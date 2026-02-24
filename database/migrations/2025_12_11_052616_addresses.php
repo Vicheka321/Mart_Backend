@@ -16,10 +16,10 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
-            $table->string('full_name');
-            $table->string('phone');
-            $table->string('province');
-            $table->string('city');
+            $table->string('full_name')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('province')->nullable();
+            $table->string('city')->nullable();
             $table->string('district')->nullable();
             $table->string('commune')->nullable();
             $table->string('street')->nullable();

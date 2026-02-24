@@ -11,7 +11,9 @@ use Google\Client as GoogleClient;
 use Illuminate\Support\Facades\Auth;
 use Google\Service\Directory\Users as DirectoryUsers;
 use Illuminate\Support\Facades\Mail;
-
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
+use Twilio\Rest\Client;
 class AuthController extends Controller
 {
     public function index() {}
@@ -37,9 +39,8 @@ class AuthController extends Controller
 
         if ($user->role === 'admin') {
             return redirect()->intended('/admin/dashboard');
-        }
-        elseif ($user->role === 'staff') {
-             return redirect()->intended('/staff/dashboard');
+        } elseif ($user->role === 'staff') {
+            return redirect()->intended('/staff/dashboard');
         }
         Auth::logout();
         abort(403, 'Access denied');

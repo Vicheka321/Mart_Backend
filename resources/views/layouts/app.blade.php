@@ -3,95 +3,95 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Mart POS</title>
+    <title>Mart POS Admin</title>
 
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    
+
 </head>
 
 <body>
 
-    <div class="wrapper">
+    <div class="app">
 
-        <!-- SIDEBAR -->
-        <div class="sidebar">
-            <h2>
-                {{-- <img src="{{ asset('images/icons/store.png') }}" class="icon"> --}}
-                Mart POS
-            </h2>
+        <!-- ========== SIDEBAR ========== -->
+        <aside class="sidebar">
 
-            <a href="{{ route('admin.dashboard') }}" class="active">
-                <img src="{{ asset('images/icons/dashboard.png') }}" class="icon">
-                Dashboard
-            </a>
+            <div class="brand">
+                🛒 <span>Mart POS</span>
+            </div>
 
+            <p class="menu-title">MANAGEMENT</p>
+
+            <a href="{{ route('admin.dashboard') }}" class="menu active">📊 Dashboard</a>
+
+            <!-- PRODUCTS -->
             <div class="menu-item">
-                <a href="javascript:void(0);" class="menu-toggle">
-                    <img src="{{ asset('images/icons/products.png') }}" class="icon">
-                    Products ▾
-                </a>
-            
+                <div class="menu toggle">
+                    
+                    🛍 Products
+                    <span class="arrow">▾</span>
+                </div>
                 <div class="submenu">
                     <a href="#">All Products</a>
-                    <a href="#">Brands</a>
                     <a href="#">Categories</a>
-                    <a href="#">Add Product</a>
+                    <a href="#">Brands</a>
                 </div>
             </div>
-            
 
-            <a href="#">
-                <img src="{{ asset('images/icons/categories.png') }}" class="icon">
-                Categories
-            </a>
+            <!-- ORDERS -->
+            <div class="menu-item">
+                <div class="menu toggle">
+                    📦 Orders
+                    <span class="arrow">▾</span>
+                </div>
+                <div class="submenu">
+                    <a href="#">All Orders</a>
+                    <a href="#">Pending</a>
+                    <a href="#">Completed</a>
+                </div>
+            </div>
 
-            <a href="#">
-                <img src="{{ asset('images/icons/orders.png') }}" class="icon">
-                Orders
-            </a>
+            <a href="#" class="menu">👥 Customers</a>
+            <a href="#" class="menu">🎁 Promotions</a>
 
-            <a href="#">
-                <img src="{{ asset('images/icons/promo.png') }}" class="icon">
-                Promotions
-            </a>
+            <p class="menu-title">SYSTEM</p>
 
-            <a href="#">
-                <img src="{{ asset('images/icons/logout.png') }}" class="icon">
-                Logout
-            </a>
-        </div>
+            <a href="#" class="menu">⚙ Settings</a>
+{{-- 
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="menu logout">🚪 Logout</button>
+            </form> --}}
 
+        </aside>
 
-        <!-- MAIN -->
+        <!-- ========== MAIN AREA ========== -->
         <div class="main">
 
-            <!-- NAVBAR -->
-            <div class="navbar">
-                Welcome, {{ auth()->user()->name ?? 'User' }}
-            </div>
+            <!-- TOP NAV -->
+            <header class="topbar">
+                <div>Welcome, {{ auth()->user()->name }}</div>
+            </header>
 
             <!-- CONTENT -->
-            <div class="content">
+            <main class="content">
                 @yield('content')
-            </div>
+            </main>
 
         </div>
 
     </div>
 
-</body>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const toggles = document.querySelectorAll(".menu-toggle");
-
-        toggles.forEach(toggle => {
-            toggle.addEventListener("click", function () {
-                const submenu = this.nextElementSibling;
-                submenu.classList.toggle("show");
+    <!-- JS -->
+    <script>
+        document.querySelectorAll(".toggle").forEach(item => {
+            item.addEventListener("click", () => {
+                item.nextElementSibling.classList.toggle("show");
             });
         });
-    });
-</script>
+    </script>
 
-
+</body>
 
 </html>

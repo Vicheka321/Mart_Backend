@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\ApiController;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +45,7 @@ class OrdersController extends Controller
 
         return response()->json([
             'items' => $items,
-            'total' => $total
+            'total amount' => $total
         ]);
     }
 
@@ -53,7 +54,7 @@ class OrdersController extends Controller
     {
         $request->validate([
             'payment_method' => 'required',
-            'address' => 'required|string|max:255'
+            'address_id' => 'required|exists:addresses,id'
         ]);
 
         $user_id = Auth::id();
@@ -66,20 +67,16 @@ class OrdersController extends Controller
             $items = CartItemModel::where('cart_id', $cart->id)->get();
 
             if ($items->count() == 0) {
-                return response()->json([
-                    'message' => 'Cart is empty'
-                ], 400);
+                return response()->json(['message' => 'Cart is empty'], 400);
             }
 
             $total = 0;
-            foreach ($items as $item) {
 
-                $product = ProductsModel::find($item->product_id);
+            foreach ($items as $item) {
+                $product = ProductsModel::findOrFail($item->product_id);
 
                 if ($product->quantity < $item->qty) {
-                    throw new \Exception(
-                        'Not enough stock for ' . $product->name
-                    );
+                    throw new \Exception("Not enough stock for {$product->name}");
                 }
 
                 $total += $item->qty * $item->price;
@@ -87,8 +84,10 @@ class OrdersController extends Controller
 
             $order = OrderModel::create([
                 'user_id' => $user_id,
+                'address_id' => $request->address_id,
                 'total_amount' => $total,
                 'status' => 'pending'
+    
             ]);
 
             foreach ($items as $item) {
@@ -99,8 +98,12 @@ class OrdersController extends Controller
                     'qty' => $item->qty,
                     'price' => $item->price
                 ]);
+
                 ProductsModel::where('id', $item->product_id)
                     ->decrement('quantity', $item->qty);
+     
+  
+
             }
 
             PaymentModel::create([
@@ -110,7 +113,6 @@ class OrdersController extends Controller
                 'amount' => $total
             ]);
 
-    
             CartItemModel::where('cart_id', $cart->id)->delete();
 
             DB::commit();
@@ -119,7 +121,6 @@ class OrdersController extends Controller
                 'message' => 'Order placed successfully',
                 'order_id' => $order->id
             ]);
-
         } catch (\Exception $e) {
 
             DB::rollback();
@@ -128,5 +129,18 @@ class OrdersController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function myOrders()
+    {
+        $user_id = Auth::id();
+        $orders = OrderModel::with('orderItems.product', 'payment')
+            ->where('user_id', $user_id)
+            ->get();
+
+        return response()->json([
+            'orders' => $orders
+        ]);
+    
     }
 }

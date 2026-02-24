@@ -9,6 +9,7 @@ class Otp extends Model
     protected $table = "otps";
     protected $fillable = [
         'email',
+        'phone',
         'otp',
         'expires_at',
         'type'

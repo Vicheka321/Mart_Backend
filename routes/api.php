@@ -23,7 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/favorite/{product_id}', [FavoriteController::class, 'removeFavorite']);
     
     Route::get('/checkout', [OrdersController::class, 'checkout']);
-    Route::post('/orders', [OrdersController::class, 'placeOrder']);
+    Route::post('/order', [OrdersController::class, 'placeOrder']);
+    Route::get('/orders', [OrdersController::class, 'myOrders']);
     
 });
 
@@ -31,6 +32,8 @@ Route::post('/send-otp', [AuthController::class, 'sendOtp']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/google-login', [AuthController::class, 'googleLogin']);
 
+Route::post('/send-otp-sms',[AuthController::class,'sendOtpSms']);
+Route::post('/verify-otp-sms',[AuthController::class,'verifyOtpSms']);
 
 Route::get('/categories', [CategoriesController::class, 'index']);
 Route::get('/categories/{id}', [CategoriesController::class, 'getProductsByCategory']);

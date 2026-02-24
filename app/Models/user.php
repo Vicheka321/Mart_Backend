@@ -29,4 +29,14 @@ class user extends Authenticatable
     {
         return $this->belongsToMany(ProductsModel::class, 'favorites', 'user_id', 'product_id')->withTimestamps();
     }
+
+    public function orders()
+    {
+        return $this->hasMany(OrderModel::class, 'user_id');
+    }
+
+     public function addresses()
+    {
+        return $this->hasMany(AddressesModel::class, 'user_id');
+    }
 }

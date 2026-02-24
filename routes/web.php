@@ -12,7 +12,6 @@ Route::get('/', function () {
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-
 Route::get('/admin', [AdminController::class, 'index']);
 Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class,'admin'])->name('admin.dashboard');
