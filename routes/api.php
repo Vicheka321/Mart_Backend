@@ -32,8 +32,6 @@ Route::post('/send-otp', [AuthController::class, 'sendOtp']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/google-login', [AuthController::class, 'googleLogin']);
 
-Route::post('/send-otp-sms',[AuthController::class,'sendOtpSms']);
-Route::post('/verify-otp-sms',[AuthController::class,'verifyOtpSms']);
 
 Route::get('/categories', [CategoriesController::class, 'index']);
 Route::get('/categories/{id}', [CategoriesController::class, 'getProductsByCategory']);
