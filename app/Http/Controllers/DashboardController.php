@@ -43,9 +43,6 @@ class DashboardController extends Controller
         //                 ->sum('total_amount');
         $todaySales = '500'; // Placeholder value, replace with actual calculation
 
-        return view('Staff.dashboard', compact(
-            'totalProducts',
-            'todaySales'
-        ));
+        return view('Staff.dashboard');
     }
 }

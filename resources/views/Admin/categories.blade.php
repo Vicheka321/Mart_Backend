@@ -1,257 +1,404 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="page-header">
-        <h2>Categories</h2>
-    </div>
 
-    <div class="card filter-bar">
-        <input type="text" placeholder="Search category..." class="input">
-        <button class="btn-primary add-btn" onclick="openModal()">+ Add Category</button>
-    </div>
+    <!-- HEADER -->
+    <div class="bg-white rounded-xl shadow pt-3 pl-4 pr-4 pb-3 pr-3 dark:bg-gray-800">
+        <div class="flex items-center justify-between mb-3 ">
 
-    <div class="card">
+            <!-- Title -->
+            <h2 class="text-[22px] font-semibold tracking-tight text-gray-900 dark:text-white">
+                Categories
+            </h2>
 
-        <table class="table">
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
 
-            <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th width="150">Actions</th>
-                </tr>
-            </thead>
+                <!-- Export -->
+                <button class="flex items-center gap-2 px-3 py-1.5 text-sm 
+                                            text-gray-600 dark:text-gray-300 
+                                            bg-white dark:bg-slate-800 
+                                            border border-gray-200 dark:border-gray-700 
+                                            rounded-md 
+                                            hover:bg-gray-100 dark:hover:bg-slate-700 
+                                            transition">
+                    <svg class="w-3 h-5.5 text-gray-500" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 3v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <span>Export</span>
+                </button>
 
-            <tbody>
+                <!-- Add New -->
+                <button onclick="openModal()"
+                    class="h-9 inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 hover:-translate-y-0.5 transition-all">
+                    Add New
+                </button>
 
-                @foreach ($categories as $category)
+            </div>
+        </div>
+
+
+        <!-- TABLE -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden ">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-indigo-100 dark:bg-indigo-500/10 border-b border-gray-100 dark:border-gray-700">
                     <tr>
-
-                        <td>{{ $loop->iteration }}</td>
-
-                        <td>
-                            @if ($category->image)
-                                <img src="{{ $category->image }}" class="category-image">
-                            @else
-                                <div class="no-image">N</div>
-                            @endif
-                        </td>
-
-                        <td>{{ $category->name }}</td>
-
-                        <td>
-
-                            <a href="#" class="btn-sm edit"
-                                onclick="editCategory({{ $category->id }}, '{{ $category->name }}', '{{ $category->image }}')">
-                                Edit
-                            </a>
-
-                            <form action="{{ route('categories.destroy', $category->id) }}" method="POST"
-                                class="delete-form" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-
-                                <button type="submit" class="btn-sm delete">
-                                    Delete
-                                </button>
-
-                            </form>
-
-                        </td>
-
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">No.</th>
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">Image</th>
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">Name</th>
+                        <th class="px-5 py- text-[11px] font-semibold uppercase tracking-wider text-gray-500">Create at
+                        </th>
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500 text-right">
+                            Actions</th>
                     </tr>
-                @endforeach
+                </thead>
+                <tbody class="divide-y divide-gray-50 dark:divide-gray-700 h-full">
+                    @foreach ($categories as $category)
+                        <tr class="hover:bg-indigo-50/30 dark:hover:bg-gray-700/40 transition-colors">
+                            <td class="px-5 py-2 text-xs font-medium text-gray-300">
+                                {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
+                            </td>
+                            <td class="px-5 py-0.5">
+                                @if ($category->image)
+                                    <img src="{{ $category->image }}"
+                                        class="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-gray-600">
+                                @else
+                                    <div
+                                        class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 font-semibold text-sm">
+                                        {{ strtoupper(substr($category->name, 0, 1)) }}
+                                    </div>
+                                @endif
+                            </td>
+                            <td class="px-5 py-2 font-medium text-gray-800 dark:text-white">{{ $category->name }}</td>
+                            <td class="px-5 py-2 text-xs text-gray-400">{{ $category->created_at->format('M d, Y') }}</td>
+                            <td class="px-5 py-2 text-right space-x-2">
+                                <button
+                                    onclick="editCategory({{ $category->id }}, '{{ $category->name }}', '{{ $category->image }}')"
+                                    class="px-3.5 py-1.5 text-xs font-medium bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50">
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </button>
+                                <form action="{{ route('categories.destroy', $category->id) }}" method="POST"
+                                    class="inline delete-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="px-3.5 py-1.5 text-xs font-medium bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+                                            <path
+                                                d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"
+                                                fill="currentColor"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
 
-            </tbody>
+        </div>
+        <div class="mt-4 flex items-center justify-between text-gray-500 dark:text-gray-400">
 
-        </table>
-
-    </div>
-
-
-
-    <!-- ================= MODAL ================= -->
-
-    <div class="modal" id="categoryModal">
-
-        <div class="modal-content fb-style">
-
-            <div class="modal-header">
-                <h3 id="modalTitle">Add Category</h3>
-                <span class="close" onclick="closeModal()">×</span>
+            <!-- Showing info -->
+            <div class="text-sm text-gray-500">
+                Showing
+                <span class="font-medium">{{ $categories->firstItem() }}</span>
+                to
+                <span class="font-medium">{{ $categories->lastItem() }}</span>
+                of
+                <span class="font-medium">{{ $categories->total() }}</span>
+                results
             </div>
 
-            <form id="categoryForm" action="{{ route('categories.store') }}" method="POST" enctype="multipart/form-data"
-                onsubmit="closeModal()">
+            <!-- Pagination -->
+            <div class="flex space-x-1">
 
-                @csrf
-                <input type="hidden" name="_method" id="formMethod" value="POST">
+                {{-- Previous --}}
+                @if ($categories->onFirstPage())
+                    <span class="px-3 py-1 rounded-lg 
+                                                    bg-gray-200 dark:bg-gray-700 
+                                                    text-gray-400 dark:text-gray-300 
+                                                    text-sm">Prev</span>
+                @else
+                    <a href="{{ $categories->previousPageUrl() }}" class="px-3 py-1 rounded-lg 
+                                                    bg-white dark:bg-slate-800 
+                                                    border border-gray-200 dark:border-gray-700 
+                                                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                    text-sm text-gray-700 dark:text-gray-300">Prev</a>
+                @endif
 
-                <div class="form-group">
-                    <input type="text" name="name" id="categoryName" class="fb-input" placeholder="Category name..."
-                        required>
-                </div>
+                {{-- Pages --}}
+                @foreach ($categories->getUrlRange(1, $categories->lastPage()) as $page => $url)
+                    @if ($page == $categories->currentPage())
+                        <span class="px-3 py-1 rounded-lg 
+                                                            bg-indigo-600 dark:bg-indigo-500 
+                                                            text-white text-sm">{{ $page }}</span>
+                    @else
+                        <a href="{{ $url }}" class="px-3 py-1 rounded-lg 
+                                                bg-white dark:bg-slate-800 
+                                                border border-gray-200 dark:border-gray-700 
+                                                hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                text-sm text-gray-700 dark:text-gray-300">{{ $page }}</a>
+                    @endif
+                @endforeach
 
+                {{-- Next --}}
+                @if ($categories->hasMorePages())
+                    <a href="{{ $categories->nextPageUrl() }}" class="px-3 py-1 rounded-lg 
+                            bg-white dark:bg-slate-800 
+                            border border-gray-200 dark:border-gray-700 
+                            hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                            text-sm text-gray-700 dark:text-gray-300">Next</a>
+                @else
+                                <span class="px-3 py-1 rounded-lg 
+                    bg-gray-200 dark:bg-gray-700 
+                    text-gray-400 dark:text-gray-300 
+                    text-sm">Next</span>
+                @endif
 
-                <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
+            </div>
+        </div>
 
-                    <input type="file" name="image" id="imageInput" hidden accept="image/*">
+        <!-- MODAL -->
+        <div id="categoryModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 px-4">
 
-                    <div id="placeholderText">+</div>
+            <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl p-6 animate-scaleIn shadow-xl">
 
-                    <div id="imagePreviewWrapper">
-                        <img id="imagePreview">
-                        <span class="remove-image" onclick="removeImage(event)">×</span>
-                    </div>
-
-                </div>
-
-                <div style="margin-top:20px;">
-                    <button type="submit" class="fb-btn">
-                        Save
+                <!-- HEADER -->
+                <div class="flex justify-between items-center mb-5">
+                    <h3 id="modalTitle" class="text-lg font-semibold text-gray-800 dark:text-white">Add Category</h3>
+                    <button onclick="closeModal()"
+                        class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600 transition text-lg leading-none">
+                        &times;
                     </button>
                 </div>
 
-            </form>
+                <!-- FORM -->
+                <form id="categoryForm" action="{{ route('categories.store') }}" method="POST"
+                    enctype="multipart/form-data">
 
+                    @csrf
+                    <input type="hidden" name="_method" id="formMethod" value="POST">
+
+                    <!-- NAME -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">Category
+                            Name</label>
+                        <input type="text" name="name" id="categoryName" placeholder="e.g. Beverages"
+                            class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:text-white transition"
+                            required>
+                    </div>
+
+                    <!-- <div class="input-group">
+                                                        <input required="" type="text" name="text" autocomplete="off" class="input">
+                                                        <label class="user-label">First Name</label>
+                                                    </div> -->
+
+                    <!-- IMAGE UPLOAD  -->
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">Category
+                            Image</label>
+
+                        <div id="uploadBox" onclick="document.getElementById('imageInput').click()"
+                            class="relative w-full h-64 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 flex flex-col items-center justify-center cursor-pointer overflow-hidden transition hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-gray-600/50">
+
+                            <!-- Placeholder -->
+                            <div id="uploadPlaceholder"
+                                class="flex flex-col items-center gap-2 text-gray-400 pointer-events-none">
+                                <div
+                                    class="w-14 h-14 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                    <svg class="w-7 h-7 text-gray-400 dark:text-gray-300" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-300">Click to upload
+                                    image</span>
+                                <span class="text-xs text-gray-400 dark:text-gray-500">PNG, JPG, WEBP up to 2MB</span>
+                            </div>
+
+                            <!-- Preview -->
+                            <img id="imagePreview" class="hidden absolute inset-0 w-full h-full object-contain">
+
+                            <!-- Hover overlay (edit) -->
+                            <div id="editOverlay"
+                                class="hidden absolute inset-0 bg-black/40 items-center justify-center pointer-events-none">
+                                <div
+                                    class="flex items-center gap-2 bg-white/90 text-gray-800 text-sm font-medium px-4 py-2 rounded-xl shadow">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                                    </svg>
+                                    Edit Photo
+                                </div>
+                            </div>
+
+                            <!-- Remove button -->
+                            <button type="button" id="removeImageBtn" onclick="removeImage(event)"
+                                class="hidden absolute top-2 right-2 w-8 h-8 bg-gray-900/70 hover:bg-gray-900 text-white rounded-full flex items-center justify-center transition z-10">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+
+                        </div>
+
+                        <input type="file" name="image" id="imageInput" accept="image/*" class="hidden">
+                    </div>
+
+                    <button type="submit"
+                        class="w-full py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition">
+                        Save
+                    </button>
+
+                </form>
+            </div>
         </div>
     </div>
+    <!-- ANIMATION -->
+    <style>
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.92);
+                opacity: 0
+            }
 
+            to {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
 
+        .animate-scaleIn {
+            animation: scaleIn 0.2s cubic-bezier(.34, 1.56, .64, 1);
+        }
+    </style>
 
+    <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        /* ================= DELETE ALERT ================= */
-
-        document.querySelectorAll(".delete-form").forEach(function(form) {
-
-            form.addEventListener("submit", function(e) {
-
-                e.preventDefault()
-
-                Swal.fire({
-                    title: "Confirm",
-                    text: "Are you sure want to permanently delete this category?",
-                    icon: "warning",
-                    width: 380,
-                    showCancelButton: true,
-                    confirmButtonColor: "#2b7dbd",
-                    cancelButtonColor: "#e74c3c",
-                    confirmButtonText: "Yes, Delete!",
-                    cancelButtonText: "Cancel"
-                }).then((result) => {
-
-                    if (result.isConfirmed) {
-                        form.submit()
-                    }
-
-                })
-
-            })
-
-        })
-
-
+        /* ================= ELEMENTS ================= */
+        const modal = document.getElementById('categoryModal')
+        const form = document.getElementById('categoryForm')
+        const modalTitle = document.getElementById('modalTitle')
+        const nameInput = document.getElementById('categoryName')
+        const methodInput = document.getElementById('formMethod')
+        const imageInput = document.getElementById('imageInput')
+        const preview = document.getElementById('imagePreview')
+        const placeholder = document.getElementById('uploadPlaceholder')
+        const editOverlay = document.getElementById('editOverlay')
+        const removeBtn = document.getElementById('removeImageBtn')
+        const uploadBox = document.getElementById('uploadBox')
 
         /* ================= MODAL ================= */
-
         function openModal() {
-
-            document.getElementById('categoryModal').classList.add('show')
-
-            document.getElementById("modalTitle").innerText = "Add Category"
-
-            document.getElementById("categoryForm").action = "{{ route('categories.store') }}"
-
-            document.getElementById("formMethod").value = "POST"
-
-            document.getElementById("categoryName").value = ""
-
-            imageInput.value = ""
-            preview.src = ""
-            wrapper.style.display = "none"
-            placeholder.style.display = "block"
-
+            modal.classList.remove('hidden')
+            modal.classList.add('flex')
         }
 
         function closeModal() {
-            document.getElementById('categoryModal').classList.remove('show')
+            modal.classList.add('hidden')
+            modal.classList.remove('flex')
+            resetForm()
         }
 
-
-
-        /* ================= EDIT CATEGORY ================= */
-
-        function editCategory(id, name, image) {
-
-            openModal()
-
-            document.getElementById("modalTitle").innerText = "Edit Category"
-
-            document.getElementById("categoryName").value = name
-
-            document.getElementById("categoryForm").action = "/admin/category/" + id
-
-            document.getElementById("formMethod").value = "PUT"
-
-            if (image) {
-                preview.src = image
-                wrapper.style.display = "block"
-                placeholder.style.display = "none"
-            }
-
+        function resetForm() {
+            form.action = "{{ route('categories.store') }}"
+            methodInput.value = 'POST'
+            nameInput.value = ''
+            modalTitle.innerText = 'Add Category'
+            resetImagePreview()
         }
-
-
-
-        /* ================= CLOSE MODAL CLICK OUTSIDE ================= */
-
-        window.onclick = function(e) {
-
-            const modal = document.getElementById('categoryModal')
-
-            if (e.target === modal) {
-                closeModal()
-            }
-
-        }
-
-
 
         /* ================= IMAGE PREVIEW ================= */
+        function showImagePreview(src) {
+            preview.src = src
+            preview.classList.remove('hidden')
+            placeholder.classList.add('hidden')
+            removeBtn.classList.remove('hidden')
+        }
 
-        const imageInput = document.getElementById("imageInput")
-        const preview = document.getElementById("imagePreview")
-        const wrapper = document.getElementById("imagePreviewWrapper")
-        const placeholder = document.getElementById("placeholderText")
+        function resetImagePreview() {
+            imageInput.value = ''
+            preview.src = ''
+            preview.classList.add('hidden')
+            placeholder.classList.remove('hidden')
+            editOverlay.classList.add('hidden')
+            editOverlay.classList.remove('flex')
+            removeBtn.classList.add('hidden')
+        }
 
-        imageInput.addEventListener("change", function() {
+        function removeImage(e) {
+            e.stopPropagation()
+            resetImagePreview()
+        }
 
-            const file = this.files[0]
-
-            if (file) {
-
-                preview.src = URL.createObjectURL(file)
-
-                wrapper.style.display = "block"
-                placeholder.style.display = "none"
-
-            }
-
+        imageInput.addEventListener('change', () => {
+            const file = imageInput.files[0]
+            if (!file) return
+            showImagePreview(URL.createObjectURL(file))
         })
 
-        function removeImage(event) {
+        // Hover: show/hide edit overlay when image is loaded
+        uploadBox.addEventListener('mouseenter', () => {
+            if (!preview.classList.contains('hidden')) {
+                editOverlay.classList.remove('hidden')
+                editOverlay.classList.add('flex')
+            }
+        })
+        uploadBox.addEventListener('mouseleave', () => {
+            editOverlay.classList.add('hidden')
+            editOverlay.classList.remove('flex')
+        })
 
-            event.stopPropagation()
+        /* ================= EDIT ================= */
+        function editCategory(id, name, image) {
+            openModal()
+            modalTitle.innerText = 'Edit Category'
+            nameInput.value = name
+            form.action = '/admin/category/' + id
+            methodInput.value = 'PUT'
 
-            imageInput.value = ""
-            preview.src = ""
-
-            wrapper.style.display = "none"
-            placeholder.style.display = "block"
-
+            if (image) {
+                showImagePreview(image)
+            } else {
+                resetImagePreview()
+            }
         }
+
+        /* ================= DELETE ================= */
+        document.querySelectorAll('.delete-form').forEach(f => {
+            f.addEventListener('submit', function (e) {
+                e.preventDefault()
+                Swal.fire({
+                    title: 'Delete category?',
+                    text: 'This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#6366f1',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Yes, delete it',
+                }).then(result => {
+                    if (result.isConfirmed) f.submit()
+                })
+            })
+        })
+
+        /* ================= CLOSE ON OUTSIDE CLICK ================= */
+        modal.addEventListener('click', e => {
+            if (e.target === modal) closeModal()
+        })
     </script>
+
 @endsection

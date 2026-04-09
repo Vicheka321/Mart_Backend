@@ -1,261 +1,452 @@
-
 @extends('layouts.app')
 
 @section('content')
-    <div class="page-header">
-        <h2>Brands</h2>
-    </div>
 
-    <div class="card filter-bar">
-        <input type="text" placeholder="Search brand..." class="input">
-        <button class="btn-primary add-btn" onclick="openModal()">+ Add Brand</button>
-    </div>
+    <div class="bg-white rounded-xl shadow pt-3 pl-4 pr-4 pb-3 dark:bg-gray-800">
 
-    <div class="card">
 
-        <table class="table">
+        <!-- HEADER -->
+        <div class="flex items-center justify-between mb-3 ">
 
-            <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Country</th>
-                    <th width="150">Actions</th>
-                </tr>
-            </thead>
+            <!-- Title -->
+            <h2 class="text-[22px] font-semibold tracking-tight text-gray-900 dark:text-white">
+                Brands
+            </h2>
 
-            <tbody>
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
 
-                @foreach ($brands as $brand)
+                <!-- Export -->
+                <button class="flex items-center gap-2 px-3 py-1.5 text-sm 
+                                                    text-gray-600 dark:text-gray-300 
+                                                    bg-white dark:bg-slate-800 
+                                                    border border-gray-200 dark:border-gray-700 
+                                                    rounded-md 
+                                                    hover:bg-gray-100 dark:hover:bg-slate-700 
+                                                    transition">
+                    <svg class="w-3 h-5.5 text-gray-500" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 3v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <span>Export</span>
+                </button>
+
+                <!-- Add New -->
+                <button onclick="openModal()"
+                    class="h-9 inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 hover:-translate-y-0.5 transition-all">
+                    Add New
+                </button>
+
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <table class="w-full text-sm text-left">
+
+                <thead class="bg-indigo-100 dark:bg-indigo-500/10 border-b border-gray-100 dark:border-gray-700">
                     <tr>
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase text-gray-500">No.</th>
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase text-gray-500">Image</th>
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase text-gray-500">Name</th>
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase text-gray-500">Country</th>
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase text-gray-500">Created At</th>
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase text-gray-500 text-right">Actions</th>
+                    </tr>
+                </thead>
 
-                        <td>{{ $loop->iteration }}</td>
+                <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
 
-                        <td>
-                            @if ($brand->image)
-                                <img src="{{ $brand->image }}" class="category-image">
-                            @else
-                                <div class="no-image">N</div>
-                            @endif
-                        </td>
+                    @forelse ($brands as $brand)
+                        <tr class="hover:bg-indigo-50/30 dark:hover:bg-gray-700/40 transition-colors">
 
-                        <td>{{ $brand->name }}</td>
-                        <td>
-                            @if ($brand->country)
-                                {{ $brand->country }}
-                            @else
-                                <div class="no-image">N</div>
-                            @endif
-                        </td>
+                            <td class="px-5 py-2 text-xs text-gray-400">
+                                {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
+                            </td>
 
-                        <td>
+                            <td class="px-5 py-0.5">
+                                @if ($brand->image)
+                                    <img src="{{ asset($brand->image) }}"
+                                        class="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-gray-600">
+                                @else
+                                    <div
+                                        class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 font-semibold text-sm">
+                                        {{ strtoupper(substr($brand->name, 0, 1)) }}
+                                    </div>
+                                @endif
+                            </td>
 
-                            <a href="#" class="btn-sm edit"
-                                onclick="editBrand({{ $brand->id }}, '{{ $brand->name }}', '{{ $brand->image }}')">
-                                Edit
-                            </a>
+                            <td class="px-5 py-2 font-medium text-gray-800 dark:text-white">
+                                {{ $brand->name }}
+                            </td>
 
-                            <form action="{{ route('brands.destroy', $brand->id) }}" method="POST" class="delete-form"
-                                style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
+                            <td class="px-5 py-2 text-xs text-gray-400">
+                                {{ $brand->country ?? 'N/A' }}
+                            </td>
 
-                                <button type="submit" class="btn-sm delete">
-                                    Delete
+                            <td class="px-5 py-2 text-xs text-gray-400">
+                                {{ $brand->created_at->format('M d, Y') }}
+                            </td>
+
+                            <td class="px-5 py-2 text-right space-x-2">
+
+                                <!-- EDIT -->
+                                <button onclick='editBrand(@json($brand->id), @json($brand->name), @json($brand->image))'
+                                    class="px-3.5 py-1.5 text-xs font-medium bg-indigo-50 text-indigo-600 rounded-lg 
+                                                                                   hover:bg-indigo-100 transition-colors 
+                                                                                   dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50">
+
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
                                 </button>
 
-                            </form>
+                                <!-- DELETE -->
+                                <form action="{{ route('brands.destroy', $brand->id) }}" method="POST"
+                                    class="inline delete-form">
+                                    @csrf
+                                    @method('DELETE')
 
-                        </td>
+                                    <button type="submit"
+                                        class="px-3.5 py-1.5 text-xs font-medium bg-red-50 text-red-500 rounded-lg 
+                                                                                       hover:bg-red-100 transition-colors 
+                                                                                       dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40">
 
-                    </tr>
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+                                            <path
+                                                d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"
+                                                fill="currentColor"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+
+                            </td>
+                        </tr>
+
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-6 text-gray-400">
+                                No brands found
+                            </td>
+                        </tr>
+                    @endforelse
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 flex items-center justify-between text-gray-500 dark:text-gray-400">
+
+            <!-- Showing info -->
+            <div class="text-sm text-gray-500">
+                Showing
+                <span class="font-medium">{{ $brands->firstItem() }}</span>
+                to
+                <span class="font-medium">{{ $brands->lastItem() }}</span>
+                of
+                <span class="font-medium">{{ $brands->total() }}</span>
+                results
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex space-x-1">
+
+                {{-- Previous --}}
+                @if ($brands->onFirstPage())
+                    <span class="px-3 py-1 rounded-lg 
+                                                                                                    bg-gray-200 dark:bg-gray-700 
+                                                                                                    text-gray-400 dark:text-gray-300 
+                                                                                                    text-sm">Prev</span>
+                @else
+                    <a href="{{ $brands->previousPageUrl() }}"
+                        class="px-3 py-1 rounded-lg 
+                                                                                                    bg-white dark:bg-slate-800 
+                                                                                                    border border-gray-200 dark:border-gray-700 
+                                                                                                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                                                    text-sm text-gray-700 dark:text-gray-300">Prev</a>
+                @endif
+
+                {{-- Pages --}}
+                @foreach ($brands->getUrlRange(1, $brands->lastPage()) as $page => $url)
+                    @if ($page == $brands->currentPage())
+                        <span
+                            class="px-3 py-1 rounded-lg 
+                                                                                                                                    bg-indigo-600 dark:bg-indigo-500 
+                                                                                                                                    text-white text-sm">{{ $page }}</span>
+                    @else
+                        <a href="{{ $url }}"
+                            class="px-3 py-1 rounded-lg 
+                                                                                                                        bg-white dark:bg-slate-800 
+                                                                                                                        border border-gray-200 dark:border-gray-700 
+                                                                                                                        hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                                                                        text-sm text-gray-700 dark:text-gray-300">{{ $page }}</a>
+                    @endif
                 @endforeach
 
-            </tbody>
+                {{-- Next --}}
+                @if ($brands->hasMorePages())
+                    <a href="{{ $brands->nextPageUrl() }}" class="px-3 py-1 rounded-lg 
+                                                                            bg-white dark:bg-slate-800 
+                                                                            border border-gray-200 dark:border-gray-700 
+                                                                            hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                            text-sm text-gray-700 dark:text-gray-300">Next</a>
+                @else
+                    <span class="px-3 py-1 rounded-lg 
+                                                                    bg-gray-200 dark:bg-gray-700 
+                                                                    text-gray-400 dark:text-gray-300 
+                                                                    text-sm">Next</span>
+                @endif
 
-        </table>
+            </div>
+        </div>
+
 
     </div>
 
+    <!-- MODAL -->
+    <div id="brandModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 px-4">
 
-    <!-- ================= MODAL ================= -->
+        <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl p-6 animate-scaleIn shadow-xl">
 
-    <div class="modal" id="brandModal">
+            <!-- HEADER -->
+            <div class="flex justify-between items-center mb-5">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-800 dark:text-white">
+                    Add Brand
+                </h3>
 
-        <div class="modal-content fb-style">
-
-            <div class="modal-header">
-                <h3 id="modalTitle">Add Brand</h3>
-                <span class="close" onclick="closeModal()">×</span>
+                <button onclick="closeModal()"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 
+                                       text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600 transition text-lg leading-none">
+                    &times;
+                </button>
             </div>
 
-            <form id="brandForm" action="{{ route('brands.store') }}" method="POST" enctype="multipart/form-data"
-                onsubmit="closeModal()">
+            <!-- FORM -->
+            <form id="brandForm" action="{{ route('brands.store') }}" method="POST" enctype="multipart/form-data">
 
                 @csrf
                 <input type="hidden" name="_method" id="formMethod" value="POST">
 
-                <div class="form-group">
-                    <input type="text" name="name" id="brandName" class="fb-input" placeholder="Brand name..."
-                        required>
+                <!-- NAME -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">
+                        Brand Name
+                    </label>
+
+                    <input type="text" name="name" id="brandName" placeholder="e.g. Nike" class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl text-sm 
+                                           focus:outline-none focus:ring-2 focus:ring-indigo-400 
+                                           dark:bg-gray-700 dark:text-white transition" required>
                 </div>
 
+                <!-- IMAGE UPLOAD -->
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">
+                        Brand Image
+                    </label>
 
-                <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
+                    <div id="uploadBox" class="relative w-full h-64 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-600 
+                                           bg-gray-50 dark:bg-gray-700 flex flex-col items-center justify-center cursor-pointer 
+                                           overflow-hidden transition hover:border-indigo-400 hover:bg-indigo-50 
+                                           dark:hover:bg-gray-600/50">
 
-                    <input type="file" name="image" id="imageInput" hidden accept="image/*">
+                        <!-- Placeholder -->
+                        <div id="uploadPlaceholder"
+                            class="flex flex-col items-center gap-2 text-gray-400 pointer-events-none">
 
-                    <div id="placeholderText">+</div>
+                            <div
+                                class="w-14 h-14 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                <svg class="w-7 h-7 text-gray-400 dark:text-gray-300" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                                </svg>
+                            </div>
 
-                    <div id="imagePreviewWrapper">
-                        <img id="imagePreview">
-                        <span class="remove-image" onclick="removeImage(event)">×</span>
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                                Click to upload image
+                            </span>
+
+                            <span class="text-xs text-gray-400 dark:text-gray-500">
+                                PNG, JPG, WEBP up to 2MB
+                            </span>
+                        </div>
+
+                        <!-- Preview -->
+                        <img id="imagePreview" class="hidden absolute inset-0 w-full h-full object-contain">
+
+                        <!-- Hover overlay -->
+                        <div id="editOverlay"
+                            class="hidden absolute inset-0 bg-black/40 items-center justify-center pointer-events-none">
+                            <div
+                                class="flex items-center gap-2 bg-white/90 text-gray-800 text-sm font-medium px-4 py-2 rounded-xl shadow">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                                </svg>
+                                Edit Photo
+                            </div>
+                        </div>
+
+                        <!-- Remove button -->
+                        <button type="button" id="removeImageBtn" onclick="removeImage(event)" class="hidden absolute top-2 right-2 w-8 h-8 bg-gray-900/70 hover:bg-gray-900 text-white 
+                                               rounded-full flex items-center justify-center transition z-10">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
                     </div>
 
+                    <input type="file" name="image" id="imageInput" accept="image/*" class="hidden">
                 </div>
 
-                <div style="margin-top:20px;">
-                    <button type="submit" class="fb-btn">
-                        Save
-                    </button>
-                </div>
+                <button type="submit"
+                    class="w-full py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition">
+                    Save
+                </button>
 
             </form>
-
         </div>
     </div>
 
+    <style>
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.92);
+                opacity: 0
+            }
 
+            to {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
+
+        .animate-scaleIn {
+            animation: scaleIn 0.2s cubic-bezier(.34, 1.56, .64, 1);
+        }
+    </style>
+
+    <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        /* ================= DELETE ALERT ================= */
-
-        document.querySelectorAll(".delete-form").forEach(function(form) {
-
-            form.addEventListener("submit", function(e) {
-
-                e.preventDefault()
-
-                Swal.fire({
-                    title: "Confirm",
-                    text: "Are you sure want to permanently delete this brand?",
-                    icon: "warning",
-                    width: 380,
-                    showCancelButton: true,
-                    confirmButtonColor: "#2b7dbd",
-                    cancelButtonColor: "#e74c3c",
-                    confirmButtonText: "Yes, Delete!",
-                    cancelButtonText: "Cancel"
-                }).then((result) => {
-
-                    if (result.isConfirmed) {
-                        form.submit()
-                    }
-
-                })
-
-            })
-
-        })
-
+        /* ================= ELEMENTS ================= */
+        const modal = document.getElementById('brandModal')
+        const form = document.getElementById('brandForm')
+        const modalTitle = document.getElementById('modalTitle')
+        const nameInput = document.getElementById('brandName')
+        const methodInput = document.getElementById('formMethod')
+        const imageInput = document.getElementById('imageInput')
+        const preview = document.getElementById('imagePreview')
+        const placeholder = document.getElementById('uploadPlaceholder')
+        const editOverlay = document.getElementById('editOverlay')
+        const removeBtn = document.getElementById('removeImageBtn')
+        const uploadBox = document.getElementById('uploadBox')
 
         /* ================= MODAL ================= */
-
         function openModal() {
-
-            document.getElementById('brandModal').classList.add('show')
-
-            document.getElementById("modalTitle").innerText = "Add Brand"
-
-            document.getElementById("brandForm").action = "{{ route('brands.store') }}"
-
-            document.getElementById("formMethod").value = "POST"
-
-            document.getElementById("brandName").value = ""
-
-            imageInput.value = ""
-            preview.src = ""
-            wrapper.style.display = "none"
-            placeholder.style.display = "block"
-
+            modal.classList.remove('hidden')
+            modal.classList.add('flex')
         }
 
         function closeModal() {
-            document.getElementById('brandModal').classList.remove('show')
+            modal.classList.add('hidden')
+            modal.classList.remove('flex')
+            resetForm()
         }
 
-
-        /* ================= EDIT BRAND ================= */
-
-        function editBrand(id, name, image) {
-
-            openModal()
-
-            document.getElementById("modalTitle").innerText = "Edit Brand"
-
-            document.getElementById("brandName").value = name
-
-            document.getElementById("brandForm").action = "/admin/brands/" + id
-
-            document.getElementById("formMethod").value = "PUT"
-
-            if (image) {
-                preview.src = image
-                wrapper.style.display = "block"
-                placeholder.style.display = "none"
-            }
-
+        function resetForm() {
+            form.action = "{{ route('brands.store') }}"
+            methodInput.value = 'POST'
+            nameInput.value = ''
+            modalTitle.innerText = 'Add Brand'
+            resetImagePreview()
         }
-
-
-        /* ================= CLOSE MODAL CLICK OUTSIDE ================= */
-
-        window.onclick = function(e) {
-
-            const modal = document.getElementById('brandModal')
-
-            if (e.target === modal) {
-                closeModal()
-            }
-
-        }
-
 
         /* ================= IMAGE PREVIEW ================= */
+        function showImagePreview(src) {
+            preview.src = src
+            preview.classList.remove('hidden')
+            placeholder.classList.add('hidden')
+            removeBtn.classList.remove('hidden')
+        }
 
-        const imageInput = document.getElementById("imageInput")
-        const preview = document.getElementById("imagePreview")
-        const wrapper = document.getElementById("imagePreviewWrapper")
-        const placeholder = document.getElementById("placeholderText")
+        function resetImagePreview() {
+            imageInput.value = ''
+            preview.src = ''
+            preview.classList.add('hidden')
+            placeholder.classList.remove('hidden')
+            editOverlay.classList.add('hidden')
+            editOverlay.classList.remove('flex')
+            removeBtn.classList.add('hidden')
+        }
 
-        imageInput.addEventListener("change", function() {
+        function removeImage(e) {
+            e.stopPropagation()
+            resetImagePreview()
+        }
 
-            const file = this.files[0]
-
-            if (file) {
-
-                preview.src = URL.createObjectURL(file)
-
-                wrapper.style.display = "block"
-                placeholder.style.display = "none"
-
-            }
-
+        imageInput.addEventListener('change', () => {
+            const file = imageInput.files[0]
+            if (!file) return
+            showImagePreview(URL.createObjectURL(file))
         })
 
+        // Hover: show/hide edit overlay when image is loaded
+        uploadBox.addEventListener('mouseenter', () => {
+            if (!preview.classList.contains('hidden')) {
+                editOverlay.classList.remove('hidden')
+                editOverlay.classList.add('flex')
+            }
+        })
+        uploadBox.addEventListener('mouseleave', () => {
+            editOverlay.classList.add('hidden')
+            editOverlay.classList.remove('flex')
+        })
 
-        function removeImage(event) {
+        /* ================= EDIT ================= */
+        function editBrand(id, name, image) {
+            openModal()
+            modalTitle.innerText = 'Edit Brand'
+            nameInput.value = name
+            form.action = '/admin/brands/' + id
+            methodInput.value = 'PUT'
 
-            event.stopPropagation()
-
-            imageInput.value = ""
-            preview.src = ""
-
-            wrapper.style.display = "none"
-            placeholder.style.display = "block"
-
+            if (image) {
+                showImagePreview(image)
+            } else {
+                resetImagePreview()
+            }
         }
+
+        /* ================= DELETE ================= */
+        document.querySelectorAll('.delete-form').forEach(f => {
+            f.addEventListener('submit', function (e) {
+                e.preventDefault()
+                Swal.fire({
+                    title: 'Delete brand?',
+                    text: 'This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#6366f1',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Yes, delete it',
+                }).then(result => {
+                    if (result.isConfirmed) f.submit()
+                })
+            })
+        })
+
+        /* ================= CLOSE ON OUTSIDE CLICK ================= */
+        modal.addEventListener('click', e => {
+            if (e.target === modal) closeModal()
+        })
     </script>
+
 @endsection

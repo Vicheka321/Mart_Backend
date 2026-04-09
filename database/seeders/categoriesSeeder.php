@@ -14,25 +14,35 @@ class categoriesSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            [
-                'name' => 'Drinks',
-                'image' => 'https://lirp.cdn-website.com/acc4873e/dms3rep/multi/opt/soft+drinks-640w.jpg'
-            ],
-            [
-                'name' => 'Snacks',
-                'image' => 'https://m.media-amazon.com/images/I/9111kAzE8GL._SL1000_.jpg'
-            ],
-            [
-                'name' => 'Groceries',
-                'image' => 'https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fit,w_730,h_521/k%2FPhoto%2FSeries%2F2019-10--power-hour-instant-pot%2FPower-Hour-Instant-Pot_001-rotated'
-            ],
-            [
-                'name' => 'Frozen Foods',
-                'image' => 'https://shopsuki.ph/cdn/shop/collections/yummy-french-fries-as-background_127101-63_1024x.jpg?v=1656300018'
-            ],
+            ['name' => 'Drinks', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Snacks', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Groceries', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Frozen Foods', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+
+            ['name' => 'Fruits', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Vegetables', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Dairy', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Bakery', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+
+            ['name' => 'Meat', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Seafood', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Instant Food', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Fooda', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodb', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodc', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodd', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foode', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodf', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodg', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodh', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodi', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodj', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodk', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodl', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+            ['name' => 'Canned Foodm', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3ab8d9d4-2369-43a0-be37-b5b39441cd90.jpg'],
+
         ];
-        
-    
+
         foreach ($data as $item) {
             categoriesModel::create($item);
         }

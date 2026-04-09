@@ -12,7 +12,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = categoriesModel::orderBy('id')->get();
+        $categories = categoriesModel::orderBy('id')->paginate(10);
         return view('Admin.categories', compact('categories'));
     }
 
@@ -40,6 +40,7 @@ class CategoryController extends Controller
 
             $imageUrl = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $path;
         }
+        
 
         categoriesModel::create([
             'name' => $request->name,

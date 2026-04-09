@@ -9,15 +9,16 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('Auth.login');
 });
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::get('/admin', [AdminController::class, 'index']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'admin'])->name('admin.dashboard');
-    Route::get('/staff/dashboard', [DashboardController::class, 'staff'])->name('staff.dashboard');
+  
 
     Route::get('/admin/products', [ProductController::class, 'index'])
         ->name('products.index');
@@ -45,4 +46,13 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
         ->name('brands.update');
     Route::delete('/admin/brands/{brand}', [BrandsController::class, 'destroy'])
         ->name('brands.destroy');
+});
+
+
+
+Route::middleware(['auth', 'is_staff'])->group(function () {
+
+    Route::get('/staff/dashboard', [DashboardController::class, 'staff'])
+        ->name('staff.dashboard');
+
 });

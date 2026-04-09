@@ -1,323 +1,162 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="page-header">
-        <h2>All Products</h2>
-    </div>
 
-    <div class="card filter-bar">
-        <input type="text" placeholder="Search product..." class="input">
-        <button class="btn-primary add-btn" onclick="openModal()">+ Add Product</button>
-    </div>
+<div class="bg-white h-full rounded-xl shadow p-4 dark:bg-gray-800">
 
-    <div class="card">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>No .</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Brand</th>
-                    <th>Cost Price</th>
-                    <th>Sale Price</th>
-                    <th>Stock</th>
-                    <th>Status</th>
-                    <th width="150">Actions</th>
-                </tr>
-            </thead>
+    <!-- HEADER -->
+    <div class="flex items-center justify-between mb-8">
+        <h2 class="text-[22px] font-semibold tracking-tight text-gray-900 dark:text-white">
+            Products
+        </h2>
 
-            <tbody>
-                @foreach ($products as $product)
-                    <tr>
+        <div class="flex items-center gap-3">
 
-                        <td>{{ $loop->iteration }}</td>
-
-                        <td>
-                            @if (!empty($product['image']) && count($product['image']) > 0)
-                                <img src="{{ $product['image'][0]['image_url'] }}" class="product-img"
-                                    onerror="this.src='https://picsum.photos/200';">
-                            @else
-                                <img src="https://picsum.photos/200" class="product-img">
-                            @endif
-                        </td>
-
-                        <td>{{ $product['name'] }}</td>
-                        <td>{{ $product['category']['name'] }}</td>
-                        <td>{{ $product['brand']['name'] }}</td>
-                        <td>${{ $product['cost_price'] }}</td>
-                        <td>${{ $product['sale_price'] }}</td>
-                        <td>{{ $product['quantity'] }}</td>
-
-                        <td>
-                            @if ($product['status'])
-                                <span class="badge success">Active</span>
-                            @else
-                                <span class="badge danger">Inactive</span>
-                            @endif
-                        </td>
-
-                        <td>
-                            <a href="#" class="btn-sm edit">Edit</a>
-                            <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="delete-form"
-                                style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-
-                                <button type="submit" class="btn-sm delete">
-                                    Delete
-                                </button>
-
-                            </form>
-                        </td>
-
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-
-
-
-    {{-- PRODUCT MODAL --}}
-    <div class="modal" id="ProductModal">
-
-        <div class="modal-dialog">
-
-            <div class="modal-header">
-                <h3>Add Product</h3>
-                <button class="close-btn" onclick="closeModal()">✕</button>
-            </div>
-
-            <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-
-                <div class="modal-body">
-
-                    <div class="form-row">
-
-                        <div class="form-group">
-                            <label>Product Name</label>
-                            <input type="text" name="name">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Product Code</label>
-                            <input type="text" name="product_code">
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-row">
-
-                        <div class="form-group">
-                            <label>Category</label>
-                            <select name="categories_id">
-                                <option>Select Category</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Brand</label>
-                            <select name="brand_id">
-                                <option>Select Brand</option>
-                                @foreach ($brands as $brand)
-                                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-row">
-
-                        <div class="form-group">
-                            <label>Cost Price</label>
-                            <input type="number" name="cost_price">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Sale Price</label>
-                            <input type="number" name="sale_price">
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-row">
-
-                        <div class="form-group">
-                            <label>Stock Quantity</label>
-                            <input type="number" name="quantity">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Status</label>
-                            <select name="status">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                            </select>
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-row">
-
-                        <div class="form-group">
-                            <label>Unit</label>
-                            <input type="text" name="unit">
-                        </div>
-
-                        <div class="form-group ">
-                            <label>Description</label>
-                            <input type="text" name="unit">
-                        </div>
-
-
-                    </div>
-
-                    <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
-
-                        <input type="file" name="image" id="imageInput" hidden accept="image/*">
-
-                        <div id="placeholderText">+</div>
-
-                        <div id="imagePreviewWrapper">
-                            <img id="imagePreview">
-                            <span class="remove-image" onclick="removeImage(event)">×</span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="modal-footer">
-
-                    <button type="button" class="btn-cancel" onclick="closeModal()">
-                        Cancel
-                    </button>
-
-                    <button class="btn-save">
-                        Save
-                    </button>
-
-                </div>
-
-            </form>
+            <!-- Export -->
+            <button class="flex items-center gap-2 px-3 py-1.5 text-sm 
+                text-gray-600 dark:text-gray-300 
+                bg-white dark:bg-slate-800 
+                border border-gray-200 dark:border-gray-700 
+                rounded-md 
+                hover:bg-gray-100 dark:hover:bg-slate-700 
+                transition">
+                Export
+            </button>
 
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- TABLE -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
 
-    <script>
-        document.querySelectorAll(".delete-form").forEach(function(form) {
+        <table class="w-full text-sm text-left">
 
-            form.addEventListener("submit", function(e) {
+            <thead class="bg-indigo-100 dark:bg-indigo-500/10 border-b border-gray-100 dark:border-gray-700">
+                <tr>
+                    <th class="px-5 py-3 text-xs text-gray-500">No.</th>
+                    <th class="px-5 py-3 text-xs text-gray-500">Image</th>
+                    <th class="px-5 py-3 text-xs text-gray-500">Name</th>
+                    <th class="px-5 py-3 text-xs text-gray-500">Category</th>
+                    <th class="px-5 py-3 text-xs text-gray-500">Brand</th>
+                    <th class="px-5 py-3 text-xs text-gray-500">Price</th>
+                    <th class="px-5 py-3 text-xs text-gray-500">Stock</th>
+                    <th class="px-5 py-3 text-xs text-gray-500">Status</th>
+                    <th class="px-5 py-3 text-xs text-gray-500 text-right">Actions</th>
+                </tr>
+            </thead>
 
-                e.preventDefault()
+            <tbody class="divide-y dark:divide-gray-700">
 
-                Swal.fire({
-                    title: "Confirm",
-                    text: "Are you sure want to permanently delete this product?",
-                    icon: "warning",
-                    width: 380,
-                    showCancelButton: true,
-                    confirmButtonColor: "#2b7dbd",
-                    cancelButtonColor: "#e74c3c",
-                    confirmButtonText: "Yes, Delete!",
-                    cancelButtonText: "Cancel"
-                }).then((result) => {
+                @foreach ($products as $product)
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition">
 
-                    if (result.isConfirmed) {
-                        form.submit()
-                    }
+                    <td class="p-4">{{ $loop->iteration }}</td>
 
-                })
+                    <!-- ✅ IMAGE HOVER PREVIEW -->
+                    <td class="p-4">
+                        <div class="relative group inline-block">
 
-            })
+                            <img src="{{ $product['image'][0]['image_url'] ?? 'https://picsum.photos/200' }}"
+                                class="w-10 h-10 rounded-lg object-cover border border-gray-100 dark:border-gray-600 cursor-pointer">
 
-        })
-        const imageInput = document.getElementById("imageInput")
-        const preview = document.getElementById("imagePreview")
-        const wrapper = document.getElementById("imagePreviewWrapper")
-        const placeholder = document.getElementById("placeholderText")
+                            <div class="absolute left-full ml-3 top-1/2 -translate-y-1/2 z-50 
+                                opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 
+                                transition-all duration-200 pointer-events-none">
 
+                                <img src="{{ $product['image'][0]['image_url'] ?? 'https://picsum.photos/200' }}"
+                                    class="w-40 h-40 object-cover rounded-xl shadow-2xl 
+                                    border border-gray-200 dark:border-gray-700 
+                                    bg-white dark:bg-slate-800">
+                            </div>
 
+                        </div>
+                    </td>
 
-        function openModal() {
+                    <td class="p-4 font-medium text-gray-800 dark:text-white">
+                        {{ $product['name'] }}
+                    </td>
 
-            document.getElementById('ProductModal').classList.add('show')
+                    <td class="p-4 text-gray-600 dark:text-gray-300">
+                        {{ $product['category']['name'] }}
+                    </td>
 
-            document.getElementById("modalTitle").innerText = "Add Product"
+                    <td class="p-4 text-gray-600 dark:text-gray-300">
+                        {{ $product['brand']['name'] }}
+                    </td>
 
-            document.getElementById("ProductForm").action = "{{ route('products.store') }}"
+                    <td class="p-4 font-medium">
+                        ${{ $product['sale_price'] }}
+                    </td>
 
-            document.getElementById("formMethod").value = "POST"
+                    <td class="p-4">
+                        {{ $product['quantity'] }}
+                    </td>
 
-            document.getElementById("productName").value = ""
+                    <!-- ✅ FIXED STATUS -->
+                    <td class="p-4">
+                        @if ($product['status'])
+                            <span class="px-2 py-1 text-xs rounded-lg bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400">
+                                Active
+                            </span>
+                        @else
+                            <span class="px-2 py-1 text-xs rounded-lg bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">
+                                Inactive
+                            </span>
+                        @endif
+                    </td>
 
-            imageInput.value = ""
-            preview.src = ""
+                    <!-- ACTION -->
+                    <td class="px-5 py-3 text-right space-x-2">
 
-            wrapper.style.display = "none"
-            placeholder.style.display = "block"
-        }
+                        <button class="px-3 py-1 text-xs bg-indigo-50 text-indigo-600 rounded-lg 
+                            hover:bg-indigo-100 transition 
+                            dark:bg-indigo-900/30 dark:text-indigo-400">
+                            Edit
+                        </button>
 
+                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline delete-form">
+                            @csrf
+                            @method('DELETE')
 
+                            <button type="submit"
+                                class="px-3 py-1 text-xs bg-red-50 text-red-500 rounded-lg 
+                                hover:bg-red-100 transition 
+                                dark:bg-red-900/20 dark:text-red-400">
+                                Delete
+                            </button>
+                        </form>
 
-        function closeModal() {
-            document.getElementById('ProductModal').classList.remove('show')
-        }
+                    </td>
 
+                </tr>
+                @endforeach
 
+            </tbody>
 
-        window.onclick = function(e) {
+        </table>
 
-            const modal = document.getElementById('ProductModal')
+    </div>
 
-            if (e.target === modal) {
-                closeModal()
-            }
+</div>
 
-        }
+<!-- DELETE CONFIRM -->
+<script>
+document.querySelectorAll(".delete-form").forEach(form => {
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
 
+        Swal.fire({
+            title: "Delete product?",
+            text: "This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#6366f1",
+            cancelButtonColor: "#ef4444",
+        }).then((result) => {
+            if (result.isConfirmed) form.submit();
+        });
+    });
+});
+</script>
 
-
-        imageInput.addEventListener("change", function() {
-
-            const file = this.files[0]
-
-            if (file) {
-
-                preview.src = URL.createObjectURL(file)
-
-                wrapper.style.display = "block"
-                placeholder.style.display = "none"
-
-            }
-
-        })
-
-
-
-        function removeImage(event) {
-
-            event.stopPropagation()
-
-            imageInput.value = ""
-            preview.src = ""
-
-            wrapper.style.display = "none"
-            placeholder.style.display = "block"
-
-        }
-    </script>
 @endsection

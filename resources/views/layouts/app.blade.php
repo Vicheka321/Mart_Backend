@@ -1,170 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
     <meta charset="UTF-8">
     <title>Mart Admin</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <link rel="stylesheet" href="assets/public/css/app.css">
+
+
+    <script>
+        // Dark mode (before render)
+
+        const theme = localStorage.getItem('theme');
+
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+
+        // Run after DOM ready
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // Fade in
+            document.body.classList.remove("opacity-0");
+
+            // Fade out on navigation
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function () {
+                    if (this.href && this.target !== '_blank') {
+                        document.body.classList.add('opacity-0');
+                    }
+                });
+            });
+
+        });
+    </script>
 </head>
 
-<body>
+<body
+    class="transition-colors duration-300 h-screen overflow-hidden bg-gray-100 dark:bg-gray-900 dark:text-white font-[Inter] transition-colors duration-300 opacity-0 transition-opacity duration-200 ease-in-out">
 
-    <div class="app">
+    <div class="flex flex-col h-screen">
 
-        <!-- ================= SIDEBAR ================= -->
-        <aside class="sidebar">
+        <nav class="flex-shrink-0">
+            @auth
+                @if(auth()->user()->role == 'admin')
+                    @include('Admin.navbar')
+                @else
+                    @include('Staff.navbar')
+                @endif
+            @endauth
+        </nav>
 
-            <div class="brand">
-                🛒 <span>Darita Mart</span>
-            </div>
+        <div class="flex flex-1 min-h-0">
 
-            <!-- DASHBOARD -->
-            <a href="{{ route('admin.dashboard') }}"
-                class="menu {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                📊 Dashboard
-            </a>
+            <aside class="w-72 overflow-y-auto">
+                @auth
+                    @if(auth()->user()->role == 'admin')
+                        @include('Admin.sidebar')
+                    @else
+                        @include('Staff.sidebar')
+                    @endif
+                @endauth
+            </aside>
 
-            <!-- PRODUCTS -->
-            <div class="menu-item">
+            <main class="flex-1 min-h-0 flex flex-col bg-white dark:bg-gray-800">
 
-                <div class="menu toggle
-                {{ request()->routeIs('products.*') ? 'active' : '' }}">
-                    🛍 Products
-                    <span class="arrow">▾</span>
-                </div>
+                <div class="flex-1 overflow-y-auto pl-0 pt-3 pr-2 pb-0">
 
-                <div class="submenu {{ request()->routeIs('products.*') ? 'show' : '' }}">
-
-                    <a href="{{ route('products.index') }}"
-                        class="{{ request()->routeIs('products.index') ? 'active' : '' }}">
-                        All Products
-                    </a>
-
-                    <a href="{{ route('categories.index') }}"
-                        class="{{ request()->routeIs('categories.index') ? 'active' : '' }}">
-                        Categories
-                    </a>
-
-                    <a href="{{ route('brands.index') }}"
-                        class="{{ request()->routeIs('brands.index') ? 'active' : '' }}">
-                        Brands
-                    </a>
+                    <div class="max-w-7xl mx-auto bg-gray-100 dark:bg-slate-700 rounded-3xl pl-6 pr-6 py-6">
+                        @yield('content')
+                    </div>
 
                 </div>
-            </div>
 
-            <!-- ORDERS -->
-            <div class="menu-item">
-                <div class="menu toggle">
-                    📦 Orders
-                    <span class="arrow">▾</span>
-                </div>
-
-                <div class="submenu">
-                    <a href="#">All Orders</a>
-                    <a href="#">Pending</a>
-                    <a href="#">Completed</a>
-                </div>
-            </div>
-
-            <a href="#" class="menu">👥 Customers</a>
-            <a href="#" class="menu">🎁 Promotions</a>
-
-            <p class="menu-title">SYSTEM</p>
-
-            <a href="#" class="menu">⚙ Settings</a>
-
-        </aside>
-
-        <!-- ================= MAIN ================= -->
-        <div class="main">
-            {{-- 
-            <header class="topbar">
-                Welcome, {{ auth()->user()->name }}
-            </header> --}}
-
-            <main class="content">
-                @yield('content')
             </main>
 
         </div>
 
     </div>
-
-    <!-- ================= JS ================= -->
-    <script>
-        document.querySelectorAll(".toggle").forEach(menu => {
-
-            menu.addEventListener("click", function() {
-
-                const submenu = this.nextElementSibling;
-
-                submenu.classList.toggle("show");
-
-                // arrow rotation
-                this.classList.toggle("active");
-
-            });
-
-        });
-
-
-        // function openModal() {
-        //     document.getElementById('categoryModal').classList.add('show');
-        // }
-
-        // function closeModal() {
-        //     document.getElementById('categoryModal').classList.remove('show');
-        // }
-
-        // window.onclick = function(e) {
-        //     const modal = document.getElementById('categoryModal');
-        //     if (e.target === modal) {
-        //         closeModal();
-        //     }
-        // }
-
-        // document.getElementById("imageInput").addEventListener("change", function(event) {
-        //     const file = event.target.files[0];
-        //     const preview = document.getElementById("imagePreview");
-        //     const container = document.getElementById("imagePreviewContainer");
-
-        //     if (file) {
-        //         preview.src = URL.createObjectURL(file);
-        //         container.style.display = "block";
-        //     }
-        // });
-
-        // const imageInput = document.getElementById("imageInput");
-        // const preview = document.getElementById("imagePreview");
-        // const wrapper = document.getElementById("imagePreviewWrapper");
-        // const placeholder = document.getElementById("placeholderText");
-
-        // imageInput.addEventListener("change", function() {
-        //     const file = this.files[0];
-
-        //     if (file) {
-        //         preview.src = URL.createObjectURL(file);
-        //         wrapper.style.display = "block";
-        //         placeholder.style.display = "none";
-        //     }
-        // });
-
-        // function removeImage(event) {
-        //     event.stopPropagation(); // prevent re-opening file picker
-
-        //     imageInput.value = "";
-        //     preview.src = "";
-        //     wrapper.style.display = "none";
-        //     placeholder.style.display = "block";
-        // }
-    </script>
-
-
-
 
 </body>
 
