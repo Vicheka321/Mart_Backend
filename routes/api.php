@@ -51,6 +51,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/me/update', [ProfileController::class, 'update']);
 });
 
-
-Route::post('/generate', [PaymentController::class, 'generate']);
-Route::get('/status/{orderId}', [PaymentController::class, 'status']);
