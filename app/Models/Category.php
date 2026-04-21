@@ -7,7 +7,7 @@ use App\Models\ProductsModel as ModelsProductsModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class categoriesModel extends Model
+class Category extends Model
 {
     use hasFactory;
     protected $table = 'categories';

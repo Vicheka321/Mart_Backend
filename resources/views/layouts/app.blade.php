@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="assets/public/css/app.css">
 
 
+
+
     <script>
         // Dark mode (before render)
 
@@ -48,6 +50,40 @@
 
         });
     </script>
+
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .toast-enter {
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        .toast-exit {
+            animation: slideOut 0.3s ease forwards;
+        }
+    </style>
 </head>
 
 <body
@@ -64,6 +100,7 @@
                 @endif
             @endauth
         </nav>
+        <div id="toastContainer" class="fixed top-5 right-5 space-y-3 z-50"></div>
 
         <div class="flex flex-1 min-h-0">
 
@@ -95,4 +132,71 @@
 
 </body>
 
+
+<audio id="orderSound" src="/sounds/notify.wav" preload="auto"></audio>
+
+<script>
+let lastIds = [];
+
+// ✅ REQUEST PERMISSION (run once)
+if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+}
+
+// 🔔 DESKTOP NOTIFICATION (LIKE FACEBOOK)
+function showDesktopNotification(order) {
+
+    if (Notification.permission === "granted") {
+
+        const notification = new Notification("🛒 Darita Mart", {
+            body: `New Order #${order.id} • $${order.total}`,
+            icon: "/logo.png"
+        });
+
+        // 👉 click open orders page
+        notification.onclick = () => {
+            window.open('/admin/orders', '_blank');
+        };
+    }
+}
+
+// 🔄 CHECK ORDER EVERY 5s
+async function checkNewOrder() {
+    try {
+        const res = await fetch('/admin/orders/latest');
+        const data = await res.json();
+
+        if (!data.id) return;
+
+        // first load (avoid spam)
+        if (lastIds.length === 0) {
+            lastIds = [data.id];
+            return;
+        }
+
+        // new order detected 🔥
+        if (!lastIds.includes(data.id)) {
+
+            // 🔔 SHOW DESKTOP NOTIFICATION
+            showDesktopNotification({
+                id: data.id,
+                total: data.total
+            });
+
+            // 🔊 SOUND
+            const audio = document.getElementById('orderSound');
+            if (audio) audio.play().catch(() => {});
+
+            lastIds = [data.id];
+        }
+
+    } catch (e) {
+        console.error("Error fetching order:", e);
+    }
+}
+
+// 🚀 RUN
+setInterval(checkNewOrder, 5000);
+checkNewOrder();
+</script>
 </html>

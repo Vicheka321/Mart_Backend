@@ -9,22 +9,18 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::create('addresses', function (Blueprint $table) {
+        Schema::create('address', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained('users', 'id')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
             $table->string('full_name')->nullable();
             $table->string('phone')->nullable();
-            $table->string('province')->nullable();
-            $table->string('city')->nullable();
-            $table->string('district')->nullable();
-            $table->string('commune')->nullable();
-            $table->string('street')->nullable();
-            $table->text('address_detail')->nullable();
+            $table->text('address');
+            $table->decimal('lat', 10, 7);
+            $table->decimal('lng', 10, 7);
             $table->boolean('is_default')->default(false);
+
             $table->timestamps();
         });
     }

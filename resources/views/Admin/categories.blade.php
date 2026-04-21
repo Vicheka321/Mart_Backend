@@ -15,18 +15,19 @@
             <div class="flex items-center gap-3">
 
                 <!-- Export -->
-                <button class="flex items-center gap-2 px-3 py-1.5 text-sm 
-                                            text-gray-600 dark:text-gray-300 
-                                            bg-white dark:bg-slate-800 
-                                            border border-gray-200 dark:border-gray-700 
-                                            rounded-md 
-                                            hover:bg-gray-100 dark:hover:bg-slate-700 
-                                            transition">
-                    <svg class="w-3 h-5.5 text-gray-500" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 3v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                        <path d="M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <button onclick="openExportModal()" class="flex items-center gap-2 px-3 py-1.5 text-sm 
+                                                text-gray-600 dark:text-gray-300 
+                                                bg-white dark:bg-slate-800 
+                                                border border-gray-200 dark:border-gray-700 
+                                                rounded-md 
+                                                hover:bg-gray-100 dark:hover:bg-slate-700 
+                                                transition">
+
+                    <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 3v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" />
+                        <path d="M5 21h14" stroke="currentColor" stroke-width="2" />
                     </svg>
+
                     <span>Export</span>
                 </button>
 
@@ -48,7 +49,7 @@
                         <th class="px-5 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">No.</th>
                         <th class="px-5 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">Image</th>
                         <th class="px-5 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">Name</th>
-                        <th class="px-5 py- text-[11px] font-semibold uppercase tracking-wider text-gray-500">Create at
+                        <th class="px-5 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">Create at
                         </th>
                         <th class="px-5 py-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500 text-right">
                             Actions</th>
@@ -123,44 +124,47 @@
                 {{-- Previous --}}
                 @if ($categories->onFirstPage())
                     <span class="px-3 py-1 rounded-lg 
-                                                    bg-gray-200 dark:bg-gray-700 
-                                                    text-gray-400 dark:text-gray-300 
-                                                    text-sm">Prev</span>
+                                                                                    bg-gray-200 dark:bg-gray-700 
+                                                                                    text-gray-400 dark:text-gray-300 
+                                                                                    text-sm">Prev</span>
                 @else
-                    <a href="{{ $categories->previousPageUrl() }}" class="px-3 py-1 rounded-lg 
-                                                    bg-white dark:bg-slate-800 
-                                                    border border-gray-200 dark:border-gray-700 
-                                                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                                                    text-sm text-gray-700 dark:text-gray-300">Prev</a>
+                    <a href="{{ $categories->previousPageUrl() }}"
+                        class="px-3 py-1 rounded-lg 
+                                                                                    bg-white dark:bg-slate-800 
+                                                                                    border border-gray-200 dark:border-gray-700 
+                                                                                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                                    text-sm text-gray-700 dark:text-gray-300">Prev</a>
                 @endif
 
                 {{-- Pages --}}
                 @foreach ($categories->getUrlRange(1, $categories->lastPage()) as $page => $url)
                     @if ($page == $categories->currentPage())
-                        <span class="px-3 py-1 rounded-lg 
-                                                            bg-indigo-600 dark:bg-indigo-500 
-                                                            text-white text-sm">{{ $page }}</span>
+                        <span
+                            class="px-3 py-1 rounded-lg 
+                                                                                                            bg-indigo-600 dark:bg-indigo-500 
+                                                                                                            text-white text-sm">{{ $page }}</span>
                     @else
-                        <a href="{{ $url }}" class="px-3 py-1 rounded-lg 
-                                                bg-white dark:bg-slate-800 
-                                                border border-gray-200 dark:border-gray-700 
-                                                hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                                                text-sm text-gray-700 dark:text-gray-300">{{ $page }}</a>
+                        <a href="{{ $url }}"
+                            class="px-3 py-1 rounded-lg 
+                                                                                                bg-white dark:bg-slate-800 
+                                                                                                border border-gray-200 dark:border-gray-700 
+                                                                                                hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                                                text-sm text-gray-700 dark:text-gray-300">{{ $page }}</a>
                     @endif
                 @endforeach
 
                 {{-- Next --}}
                 @if ($categories->hasMorePages())
                     <a href="{{ $categories->nextPageUrl() }}" class="px-3 py-1 rounded-lg 
-                            bg-white dark:bg-slate-800 
-                            border border-gray-200 dark:border-gray-700 
-                            hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                            text-sm text-gray-700 dark:text-gray-300">Next</a>
+                                                            bg-white dark:bg-slate-800 
+                                                            border border-gray-200 dark:border-gray-700 
+                                                            hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                            text-sm text-gray-700 dark:text-gray-300">Next</a>
                 @else
-                                <span class="px-3 py-1 rounded-lg 
-                    bg-gray-200 dark:bg-gray-700 
-                    text-gray-400 dark:text-gray-300 
-                    text-sm">Next</span>
+                    <span class="px-3 py-1 rounded-lg 
+                                                    bg-gray-200 dark:bg-gray-700 
+                                                    text-gray-400 dark:text-gray-300 
+                                                    text-sm">Next</span>
                 @endif
 
             </div>
@@ -197,9 +201,9 @@
                     </div>
 
                     <!-- <div class="input-group">
-                                                        <input required="" type="text" name="text" autocomplete="off" class="input">
-                                                        <label class="user-label">First Name</label>
-                                                    </div> -->
+                                                                        <input required="" type="text" name="text" autocomplete="off" class="input">
+                                                                        <label class="user-label">First Name</label>
+                                                                    </div> -->
 
                     <!-- IMAGE UPLOAD  -->
                     <div class="mb-5">
@@ -264,8 +268,97 @@
                 </form>
             </div>
         </div>
+
+        {{-- export modal --}}
+        <div id="exportModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+
+            <div onclick="event.stopPropagation()" class="bg-white dark:bg-[#1e293b] 
+                                   border border-gray-200 dark:border-gray-700
+                                   rounded-2xl p-6 w-80 shadow-2xl animate-scaleIn">
+
+                <!-- Title -->
+                <h3 class="text-lg font-semibold mb-5 
+                                       text-gray-800 dark:text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 3v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" />
+                        <path d="M5 21h14" stroke="currentColor" stroke-width="2" />
+                    </svg>
+                    Export Data
+                </h3>
+
+                <!-- Options -->
+                <div class="flex flex-col gap-3">
+
+                    <!-- CSV -->
+                    <a href="{{ route('categories.export.csv') }}" class="flex items-center justify-between px-4 py-2.5 rounded-lg 
+                                           bg-gray-50 dark:bg-[#0f172a] 
+                                           border border-gray-200 dark:border-gray-700 
+                                           hover:bg-green-50 dark:hover:bg-green-500/10 
+                                           hover:border-green-400 dark:hover:border-green-500
+                                           transition group">
+
+                        <span class="flex items-center gap-2 
+                                                 text-gray-700 dark:text-gray-300 
+                                                 group-hover:text-green-600 dark:group-hover:text-green-400">
+                            📄 CSV File
+                        </span>
+
+                        <span class="text-xs 
+                                                 text-gray-400 dark:text-gray-500 
+                                                 group-hover:text-green-600 dark:group-hover:text-green-400">
+                            Download
+                        </span>
+                    </a>
+
+                    <!-- PDF -->
+                    <a href="{{ route('categories.export.pdf') }}" class="flex items-center justify-between px-4 py-2.5 rounded-lg 
+                                           bg-gray-50 dark:bg-[#0f172a] 
+                                           border border-gray-200 dark:border-gray-700 
+                                           hover:bg-red-50 dark:hover:bg-red-500/10 
+                                           hover:border-red-400 dark:hover:border-red-500
+                                           transition group">
+
+                        <span class="flex items-center gap-2 
+                                                 text-gray-700 dark:text-gray-300 
+                                                 group-hover:text-red-600 dark:group-hover:text-red-400">
+                            📑 PDF File
+                        </span>
+
+                        <span class="text-xs 
+                                                 text-gray-400 dark:text-gray-500 
+                                                 group-hover:text-red-600 dark:group-hover:text-red-400">
+                            Download
+                        </span>
+                    </a>
+
+                </div>
+
+                <!-- Divider -->
+                <div class="my-4 border-t border-gray-200 dark:border-gray-700"></div>
+
+                <!-- Close -->
+                <button onclick="closeExportModal()" class="w-full py-2 text-sm 
+                                       text-gray-500 dark:text-gray-400 
+                                       hover:text-red-500 dark:hover:text-red-400 transition">
+                    Cancel
+                </button>
+            </div>
+        </div>
     </div>
     <!-- ANIMATION -->
+
+
+    <script>
+        function openExportModal() {
+            document.getElementById('exportModal').classList.remove('hidden');
+            document.getElementById('exportModal').classList.add('flex');
+        }
+
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.add('hidden');
+            document.getElementById('exportModal').classList.remove('flex');
+        }
+    </script>
     <style>
         @keyframes scaleIn {
             from {
@@ -285,7 +378,7 @@
     </style>
 
     <!-- SCRIPTS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 
     <script>
         /* ================= ELEMENTS ================= */
@@ -305,12 +398,13 @@
         function openModal() {
             modal.classList.remove('hidden')
             modal.classList.add('flex')
+            resetForm()
         }
 
         function closeModal() {
             modal.classList.add('hidden')
             modal.classList.remove('flex')
-            resetForm()
+
         }
 
         function resetForm() {
@@ -381,14 +475,29 @@
         document.querySelectorAll('.delete-form').forEach(f => {
             f.addEventListener('submit', function (e) {
                 e.preventDefault()
+
+                const isDark = document.documentElement.classList.contains('dark');
+
                 Swal.fire({
                     title: 'Delete category?',
                     text: 'This action cannot be undone.',
                     icon: 'warning',
                     showCancelButton: true,
+
+                    confirmButtonText: 'Yes, delete it',
+
                     confirmButtonColor: '#6366f1',
                     cancelButtonColor: '#ef4444',
-                    confirmButtonText: 'Yes, delete it',
+
+                    background: isDark ? '#1e293b' : '#ffffff',
+                    color: isDark ? '#e2e8f0' : '#1f2937',
+
+                    customClass: {
+                        popup: 'rounded-xl',
+                        title: 'text-lg font-semibold',
+                        confirmButton: 'px-4 py-2 rounded-lg',
+                        cancelButton: 'px-4 py-2 rounded-lg'
+                    }
                 }).then(result => {
                     if (result.isConfirmed) f.submit()
                 })
@@ -396,8 +505,14 @@
         })
 
         /* ================= CLOSE ON OUTSIDE CLICK ================= */
-        modal.addEventListener('click', e => {
-            if (e.target === modal) closeModal()
+        form.addEventListener('submit', function (e) {
+            e.preventDefault()
+
+            closeModal()
+
+            setTimeout(() => {
+                this.submit() // ✅ use this (not form)
+            }, 100)
         })
     </script>
 

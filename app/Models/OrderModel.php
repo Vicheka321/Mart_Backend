@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\AddressModel;
 use App\Models\Order_itemModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class OrderModel extends Model
 {
     use HasFactory;
@@ -16,7 +17,10 @@ class OrderModel extends Model
         'user_id',
         'address_id',
         'total_amount',
-        'status'
+        'status',
+        'telegram_message_id',
+        'telegram_chat_id'
+
     ];
 
     public function user()
@@ -38,6 +42,4 @@ class OrderModel extends Model
     {
         return $this->hasOne(PaymentModel::class, 'order_id');
     }
-
-
 }

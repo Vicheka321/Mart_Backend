@@ -66,13 +66,10 @@ class AuthController extends Controller
             ['otp' => $otp, 'expires_at' => now()->addMinutes(5)]
         );
 
-        Mail::raw("Your OTP Code is: $otp", function ($message) use ($request) {
-            $message->to($request->email)
-                ->subject('Your OTP Code');
-        });
+        Mail::to($request->email)->send(new SendOtpMail($otp));
 
-        return response()->json(['message' => 'OTP sent to email']);
-    }
+                return response()->json(['message' => 'OTP sent to email']);
+            }
 
 
     public function verifyOtp(Request $request)
@@ -102,6 +99,7 @@ class AuthController extends Controller
         );
 
         $token = $user->createToken('auth_token')->plainTextToken;
+
 
         return response()->json([
             'status' => 'Otp Verified Successfully',

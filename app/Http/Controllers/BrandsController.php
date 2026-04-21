@@ -6,6 +6,8 @@ use App\Models\BrandModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BrandsController extends Controller
 {
@@ -51,6 +53,7 @@ class BrandsController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'country' => 'nullable|string|max:255',
 
         ]);
         $brand = BrandModel::find($id);
@@ -72,6 +75,7 @@ class BrandsController extends Controller
         $brand->update([
             'name' => $request->name,
             'image' => $imageUrl,
+            'country' => $request->country,
 
         ]);
 
@@ -83,5 +87,49 @@ class BrandsController extends Controller
         $brand = BrandModel::find($id);
         $brand->delete();
         return redirect()->route('brands.index')->with('success', 'Brand deleted successfully.');
+    }
+
+
+    public function exportCSV()
+    {
+        $fileName = "brands.csv";
+
+        $brands = BrandModel::orderBy('id')->get();
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+        ];
+
+        $callback = function () use ($brands) {
+            $file = fopen('php://output', 'w');
+
+            // header
+            fputcsv($file, ['ID', 'Name', 'Image', 'Country', 'Created At']);
+
+            foreach ($brands as $brand) {
+                fputcsv($file, [
+                    $brand->id,
+                    $brand->name,
+                    $brand->image,
+                    $brand->country,
+                    $brand->created_at
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+
+    }
+
+    public function exportPDF()
+    {
+        $brands = BrandModel::orderBy('id')->get();
+
+        $pdf = Pdf::loadView('Admin.brands_pdf', compact('brands'));
+
+        return $pdf->download('brands.pdf');
     }
 }

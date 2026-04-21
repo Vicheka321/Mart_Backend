@@ -4,19 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+
 class AddressModel extends Model
 {
-    protected $table = 'addresses';
+    protected $table = 'address';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'user_id',
         'full_name',
         'phone',
-        'province',
-        'city',
-        'district',
-        'commune',
-        'street',
-        'address_detail',
+        'address',
+        'lat',
+        'lng',
         'is_default'
     ];
 

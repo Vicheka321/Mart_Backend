@@ -13,6 +13,7 @@ use App\Models\OrderModel;
 use App\Models\OrderItemModel;
 use App\Models\PaymentModel;
 use Illuminate\Support\Facades\Auth;
+use App\Services\TelegramService;
 
 class OrdersController extends Controller
 {
@@ -54,7 +55,7 @@ class OrdersController extends Controller
     {
         $request->validate([
             'payment_method' => 'required',
-            'address_id' => 'required|exists:addresses,id'
+            'address_id' => 'required|exists:address,id'
         ]);
 
         $user_id = Auth::id();
@@ -87,7 +88,7 @@ class OrdersController extends Controller
                 'address_id' => $request->address_id,
                 'total_amount' => $total,
                 'status' => 'pending'
-    
+
             ]);
 
             foreach ($items as $item) {
@@ -101,21 +102,49 @@ class OrdersController extends Controller
 
                 ProductsModel::where('id', $item->product_id)
                     ->decrement('quantity', $item->qty);
-     
-  
-
             }
 
             PaymentModel::create([
                 'order_id' => $order->id,
                 'payment_method' => $request->payment_method,
-                'payment_status' => 'pending',
+                'payment_status' => 'paid',
                 'amount' => $total
             ]);
 
             CartItemModel::where('cart_id', $cart->id)->delete();
 
             DB::commit();
+            
+            $telegram = new TelegramService();
+            $hasActive = OrderModel::where('status', 'pending')
+                ->whereNotNull('telegram_message_id')
+                ->exists();
+
+            if (!$hasActive) {
+                $next = OrderModel::where('status', 'pending')
+                    ->whereNull('telegram_message_id')
+                    ->orderBy('created_at', 'asc')
+                    ->first();
+
+                if ($next) {
+
+                    app(TelegramService::class)->send(
+                        "🚀 *NEW ORDER RECEIVED*\n" .
+                            "━━━━━━━━━━━━━━━\n" .
+                            "🆔 *Order:* #{$next->id}\n" .
+                            "👤 *Customer:* {$next->user->name}\n" .
+                            "📞 *Phone:* {$next->address->phone}\n" .
+                            "📍 *Address:* {$next->address->address}\n" .
+                            "📍 *Location:* https://www.google.com/maps?q={$next->address->lat},{$next->address->lng}\n" .
+                            "━━━━━━━━━━━━━━━\n" .
+                            "💰 *Total:* $" . number_format($next->total_amount, 2) . "\n" .
+                            "💳 *Payment:* {$next->payment->payment_method}\n" .
+                            "📦 *Status:* {$next->status}\n" .
+                            "━━━━━━━━━━━━━━━",
+                        $next
+                    );
+                }
+            }
 
             return response()->json([
                 'message' => 'Order placed successfully',
@@ -134,13 +163,12 @@ class OrdersController extends Controller
     public function myOrders()
     {
         $user_id = Auth::id();
-        $orders = OrderModel::with('orderItems.product', 'payment')
+        $orders = OrderModel::with('orderItems.product', 'payment', 'address')
             ->where('user_id', $user_id)
             ->get();
 
         return response()->json([
             'orders' => $orders
         ]);
-    
     }
 }

@@ -83,19 +83,17 @@ hover:translate-x-1 transition-all duration-200">
                     Brands
                 </a>
 
-                <a href="#" class="block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Inventory</a>
             </div>
 
         </div>
 
         <!-- Orders -->
-        <a href="#" class="h-10 menu-item group flex items-center gap-3 p-3 rounded-lg 
-                text-gray-700 dark:text-gray-300 
-                hover:bg-indigo-100 dark:hover:bg-indigo-500/10 
-                hover:text-indigo-600 dark:hover:text-indigo-400 
-                hover:translate-x-1 transition-all duration-200 transition">
+        <a href="{{ route('orders.index') }}" class="h-10 menu-item group flex items-center gap-3 p-3 rounded-lg 
+{{ request()->routeIs('orders.*')
+    ? 'bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-300' 
+}} 
+hover:translate-x-1 transition-all duration-200 transition">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path
                     d="M13.28 4.78a.75.75 0 0 0-1.06-1.06l-2.97 2.97-1.22-1.22a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l3.5-3.5Z">

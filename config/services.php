@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'bakong' => [
+        'url' => env('BAKONG_API_URL'),
+        'token' => env('BAKONG_TOKEN'),
+        'merchant' => env('BAKONG_MERCHANT_ID'),
+    ],
+
 ];

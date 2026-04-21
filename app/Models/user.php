@@ -18,6 +18,7 @@ class user extends Authenticatable
         'phone',
         'password',
         'role',
+        'avatar',
     ];
 
     protected $hidden = [
@@ -37,6 +38,6 @@ class user extends Authenticatable
 
      public function addresses()
     {
-        return $this->hasMany(AddressesModel::class, 'user_id');
+        return $this->hasMany(AddressModel::class, 'user_id');
     }
 }

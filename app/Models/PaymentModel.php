@@ -9,10 +9,13 @@ class PaymentModel extends Model
     protected $table = 'payments';
     protected $fillable = [
         'order_id',
-        'payment_method',
-        'payment_status',
-        'transaction_id',
-        'amount'
+        'amount',
+        'currency',
+        'qr_string',
+        'md5_hash',
+        'status',
+        'expires_at'
+
     ];
 
     public function order()

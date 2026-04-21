@@ -40,7 +40,12 @@
 
             <!-- Notification -->
             <div class="relative">
-                <button class="cursor-pointer hover:scale-105 transition text-gray-600 hover:text-indigo-600">
+
+                <!-- 🔔 Bell -->
+                <button onclick="toggleNotification()" class="relative p-2 rounded-full 
+                dark:bg-slate-700 
+               hover:bg-gray-200 dark:hover:bg-slate-600 transition">
+
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none"
                         stroke="currentColor">
                         <path
@@ -51,15 +56,37 @@
                             style="fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px">
                         </path>
                     </svg>
+
+                    <!-- 🔴 Badge -->
+                    <span id="notifCount" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 text-[10px]
+                   bg-red-500 text-white rounded-full flex items-center justify-center hidden">
+                        0
+                    </span>
                 </button>
-                <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+
+                <!-- 📥 Dropdown -->
+                <div id="notifDropdown" class="hidden absolute right-0 mt-3 w-80 
+               bg-white dark:bg-[#1e293b] 
+               border border-gray-200 dark:border-gray-700 
+               rounded-2xl shadow-xl overflow-hidden z-50">
+
+                    <!-- Header -->
+                    <div class="px-4 py-3 font-semibold text-gray-800 dark:text-white border-b dark:border-gray-700">
+                        Notifications
+                    </div>
+
+                    <!-- List -->
+                    <div id="notifList" class="max-h-80 overflow-y-auto"></div>
+
+                </div>
+
             </div>
 
 
             <div x-data="{ open: false }" class="relative">
 
                 <!-- Avatar -->
-                <img @click="open = !open" src="https://i.pravatar.cc/40"
+                <img @click="open = !open" src="{{ asset('images/icons/profile.jpg') }}"
                     class="w-9 h-9 rounded-full cursor-pointer border-2 border-gray-200">
 
                 <!-- Dropdown -->
@@ -161,3 +188,107 @@
     }
 </script>
 
+
+
+
+<script>
+    let lastIds = [];
+
+    function toggleNotification() {
+        document.getElementById('notifDropdown').classList.toggle('hidden');
+    }
+
+    async function loadNotifications() {
+
+        const res = await fetch('/admin/orders/notifications');
+        const data = await res.json();
+
+        const list = document.getElementById('notifList');
+        const count = document.getElementById('notifCount');
+
+        list.innerHTML = '';
+
+        data.forEach(order => {
+
+            list.innerHTML += `
+        <div onclick="goOrder(${order.id})"
+            class="flex items-start gap-3 px-4 py-3 
+                   hover:bg-gray-100 dark:hover:bg-slate-700 
+                   cursor-pointer transition">
+
+            <div class="w-9 h-9 flex items-center justify-center rounded-full 
+                        bg-indigo-100 dark:bg-indigo-500/20 
+                        text-indigo-600 dark:text-indigo-400">
+                🛒
+            </div>
+
+            <div class="flex-1 text-sm">
+                <p class="text-gray-700 dark:text-gray-200 font-medium">
+                    New Order #${order.id}
+                </p>
+                <p class="text-xs text-gray-400">
+                    ${order.time} • $${order.total}
+                </p>
+            </div>
+
+            <span class="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+        </div>
+        `;
+        });
+
+        // 🔴 badge
+        if (data.length > 0) {
+            count.innerText = data.length;
+            count.classList.remove('hidden');
+        }
+
+        // 🔔 popup (new order detect)
+        const newIds = data.map(o => o.id);
+
+        const hasNew = newIds.some(id => !lastIds.includes(id));
+
+        if (lastIds.length && hasNew) {
+            Swal.fire({
+                title: '🛒 New Order!',
+                text: 'You have new orders',
+                icon: 'success',
+                confirmButtonColor: '#6366f1'
+            });
+
+            document.getElementById('orderSound').play();
+        }
+
+        lastIds = newIds;
+    }
+
+    // redirect
+    function goOrder(id) {
+
+        // show modal first (loading state)
+        orderModal.classList.remove('hidden')
+        orderModal.classList.add('flex')
+
+        orderContent.innerHTML = `
+        <div class="text-center py-10 text-gray-400">
+            Loading...
+        </div>
+    `
+
+        // fetch order detail
+        fetch('/admin/orders/' + id)
+            .then(res => res.json())
+            .then(order => {
+                openOrderModal(order) // ✅ show modal with data
+            })
+            .catch(err => {
+                console.error(err)
+                orderContent.innerHTML = 'Failed to load order'
+            })
+    }
+
+    // run every 5s
+    setInterval(loadNotifications, 5000);
+
+    // first load
+    loadNotifications();
+</script>
