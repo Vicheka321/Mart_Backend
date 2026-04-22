@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\ProductsModel;
 use App\Models\CategoriesModel;
 use App\Models\BrandsModel;
+use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -29,7 +30,7 @@ class ProductController extends Controller
     {
         $products = ProductsModel::with(['category', 'brand', 'image'])->get();
 
-        $categories = CategoriesModel::all();
+        $categories = Category::all();
         $brands = BrandModel::all();
 
         return view('admin.products', compact(

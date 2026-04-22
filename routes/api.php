@@ -50,4 +50,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [ProfileController::class, 'me']);
     Route::post('/me/update', [ProfileController::class, 'update']);
 });
-
+Route::post('/generate', [PaymentController::class, 'generateQr']);
