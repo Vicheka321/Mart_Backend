@@ -27,6 +27,8 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::post('/admin/products', [ProductController::class, 'store'])->name('products.store');
     Route::put('/admin/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/admin/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::get('/admin/products/export/csv', [ProductController::class, 'exportCSV'])->name('products.export.csv');
+    Route::get('/admin/products/export/pdf', [ProductController::class, 'exportPDF'])->name('products.export.pdf');
 
     Route::get('/admin/category', [CategoryController::class, 'index'])->name('categories.index');
     Route::post('/admin/category/store', [CategoryController::class, 'store'])->name('categories.store');
@@ -42,8 +44,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/brands/export/csv', [BrandsController::class, 'exportCSV'])->name('brands.export.csv');
     Route::get('/admin/brands/export/pdf', [BrandsController::class, 'exportPDF'])->name('brands.export.pdf');
 
-    Route::get('/admin/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/admin/orders/latest', [OrderController::class, 'latest']);
+ 
     Route::get('/admin/orders/notifications', [OrderController::class, 'notifications']);
     Route::post('/admin/orders/{id}/status', [OrderController::class, 'changeStatus']);
     Route::post('/admin/orders/{id}/cancel', [OrderController::class, 'cancel']);
@@ -53,6 +54,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 
     Route::get('/admin/customers', [CustomersController::class, 'customers']);
 });
+
 
 
 

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->integer('qty')->default(1);
             $table->decimal('price', 10, 2);
             $table->timestamps();
-            // Prevent duplicate product in same cart
             $table->unique(['cart_id', 'product_id']);
         });
     }

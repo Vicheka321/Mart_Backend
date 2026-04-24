@@ -4,19 +4,19 @@ namespace App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-use App\Models\categoriesModel;
+use App\Models\Category;
 use App\Models\ProductsModel;
 
 class CategoriesController extends Controller
 {
     public function index()
     {
-        return categoriesModel::all();
+        return Category::all();
     }
     
     public function getProductsByCategory($id)
     {
-        $category = categoriesModel::find($id);
+        $category = Category::find($id);
     
         if (!$category) {
             return response()->json(['message' => 'Category not found'], 404);

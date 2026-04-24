@@ -56,11 +56,22 @@ class OrderController extends Controller
     }
     public function latest()
     {
-        $order = OrderModel::latest()->first();
+        $order = OrderModel::with(['user', 'address', 'payment'])
+            ->orderBy('updated_at', 'desc') // 🔥 important
+            ->first();
+
+        if (!$order) return response()->json(null);
 
         return response()->json([
-            'id' => $order?->id,
-            'total' => $order?->total_amount
+            'id' => $order->id,
+            'user_name' => $order->user->name ?? '',
+            'phone' => $order->address->phone ?? '',
+            'address' => $order->address->address ?? '',
+            'total' => $order->total_amount,
+            'payment_method' => $order->payment->payment_method ?? '',
+            'status' => $order->status,
+            'created_at' => $order->created_at->format('Y-m-d H:i'),
+            'updated_at' => $order->updated_at->timestamp // 🔥 key
         ]);
     }
 

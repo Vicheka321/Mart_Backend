@@ -186,12 +186,7 @@
     if (localStorage.getItem('theme') === 'dark') {
         document.documentElement.classList.add('dark');
     }
-</script>
 
-
-
-
-<script>
     let lastIds = [];
 
     function toggleNotification() {
@@ -291,4 +286,7 @@
 
     // first load
     loadNotifications();
+
+
 </script>
+

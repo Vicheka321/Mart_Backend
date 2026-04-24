@@ -10,12 +10,9 @@ class PaymentModel extends Model
     protected $fillable = [
         'order_id',
         'amount',
-        'currency',
-        'qr_string',
-        'md5_hash',
-        'status',
-        'expires_at'
-
+        'payment_method',
+        'payment_status',
+    
     ];
 
     public function order()

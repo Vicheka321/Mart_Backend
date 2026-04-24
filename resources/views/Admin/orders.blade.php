@@ -22,7 +22,7 @@
                     @foreach(['all', 'pending', 'processing', 'completed', 'cancelled'] as $s)
                                 <a href="?status={{ $s }}"
                                     class="px-3 py-1 text-xs rounded-md capitalize transition
-                                                                                                                                                                                                                   {{ $current == $s
+                                                                                                                                                                                                                                                                                                                                                                   {{ $current == $s
                         ? 'bg-indigo-600 text-white'
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}">
                                     {{ $s }}
@@ -36,12 +36,12 @@
             <!-- RIGHT -->
             <div>
                 <button onclick="openExportModal()" class="flex items-center gap-2 px-3 py-1.5 text-sm 
-                                                                   text-gray-600 dark:text-gray-300 
-                                                                   bg-white dark:bg-slate-800 
-                                                                   border border-gray-200 dark:border-gray-700 
-                                                                   rounded-md 
-                                                                   hover:bg-gray-100 dark:hover:bg-slate-700 
-                                                                   transition">
+                                                                                                       text-gray-600 dark:text-gray-300 
+                                                                                                       bg-white dark:bg-slate-800 
+                                                                                                       border border-gray-200 dark:border-gray-700 
+                                                                                                       rounded-md 
+                                                                                                       hover:bg-gray-100 dark:hover:bg-slate-700 
+                                                                                                       transition">
 
                     <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
                         <path d="M12 3v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" />
@@ -102,11 +102,11 @@
                             <td class="px-5 py-2">
                                 <span
                                     class="px-2 py-1 text-xs rounded
-                                                                                                                                                                                                                                                                @if($order['status'] == 'pending') bg-yellow-100 text-yellow-800
-                                                                                                                                                                                                                                                                @elseif($order['status'] == 'paid') bg-blue-100 text-blue-800
-                                                                                                                                                                                                                                                                @elseif($order['status'] == 'completed') bg-green-100 text-green-800
-                                                                                                                                                                                                                                                                @else bg-red-100 text-red-800
-                                                                                                                                                                                                                                                                @endif">
+                                                                                                                                                                                                                                                                                                                                        @if($order['status'] == 'pending') bg-yellow-100 text-yellow-800
+                                                                                                                                                                                                                                                                                                                                        @elseif($order['status'] == 'paid') bg-blue-100 text-blue-800
+                                                                                                                                                                                                                                                                                                                                        @elseif($order['status'] == 'completed') bg-green-100 text-green-800
+                                                                                                                                                                                                                                                                                                                                        @else bg-red-100 text-red-800
+                                                                                                                                                                                                                                                                                                                                        @endif">
                                     {{ ucfirst($order['status']) }}
                                 </span>
                             </td>
@@ -138,11 +138,11 @@
                                 @if($order['status'] == 'pending')
                                     <button onclick="confirmChange({{ $order['id'] }}, 'processing')"
                                         class="px-3 py-1 
-                                                                                                                                                                                        bg-blue-100 dark:bg-blue-900/40 
-                                                                                                                                                                                        text-blue-600 dark:text-blue-400 
-                                                                                                                                                                                        rounded text-xs font-medium
-                                                                                                                                                                                        hover:bg-blue-200 dark:hover:bg-blue-800/60
-                                                                                                                                                                                        transition">
+                                                                                                                                                                                                                                                                                                    bg-blue-100 dark:bg-blue-900/40 
+                                                                                                                                                                                                                                                                                                    text-blue-600 dark:text-blue-400 
+                                                                                                                                                                                                                                                                                                    rounded text-xs font-medium
+                                                                                                                                                                                                                                                                                                    hover:bg-blue-200 dark:hover:bg-blue-800/60
+                                                                                                                                                                                                                                                                                                    transition">
                                         <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 20 20">
                                             <path
@@ -155,11 +155,11 @@
                                 @if($order['status'] == 'processing')
                                     <button onclick="confirmChange({{ $order['id'] }}, 'completed')"
                                         class="px-3 py-1 
-                                                                                                                                                                                        bg-green-100 dark:bg-green-900/40 
-                                                                                                                                                                                        text-green-600 dark:text-green-400 
-                                                                                                                                                                                        rounded text-xs font-medium
-                                                                                                                                                                                        hover:bg-green-200 dark:hover:bg-green-800/60
-                                                                                                                                                                                        transition">
+                                                                                                                                                                                                                                                                                                    bg-green-100 dark:bg-green-900/40 
+                                                                                                                                                                                                                                                                                                    text-green-600 dark:text-green-400 
+                                                                                                                                                                                                                                                                                                    rounded text-xs font-medium
+                                                                                                                                                                                                                                                                                                    hover:bg-green-200 dark:hover:bg-green-800/60
+                                                                                                                                                                                                                                                                                                    transition">
                                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" stroke="none"
                                             viewBox="0 0 24 24">
                                             <path
@@ -212,16 +212,16 @@
                 @if ($orders->onFirstPage())
                     <span
                         class="px-3 py-1 rounded-lg 
-                                                                                                                                                                                                                                                                                                    bg-gray-200 dark:bg-gray-700 
-                                                                                                                                                                                                                                                                                                    text-gray-400 dark:text-gray-300 
-                                                                                                                                                                                                                                                                                                    text-sm">Prev</span>
+                                                                                                                                                                                                                                                                                                                                                                            bg-gray-200 dark:bg-gray-700 
+                                                                                                                                                                                                                                                                                                                                                                            text-gray-400 dark:text-gray-300 
+                                                                                                                                                                                                                                                                                                                                                                            text-sm">Prev</span>
                 @else
                     <a href="{{ $orders->previousPageUrl() }}"
                         class="px-3 py-1 rounded-lg 
-                                                                                                                                                                                                                                                                                                    bg-white dark:bg-slate-800 
-                                                                                                                                                                                                                                                                                                    border border-gray-200 dark:border-gray-700 
-                                                                                                                                                                                                                                                                                                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                                                                                                                                                                                                                                                                                                    text-sm text-gray-700 dark:text-gray-300">Prev</a>
+                                                                                                                                                                                                                                                                                                                                                                            bg-white dark:bg-slate-800 
+                                                                                                                                                                                                                                                                                                                                                                            border border-gray-200 dark:border-gray-700 
+                                                                                                                                                                                                                                                                                                                                                                            hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                                                                                                                                                                                                                                                                                                                            text-sm text-gray-700 dark:text-gray-300">Prev</a>
                 @endif
 
                 {{-- Pages --}}
@@ -229,15 +229,15 @@
                     @if ($page == $orders->currentPage())
                         <span
                             class="px-3 py-1 rounded-lg 
-                                                                                                                                                                                                                                                                                                                                                                                                                                    bg-indigo-600 dark:bg-indigo-500 
-                                                                                                                                                                                                                                                                                                                                                                                                                                    text-white text-sm">{{ $page }}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                bg-indigo-600 dark:bg-indigo-500 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                text-white text-sm">{{ $page }}</span>
                     @else
                         <a href="{{ $url }}"
                             class="px-3 py-1 rounded-lg 
-                                                                                                                                                                                                                                                                                                                                                                                                                        bg-white dark:bg-slate-800 
-                                                                                                                                                                                                                                                                                                                                                                                                                        border border-gray-200 dark:border-gray-700 
-                                                                                                                                                                                                                                                                                                                                                                                                                        hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                                                                                                                                                                                                                                                                                                                                                                                                                        text-sm text-gray-700 dark:text-gray-300">{{ $page }}</a>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    bg-white dark:bg-slate-800 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    border border-gray-200 dark:border-gray-700 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    text-sm text-gray-700 dark:text-gray-300">{{ $page }}</a>
                     @endif
                 @endforeach
 
@@ -245,16 +245,16 @@
                 @if ($orders->hasMorePages())
                     <a href="{{ $orders->nextPageUrl() }}"
                         class="px-3 py-1 rounded-lg 
-                                                                                                                                                                                                                                                                            bg-white dark:bg-slate-800 
-                                                                                                                                                                                                                                                                            border border-gray-200 dark:border-gray-700 
-                                                                                                                                                                                                                                                                            hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                                                                                                                                                                                                                                                                            text-sm text-gray-700 dark:text-gray-300">Next</a>
+                                                                                                                                                                                                                                                                                                                                                    bg-white dark:bg-slate-800 
+                                                                                                                                                                                                                                                                                                                                                    border border-gray-200 dark:border-gray-700 
+                                                                                                                                                                                                                                                                                                                                                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                                                                                                                                                                                                                                                                                                    text-sm text-gray-700 dark:text-gray-300">Next</a>
                 @else
                     <span
                         class="px-3 py-1 rounded-lg 
-                                                                                                                                                                                                                                                                    bg-gray-200 dark:bg-gray-700 
-                                                                                                                                                                                                                                                                    text-gray-400 dark:text-gray-300 
-                                                                                                                                                                                                                                                                    text-sm">Next</span>
+                                                                                                                                                                                                                                                                                                                                            bg-gray-200 dark:bg-gray-700 
+                                                                                                                                                                                                                                                                                                                                            text-gray-400 dark:text-gray-300 
+                                                                                                                                                                                                                                                                                                                                            text-sm">Next</span>
                 @endif
 
             </div>
@@ -265,8 +265,8 @@
 
             <!-- MODAL BOX -->
             <div class="bg-white dark:bg-gray-800 w-full max-w-lg rounded-2xl shadow-2xl
-                                            border border-gray-100 dark:border-gray-700
-                                            flex flex-col max-h-[90vh]">
+                                                                                border border-gray-100 dark:border-gray-700
+                                                                                flex flex-col max-h-[90vh]">
 
                 <!-- HEADER -->
                 <div class="flex justify-between items-center p-5 border-b border-gray-100 dark:border-gray-700">
@@ -274,8 +274,9 @@
                         Order Detail
                     </h3>
 
-                    <button onclick="closeOrderModal()" class="w-8 h-8 flex items-center justify-center rounded-full
-                                                   bg-gray-100 dark:bg-gray-700 hover:bg-gray-200">
+                    <button onclick="closeOrderModal()"
+                        class="w-8 h-8 flex items-center justify-center rounded-full
+                                                                                       bg-gray-100 dark:bg-gray-700 hover:bg-gray-200">
                         ✕
                     </button>
                 </div>
@@ -340,132 +341,132 @@
                 return '/storage/' + img
             }
             const itemsHtml = order.items.map(item => `
-                                        <div class="flex items-center gap-3 p-3 rounded-xl
-                                            bg-gray-50 dark:bg-gray-700/40
-                                            border border-gray-100 dark:border-gray-700">
+                                                                            <div class="flex items-center gap-3 p-3 rounded-xl
+                                                                                bg-gray-50 dark:bg-gray-700/40
+                                                                                border border-gray-100 dark:border-gray-700">
 
-                                            <!-- IMAGE -->
-                                            <img src="${getImage(item.image)}"
-                                                 onerror="this.src='/no-image.png'"
-                                                 class="w-14 h-14 rounded-xl object-cover shadow-sm">
+                                                                                <!-- IMAGE -->
+                                                                                <img src="${getImage(item.image)}"
+                                                                                     onerror="this.src='/no-image.png'"
+                                                                                     class="w-14 h-14 rounded-xl object-cover shadow-sm">
 
-                                            <!-- INFO -->
-                                            <div class="flex-1">
-                                                <p class="text-sm font-semibold text-gray-800 dark:text-white">
-                                                    ${item.name}
-                                                </p>
+                                                                                <!-- INFO -->
+                                                                                <div class="flex-1">
+                                                                                    <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                                                                        ${item.name}
+                                                                                    </p>
 
-                                                <!-- ✅ CATEGORY + BRAND -->
-                                                <p class="text-[11px] text-gray-400 mt-1">
-                                                    ${item.category ?? 'No category'} • ${item.brand ?? 'No brand'}
-                                                </p>
+                                                                                    <!-- ✅ CATEGORY + BRAND -->
+                                                                                    <p class="text-[11px] text-gray-400 mt-1">
+                                                                                        ${item.category ?? 'No category'} • ${item.brand ?? 'No brand'}
+                                                                                    </p>
 
-                                                <p class="text-xs text-gray-400 mt-1">
-                                                    Qty: ${item.qty} × $${item.price}
-                                                </p>
-                                            </div>
+                                                                                    <p class="text-xs text-gray-400 mt-1">
+                                                                                        Qty: ${item.qty} × $${item.price}
+                                                                                    </p>
+                                                                                </div>
 
-                                            <!-- PRICE -->
-                                            <div class="text-sm font-bold text-gray-700 dark:text-gray-300">
-                                                $${(item.qty * item.price).toFixed(2)}
-                                            </div>
-                                        </div>
-                                    `).join('')
+                                                                                <!-- PRICE -->
+                                                                                <div class="text-sm font-bold text-gray-700 dark:text-gray-300">
+                                                                                    $${(item.qty * item.price).toFixed(2)}
+                                                                                </div>
+                                                                            </div>
+                                                                        `).join('')
 
 
             // 🧾 CONTENT
             orderContent.innerHTML = `
 
-                                        <!-- HEADER -->
-                                        <div class="flex justify-between items-start mb-4">
-                                            <div>
-                                                <p class="text-xs text-gray-400">Order #${order.id}</p>
-                                                <p class="text-xl font-bold text-gray-900 dark:text-white">
-                                                    $${order.total}
-                                                </p>
-                                            </div>
+                                                                            <!-- HEADER -->
+                                                                            <div class="flex justify-between items-start mb-4">
+                                                                                <div>
+                                                                                    <p class="text-xs text-gray-400">Order #${order.id}</p>
+                                                                                    <p class="text-xl font-bold text-gray-900 dark:text-white">
+                                                                                        $${order.total}
+                                                                                    </p>
+                                                                                </div>
 
-                                            <span class="text-xs px-2 py-1 rounded-md font-medium
-                                                ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : ''}
-                                                ${order.status === 'processing' ? 'bg-blue-100 text-blue-700' : ''}
-                                                ${order.status === 'completed' ? 'bg-green-100 text-green-700' : ''}
-                                                ${order.status === 'cancelled' ? 'bg-red-100 text-red-700' : ''}
-                                            ">
-                                                ${order.status}
-                                            </span>
-                                        </div>
+                                                                                <span class="text-xs px-2 py-1 rounded-md font-medium
+                                                                                    ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : ''}
+                                                                                    ${order.status === 'processing' ? 'bg-blue-100 text-blue-700' : ''}
+                                                                                    ${order.status === 'completed' ? 'bg-green-100 text-green-700' : ''}
+                                                                                    ${order.status === 'cancelled' ? 'bg-red-100 text-red-700' : ''}
+                                                                                ">
+                                                                                    ${order.status}
+                                                                                </span>
+                                                                            </div>
 
-                                        <!-- CUSTOMER -->
-                                        <div class="bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3 space-y-1">
-                                            <p class="text-sm font-semibold text-gray-800 dark:text-white">
-                                                👤 ${order.user_name}
-                                            </p>
-                                            <p class="text-xs text-gray-500">
-                                                📞 ${order.phone}
-                                            </p>
-                                        </div>
+                                                                            <!-- CUSTOMER -->
+                                                                            <div class="bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3 space-y-1">
+                                                                                <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                                                                    👤 ${order.user_name}
+                                                                                </p>
+                                                                                <p class="text-xs text-gray-500">
+                                                                                    📞 ${order.phone}
+                                                                                </p>
+                                                                            </div>
 
-                                        <!-- ADDRESS -->
-                                        <div class="text-xs text-gray-500 mt-2">
-                                            📍 ${order.address ?? 'No address'}
-                                        </div>
+                                                                            <!-- ADDRESS -->
+                                                                            <div class="text-xs text-gray-500 mt-2">
+                                                                                📍 ${order.address ?? 'No address'}
+                                                                            </div>
 
-                                        <!-- PAYMENT + TOTAL -->
-                                        <div class="mt-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-700/40 space-y-2 text-xs">
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-400">Payment</span>
-                                                <span class="font-medium text-gray-700 dark:text-gray-300">
-                                                    ${order.payment_method}
-                                                </span>
-                                            </div>
+                                                                            <!-- PAYMENT + TOTAL -->
+                                                                            <div class="mt-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-700/40 space-y-2 text-xs">
+                                                                                <div class="flex justify-between">
+                                                                                    <span class="text-gray-400">Payment</span>
+                                                                                    <span class="font-medium text-gray-700 dark:text-gray-300">
+                                                                                        ${order.payment_method}
+                                                                                    </span>
+                                                                                </div>
 
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-400">Total</span>
-                                                <span class="font-bold text-gray-900 dark:text-white">
-                                                    $${order.total}
-                                                </span>
-                                            </div>
-                                        </div>
+                                                                                <div class="flex justify-between">
+                                                                                    <span class="text-gray-400">Total</span>
+                                                                                    <span class="font-bold text-gray-900 dark:text-white">
+                                                                                        $${order.total}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
 
-                                        <!-- ITEMS -->
-                                        <div class="mt-4">
-                                            <p class="text-xs text-gray-400 mb-2 uppercase">Items</p>
-                                            <div class="space-y-2">
-                                                ${itemsHtml}
-                                            </div>
-                                        </div>
+                                                                            <!-- ITEMS -->
+                                                                            <div class="mt-4">
+                                                                                <p class="text-xs text-gray-400 mb-2 uppercase">Items</p>
+                                                                                <div class="space-y-2">
+                                                                                    ${itemsHtml}
+                                                                                </div>
+                                                                            </div>
 
-                                        <!-- ACTIONS -->
-                                        <div class="flex gap-2 mt-5">
+                                                                            <!-- ACTIONS -->
+                                                                            <div class="flex gap-2 mt-5">
 
-                                            ${order.status === 'pending' ? `
-                                                <button onclick="confirmChange(${order.id}, 'processing')"
-                                                    class="flex-1 py-2 text-xs rounded-lg bg-blue-500 text-white">
-                                                    ✔ Accept
-                                                </button>
-                                            ` : ''}
+                                                                                ${order.status === 'pending' ? `
+                                                                                    <button onclick="confirmChange(${order.id}, 'processing')"
+                                                                                        class="flex-1 py-2 text-xs rounded-lg bg-blue-500 text-white">
+                                                                                        ✔ Accept
+                                                                                    </button>
+                                                                                ` : ''}
 
-                                            ${order.status === 'processing' ? `
-                                                <button onclick="confirmChange(${order.id}, 'completed')"
-                                                    class="flex-1 py-2 text-xs rounded-lg bg-green-500 text-white">
-                                                    📦 Complete
-                                                </button>
-                                            ` : ''}
+                                                                                ${order.status === 'processing' ? `
+                                                                                    <button onclick="confirmChange(${order.id}, 'completed')"
+                                                                                        class="flex-1 py-2 text-xs rounded-lg bg-green-500 text-white">
+                                                                                        📦 Complete
+                                                                                    </button>
+                                                                                ` : ''}
 
-                                            ${(order.status === 'pending' || order.status === 'processing') ? `
-                                                <button onclick="confirmCancel(${order.id})"
-                                                    class="flex-1 py-2 text-xs rounded-lg bg-red-500 text-white">
-                                                    ❌ Cancel
-                                                </button>
-                                            ` : ''}
+                                                                                ${(order.status === 'pending' || order.status === 'processing') ? `
+                                                                                    <button onclick="confirmCancel(${order.id})"
+                                                                                        class="flex-1 py-2 text-xs rounded-lg bg-red-500 text-white">
+                                                                                        ❌ Cancel
+                                                                                    </button>
+                                                                                ` : ''}
 
-                                        </div>
+                                                                            </div>
 
-                                        <!-- DATE -->
-                                        <p class="text-[11px] text-gray-400 text-right mt-4">
-                                            ${order.created_at}
-                                        </p>
-                                    `
+                                                                            <!-- DATE -->
+                                                                            <p class="text-[11px] text-gray-400 text-right mt-4">
+                                                                                ${order.created_at}
+                                                                            </p>
+                                                                        `
         }
         function closeOrderModal() {
             orderModal.classList.add('hidden')
@@ -538,7 +539,92 @@
             });
 
         }
+
+
+
     </script>
+
+    <script>
+        let lastId = null;
+
+        setInterval(() => {
+            fetch('/admin/orders/latest')
+                .then(res => res.json())
+                .then(data => {
+
+                    if (!data || !data.id) return;
+
+                    if (data.id !== lastId) {
+                        lastId = data.id;
+
+                        addNewRow(data); // ✅ only add 1 row
+                    }
+
+                });
+        }, 3000);
+
+        function addNewRow(order) {
+            function addNewRow(order) {
+                let tbody = document.querySelector("tbody");
+
+                let statusColor = '';
+
+                if (order.status === 'pending') {
+                    statusColor = 'bg-yellow-100 text-yellow-800';
+                } else if (order.status === 'processing') {
+                    statusColor = 'bg-blue-100 text-blue-800';
+                } else if (order.status === 'completed') {
+                    statusColor = 'bg-green-100 text-green-800';
+                } else {
+                    statusColor = 'bg-red-100 text-red-800';
+                }
+
+                let row = `
+        <tr class="bg-green-50 animate-pulse">
+            <td class="px-5 py-2 text-xs text-gray-400">NEW</td>
+
+            <td class="px-5 py-2 font-medium text-gray-800">
+                ${order.user_name}
+            </td>
+
+            <td class="px-5 py-2 text-gray-600">
+                ${order.phone}
+            </td>
+
+            <td class="px-5 py-2 text-gray-600">
+                ${order.address}
+            </td>
+
+            <td class="px-5 py-2 font-semibold">
+                $${order.total}
+            </td>
+
+            <td class="px-5 py-2 text-gray-600">
+                ${order.payment_method}
+            </td>
+
+            <td class="px-5 py-2">
+                <span class="px-2 py-1 text-xs rounded ${statusColor}">
+                    ${order.status}
+                </span>
+            </td>
+
+            <td class="px-5 py-2 text-sm text-gray-500">
+                ${order.created_at}
+            </td>
+
+            <td class="px-5 py-2 text-right">
+                <span class="text-xs text-gray-400">New</span>
+            </td>
+        </tr>
+        `;
+
+                tbody.insertAdjacentHTML('afterbegin', row);
+            }
+        }
+    </script>
+
+
 
 
 

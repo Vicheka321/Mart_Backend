@@ -1,12 +1,11 @@
 @extends('layouts.app')
-
 @section('content')
 
-    <!-- HEADER -->
+    <!-- Body -->
     <div class="bg-white rounded-xl shadow pt-3 pl-4 pr-4 pb-3 pr-3 dark:bg-gray-800">
-        <div class="flex items-center justify-between mb-3 ">
 
-            <!-- Title -->
+        {{-- header --}}
+        <div class="flex items-center justify-between mb-3 ">
             <h2 class="text-[22px] font-semibold tracking-tight text-gray-900 dark:text-white">
                 Categories
             </h2>
@@ -15,19 +14,12 @@
             <div class="flex items-center gap-3">
 
                 <!-- Export -->
-                <button onclick="openExportModal()" class="flex items-center gap-2 px-3 py-1.5 text-sm 
-                                                text-gray-600 dark:text-gray-300 
-                                                bg-white dark:bg-slate-800 
-                                                border border-gray-200 dark:border-gray-700 
-                                                rounded-md 
-                                                hover:bg-gray-100 dark:hover:bg-slate-700 
-                                                transition">
-
+                <button onclick="openExportModal()"
+                    class="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700 transition">
                     <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
                         <path d="M12 3v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" />
                         <path d="M5 21h14" stroke="currentColor" stroke-width="2" />
                     </svg>
-
                     <span>Export</span>
                 </button>
 
@@ -39,7 +31,6 @@
 
             </div>
         </div>
-
 
         <!-- TABLE -->
         <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden ">
@@ -61,10 +52,23 @@
                             <td class="px-5 py-2 text-xs font-medium text-gray-300">
                                 {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
                             </td>
+
                             <td class="px-5 py-0.5">
                                 @if ($category->image)
-                                    <img src="{{ $category->image }}"
-                                        class="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-gray-600">
+                                            <div class="relative group w-10 h-10">
+
+                                                <!-- small image -->
+                                                <img src="{{ $category->image }}" class="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-gray-600 
+                                    transition duration-300 ease-in-out 
+                                    group-hover:scale-125 relative z-10">
+
+                                                <!-- preview big -->
+                                                <div class="absolute hidden group-hover:block z-50 left-12 top-0">
+                                                    <img src="{{ $category->image }}"
+                                                        class="w-32 h-32 object-cover rounded-xl shadow-xl border bg-white dark:bg-gray-800">
+                                                </div>
+
+                                            </div>
                                 @else
                                     <div
                                         class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 font-semibold text-sm">
@@ -72,6 +76,17 @@
                                     </div>
                                 @endif
                             </td>
+                            {{-- <td class="px-5 py-0.5">
+                                @if ($category->image)
+                                <img src="{{ $category->image }}"
+                                    class="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-gray-600">
+                                @else
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 font-semibold text-sm">
+                                    {{ strtoupper(substr($category->name, 0, 1)) }}
+                                </div>
+                                @endif
+                            </td> --}}
                             <td class="px-5 py-2 font-medium text-gray-800 dark:text-white">{{ $category->name }}</td>
                             <td class="px-5 py-2 text-xs text-gray-400">{{ $category->created_at->format('M d, Y') }}</td>
                             <td class="px-5 py-2 text-right space-x-2">
@@ -105,6 +120,8 @@
             </table>
 
         </div>
+
+        {{-- Pagination --}}
         <div class="mt-4 flex items-center justify-between text-gray-500 dark:text-gray-400">
 
             <!-- Showing info -->
@@ -123,17 +140,16 @@
 
                 {{-- Previous --}}
                 @if ($categories->onFirstPage())
-                    <span class="px-3 py-1 rounded-lg 
-                                                                                    bg-gray-200 dark:bg-gray-700 
-                                                                                    text-gray-400 dark:text-gray-300 
-                                                                                    text-sm">Prev</span>
+                    <span class="px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-300 text-sm">
+                        Prev
+                    </span>
                 @else
                     <a href="{{ $categories->previousPageUrl() }}"
                         class="px-3 py-1 rounded-lg 
-                                                                                    bg-white dark:bg-slate-800 
-                                                                                    border border-gray-200 dark:border-gray-700 
-                                                                                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                                                                                    text-sm text-gray-700 dark:text-gray-300">Prev</a>
+                                                                                                                                                                                                                            bg-white dark:bg-slate-800 
+                                                                                                                                                                                                                            border border-gray-200 dark:border-gray-700 
+                                                                                                                                                                                                                            hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                                                                                                                                                             text-sm text-gray-700 dark:text-gray-300">Prev</a>
                 @endif
 
                 {{-- Pages --}}
@@ -141,36 +157,123 @@
                     @if ($page == $categories->currentPage())
                         <span
                             class="px-3 py-1 rounded-lg 
-                                                                                                            bg-indigo-600 dark:bg-indigo-500 
-                                                                                                            text-white text-sm">{{ $page }}</span>
+                                                                                                                                                                                                                                                                                                                        bg-indigo-600 dark:bg-indigo-500 
+                                                                                                                                                                                                                                                                                                                        text-white text-sm">{{ $page }}</span>
                     @else
                         <a href="{{ $url }}"
                             class="px-3 py-1 rounded-lg 
-                                                                                                bg-white dark:bg-slate-800 
-                                                                                                border border-gray-200 dark:border-gray-700 
-                                                                                                hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                                                                                                text-sm text-gray-700 dark:text-gray-300">{{ $page }}</a>
+                                                                                                                                                                                                                                                                                                            bg-white dark:bg-slate-800 
+                                                                                                                                                                                                                                                                                                            border border-gray-200 dark:border-gray-700 
+                                                                                                                                                                                                                                                                                                            hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                                                                                                                                                                                                                                                            text-sm text-gray-700 dark:text-gray-300">{{ $page }}</a>
                     @endif
                 @endforeach
 
                 {{-- Next --}}
                 @if ($categories->hasMorePages())
-                    <a href="{{ $categories->nextPageUrl() }}" class="px-3 py-1 rounded-lg 
-                                                            bg-white dark:bg-slate-800 
-                                                            border border-gray-200 dark:border-gray-700 
-                                                            hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                                                            text-sm text-gray-700 dark:text-gray-300">Next</a>
+                    <a href="{{ $categories->nextPageUrl() }}"
+                        class="px-3 py-1 rounded-lg 
+                                                                                                                                                                                                    bg-white dark:bg-slate-800 
+                                                                                                                                                                                                    border border-gray-200 dark:border-gray-700 
+                                                                                                                                                                                                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
+                                                                                                                                                                                                    text-sm text-gray-700 dark:text-gray-300">Next</a>
                 @else
-                    <span class="px-3 py-1 rounded-lg 
-                                                    bg-gray-200 dark:bg-gray-700 
-                                                    text-gray-400 dark:text-gray-300 
-                                                    text-sm">Next</span>
+                    <span
+                        class="px-3 py-1 rounded-lg 
+                                                                                                                                                                                            bg-gray-200 dark:bg-gray-700 
+                                                                                                                                                                                            text-gray-400 dark:text-gray-300 
+                                                                                                                                                                                            text-sm">Next</span>
                 @endif
 
             </div>
         </div>
 
-        <!-- MODAL -->
+        {{-- export modal --}}
+        <div id="exportModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+
+            <div onclick="event.stopPropagation()"
+                class="bg-white dark:bg-[#1e293b] 
+                                                                                                       border border-gray-200 dark:border-gray-700
+                                                                                                       rounded-2xl p-6 w-80 shadow-2xl animate-scaleIn">
+
+                <!-- Title -->
+                <h3
+                    class="text-lg font-semibold mb-5 
+                                                                                                           text-gray-800 dark:text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 3v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" />
+                        <path d="M5 21h14" stroke="currentColor" stroke-width="2" />
+                    </svg>
+                    Export Data
+                </h3>
+
+                <!-- Options -->
+                <div class="flex flex-col gap-3">
+
+                    <!-- CSV -->
+                    <a href="{{ route('categories.export.csv') }}"
+                        class="flex items-center justify-between px-4 py-2.5 rounded-lg 
+                                                                                                               bg-gray-50 dark:bg-[#0f172a] 
+                                                                                                               border border-gray-200 dark:border-gray-700 
+                                                                                                               hover:bg-green-50 dark:hover:bg-green-500/10 
+                                                                                                               hover:border-green-400 dark:hover:border-green-500
+                                                                                                               transition group">
+
+                        <span
+                            class="flex items-center gap-2 
+                                                                                                                     text-gray-700 dark:text-gray-300 
+                                                                                                                     group-hover:text-green-600 dark:group-hover:text-green-400">
+                            📄 CSV File
+                        </span>
+
+                        <span
+                            class="text-xs 
+                                                                                                                     text-gray-400 dark:text-gray-500 
+                                                                                                                     group-hover:text-green-600 dark:group-hover:text-green-400">
+                            Download
+                        </span>
+                    </a>
+
+                    <!-- PDF -->
+                    <a href="{{ route('categories.export.pdf') }}"
+                        class="flex items-center justify-between px-4 py-2.5 rounded-lg 
+                                                                                                               bg-gray-50 dark:bg-[#0f172a] 
+                                                                                                               border border-gray-200 dark:border-gray-700 
+                                                                                                               hover:bg-red-50 dark:hover:bg-red-500/10 
+                                                                                                               hover:border-red-400 dark:hover:border-red-500
+                                                                                                               transition group">
+
+                        <span
+                            class="flex items-center gap-2 
+                                                                                                                     text-gray-700 dark:text-gray-300 
+                                                                                                                     group-hover:text-red-600 dark:group-hover:text-red-400">
+                            📑 PDF File
+                        </span>
+
+                        <span
+                            class="text-xs 
+                                                                                                                     text-gray-400 dark:text-gray-500 
+                                                                                                                     group-hover:text-red-600 dark:group-hover:text-red-400">
+                            Download
+                        </span>
+                    </a>
+
+                </div>
+
+                <!-- Divider -->
+                <div class="my-4 border-t border-gray-200 dark:border-gray-700"></div>
+
+                <!-- Close -->
+                <button onclick="closeExportModal()"
+                    class="w-full py-2 text-sm 
+                                                                                                           text-gray-500 dark:text-gray-400 
+                                                                                                           hover:text-red-500 dark:hover:text-red-400 transition">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal add new -->
         <div id="categoryModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 px-4">
 
             <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl p-6 animate-scaleIn shadow-xl">
@@ -195,15 +298,11 @@
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">Category
                             Name</label>
-                        <input type="text" name="name" id="categoryName" placeholder="e.g. Beverages"
-                            class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:text-white transition"
-                            required>
+                        <input type="text" name="name" id="categoryName" placeholder="e.g. Beverages" class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl text-sm 
+                                                               focus:outline-none focus:ring-2 focus:ring-indigo-400 
+                                                               dark:bg-gray-700 dark:text-white transition" required>
                     </div>
 
-                    <!-- <div class="input-group">
-                                                                        <input required="" type="text" name="text" autocomplete="off" class="input">
-                                                                        <label class="user-label">First Name</label>
-                                                                    </div> -->
 
                     <!-- IMAGE UPLOAD  -->
                     <div class="mb-5">
@@ -269,96 +368,8 @@
             </div>
         </div>
 
-        {{-- export modal --}}
-        <div id="exportModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
-
-            <div onclick="event.stopPropagation()" class="bg-white dark:bg-[#1e293b] 
-                                   border border-gray-200 dark:border-gray-700
-                                   rounded-2xl p-6 w-80 shadow-2xl animate-scaleIn">
-
-                <!-- Title -->
-                <h3 class="text-lg font-semibold mb-5 
-                                       text-gray-800 dark:text-white flex items-center gap-2">
-                    <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 3v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" />
-                        <path d="M5 21h14" stroke="currentColor" stroke-width="2" />
-                    </svg>
-                    Export Data
-                </h3>
-
-                <!-- Options -->
-                <div class="flex flex-col gap-3">
-
-                    <!-- CSV -->
-                    <a href="{{ route('categories.export.csv') }}" class="flex items-center justify-between px-4 py-2.5 rounded-lg 
-                                           bg-gray-50 dark:bg-[#0f172a] 
-                                           border border-gray-200 dark:border-gray-700 
-                                           hover:bg-green-50 dark:hover:bg-green-500/10 
-                                           hover:border-green-400 dark:hover:border-green-500
-                                           transition group">
-
-                        <span class="flex items-center gap-2 
-                                                 text-gray-700 dark:text-gray-300 
-                                                 group-hover:text-green-600 dark:group-hover:text-green-400">
-                            📄 CSV File
-                        </span>
-
-                        <span class="text-xs 
-                                                 text-gray-400 dark:text-gray-500 
-                                                 group-hover:text-green-600 dark:group-hover:text-green-400">
-                            Download
-                        </span>
-                    </a>
-
-                    <!-- PDF -->
-                    <a href="{{ route('categories.export.pdf') }}" class="flex items-center justify-between px-4 py-2.5 rounded-lg 
-                                           bg-gray-50 dark:bg-[#0f172a] 
-                                           border border-gray-200 dark:border-gray-700 
-                                           hover:bg-red-50 dark:hover:bg-red-500/10 
-                                           hover:border-red-400 dark:hover:border-red-500
-                                           transition group">
-
-                        <span class="flex items-center gap-2 
-                                                 text-gray-700 dark:text-gray-300 
-                                                 group-hover:text-red-600 dark:group-hover:text-red-400">
-                            📑 PDF File
-                        </span>
-
-                        <span class="text-xs 
-                                                 text-gray-400 dark:text-gray-500 
-                                                 group-hover:text-red-600 dark:group-hover:text-red-400">
-                            Download
-                        </span>
-                    </a>
-
-                </div>
-
-                <!-- Divider -->
-                <div class="my-4 border-t border-gray-200 dark:border-gray-700"></div>
-
-                <!-- Close -->
-                <button onclick="closeExportModal()" class="w-full py-2 text-sm 
-                                       text-gray-500 dark:text-gray-400 
-                                       hover:text-red-500 dark:hover:text-red-400 transition">
-                    Cancel
-                </button>
-            </div>
-        </div>
     </div>
-    <!-- ANIMATION -->
 
-
-    <script>
-        function openExportModal() {
-            document.getElementById('exportModal').classList.remove('hidden');
-            document.getElementById('exportModal').classList.add('flex');
-        }
-
-        function closeExportModal() {
-            document.getElementById('exportModal').classList.add('hidden');
-            document.getElementById('exportModal').classList.remove('flex');
-        }
-    </script>
     <style>
         @keyframes scaleIn {
             from {
@@ -377,60 +388,53 @@
         }
     </style>
 
-    <!-- SCRIPTS -->
-    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
-
     <script>
-        /* ================= ELEMENTS ================= */
-        const modal = document.getElementById('categoryModal')
-        const form = document.getElementById('categoryForm')
-        const modalTitle = document.getElementById('modalTitle')
-        const nameInput = document.getElementById('categoryName')
-        const methodInput = document.getElementById('formMethod')
-        const imageInput = document.getElementById('imageInput')
-        const preview = document.getElementById('imagePreview')
-        const placeholder = document.getElementById('uploadPlaceholder')
-        const editOverlay = document.getElementById('editOverlay')
-        const removeBtn = document.getElementById('removeImageBtn')
-        const uploadBox = document.getElementById('uploadBox')
+        function openExportModal() {
+            document.getElementById('exportModal').classList.remove('hidden');
+            document.getElementById('exportModal').classList.add('flex');
+        }
 
-        /* ================= MODAL ================= */
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.add('hidden');
+            document.getElementById('exportModal').classList.remove('flex');
+        }
+
         function openModal() {
-            modal.classList.remove('hidden')
-            modal.classList.add('flex')
+            document.getElementById('categoryModal').classList.remove('hidden')
+            document.getElementById('categoryModal').classList.add('flex')
             resetForm()
         }
 
+
         function closeModal() {
-            modal.classList.add('hidden')
-            modal.classList.remove('flex')
+            document.getElementById('categoryModal').classList.add('hidden')
+            document.getElementById('categoryModal').classList.remove('flex')
 
         }
 
         function resetForm() {
-            form.action = "{{ route('categories.store') }}"
-            methodInput.value = 'POST'
-            nameInput.value = ''
-            modalTitle.innerText = 'Add Category'
+            document.getElementById('categoryForm').action = "{{ route('categories.store') }}"
+            document.getElementById('formMethod').value = 'POST'
+            document.getElementById('categoryName').value = ''
+            document.getElementById('modalTitle').innerText = 'Add Category'
             resetImagePreview()
         }
 
-        /* ================= IMAGE PREVIEW ================= */
         function showImagePreview(src) {
-            preview.src = src
-            preview.classList.remove('hidden')
-            placeholder.classList.add('hidden')
-            removeBtn.classList.remove('hidden')
+            document.getElementById('imagePreview').src = src
+            document.getElementById('imagePreview').classList.remove('hidden')
+            document.getElementById('uploadPlaceholder').classList.add('hidden')
+            document.getElementById('removeImageBtn').classList.remove('hidden')
         }
 
         function resetImagePreview() {
-            imageInput.value = ''
-            preview.src = ''
-            preview.classList.add('hidden')
-            placeholder.classList.remove('hidden')
-            editOverlay.classList.add('hidden')
-            editOverlay.classList.remove('flex')
-            removeBtn.classList.add('hidden')
+            document.getElementById('imageInput').value = ''
+            document.getElementById('imagePreview').src = ''
+            document.getElementById('imagePreview').classList.add('hidden')
+            document.getElementById('uploadPlaceholder').classList.remove('hidden')
+            document.getElementById('editOverlay').classList.add('hidden')
+            document.getElementById('editOverlay').classList.remove('flex')
+            document.getElementById('removeImageBtn').classList.add('hidden')
         }
 
         function removeImage(e) {
@@ -438,31 +442,30 @@
             resetImagePreview()
         }
 
-        imageInput.addEventListener('change', () => {
-            const file = imageInput.files[0]
+        document.getElementById('imageInput').addEventListener('change', () => {
+            const file = document.getElementById('imageInput').files[0]
             if (!file) return
             showImagePreview(URL.createObjectURL(file))
         })
 
-        // Hover: show/hide edit overlay when image is loaded
-        uploadBox.addEventListener('mouseenter', () => {
-            if (!preview.classList.contains('hidden')) {
-                editOverlay.classList.remove('hidden')
-                editOverlay.classList.add('flex')
+        document.getElementById('uploadBox').addEventListener('mouseenter', () => {
+            if (!document.getElementById('imagePreview').classList.contains('hidden')) {
+                document.getElementById('editOverlay').classList.remove('hidden')
+                document.getElementById('editOverlay').classList.add('flex')
             }
         })
-        uploadBox.addEventListener('mouseleave', () => {
-            editOverlay.classList.add('hidden')
-            editOverlay.classList.remove('flex')
+        document.getElementById('uploadBox').addEventListener('mouseleave', () => {
+            document.getElementById('editOverlay').classList.add('hidden')
+            document.getElementById('editOverlay').classList.remove('flex')
         })
 
-        /* ================= EDIT ================= */
         function editCategory(id, name, image) {
             openModal()
-            modalTitle.innerText = 'Edit Category'
-            nameInput.value = name
-            form.action = '/admin/category/' + id
-            methodInput.value = 'PUT'
+
+            document.getElementById('modalTitle').innerText = 'Edit Category'
+            document.getElementById('categoryName').value = name
+            document.getElementById('categoryForm').action = '/admin/category/' + id
+            document.getElementById('formMethod').value = 'PUT'
 
             if (image) {
                 showImagePreview(image)
@@ -471,7 +474,6 @@
             }
         }
 
-        /* ================= DELETE ================= */
         document.querySelectorAll('.delete-form').forEach(f => {
             f.addEventListener('submit', function (e) {
                 e.preventDefault()
@@ -504,16 +506,15 @@
             })
         })
 
-        /* ================= CLOSE ON OUTSIDE CLICK ================= */
         form.addEventListener('submit', function (e) {
             e.preventDefault()
 
             closeModal()
 
             setTimeout(() => {
-                this.submit() // ✅ use this (not form)
+                this.submit()
             }, 100)
         })
-    </script>
 
+    </script>
 @endsection
