@@ -15,7 +15,11 @@ class categoriesSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['name' => 'Drinks', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/03f6c63a-1058-402e-93ce-727e2a60fa56.jpg'],
+            ['name' => 'Fresh Produce', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/1.webp'],
+            ['name' => 'Dairy Products', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/2.jpg'],
+            ['name' => 'Bakery Cakes', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/3.jpg'],
+            ['name' => 'Snacks', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/4.jpeg'],
+            ['name' => 'Beverages', 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/5.avif'],
         ];
 
 

@@ -231,9 +231,14 @@ hover:translate-x-1 transition-all duration-200 transition">
                 <a href="#" class="menu-item block text-gray-400 dark:text-gray-500 
                     hover:text-indigo-600 dark:hover:text-indigo-400 
                     hover:translate-x-1 transition-all duration-200 transition">Coupons</a>
-                <a href="#" class="block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Banners</a>
+                <a href="{{ route('banners.index') }}" class="block
+{{ request()->routeIs('banners.*')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400' 
+}} 
+hover:translate-x-1 transition-all duration-200">
+                    Banners
+                </a>
                 <a href="#" class="block text-gray-400 dark:text-gray-500 
                     hover:text-indigo-600 dark:hover:text-indigo-400 
                     hover:translate-x-1 transition-all duration-200 transition">Promotions</a>

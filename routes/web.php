@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
@@ -20,8 +21,14 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::get('/admin', [AdminController::class, 'index']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'is_admin'])->group(function () {
+
+
     Route::get('/admin/dashboard', [DashboardController::class, 'admin'])->name('admin.dashboard');
 
+    Route::get('/admin/banners', [BannerController::class, 'index'])->name('banners.index');
+    Route::post('/admin/banners', [BannerController::class, 'store'])->name('banners.store'); 
+    Route::put('/admin/banners/{banner}', [BannerController::class, 'update'])->name('banners.update');
+    Route::delete('/admin/banners/{banner}', [BannerController::class, 'destroy'])->name('banners.destroy');
 
     Route::get('/admin/products', [ProductController::class, 'index'])->name('products.index');
     Route::post('/admin/products', [ProductController::class, 'store'])->name('products.store');
@@ -44,7 +51,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/brands/export/csv', [BrandsController::class, 'exportCSV'])->name('brands.export.csv');
     Route::get('/admin/brands/export/pdf', [BrandsController::class, 'exportPDF'])->name('brands.export.pdf');
 
- 
+    Route::get('/admin/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/admin/orders/notifications', [OrderController::class, 'notifications']);
     Route::post('/admin/orders/{id}/status', [OrderController::class, 'changeStatus']);
     Route::post('/admin/orders/{id}/cancel', [OrderController::class, 'cancel']);

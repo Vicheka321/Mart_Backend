@@ -11,22 +11,27 @@ use App\Http\Controllers\ApiController\BrandController;
 use App\Http\Controllers\ApiController\CartController;
 use App\Http\Controllers\ApiController\FavoriteController;
 use App\Http\Controllers\ApiController\OrdersController;
-use Google\Service\Adsense\Row;
 use App\Http\Controllers\ApiController\AddressController;
 use App\Http\Controllers\ApiController\TelegramController;
 use App\Http\Controllers\ApiController\ProfileController;
-use App\Http\Controllers\ApiController\PaymentController;
-
+use App\Http\Controllers\ApiController\BannerController;
 Route::post('/send-otp', [AuthController::class, 'sendOtp']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/google-login', [AuthController::class, 'googleLogin']);
 
+Route::get('/banners', [BannerController::class, 'index']);
 Route::get('/categories', [CategoriesController::class, 'index']);
 Route::get('/category/{id}', [CategoriesController::class, 'getProductsByCategory']);
 Route::get('/brands', [BrandController::class, 'index']);
 Route::get('/brand/{id}', [BrandController::class, 'getProductById']);
 Route::get('/products', [ProductsController::class, 'index']);
 Route::get('/product/{id}', [ProductsController::class, 'getProductById']);
+Route::get('/best-sellers', [ProductsController::class, 'bestSellers']);
+Route::get('/new-arrivals', [ProductsController::class, 'newArrivals']);
+Route::get('/recommended', [ProductsController::class, 'recommended']);
+
+
+
 Route::post('/telegram/webhook', [TelegramController::class, 'handle']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add-to-cart', [CartController::class, 'addToCart']);

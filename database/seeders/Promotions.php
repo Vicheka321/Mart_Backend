@@ -22,13 +22,13 @@ class Promotions extends Seeder
         DB::table('promotion_products')->insert([
             [
                 'promotion_id' => $promotion->id,
-                'product_id' => 1,
+                'product_id' => 4,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'promotion_id' => $promotion->id,
-                'product_id' => 2,
+                'product_id' => 7,
                 'created_at' => now(),
                 'updated_at' => now()
             ]

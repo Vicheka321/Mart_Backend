@@ -63,12 +63,278 @@ class ProductsController extends Controller
         unset($product->brand);
         return response()->json($product);
     }
+
+    public function bestSellers()
+    {
+        $today = Carbon::today();
+
+        $products = ProductsModel::leftJoin(
+            'order_items',
+            'products.id',
+            '=',
+            'order_items.product_id'
+        )
+            ->select('products.*')
+            ->selectRaw('COALESCE(SUM(order_items.qty),0) as sold')
+            ->groupBy('products.id')
+            ->orderByDesc('sold')
+            ->take(10)
+            ->get();
+
+        $products->load('image');
+
+        $products = $products->map(function ($product) use ($today) {
+
+            $final_price = $product->sale_price;
+            $discount = null;
+
+            $promotion = PromotionModel::whereHas('products', function ($q) use ($product) {
+                $q->where('product_id', $product->id);
+            })
+                ->where('status', true)
+                ->whereDate('start_date', '<=', $today)
+                ->whereDate('end_date', '>=', $today)
+                ->first();
+
+            if ($promotion) {
+
+                if ($promotion->discount_type === 'percent') {
+                    $final_price =
+                        $product->sale_price -
+                        ($product->sale_price * $promotion->discount_value / 100);
+
+                    $discount = $promotion->discount_value . '%';
+                } else {
+                    $final_price =
+                        $product->sale_price - $promotion->discount_value;
+
+                    $discount = '$' . $promotion->discount_value;
+                }
+            }
+
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'sale_price' => $product->sale_price,
+                'final_price' => round($final_price, 2),
+                'discount' => $discount,
+                'sold' => (int)$product->sold,
+                'images' => $product->image
+                    ->pluck('image_url')
+                    ->values(),
+            ];
+        });
+
+        return response()->json($products);
+    }
+
+    public function newArrivals()
+    {
+        $today = Carbon::today();
+
+        $products = ProductsModel::with('image')
+            ->orderByDesc('created_at')
+            ->take(10)
+            ->get();
+
+        $products = $products->map(function ($product) use ($today) {
+
+            $final_price = $product->sale_price;
+            $discount = null;
+
+            $promotion = PromotionModel::whereHas(
+                'products',
+                function ($q) use ($product) {
+                    $q->where(
+                        'product_id',
+                        $product->id
+                    );
+                }
+            )
+                ->where('status', true)
+                ->whereDate(
+                    'start_date',
+                    '<=',
+                    $today
+                )
+                ->whereDate(
+                    'end_date',
+                    '>=',
+                    $today
+                )
+                ->first();
+
+            if ($promotion) {
+
+                if (
+                    $promotion->discount_type
+                    === 'percent'
+                ) {
+
+                    $final_price =
+                        $product->sale_price -
+                        (
+                            $product->sale_price *
+                            $promotion->discount_value
+                            / 100
+                        );
+
+                    $discount =
+                        $promotion->discount_value . '%';
+                } else {
+
+                    $final_price =
+                        $product->sale_price -
+                        $promotion->discount_value;
+
+                    $discount =
+                        '$' .
+                        $promotion->discount_value;
+                }
+            }
+
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+
+                'sale_price' =>
+                $product->sale_price,
+
+                'final_price' =>
+                round($final_price, 2),
+
+                'discount' =>
+                $discount,
+
+                'images' =>
+                $product->image
+                    ->pluck('image_url')
+                    ->values(),
+            ];
+        });
+
+        return response()->json($products);
+    }
+
+    public function recommended()
+    {
+        $today = Carbon::today();
+
+        $products = ProductsModel::with('image')
+            ->withSum(
+                'orderItems as sold',
+                'qty'
+            )
+            ->where('status', 1)
+            ->orderBy(
+                'sale_price',
+                'asc'
+            )
+            ->take(10)
+            ->get();
+
+        $products = $products->map(
+            function ($product) use ($today) {
+
+                $final_price =
+                    $product->sale_price;
+
+                $discount = null;
+
+                $promotion =
+                    PromotionModel::whereHas(
+                        'products',
+                        function ($q)
+                        use ($product) {
+
+                            $q->where(
+                                'product_id',
+                                $product->id
+                            );
+                        }
+                    )
+                    ->where(
+                        'status',
+                        true
+                    )
+                    ->whereDate(
+                        'start_date',
+                        '<=',
+                        $today
+                    )
+                    ->whereDate(
+                        'end_date',
+                        '>=',
+                        $today
+                    )
+                    ->first();
+
+                if ($promotion) {
+
+                    if (
+                        $promotion->discount_type
+                        === 'percent'
+                    ) {
+
+                        $final_price =
+                            $product->sale_price -
+                            (
+                                $product->sale_price *
+                                $promotion->discount_value
+                                / 100
+                            );
+
+                        $discount =
+                            $promotion
+                            ->discount_value . '%';
+                    } else {
+
+                        $final_price =
+                            $product->sale_price -
+                            $promotion
+                            ->discount_value;
+
+                        $discount =
+                            '$' .
+                            $promotion
+                            ->discount_value;
+                    }
+                }
+
+                return [
+                    'id' => $product->id,
+
+                    'name' =>
+                    $product->name,
+
+                    'sale_price' =>
+                    $product->sale_price,
+
+                    'final_price' =>
+                    round(
+                        $final_price,
+                        2
+                    ),
+
+                    'discount' =>
+                    $discount,
+
+                    'sold' =>
+                    $product->sold ?? 0,
+
+                    'images' =>
+                    $product->image
+                        ->pluck(
+                            'image_url'
+                        )
+                        ->values(),
+                ];
+            }
+        );
+
+        return response()->json(
+            $products
+        );
+    }
 }
 
-
-// if (product.final_price < product.sale_price) {
-//     show sale_price (strikethrough)
-//     show final_price (highlight)
-//  } else {
-//     show sale_price only
-//  }

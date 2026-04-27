@@ -44,4 +44,9 @@ class ProductsModel extends Model
     {
         return $this->belongsToMany(User::class, 'favorites', 'product_id', 'user_id');
     }
+
+    public function orderItems()
+    {
+        return $this->hasMany(Order_itemModel::class,'product_id','id');
+    }
 }

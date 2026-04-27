@@ -13,22 +13,25 @@ class ProductsSeeder extends Seeder
      */
     public function run(): void
     {
-       $data = [
+        $data = [
 
-            // Drinks
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR013','name'=>'Coca Cola 330ml','description'=>'Soft drink','unit'=>'bottle','cost_price'=>0.40,'sale_price'=>0.60,'quantity'=>100,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR014','name'=>'Pepsi 330ml','description'=>'Cola drink','unit'=>'bottle','cost_price'=>0.40,'sale_price'=>0.60,'quantity'=>120,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR015','name'=>'Sprite 330ml','description'=>'Lemon soda','unit'=>'bottle','cost_price'=>0.40,'sale_price'=>0.60,'quantity'=>90,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR016','name'=>'Fanta Orange','description'=>'Orange soda','unit'=>'bottle','cost_price'=>0.45,'sale_price'=>0.70,'quantity'=>80,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR005','name'=>'Coca Cola','description'=>'Soft drink','unit'=>'bottle','cost_price'=>0.40,'sale_price'=>0.60,'quantity'=>110,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR006','name'=>'Pepsi','description'=>'Cola drink','unit'=>'bottle','cost_price'=>0.40,'sale_price'=>0.60,'quantity'=>130,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR007','name'=>'Sprite','description'=>'Lemon soda','unit'=>'bottle','cost_price'=>0.40,'sale_price'=>0.60,'quantity'=>40,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR008','name'=>'Fanta Orange 380ml','description'=>'Orange soda','unit'=>'bottle','cost_price'=>0.45,'sale_price'=>0.70,'quantity'=>80,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR009','name'=>'Coca Cola 380ml','description'=>'Soft drink','unit'=>'bottle','cost_price'=>0.40,'sale_price'=>0.60,'quantity'=>160,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR010','name'=>'Pepsi 380ml','description'=>'Cola drink','unit'=>'bottle','cost_price'=>0.40,'sale_price'=>0.60,'quantity'=>190,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR011','name'=>'Sprite 380ml','description'=>'Lemon soda','unit'=>'bottle','cost_price'=>0.40,'sale_price'=>0.60,'quantity'=>10,'status'=>true],
-            ['categories_id'=>1,'brand_id'=>1,'product_code'=>'DR012','name'=>'Fanta Orange 340ml','description'=>'Orange soda','unit'=>'bottle','cost_price'=>0.45,'sale_price'=>0.70,'quantity'=>40,'status'=>true],
-       ];
+
+            ['categories_id' => 1, 'brand_id' => 1, 'product_code' => 'FP001', 'name' => 'Apple', 'description' => 'Fresh red apples', 'unit' => 'kg', 'cost_price' => 1.20, 'sale_price' => 1.80, 'quantity' => 150, 'status' => true],
+            ['categories_id' => 1, 'brand_id' => 1, 'product_code' => 'FP002', 'name' => 'Banana', 'description' => 'Fresh ripe bananas', 'unit' => 'dozen', 'cost_price' => 1.00, 'sale_price' => 1.50, 'quantity' => 120, 'status' => true],
+
+            ['categories_id' => 2, 'brand_id' => 2, 'product_code' => 'DA001', 'name' => 'Milk', 'description' => 'Fresh whole milk', 'unit' => 'liter', 'cost_price' => 1.10, 'sale_price' => 1.60, 'quantity' => 90, 'status' => true],
+            ['categories_id' => 2, 'brand_id' => 2, 'product_code' => 'DA002', 'name' => 'Cheese', 'description' => 'Cheddar cheese block', 'unit' => 'pack', 'cost_price' => 2.50, 'sale_price' => 3.50, 'quantity' => 60, 'status' => true],
+
+            ['categories_id' => 3, 'brand_id' => 3, 'product_code' => 'BK001', 'name' => 'Chocolate Cake', 'description' => 'Rich chocolate layered cake', 'unit' => 'piece', 'cost_price' => 8.00, 'sale_price' => 12.00, 'quantity' => 25, 'status' => true],
+            ['categories_id' => 3, 'brand_id' => 3, 'product_code' => 'BK002', 'name' => 'Vanilla Sponge Cake', 'description' => 'Soft vanilla sponge cake', 'unit' => 'piece', 'cost_price' => 7.50, 'sale_price' => 11.00, 'quantity' => 20, 'status' => true],
+
+            ['categories_id' => 4, 'brand_id' => 4, 'product_code' => 'SN001', 'name' => 'Potato Chips', 'description' => 'Crispy salted potato chips', 'unit' => 'bag', 'cost_price' => 0.50, 'sale_price' => 1.00, 'quantity' => 200, 'status' => true],
+            ['categories_id' => 4, 'brand_id' => 4, 'product_code' => 'SN002', 'name' => 'Popcorn', 'description' => 'Butter flavored popcorn', 'unit' => 'bag', 'cost_price' => 0.45, 'sale_price' => 0.90, 'quantity' => 180, 'status' => true],
+
+            ['categories_id' => 5, 'brand_id' => 5, 'product_code' => 'BV001', 'name' => 'Orange Juice', 'description' => 'Fresh orange juice drink', 'unit' => 'bottle', 'cost_price' => 0.70, 'sale_price' => 1.20, 'quantity' => 160, 'status' => true],
+            ['categories_id' => 5, 'brand_id' => 5, 'product_code' => 'BV002', 'name' => 'Green Tea', 'description' => 'Refreshing bottled green tea', 'unit' => 'bottle', 'cost_price' => 0.60, 'sale_price' => 1.00, 'quantity' => 190, 'status' => true],
+
+        ];
         foreach ($data as $item) {
             ProductsModel::create($item);
         }

@@ -14,10 +14,22 @@ class Products_image extends Seeder
     public function run(): void
     {
         $data = [
-            ['product_id'=>1,'image_url'=>'https://www.shutterstock.com/image-photo/jakarta-indonesia-june-9-2024-260nw-2473912149.jpg'],
-            ['product_id'=>2,'image_url'=>'https://cdn.pixabay.com/photo/2016/03/02/20/13/grocery-1232944_1280.jpg'],
-            ['product_id'=>3,'image_url'=>'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwq5e4JwvR821FtdOR63C7G6IK4SnRsi4IOQ&s'],
-            ['product_id'=>4,'image_url'=>'https://cdn.pixabay.com/photo/2016/03/02/20/13/grocery-1232944_1280.jpg'],
+            ['product_id'=>1,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/2.webp'],
+            ['product_id'=>2,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/2.avif'],
+            ['product_id'=>3,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/24_019351f9-d2ac-40cd-91ef-117d7a0cebf6.webp'],
+            ['product_id'=>4,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/3.webp'],
+            ['product_id'=>5,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/5.webp'],
+            ['product_id'=>6,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/6.jpg'],
+            ['product_id'=>7,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/7.jpg'],
+            ['product_id'=>8,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/8.jpg'],
+            ['product_id'=>9,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/9.png'],
+            ['product_id'=>10,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/10.avif'],
+            ['product_id'=>10,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/11.webp'],
+            ['product_id'=>10,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/12.webp'],
+
+
+        
+            
         
 
 
