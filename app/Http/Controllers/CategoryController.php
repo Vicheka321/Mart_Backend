@@ -7,14 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+
 class CategoryController extends Controller
 {
     public function index()
     {
         $categories = Category::orderBy('id')->paginate(10);
-        return view('Admin.categories', compact('categories'));
-    }
 
+        return view('admin.categories', compact('categories'));
+    }
 
     public function store(Request $request)
     {

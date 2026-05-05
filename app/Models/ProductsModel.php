@@ -47,6 +47,21 @@ class ProductsModel extends Model
 
     public function orderItems()
     {
-        return $this->hasMany(Order_itemModel::class,'product_id','id');
+        return $this->hasMany(Order_itemModel::class, 'product_id', 'id');
+    }
+
+    public function promotions()
+    {
+        return $this->belongsToMany(
+            PromotionModel::class,
+            'promotion_products',
+            'product_id',
+            'promotion_id'
+        );
+    }
+
+    public function firstImage()
+    {
+        return $this->hasOne(ProductsImageModel::class, 'product_id')->latest();
     }
 }

@@ -8,7 +8,8 @@ use App\Models\CartItemModel;
 use App\Models\CartModel;
 use App\Models\ProductsModel;
 use Illuminate\Support\Facades\Auth;
-
+use Carbon\Carbon;
+use App\Models\PromotionModel;
 class CartController extends Controller
 {
     public function addToCart(Request $request)
@@ -53,34 +54,87 @@ class CartController extends Controller
         ]);
     }
 
-    public function getCard()
-    {
-        $user_id = Auth::id();
-        $cart = CartModel::where('user_id', $user_id)->first();
+public function getCart()
+{
+    $today = Carbon::today();
 
-        if (!$cart) {
-            return response()->json(['message' => 'Cart not found'], 404);
-        }
+    $user_id = Auth::id();
+    $cart = CartModel::where('user_id', $user_id)->first();
 
-        $cartItems = CartItemModel::where('cart_id', $cart->id)->get();
-
-        $items = [];
-        foreach ($cartItems as $item) {
-            $product = ProductsModel::find($item->product_id);
-            $items[] = [
-                'product_id' => $item->product_id,
-                'name' => $product->name,
-                'qty' => $item->qty,
-                'price' => $item->price,
-                'total_price' => $item->qty * $item->price
-            ];
-        }
-
-        return response()->json([
-            'cart_id' => $cart->id,
-            'items' => $items
-        ]);
+    if (!$cart) {
+        return response()->json(['message' => 'Cart not found'], 404);
     }
+
+    $cartItems = CartItemModel::where('cart_id', $cart->id)->get();
+
+    $items = [];
+    $cartTotal = 0;
+
+    foreach ($cartItems as $item) {
+
+        $product = ProductsModel::with('image')->find($item->product_id);
+
+        // 🔥 DEFAULT PRICE
+        $final_price = $product->sale_price;
+        $discount = null;
+
+        // 🔥 CHECK PROMOTION
+        $promotion = PromotionModel::whereHas('products', function ($q) use ($product) {
+            $q->where('product_id', $product->id);
+        })
+            ->where('status', true)
+            ->whereDate('start_date', '<=', $today)
+            ->whereDate('end_date', '>=', $today)
+            ->first();
+
+        if ($promotion) {
+
+            if ($promotion->discount_type === 'percent') {
+
+                $final_price =
+                    $product->sale_price -
+                    ($product->sale_price * $promotion->discount_value / 100);
+
+                $discount = $promotion->discount_value . '%';
+
+            } else {
+
+                $final_price =
+                    $product->sale_price - $promotion->discount_value;
+
+                $discount = '$' . $promotion->discount_value;
+            }
+        }
+
+        // 🔥 TOTAL PER ITEM
+        $totalPrice = $item->qty * $final_price;
+
+        $items[] = [
+            'product_id' => $item->product_id,
+            'name' => $product->name,
+            'qty' => $item->qty,
+
+            // ✅ IMPORTANT FIX
+            'price' => $final_price,
+            'sale_price' => $product->sale_price,
+            'discount' => $discount,
+
+            'total_price' => round($totalPrice, 2),
+
+            'images' => $product->image
+                ->pluck('image_url')
+                ->values(),
+        ];
+
+        $cartTotal += $totalPrice;
+    }
+
+    return response()->json([
+        'cart_id' => $cart->id,
+        'total_price' => round($cartTotal, 2),
+        'items' => $items
+    ]);
+}
 
     public function updateCart(Request $request)
     {

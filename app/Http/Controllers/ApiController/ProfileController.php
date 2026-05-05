@@ -11,7 +11,7 @@ use App\Models\user;
 
 class ProfileController extends Controller
 {
-    public function me()
+    public function myProfile()
     {
         $user = Auth::user();
 

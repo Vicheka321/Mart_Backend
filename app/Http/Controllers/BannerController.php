@@ -27,6 +27,45 @@ class BannerController extends Controller
         return view('Admin.banners', compact('banners'));
     }
 
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'title' => 'required|string|max:255',
+    //         'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    //         'sort_order' => 'nullable|integer',
+    //         'status' => 'required|boolean',
+    //         'start_date' => 'nullable|date',
+    //         'end_date' => 'nullable|date|after_or_equal:start_date',
+    //     ]);
+
+    //     $imageUrl = null;
+    //     if ($request->hasFile('image')) {
+
+    //         $file = $request->file('image');
+
+    //         $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+    //         $path = 'banners/' . $fileName;
+    //         Storage::disk('r2')->put(
+    //             $path,
+    //             file_get_contents($file),
+    //             'public'
+    //         );
+    //         $imageUrl = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $path;
+    //     }
+    //     banners::create([
+    //         'title' => $request->title,
+    //         'image_url' => $imageUrl,
+    //         'sort_order' => $request->sort_order,
+    //         'status' => $request->status,
+    //         'start_date' => $request->start_date,
+    //         'end_date' => $request->end_date,
+    //     ]);
+
+    //     return redirect()->route('banners.index')->with('success', 'Banner created successfully.');
+    // }
+
+
     public function store(Request $request)
     {
         $request->validate([
@@ -39,33 +78,77 @@ class BannerController extends Controller
         ]);
 
         $imageUrl = null;
-        if ($request->hasFile('image')) {
 
+        if ($request->hasFile('image')) {
             $file = $request->file('image');
 
             $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
-
             $path = 'banners/' . $fileName;
-            Storage::disk('r2')->put(
-                $path,
-                file_get_contents($file),
-                'public'
-            );
+
+            Storage::disk('r2')->put($path, file_get_contents($file), 'public');
+
             $imageUrl = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $path;
         }
-        banners::create([
+
+        Banners::create([
             'title' => $request->title,
             'image_url' => $imageUrl,
-            'sort_order' => $request->sort_order,
+            'sort_order' => $request->sort_order ?? 0,
             'status' => $request->status,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ]);
 
-        return redirect()->route('banners.index')->with('success', 'Banner created successfully.');
+        return redirect()
+            ->route('banners.index')
+            ->with('success', 'Banner created successfully.');
     }
+    // public function update(Request $request, banners $banner)
+    // {
+    //     $request->validate([
+    //         'title' => 'required|max:255',
+    //         'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    //         'sort_order' => 'nullable|integer',
+    //         'status' => 'required|boolean',
+    //         'start_date' => 'nullable|date',
+    //         'end_date' => 'nullable|date|after_or_equal:start_date'
+    //     ]);
 
-    public function update(Request $request, banners $banner)
+    //     $imageUrl = $banner->image;
+
+    //     if ($request->hasFile('image')) {
+    //         $file = $request->file('image');
+
+    //         $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+    //         $path = 'banners/' . $fileName;
+
+    //         Storage::disk('r2')->put(
+    //             $path,
+    //             file_get_contents($file),
+    //             'public'
+    //         );
+
+    //         $imageUrl = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $path;
+    //     }
+
+    //     $banner->update([
+    //         'title' => $request->title,
+    //         'image' => $imageUrl,
+    //         'sort_order' => $request->sort_order,
+    //         'status' => $request->status,
+    //         'start_date' => $request->start_date,
+    //         'end_date' => $request->end_date,
+    //     ]);
+
+    //     return redirect()
+    //         ->route('banners.index')
+    //         ->with('success', 'Banner updated successfully.');
+    // }
+
+
+
+    public function update(Request $request, Banners $banner)
     {
         $request->validate([
             'title' => 'required|max:255',
@@ -76,13 +159,12 @@ class BannerController extends Controller
             'end_date' => 'nullable|date|after_or_equal:start_date'
         ]);
 
-        $imageUrl = $banner->image;
+        $imageUrl = $banner->image_url; // ✅ FIXED
 
         if ($request->hasFile('image')) {
+
             $file = $request->file('image');
-
             $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
-
             $path = 'banners/' . $fileName;
 
             Storage::disk('r2')->put(
@@ -96,8 +178,8 @@ class BannerController extends Controller
 
         $banner->update([
             'title' => $request->title,
-            'image' => $imageUrl,
-            'sort_order' => $request->sort_order,
+            'image_url' => $imageUrl, // ✅ FIXED
+            'sort_order' => $request->sort_order ?? 0,
             'status' => $request->status,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
@@ -107,10 +189,31 @@ class BannerController extends Controller
             ->route('banners.index')
             ->with('success', 'Banner updated successfully.');
     }
-    public function destroy(banners $banner)
+
+    // public function destroy(banners $banner)
+    // {
+    //     $banner->delete();
+
+    //     return redirect()->route('banners.index')->with('success', 'Banner deleted successfully.');
+    // }
+
+    public function destroy(Banners $banner)
     {
+        // Delete image from R2 if exists
+        if ($banner->image_url) {
+            $path = parse_url($banner->image_url, PHP_URL_PATH);
+
+            // remove leading slash
+            $path = ltrim($path, '/');
+
+            Storage::disk('r2')->delete($path);
+        }
+
+        // Delete record
         $banner->delete();
 
-        return redirect()->route('banners.index')->with('success', 'Banner deleted successfully.');
+        return redirect()
+            ->route('banners.index')
+            ->with('success', 'Banner deleted successfully.');
     }
 }

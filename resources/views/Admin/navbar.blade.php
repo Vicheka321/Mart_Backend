@@ -282,7 +282,7 @@
     }
 
     // run every 5s
-    setInterval(loadNotifications, 5000);
+    setInterval(loadNotifications, 10000);
 
     // first load
     loadNotifications();

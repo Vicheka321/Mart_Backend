@@ -16,34 +16,41 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+
     // public function index()
     // {
-    //     $products = ProductsModel::with(['product','brand','image'])
-    //     ->orderBy('id','desc')
-    //     ->paginate(10);
+    //     $products = ProductsModel::with([
+    //         'category:id,name',
+    //         'brand:id,name',
+    //         'image' => function ($q) {
+    //             $q->select('id', 'product_id', 'image_url')->limit(1);
+    //         }
+    //     ])
+    //         ->orderBy('created_at', 'desc')
+    //         ->paginate(10);
 
-    //     return view('admin.products', compact('products'));
-    //     // return response()->json($products);
+    //     $categories = Category::all();
+    //     $brands = BrandModel::all();
+    //     return view('admin.products', compact('products', 'categories', 'brands'));
     // }
-
-
 
     public function index()
     {
         $products = ProductsModel::with([
             'category:id,name',
             'brand:id,name',
-            'image' => function ($q) {
-                $q->select('id', 'product_id', 'image_url')->limit(1);
-            }
+            'firstImage:id,product_id,image_url'
         ])
-            ->orderBy('created_at', 'desc') // ✅ sort by latest created
+            ->latest()
             ->paginate(10);
 
-        $categories = Category::all();
-        $brands = BrandModel::all();
+        $categories = Category::select('id', 'name')->get();
+        $brands = BrandModel::select('id', 'name')->get();
+
         return view('admin.products', compact('products', 'categories', 'brands'));
     }
+
+
     // public function store(Request $request)
     // {
 
@@ -151,10 +158,9 @@ class ProductController extends Controller
                     'product_id' => $product->id,
                     'image_url'  => $imageUrl,
                 ]);
-               
             }
         }
-        
+
 
         return redirect()->route('products.index')
             ->with('success', 'Product created successfully.');

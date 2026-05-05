@@ -36,9 +36,16 @@ return [
     ],
 
     'bakong' => [
-        'url' => env('BAKONG_API_URL'),
+        'api_url' => env('BAKONG_API_URL'),
         'token' => env('BAKONG_TOKEN'),
-        'merchant' => env('BAKONG_MERCHANT_ID'),
+        'merchant' => [
+            'bakong_id' => env('MERCHANT_BAKONG_ID'),
+            'name' => env('MERCHANT_NAME'),
+            'city' => env('MERCHANT_CITY', 'PHNOM PENH'),
+            'acquiring_bank' => env('ACQUIRING_BANK'),
+        ],
     ],
+
+    'pusher' => env('BROADCAST_DRIVER', 'pusher'),
 
 ];

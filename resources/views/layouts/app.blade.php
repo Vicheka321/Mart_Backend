@@ -17,13 +17,9 @@
 
     <script src="https://unpkg.com/alpinejs" defer></script>
     <link rel="stylesheet" href="assets/public/css/app.css">
-
-
-
-
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
         // Dark mode (before render)
-
         const theme = localStorage.getItem('theme');
 
         if (theme === 'dark') {
@@ -31,8 +27,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
-
         // Run after DOM ready
         document.addEventListener("DOMContentLoaded", () => {
 

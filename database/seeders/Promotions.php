@@ -28,7 +28,7 @@ class Promotions extends Seeder
             ],
             [
                 'promotion_id' => $promotion->id,
-                'product_id' => 7,
+                'product_id' => 9,
                 'created_at' => now(),
                 'updated_at' => now()
             ]
