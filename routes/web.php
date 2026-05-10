@@ -59,7 +59,8 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 
 
 
-    Route::get('/admin/customers', [CustomersController::class, 'customers']);
+    Route::get('/admin/customers', [CustomersController::class, 'customers'])->name('customers.index');
+    Route::patch('/admin/customers/{user}/change-role', [CustomersController::class, 'changeCustomerRole'])->name('admin.customers.change-role');
 });
 
 

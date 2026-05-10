@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('khqr_payments', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('order_id')
+                ->nullable()
+                ->after('id');
+
+            $table->foreignId('payment_id')
+                ->nullable()
+                ->after('order_id');
             $table->string('md5', 32)->unique(); // MD5 is always 32 characters
             $table->text('qr_code'); // Use text instead of varchar(1000)
             $table->decimal('amount', 10, 2);

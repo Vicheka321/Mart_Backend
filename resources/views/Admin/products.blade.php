@@ -67,7 +67,20 @@
                             <td class="px-5 py-2">{{ $product['quantity'] }}</td>
                             <td class="px-5 py-2 text-xs text-gray-400">{{ $product->created_at->format('M d, Y') }}</td>
                             <td class="px-5 py-2 text-right space-x-2">
-                                <button onclick="editProduct({{ $product->id }})"
+                                <button onclick='editProduct(
+                                            {{ $product->id }},
+                                            @json($product->name),
+                                            @json($product->description),
+                                            {{ $product->categories_id }},
+                                            {{ $product->brand_id }},
+                                            {{ $product->cost_price ?? 0 }},
+                                            {{ $product->sale_price ?? 0 }},
+                                            {{ $product->quantity ?? 0 }},
+                                            {{ $product->status ?? 1 }},
+                                            @json($product->image->map(function ($img) {
+                                                return ["image_url" => $img->image_url];
+                                            })->values())
+                                        )'
                                     class="px-3.5 py-1.5 text-xs font-medium bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50">
                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -105,9 +118,9 @@
             <div class="flex space-x-1">
                 @if ($products->onFirstPage())
                     <span
-                        class="px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-300 text-sm">Prev</span>
+                        class="px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-300 text-sm">Previous</span>
                 @else
-                    <a href="{{ $products->previousPageUrl() }}"
+                    <a href="{{ $products->previousPageUrl() }}" wire:navigate
                         class="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-sm text-gray-700 dark:text-gray-300">Prev</a>
                 @endif
 
@@ -115,13 +128,13 @@
                     @if ($page == $products->currentPage())
                         <span class="px-3 py-1 rounded-lg bg-indigo-600 dark:bg-indigo-500 text-white text-sm">{{ $page }}</span>
                     @else
-                        <a href="{{ $url }}"
+                        <a href="{{ $url }}" wire:navigate
                             class="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-sm text-gray-700 dark:text-gray-300">{{ $page }}</a>
                     @endif
                 @endforeach
 
                 @if ($products->hasMorePages())
-                    <a href="{{ $products->nextPageUrl() }}"
+                    <a href="{{ $products->nextPageUrl() }}" wire:navigate
                         class="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-sm text-gray-700 dark:text-gray-300">Next</a>
                 @else
                     <span
@@ -266,7 +279,7 @@
                         </div>
 
                         {{-- RIGHT: Image Upload --}}
-                        
+
                         <div class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm"
                             style="min-height: 100%;">
 
@@ -274,8 +287,8 @@
 
                             {{-- Main upload box --}}
                             <div id="uploadBox" onclick="handleMainClick()" class="relative w-full h-52 rounded-2xl bg-gray-50 dark:bg-gray-700 border-2 border-dashed border-gray-200 dark:border-gray-600
-                   flex items-center justify-center cursor-pointer overflow-hidden transition-colors
-                   hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                       flex items-center justify-center cursor-pointer overflow-hidden transition-colors
+                                       hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
 
                                 <div id="uploadPlaceholder"
                                     class="flex flex-col items-center gap-2 pointer-events-none select-none">
@@ -299,7 +312,7 @@
                                     class="hidden absolute inset-0 items-center justify-center pointer-events-none"
                                     style="transition: background 0.2s;">
                                     <span id="editLabel"
-                                        class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs font-medium px-4 py-1.5 rounded-full opacity-0"
+                                        class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs font-medium px-4 py-1.5 rounded-full "
                                         style="transition: opacity 0.2s;">Change Photo</span>
                                 </div>
                             </div>
@@ -346,189 +359,309 @@
         }
     </style>
 
-    <script>
-        // ─── Modal helpers ───────────────────────────────────────────────
-        function openExportModal() {
-            document.getElementById('exportModal').classList.replace('hidden', 'flex');
-        }
-        function closeExportModal() {
-            document.getElementById('exportModal').classList.replace('flex', 'hidden');
-        }
-        function openModal() {
-            resetModal();
-            document.getElementById('productModal').classList.replace('hidden', 'flex');
-        }
-        function closeModal() {
-            document.getElementById('productModal').classList.replace('flex', 'hidden');
-        }
-        function resetModal() {
-            document.getElementById('productForm').action = "{{ route('products.store') }}";
-            document.getElementById('formMethod').value = 'POST';
-            document.getElementById('productName').value = '';
-            document.getElementById('modalTitle').innerText = 'Add Product';
-            clearPreview();
-        }
+    @push('scripts')
+        <script>
 
-        // ─── Delete confirm ──────────────────────────────────────────────
-        document.querySelectorAll('.delete-form').forEach(form => {
-            form.addEventListener('submit', e => {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Delete product?',
-                    text: 'This action cannot be undone.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#6366f1',
-                    cancelButtonColor: '#ef4444',
-                }).then(r => { if (r.isConfirmed) form.submit(); });
+            function openExportModal() {
+                document.getElementById('exportModal').classList.replace('hidden', 'flex');
+            }
+
+            function closeExportModal() {
+                document.getElementById('exportModal').classList.replace('flex', 'hidden');
+            }
+
+            function openModal() {
+                resetModal();
+                document.getElementById('productModal').classList.replace('hidden', 'flex');
+            }
+
+            function closeModal() {
+                document.getElementById('productModal').classList.replace('flex', 'hidden');
+            }
+
+            function resetModal() {
+                document.getElementById('productForm').action =
+                    "{{ route('products.store') }}";
+
+                document.getElementById('formMethod').value = 'POST';
+                document.getElementById('productName').value = '';
+                document.getElementById('modalTitle').innerText = 'Add Product';
+
+                clearPreview();
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.delete-form').forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+
+                        Swal.fire({
+                            title: 'Delete product?',
+                            text: 'This action cannot be undone.',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#6366f1',
+                            cancelButtonColor: '#ef4444',
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
             });
-        });
 
-        // ─── Image upload logic ──────────────────────────────────────────
-        const inputNew = document.getElementById('imageInputNew');
-        const inputSwap = document.getElementById('imageInputSwap');
-        const mainPreview = document.getElementById('mainPreview');
-        const placeholder = document.getElementById('uploadPlaceholder');
-        const uploadBox = document.getElementById('uploadBox');
-        const editOverlay = document.getElementById('editOverlay');
-        const thumbGrid = document.getElementById('thumbGrid');
-        const imgCount = document.getElementById('imgCount');
-        const MAX = 8;
+            const inputNew = document.getElementById('imageInputNew');
+            const inputSwap = document.getElementById('imageInputSwap');
+            const mainPreview = document.getElementById('mainPreview');
+            const placeholder = document.getElementById('uploadPlaceholder');
+            const uploadBox = document.getElementById('uploadBox');
+            const editOverlay = document.getElementById('editOverlay');
+            const thumbGrid = document.getElementById('thumbGrid');
+            const imgCount = document.getElementById('imgCount');
+            const MAX = 8;
 
-        let images = []; // { url, file }
-        let selectedIdx = 0;
-        let swapTarget = null;
+            let images = [];
+            let selectedIdx = 0;
+            let swapTarget = null;
 
-        function handleMainClick() {
-            if (images.length > 0) { swapTarget = selectedIdx; inputSwap.click(); }
-            else inputNew.click();
-        }
-
-        inputNew.addEventListener('change', () => {
-            const slots = MAX - images.length;
-            Array.from(inputNew.files).slice(0, slots).forEach(file => {
-                if (file.size <= 2 * 1024 * 1024) images.push({ url: URL.createObjectURL(file), file });
-            });
-            if (images.length) render(images.length - 1);
-            inputNew.value = '';
-            syncInput();
-        });
-
-        inputSwap.addEventListener('change', () => {
-            if (inputSwap.files.length && swapTarget !== null) {
-                const file = inputSwap.files[0];
-                if (file.size <= 2 * 1024 * 1024) {
-                    images[swapTarget] = { url: URL.createObjectURL(file), file };
-                    render(swapTarget);
-                    syncInput();
+            function handleMainClick() {
+                if (images.length > 0) {
+                    swapTarget = selectedIdx;
+                    inputSwap.click();
+                } else {
+                    inputNew.click();
                 }
             }
-            swapTarget = null;
-            inputSwap.value = '';
-        });
 
-        function removeImage(idx, e) {
-            e.stopPropagation();
-            images.splice(idx, 1);
-            if (!images.length) { clearPreview(); syncInput(); return; }
-            render(Math.min(selectedIdx, images.length - 1));
-            syncInput();
-        }
+            inputNew?.addEventListener('change', () => {
+                const slots = MAX - images.length;
 
-        function clearPreview() {
-            images = [];
-            selectedIdx = 0;
-            mainPreview.classList.add('hidden');
-            mainPreview.src = '';
-            placeholder.classList.remove('hidden');
-            editOverlay.classList.add('hidden');
-            editOverlay.classList.remove('flex');
-            uploadBox.classList.remove('border-solid');
-            uploadBox.classList.add('border-dashed');
-            thumbGrid.innerHTML = '';
-            imgCount.classList.add('hidden');
-            syncInput();
-        }
+                Array.from(inputNew.files)
+                    .slice(0, slots)
+                    .forEach(file => {
+                        if (file.size <= 2 * 1024 * 1024) {
+                            images.push({
+                                url: URL.createObjectURL(file),
+                                file
+                            });
+                        }
+                    });
 
-        function render(idx) {
-            selectedIdx = idx;
+                if (images.length) {
+                    render(images.length - 1);
+                }
 
-            mainPreview.src = images[idx].url;
-            mainPreview.classList.remove('hidden');
-            placeholder.classList.add('hidden');
-            editOverlay.classList.remove('hidden');
-            editOverlay.classList.add('flex');
-            uploadBox.classList.add('border-solid');
-            uploadBox.classList.remove('border-dashed');
-
-            thumbGrid.innerHTML = '';
-
-            images.forEach((img, i) => {
-                const slot = document.createElement('div');
-                slot.className = `relative aspect-square rounded-xl cursor-pointer transition-all ${i === idx ? 'ring-2 ring-indigo-500' : 'ring-1 ring-gray-200 dark:ring-gray-600'
-                    }`;
-
-                // ✕ Remove button
-                const rmBtn = document.createElement('div');
-                rmBtn.className = 'absolute -top-1.5 -right-1.5 z-10 w-[18px] h-[18px] bg-gray-900 hover:bg-red-500 border-2 border-white rounded-full flex items-center justify-center cursor-pointer transition-colors';
-                rmBtn.innerHTML = `<svg class="w-2 h-2 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                </svg>`;
-                rmBtn.onclick = (e) => removeImage(i, e);
-
-                // Thumbnail image
-                const inner = document.createElement('div');
-                inner.className = 'thumb-inner bg-gray-100 dark:bg-gray-700';
-                inner.innerHTML = `<img src="${img.url}" class="w-full h-full object-cover" alt="">`;
-                inner.onclick = () => render(i);
-
-                slot.appendChild(rmBtn);
-                slot.appendChild(inner);
-                thumbGrid.appendChild(slot);
+                inputNew.value = '';
+                syncInput();
             });
 
-            // ＋ Add slot — always last, hidden at max
-            if (images.length < MAX) {
-                const add = document.createElement('div');
-                add.className = 'aspect-square rounded-xl ring-1 ring-gray-300 dark:ring-gray-600 bg-gray-50 dark:bg-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors';
-                add.style.borderStyle = 'dashed';
-                add.innerHTML = `<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                </svg>`;
-                add.onclick = (e) => { e.stopPropagation(); inputNew.click(); };
-                thumbGrid.appendChild(add);
+            inputSwap?.addEventListener('change', () => {
+                if (inputSwap.files.length && swapTarget !== null) {
+                    const file = inputSwap.files[0];
+
+                    if (file.size <= 2 * 1024 * 1024) {
+                        images[swapTarget] = {
+                            url: URL.createObjectURL(file),
+                            file
+                        };
+
+                        render(swapTarget);
+                        syncInput();
+                    }
+                }
+
+                swapTarget = null;
+                inputSwap.value = '';
+            });
+
+            function removeImage(idx, e) {
+                e.stopPropagation();
+
+                images.splice(idx, 1);
+
+                if (!images.length) {
+                    clearPreview();
+                    syncInput();
+                    return;
+                }
+
+                render(Math.min(selectedIdx, images.length - 1));
+                syncInput();
             }
 
-            imgCount.textContent = `${images.length}/8 images selected`;
-            imgCount.classList.remove('hidden');
-        }
+            function clearPreview() {
+                images = [];
+                selectedIdx = 0;
 
-        // Keep real file input in sync so Laravel receives all files on submit
-        function syncInput() {
-            const dt = new DataTransfer();
-            images.forEach(img => dt.items.add(img.file));
-            inputNew.files = dt.files;
-        }
+                mainPreview.classList.add('hidden');
+                mainPreview.src = '';
 
-        function editProduct(id) {
-            fetch(`/products/${id}`)
-                .then(res => res.json())
-                .then(data => {
-                    resetModal();
-                    document.getElementById('productForm').action = `/products/${id}`;
-                    document.getElementById('formMethod').value = 'PUT';
-                    document.getElementById('productName').value = data.name;
-                    document.getElementById('modalTitle').innerText = 'Edit Product';
+                placeholder.classList.remove('hidden');
 
-                    // Preload existing images into preview (these won't be re-uploaded unless changed)
-                    if (data.images.length) {
-                        images = data.images.map(img => ({ url: img.image_url, file: null }));
-                        render(0);
+                editOverlay.classList.add('hidden');
+                editOverlay.classList.remove('flex');
+
+                uploadBox.classList.remove('border-solid');
+                uploadBox.classList.add('border-dashed');
+
+                thumbGrid.innerHTML = '';
+
+                imgCount.classList.add('hidden');
+
+                syncInput();
+            }
+
+            function render(idx) {
+                selectedIdx = idx;
+
+                mainPreview.src = images[idx].url;
+                mainPreview.classList.remove('hidden');
+
+                placeholder.classList.add('hidden');
+
+                editOverlay.classList.remove('hidden');
+                editOverlay.classList.add('flex');
+
+                uploadBox.classList.add('border-solid');
+                uploadBox.classList.remove('border-dashed');
+
+                thumbGrid.innerHTML = '';
+
+                images.forEach((img, i) => {
+                    const slot = document.createElement('div');
+
+                    slot.className =
+                        `relative aspect-square rounded-xl cursor-pointer transition-all ${i === idx
+                            ? 'ring-2 ring-indigo-500'
+                            : 'ring-1 ring-gray-200 dark:ring-gray-600'
+                        }`;
+
+                    const rmBtn = document.createElement('div');
+                    rmBtn.className =
+                        'absolute -top-1.5 -right-1.5 z-10 w-[18px] h-[18px] bg-gray-900 hover:bg-red-500 border-2 border-white rounded-full flex items-center justify-center cursor-pointer transition-colors';
+
+                    rmBtn.innerHTML = `
+                                            <svg class="w-2 h-2 text-white" fill="none"
+                                                stroke="currentColor" stroke-width="3"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        `;
+
+                    rmBtn.onclick = (e) => removeImage(i, e);
+
+                    const inner = document.createElement('div');
+                    inner.className = 'thumb-inner bg-gray-100 dark:bg-gray-700';
+                    inner.innerHTML =
+                        `<img src="${img.url}" class="w-full h-full object-cover">`;
+
+                    inner.onclick = () => render(i);
+
+                    slot.appendChild(rmBtn);
+                    slot.appendChild(inner);
+
+                    thumbGrid.appendChild(slot);
+                });
+
+                if (images.length < MAX) {
+                    const add = document.createElement('div');
+
+                    add.className =
+                        'aspect-square rounded-xl ring-1 ring-gray-300 dark:ring-gray-600 bg-gray-50 dark:bg-gray-700 flex items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors';
+
+                    add.style.borderStyle = 'dashed';
+
+                    add.innerHTML = `
+                                        <svg class="w-5 h-5 text-gray-400"
+                                            fill="none" stroke="currentColor"
+                                            stroke-width="2"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                    `;
+
+                    add.onclick = (e) => {
+                        e.stopPropagation();
+                        inputNew.click();
+                    };
+
+                    thumbGrid.appendChild(add);
+                }
+
+                imgCount.textContent = `${images.length}/8 images selected`;
+                imgCount.classList.remove('hidden');
+            }
+
+            function syncInput() {
+                const dt = new DataTransfer();
+
+                images.forEach(img => {
+                    if (img.file) {
+                        dt.items.add(img.file);
                     }
+                });
 
+                inputNew.files = dt.files;
+            }
 
-                });        }
-                
-    </script>
+            function editProduct(
+                id,
+                name,
+                description,
+                categories_id,
+                brand_id,
+                cost_price,
+                sale_price,
+                quantity,
+                status,
+                imagesData = []
+            ) {
+                openModal();
+
+                document.getElementById('modalTitle').innerText = 'Edit Product';
+
+                document.getElementById('productForm').action = '/admin/products/' + id;
+                document.getElementById('formMethod').value = 'PUT';
+                document.getElementById('productName').value = name ?? '';
+
+                const descriptionField = document.querySelector('textarea[name="description"]');
+                if (descriptionField) descriptionField.value = description ?? '';
+
+                const categoryField = document.querySelector('select[name="categories_id"]');
+                if (categoryField) categoryField.value = categories_id ?? '';
+
+                const brandField = document.querySelector('select[name="brand_id"]');
+                if (brandField) brandField.value = brand_id ?? '';
+
+                const costPriceField = document.querySelector('input[name="cost_price"]');
+                if (costPriceField) costPriceField.value = cost_price ?? '';
+
+                const salePriceField = document.querySelector('input[name="sale_price"]');
+                if (salePriceField) salePriceField.value = sale_price ?? '';
+
+                const quantityField = document.querySelector('input[name="quantity"]');
+                if (quantityField) quantityField.value = quantity ?? '';
+
+                const statusField = document.querySelector('select[name="status"]');
+                if (statusField) statusField.value = status ?? 1;
+                if (imagesData && imagesData.length > 0) {
+                    images = [...imagesData].map((img) => ({
+                        url: typeof img === 'string' ? img : img.image_url,
+                        file: null
+                    }));
+
+                    render(0);
+                } else {
+                    clearPreview();
+                }
+                syncInput();
+            }
+        </script>
+    @endpush
 
 @endsection

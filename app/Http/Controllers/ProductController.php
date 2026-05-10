@@ -166,44 +166,98 @@ class ProductController extends Controller
             ->with('success', 'Product created successfully.');
     }
 
-
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required',
-            'products_id' => 'required',
-            'brand_id' => 'required',
-            'cost_price' => 'required|numeric',
-            'sale_price' => 'required|numeric',
-            'quantity' => 'required|integer',
-            'image_url' => 'nullable|url'
+            'name'          => 'required',
+            'categories_id' => 'required|exists:categories,id',
+            'brand_id'      => 'required|exists:brands,id',
+            'cost_price'    => 'nullable|numeric',
+            'sale_price'    => 'required|numeric',
+            'quantity'      => 'required|integer',
+            'status'        => 'nullable|in:0,1',
+
+            // Multiple image upload
+            'images'        => 'nullable|array|max:10',
+            'images.*'      => 'image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $product = ProductsModel::findOrFail($id);
-        $product->update([
-            'categories_id' => $request->categories_id,
-            'brand_id' => $request->brand_id,
-            'product_code' => $request->product_code,
-            'name' => $request->name,
-            'description' => $request->description,
-            'unit' => $request->unit,
-            'cost_price' => $request->cost_price,
-            'sale_price' => $request->sale_price,
-            'quantity' => $request->quantity,
-            'status' => $request->status ?? 1,
-        ]);
+        DB::transaction(function () use ($request, $id) {
 
-        // update product image
-        if ($request->image_url) {
+            // Find product
+            $product = ProductsModel::findOrFail($id);
 
-            ProductsImageModel::updateOrCreate(
-                ['product_id' => $product->id],
-                ['image_url' => $request->image_url]
-            );
-        }
+            // Update product information
+            $product->update([
+                'categories_id' => $request->categories_id,
+                'brand_id'      => $request->brand_id,
+                'product_code'  => $request->product_code,
+                'name'          => $request->name,
+                'description'   => $request->description,
+                'unit'          => $request->unit,
+                'cost_price'    => $request->cost_price,
+                'sale_price'    => $request->sale_price,
+                'quantity'      => $request->quantity,
+                'status'        => $request->status ?? 1,
+            ]);
+
+            // If new images are uploaded, replace all old images
+            if ($request->hasFile('images')) {
+
+                // Get old images
+                $oldImages = ProductsImageModel::where('product_id', $product->id)->get();
+
+                // Delete old files from Cloudflare R2
+                foreach ($oldImages as $oldImage) {
+                    if ($oldImage->image_url) {
+                        $baseUrl = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/';
+
+                        // Convert full URL to relative path
+                        $path = str_replace($baseUrl, '', $oldImage->image_url);
+
+                        // Delete file if it exists
+                        if (Storage::disk('r2')->exists($path)) {
+                            Storage::disk('r2')->delete($path);
+                        }
+                    }
+                }
+
+                // Delete old image records from database
+                ProductsImageModel::where('product_id', $product->id)->delete();
+
+                // Upload each new image
+                foreach ($request->file('images') as $file) {
+
+                    if (!$file->isValid()) {
+                        continue;
+                    }
+
+                    // Generate unique filename
+                    $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                    $path = 'products/' . $fileName;
+
+                    // Upload to Cloudflare R2
+                    Storage::disk('r2')->put(
+                        $path,
+                        file_get_contents($file),
+                        'public'
+                    );
+
+                    // Build public URL
+                    $imageUrl = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $path;
+
+                    // Save to database
+                    ProductsImageModel::create([
+                        'product_id' => $product->id,
+                        'image_url'  => $imageUrl,
+                    ]);
+                }
+            }
+        });
 
         return redirect()
-            ->route('products.index', ['page' => request('page')]);
+            ->route('products.index', ['page' => request('page')])
+            ->with('success', 'Product updated successfully.');
     }
     public function destroy($id)
     {

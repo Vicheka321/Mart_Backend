@@ -62,6 +62,8 @@ class ProductsModel extends Model
 
     public function firstImage()
     {
-        return $this->hasOne(ProductsImageModel::class, 'product_id')->latest();
+        
+    return $this->hasOne(ProductsImageModel::class, 'product_id')->latest();
     }
+    
 }

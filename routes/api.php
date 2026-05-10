@@ -52,9 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/address', [AddressController::class, 'storeAddress']);
     Route::post('/payment/khqr', [PaymentController::class, 'generateQR']);
     Route::post('/check', [PaymentController::class, 'checkPayment']);
+    Route::post('/update-order', [OrdersController::class, 'updateOrder']);
     Route::post('/status', [PaymentController::class, 'getPaymentStatus']);
-
-
+    Route::post('/aba-pay',[PaymentController::class, 'ABAPay']);
+    Route::post('/check-aba-pay', [PaymentController::class, 'checkStatusMD5ABA']);
 
     Route::post('/order', [OrdersController::class, 'placeOrder']);
     Route::get('/orders', [OrdersController::class, 'myOrders']);

@@ -77,10 +77,26 @@ class OrderController extends Controller
 
     public function notifications()
     {
-        $orders = OrderModel::where('status', 'pending')
-            ->latest()
+        // $orders = OrderModel::where('status', 'pending')
+        //     ->latest()
+        //     ->take(100)
+        //     ->get();
+        // $orders = OrderModel::where('status', 'pending')
+        //     ->whereRelation('payment', 'payment_status', 'paid')
+        //     ->with('payment')
+        //     ->latest()
+        //     ->take(100)
+        //     ->get();
+
+        $orders = OrderModel::select('orders.*')
+            ->join('payments', 'payments.order_id', '=', 'orders.id')
+            ->where('orders.status', 'pending')
+            ->where('payments.payment_status', 'paid')
+            ->with('payment')
+            ->orderBy('payments.updated_at', 'desc')
             ->take(100)
             ->get();
+
 
         return response()->json($orders->map(function ($o) {
             return [

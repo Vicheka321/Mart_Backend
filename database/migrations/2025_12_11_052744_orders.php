@@ -15,6 +15,7 @@ return new class extends Migration
             $table->foreignId('address_id')->constrained('address')->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('total_amount', 10, 2);
             $table->enum('status', ['pending', 'processing', 'cancelled', 'completed'])->default('pending');
+            $table->enum('payment_method', ['cash', 'card', 'aba', 'wing', 'paypal','khqr']);
             $table->string('telegram_message_id')->nullable();
             $table->string('telegram_chat_id')->nullable();
             $table->boolean('is_sent')->default(false);

@@ -561,33 +561,18 @@
             })
         })
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault()
+        // form.addEventListener('submit', function (e) {
+        //     e.preventDefault()
 
-            closeModal()
+        //     closeModal()
 
-            setTimeout(() => {
-                this.submit()
-            }, 100)
-        })
+        //     setTimeout(() => {
+        //         this.submit()
+        //     }, 100)
+        // })
 
 
 
     </script>
-    {{--
-    <script>
-
-        const modal = document.getElementById('brandModal')
-        const form = document.getElementById('brandForm')
-        const modalTitle = document.getElementById('modalTitle')
-        const nameInput = document.getElementById('brandName')
-        const methodInput = document.getElementById('formMethod')
-        const imageInput = document.getElementById('imageInput')
-        const preview = document.getElementById('imagePreview')
-        const placeholder = document.getElementById('uploadPlaceholder')
-        const editOverlay = document.getElementById('editOverlay')
-        const removeBtn = document.getElementById('removeImageBtn')
-        const uploadBox = document.getElementById('uploadBox')
-    </script> --}}
 
 @endsection

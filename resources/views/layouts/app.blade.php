@@ -1,3 +1,4 @@
+{{--
 <!DOCTYPE html>
 <html lang="en" class="dark">
 
@@ -6,19 +7,19 @@
     <title>Mart Admin</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/public/css/app.css">
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
-    <script>
+    <script defer>
         tailwind.config = {
             darkMode: 'class'
         }
     </script>
 
-    <script src="https://unpkg.com/alpinejs" defer></script>
-    <link rel="stylesheet" href="assets/public/css/app.css">
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-    <script>
+    <script defer>
         // Dark mode (before render)
         const theme = localStorage.getItem('theme');
 
@@ -78,6 +79,49 @@
             animation: slideOut 0.3s ease forwards;
         }
     </style>
+
+
+    <script defer>
+
+        Pusher.logToConsole = false;
+
+        var pusher = new Pusher('ac672e0dfc7b9aa3c37d', {
+            cluster: 'ap1'
+        });
+
+        var channel = pusher.subscribe('orders');
+
+        channel.bind('NewOrderCreated', function (data) {
+
+            // 🔔 Desktop Notification
+            showDesktopNotification({
+                id: data.order.id,
+                total: data.order.total
+            });
+
+            // 🔊 Sound
+            const audio = document.getElementById('orderSound');
+
+            if (audio) {
+                audio.play().catch(() => { });
+            }
+
+            console.log(data);
+
+        });
+
+    </script>
+
+    <script defer>
+
+
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+    </script>
+
+
 </head>
 
 <body
@@ -87,11 +131,11 @@
 
         <nav class="flex-shrink-0">
             @auth
-                @if(auth()->user()->role == 'admin')
-                    @include('Admin.navbar')
-                @else
-                    @include('Staff.navbar')
-                @endif
+            @if(auth()->user()->role == 'admin')
+            @include('Admin.navbar')
+            @else
+            @include('Staff.navbar')
+            @endif
             @endauth
         </nav>
         <div id="toastContainer" class="fixed top-5 right-5 space-y-3 z-50"></div>
@@ -100,11 +144,11 @@
 
             <aside class="w-72 overflow-y-auto">
                 @auth
-                    @if(auth()->user()->role == 'admin')
-                        @include('Admin.sidebar')
-                    @else
-                        @include('Staff.sidebar')
-                    @endif
+                @if(auth()->user()->role == 'admin')
+                @include('Admin.sidebar')
+                @else
+                @include('Staff.sidebar')
+                @endif
                 @endauth
             </aside>
 
@@ -129,68 +173,199 @@
 
 <audio id="orderSound" src="/sounds/notify.wav" preload="auto"></audio>
 
-<script>
-let lastIds = [];
 
-// ✅ REQUEST PERMISSION (run once)
-if (Notification.permission !== "granted") {
-    Notification.requestPermission();
-}
 
-// 🔔 DESKTOP NOTIFICATION (LIKE FACEBOOK)
-function showDesktopNotification(order) {
+</html> --}}
 
-    if (Notification.permission === "granted") {
 
-        const notification = new Notification("🛒 Darita Mart", {
-            body: `New Order #${order.id} • $${order.total}`,
-            icon: "/logo.png"
-        });
 
-        // 👉 click open orders page
-        notification.onclick = () => {
-            window.open('/admin/orders', '_blank');
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mart Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+
+    {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}">  --}}
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js" defer></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
         };
-    }
-}
+    </script>
 
-// 🔄 CHECK ORDER EVERY 5s
-async function checkNewOrder() {
-    try {
-        const res = await fetch('/admin/orders/latest');
-        const data = await res.json();
+    <!-- Dark Mode -->
+    <script>
+        const theme = localStorage.getItem('theme');
 
-        if (!data.id) return;
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 
-        // first load (avoid spam)
-        if (lastIds.length === 0) {
-            lastIds = [data.id];
-            return;
+    <!-- Toast Animation -->
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
-        // new order detected 🔥
-        if (!lastIds.includes(data.id)) {
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
 
-            // 🔔 SHOW DESKTOP NOTIFICATION
-            showDesktopNotification({
-                id: data.id,
-                total: data.total
-            });
-
-            // 🔊 SOUND
-            const audio = document.getElementById('orderSound');
-            if (audio) audio.play().catch(() => {});
-
-            lastIds = [data.id];
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
         }
 
-    } catch (e) {
-        console.error("Error fetching order:", e);
-    }
-}
+        .toast-enter {
+            animation: slideIn 0.3s ease forwards;
+        }
 
-// 🚀 RUN
-setInterval(checkNewOrder, 5000);
-checkNewOrder();
-</script>
+        .toast-exit {
+            animation: slideOut 0.3s ease forwards;
+        }
+    </style>
+
+    <!-- Pusher -->
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Turn off debug logs
+            Pusher.logToConsole = false;
+
+            // Request browser notification permission once
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+
+            // Prevent duplicate initialization
+            if (!window._pusherReady) {
+                window._pusherReady = true;
+
+                window.pusher = new Pusher(
+                    "{{ config('broadcasting.connections.pusher.key') }}",
+                    {
+                        cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}"
+                    }
+                );
+
+                // Subscribe to orders channel
+                const channel = window.pusher.subscribe('orders');
+
+                // Listen to event name from broadcastAs()
+                channel.bind('new-order', function (data) {
+
+                    const order = data.order;
+
+                    // Play sound
+                    const audio = document.getElementById('orderSound');
+                    if (audio) {
+                        audio.play().catch(() => { });
+                    }
+
+                    // Desktop notification
+                    if (Notification.permission === "granted") {
+                        new Notification("🛒 New Order", {
+                            body: `Order #${order.id} • $${order.total_amount}`,
+                            icon: "public/images/icons/logo.png"
+                        });
+                    }
+
+                    // Custom functions if available
+                    if (typeof addNotification === 'function') {
+                        addNotification(order);
+                    }
+
+                    if (typeof showToast === 'function') {
+                        showToast(order);
+                    }
+                });
+            }
+        });
+    </script>
+
+    @livewireStyles
+
+</head>
+
+<body
+    class="h-screen overflow-hidden bg-gray-100 dark:bg-gray-900 dark:text-white font-[Inter] transition-colors duration-300">
+
+    <div class="flex flex-col h-screen">
+
+        <!-- Navbar -->
+        <nav class="flex-shrink-0">
+            @auth
+                @if(auth()->user()->role == 'admin')
+                    @include('Admin.navbar')
+                @else
+                    @include('Staff.navbar')
+                @endif
+            @endauth
+        </nav>
+
+        <!-- Toast Container -->
+        <div id="toastContainer" class="fixed top-5 right-5 space-y-3 z-50"></div>
+
+        <div class="flex flex-1 min-h-0">
+
+            <!-- Sidebar -->
+            <aside class="w-72 overflow-y-auto">
+                @auth
+                    @if(auth()->user()->role == 'admin')
+                        @include('Admin.sidebar')
+                    @else
+                        @include('Staff.sidebar')
+                    @endif
+                @endauth
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 min-h-0 flex flex-col bg-white dark:bg-gray-800">
+
+                <div class="flex-1 overflow-y-auto pl-0 pt-3 pr-2 pb-0">
+
+                    <div class="max-w-7xl mx-auto bg-gray-100 dark:bg-slate-700 rounded-3xl pl-6 pr-6 py-6">
+                        @yield('content')
+                    </div>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- Page-specific scripts -->
+    @stack('scripts')
+
+    <!-- Notification Sound -->
+    <audio id="orderSound" src="/sounds/notify.wav" preload="auto"></audio>
+    @livewireScripts
+
+</body>
+
 </html>

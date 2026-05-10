@@ -91,9 +91,9 @@
 
                 <!-- Dropdown -->
                 <div x-show="open" @click.outside="open = false" x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:enter-start=" scale-95" x-transition:enter-end="opacity-100 scale-100"
                     x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                    x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end=" scale-95"
                     class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl p-4 space-y-2 dark:bg-gray-900">
 
                     <!-- My Profile -->
@@ -151,142 +151,206 @@
     </div>
 </nav>
 
+<script src="https://js.pusher.com/8.2.0/pusher.min.js" defer></script>
+<script defer>
+    document.addEventListener('DOMContentLoaded', function () {
 
-<script>
+        // ==========================
+        // Logout Confirmation
+        // ==========================
+        window.confirmLogout = function () {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will be logged out!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#6366f1',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logout-form').submit();
+                }
+            });
+        };
 
-    // scriptDailogAlert
-    function confirmLogout() {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You will be logged out!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#6366f1',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, logout'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('logout-form').submit();
+        // ==========================
+        // Dark Mode Toggle
+        // ==========================
+        window.toggleDarkMode = function () {
+            const html = document.documentElement;
+
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        };
+
+        // Apply saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+
+        // ==========================
+        // Notification Dropdown
+        // ==========================
+        window.toggleNotification = function () {
+            const dropdown = document.getElementById('notifDropdown');
+
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        };
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            const dropdown = document.getElementById('notifDropdown');
+            const button = document.querySelector('[onclick="toggleNotification()"]');
+
+            if (!dropdown || !button) return;
+
+            if (!dropdown.contains(e.target) && !button.contains(e.target)) {
+                dropdown.classList.add('hidden');
             }
         });
-    }
 
-    // scriptChangeTheme
-    function toggleDarkMode() {
-        const html = document.documentElement;
-        if (html.classList.contains('dark')) {
-            html.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        } else {
-            html.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        }
-    }
-
-    if (localStorage.getItem('theme') === 'dark') {
-        document.documentElement.classList.add('dark');
-    }
-
-    let lastIds = [];
-
-    function toggleNotification() {
-        document.getElementById('notifDropdown').classList.toggle('hidden');
-    }
-
-    async function loadNotifications() {
-
-        const res = await fetch('/admin/orders/notifications');
-        const data = await res.json();
-
-        const list = document.getElementById('notifList');
-        const count = document.getElementById('notifCount');
-
-        list.innerHTML = '';
-
-        data.forEach(order => {
-
-            list.innerHTML += `
-        <div onclick="goOrder(${order.id})"
-            class="flex items-start gap-3 px-4 py-3 
-                   hover:bg-gray-100 dark:hover:bg-slate-700 
-                   cursor-pointer transition">
-
-            <div class="w-9 h-9 flex items-center justify-center rounded-full 
-                        bg-indigo-100 dark:bg-indigo-500/20 
-                        text-indigo-600 dark:text-indigo-400">
-                🛒
-            </div>
-
-            <div class="flex-1 text-sm">
-                <p class="text-gray-700 dark:text-gray-200 font-medium">
-                    New Order #${order.id}
-                </p>
-                <p class="text-xs text-gray-400">
-                    ${order.time} • $${order.total}
-                </p>
-            </div>
-
-            <span class="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
-        </div>
-        `;
-        });
-
-        // 🔴 badge
-        if (data.length > 0) {
-            count.innerText = data.length;
-            count.classList.remove('hidden');
+        // ==========================
+        // Browser Notification Permission
+        // ==========================
+        if ('Notification' in window &&
+            Notification.permission !== 'granted' &&
+            Notification.permission !== 'denied') {
+            Notification.requestPermission();
         }
 
-        // 🔔 popup (new order detect)
-        const newIds = data.map(o => o.id);
+        // ==========================
+        // Unread Count
+        // ==========================
+        if (typeof window.notifCount === 'undefined') {
+            window.notifCount = 0;
+        }
 
-        const hasNew = newIds.some(id => !lastIds.includes(id));
+        // ==========================
+        // Initialize Pusher Only Once
+        // ==========================
+        if (!window._navbarPusherReady && typeof Pusher !== 'undefined') {
+            window._navbarPusherReady = true;
 
-        if (lastIds.length && hasNew) {
-            Swal.fire({
-                title: '🛒 New Order!',
-                text: 'You have new orders',
-                icon: 'success',
-                confirmButtonColor: '#6366f1'
+            // Disable debug logs in production
+            Pusher.logToConsole = false;
+
+            // Create global Pusher instance
+            window.pusher = new Pusher(
+                "{{ config('broadcasting.connections.pusher.key') }}",
+                {
+                    cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}"
+                }
+            );
+
+            // Subscribe to orders channel
+            const channel = window.pusher.subscribe('orders');
+
+            // Listen to event broadcastAs() => 'new-order'
+            channel.bind('new-order', function (data) {
+
+                console.log('New order received:', data);
+
+                const order = data.order;
+
+                // Add notification item
+                if (typeof window.addNotification === 'function') {
+                    window.addNotification(order);
+                }
+
+                // Increase unread count
+                window.notifCount++;
+
+                const badge = document.getElementById('notifCount');
+
+                if (badge) {
+                    badge.innerText = window.notifCount;
+                    badge.classList.remove('hidden');
+                }
+
+                // Play sound
+                const audio = document.getElementById('orderSound');
+
+                if (audio) {
+                    audio.play().catch(() => { });
+                }
+
+                // Desktop Notification
+                if ('Notification' in window &&
+                    Notification.permission === 'granted') {
+
+                    new Notification('🛒 New Order', {
+                        body: `Order #${order.id} • $${order.total_amount}`,
+                        icon: '/logo.png'
+                    });
+                }
+
+                // SweetAlert Toast
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: `New Order #${order.id}`,
+                        text: `$${order.total_amount}`,
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                }
             });
-
-            document.getElementById('orderSound').play();
         }
 
-        lastIds = newIds;
-    }
+        // ==========================
+        // Add Notification to Dropdown
+        // ==========================
+        window.addNotification = function (order) {
+            const list = document.getElementById('notifList');
 
-    // redirect
-    function goOrder(id) {
+            if (!list) return;
 
-        // show modal first (loading state)
-        orderModal.classList.remove('hidden')
-        orderModal.classList.add('flex')
+            const html = `
+            <div onclick="goOrder(${order.id})"
+                class="flex items-start gap-3 px-4 py-3
+                       hover:bg-gray-100 dark:hover:bg-slate-700
+                       cursor-pointer transition border-b dark:border-gray-700">
 
-        orderContent.innerHTML = `
-        <div class="text-center py-10 text-gray-400">
-            Loading...
-        </div>
-    `
+                <div class="w-9 h-9 flex items-center justify-center rounded-full
+                            bg-indigo-100 dark:bg-indigo-500/20
+                            text-indigo-600 dark:text-indigo-400">
+                    🛒
+                </div>
 
-        // fetch order detail
-        fetch('/admin/orders/' + id)
-            .then(res => res.json())
-            .then(order => {
-                openOrderModal(order) // ✅ show modal with data
-            })
-            .catch(err => {
-                console.error(err)
-                orderContent.innerHTML = 'Failed to load order'
-            })
-    }
+                <div class="flex-1 text-sm">
+                    <p class="text-gray-700 dark:text-gray-200 font-medium">
+                        New Order #${order.id}
+                    </p>
 
-    // run every 5s
-    setInterval(loadNotifications, 10000);
+                    <p class="text-xs text-gray-400">
+                        $${order.total_amount}
+                    </p>
+                </div>
 
-    // first load
-    loadNotifications();
+                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+            </div>
+        `;
 
+            list.insertAdjacentHTML('afterbegin', html);
+        };
 
+        // ==========================
+        // Go to Order Detail Page
+        // ==========================
+        window.goOrder = function (id) {
+            window.location.href = `/admin/orders/${id}`;
+        };
+
+    });
 </script>
-

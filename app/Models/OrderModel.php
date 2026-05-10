@@ -17,6 +17,7 @@ class OrderModel extends Model
         'user_id',
         'address_id',
         'total_amount',
+        'payment_method',
         'status',
         'telegram_message_id',
         'telegram_chat_id'

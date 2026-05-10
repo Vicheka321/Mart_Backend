@@ -506,15 +506,15 @@
             })
         })
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault()
+        // form.addEventListener('submit', function (e) {
+        //     e.preventDefault()
 
-            closeModal()
+        //     closeModal()
 
-            setTimeout(() => {
-                this.submit()
-            }, 100)
-        })
+        //     setTimeout(() => {
+        //         this.submit()
+        //     }, 100)
+        // })
 
     </script>
 @endsection

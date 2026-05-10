@@ -3,14 +3,9 @@
     <div class="space-y-4 ">
 
         <!-- Dashboard -->
-
         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider pt-6">Dashboards</p>
-        <a href="{{ route('admin.dashboard') }}" class="h-10 menu-item group flex items-center gap-3 p-3 rounded-lg 
-{{ request()->routeIs('admin.dashboard')
-    ? 'bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
-    : 'text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-300' 
-}} 
-hover:translate-x-1 transition-all duration-200 transition">
+        <a href="{{ route('admin.dashboard') }}" wire:navigate
+            class="h-10 menu-item group flex items-center gap-3 p-3 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-300' }} hover:translate-x-1 transition-all duration-200 transition">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                 fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" color="currentColor">
                 <path d="M18 2V10M22 6L14 6" stroke="currentColor"></path>
@@ -31,13 +26,8 @@ hover:translate-x-1 transition-all duration-200 transition">
         <!-- Products -->
         <div x-data="{ open: {{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('brands.*') ? 'true' : 'false' }} }"
             class="space-y-3">
-
-            <button @click="open = !open" class="h-10 w-full group flex items-center justify-between p-3 rounded-lg 
-                    text-gray-700 dark:text-gray-300 
-                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">
-
+            <button @click="open = !open"
+                class="h-10 w-full group flex items-center justify-between p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">
                 <div class="flex items-center gap-3">
                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path
@@ -47,53 +37,31 @@ hover:translate-x-1 transition-all duration-200 transition">
 
                     <span>Products</span>
                 </div>
-
                 <svg :class="open ? 'rotate-90' : ''" class="w-3 h-3 transition-transform duration-200"
                     viewBox="0 0 24 24" fill="currentColor">
                     <polyline fill="none" stroke="currentColor" stroke-width="2" points="7 2 17 12 7 22">
                     </polyline>
                 </svg>
-
             </button>
-
             <div x-show="open" x-transition class="ml-8 space-y-2">
-
-                <a href="{{ route('products.index') }}" class="block 
-{{ request()->routeIs('products.*')
-    ? 'text-indigo-600 dark:text-indigo-400'
-    : 'text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400' 
-}} 
-hover:translate-x-1 transition-all duration-200">
+                <a href="{{ route('products.index') }}" wire:navigate
+                    class="block {{ request()->routeIs('products.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400' }} hover:translate-x-1 transition-all duration-200">
                     All Products
                 </a>
-                <a href="{{ route('categories.index') }}" class="block 
-{{ request()->routeIs('categories.*')
-    ? 'text-indigo-600 dark:text-indigo-400'
-    : 'text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400' 
-}} 
-hover:translate-x-1 transition-all duration-200">
+                <a href="{{ route('categories.index') }}" wire:navigate
+                    class="block {{ request()->routeIs('categories.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400' }} hover:translate-x-1 transition-all duration-200">
                     Categories
                 </a>
-                <a href="{{ route('brands.index') }}" class="block
-{{ request()->routeIs('brands.*')
-    ? 'text-indigo-600 dark:text-indigo-400'
-    : 'text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400' 
-}} 
-hover:translate-x-1 transition-all duration-200">
+                <a href="{{ route('brands.index') }}" wire:navigate
+                    class="block {{ request()->routeIs('brands.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400' }} hover:translate-x-1 transition-all duration-200">
                     Brands
                 </a>
-
             </div>
-
         </div>
 
         <!-- Orders -->
-        <a href="{{ route('orders.index') }}" class="h-10 menu-item group flex items-center gap-3 p-3 rounded-lg 
-{{ request()->routeIs('orders.*')
-    ? 'bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
-    : 'text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-300' 
-}} 
-hover:translate-x-1 transition-all duration-200 transition">
+        <a href="{{ route('orders.index') }}" wire:navigate
+            class="h-10 menu-item group flex items-center gap-3 p-3 rounded-lg {{ request()->routeIs('orders.*') ? 'bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-300' }} hover:translate-x-1 transition-all duration-200 transition">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path
                     d="M13.28 4.78a.75.75 0 0 0-1.06-1.06l-2.97 2.97-1.22-1.22a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l3.5-3.5Z">
@@ -106,103 +74,59 @@ hover:translate-x-1 transition-all duration-200 transition">
         </a>
 
         <!-- Customers -->
-        <div x-data="{ open: false }" class="space-y-3">
+        <a href="{{ route('customers.index') }}" wire:navigate
+            class="h-10 menu-item group flex items-center gap-3 p-3 rounded-lg {{ request()->routeIs('customers.*') ? 'bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-300' }} hover:translate-x-1 transition-all duration-200 transition">
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor">
+                <defs></defs>
+                <path
+                    d="m26,30h-2v-5c-.0033-2.7601-2.2399-4.9967-5-5h-6c-2.7601.0033-4.9967,2.2399-5,5v5h-2v-5c.0045-3.8641,3.1359-6.9955,7-7h6c3.8641.0045,6.9955,3.1359,7,7v5Z">
+                </path>
+                <path
+                    d="m22,6v4c0,1.1025-.8972,2-2,2h-1c-.5522,0-1,.4478-1,1s.4478,1,1,1h1c2.2056,0,4-1.7944,4-4v-4h-2Z">
+                </path>
+                <path
+                    d="m16,16c-3.8599,0-7-3.1401-7-7S12.1401,2,16,2c1.9885,0,3.8901.8503,5.2173,2.3329l-1.4902,1.334c-.9482-1.0593-2.3066-1.6669-3.7271-1.6669-2.7571,0-5,2.243-5,5s2.2429,5,5,5v2Z">
+                </path>
+                <rect id="_Transparent_Rectangle_" data-name="&amp;lt;Transparent Rectangle&amp;gt;" class="cls-1"
+                    width="32" height="32" style="fill: none"></rect>
+            </svg>
+            <span>Customers</span>
+        </a>
 
-            <button @click="open = !open" class="h-10 w-full group flex items-center justify-between p-3 rounded-lg 
-                    text-gray-700 dark:text-gray-300 
-                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">
 
-                <div class="flex items-center gap-3">
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor">
-                        <defs></defs>
-                        <path
-                            d="m26,30h-2v-5c-.0033-2.7601-2.2399-4.9967-5-5h-6c-2.7601.0033-4.9967,2.2399-5,5v5h-2v-5c.0045-3.8641,3.1359-6.9955,7-7h6c3.8641.0045,6.9955,3.1359,7,7v5Z">
-                        </path>
-                        <path
-                            d="m22,6v4c0,1.1025-.8972,2-2,2h-1c-.5522,0-1,.4478-1,1s.4478,1,1,1h1c2.2056,0,4-1.7944,4-4v-4h-2Z">
-                        </path>
-                        <path
-                            d="m16,16c-3.8599,0-7-3.1401-7-7S12.1401,2,16,2c1.9885,0,3.8901.8503,5.2173,2.3329l-1.4902,1.334c-.9482-1.0593-2.3066-1.6669-3.7271-1.6669-2.7571,0-5,2.243-5,5s2.2429,5,5,5v2Z">
-                        </path>
-                        <rect id="_Transparent_Rectangle_" data-name="&amp;lt;Transparent Rectangle&amp;gt;"
-                            class="cls-1" width="32" height="32" style="fill: none"></rect>
-                    </svg>
-
-                    <span>Customers</span>
-                </div>
-
-                <svg :class="open ? 'rotate-90' : ''" class="w-3 h-3 transition-transform duration-200"
-                    viewBox="0 0 24 24" fill="currentColor">
-                    <polyline fill="none" stroke="currentColor" stroke-width="2" points="7 2 17 12 7 22">
-                    </polyline>
-                </svg>
-
-            </button>
-
-            <div x-show="open" x-transition class="ml-8 space-y-2">
-
-                <a href="#" class="menu-item block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Customer
-                    List</a>
-                <a href="#" class="block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Reviews</a>
-            </div>
-
-        </div>
 
         <!-- Payments -->
         <div x-data="{ open: false }" class="space-y-3">
 
-            <button @click="open = !open" class="h-10 w-full group flex items-center justify-between p-3 rounded-lg 
-                    text-gray-700 dark:text-gray-300 
-                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">
-
+            <button @click="open = !open"
+                class="h-10 w-full group flex items-center justify-between p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">
                 <div class="flex items-center gap-3">
                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" fill="none">
                         <path
                             d="M18.25 16.5C17.8358 16.5 17.5 16.8358 17.5 17.25C17.5 17.6642 17.8358 18 18.25 18H21.75C22.1642 18 22.5 17.6642 22.5 17.25C22.5 16.8358 22.1642 16.5 21.75 16.5H18.25ZM2.00391 8.75C2.00391 6.67893 3.68284 5 5.75391 5H22.2505C24.3216 5 26.0005 6.67893 26.0005 8.75V19.2501C26.0005 21.3211 24.3216 23.0001 22.2505 23.0001H5.75391C3.68284 23.0001 2.00391 21.3211 2.00391 19.2501V8.75ZM5.75391 6.5C4.51127 6.5 3.50391 7.50736 3.50391 8.75V9.5H24.5005V8.75C24.5005 7.50736 23.4932 6.5 22.2505 6.5H5.75391ZM3.50391 19.2501C3.50391 20.4927 4.51127 21.5001 5.75391 21.5001H22.2505C23.4932 21.5001 24.5005 20.4927 24.5005 19.2501V11H3.50391V19.2501Z"
                             fill="currentColor"></path>
                     </svg>
-
                     <span>Payments</span>
                 </div>
-
                 <svg :class="open ? 'rotate-90' : ''" class="w-3 h-3 transition-transform duration-200"
                     viewBox="0 0 24 24" fill="currentColor">
                     <polyline fill="none" stroke="currentColor" stroke-width="2" points="7 2 17 12 7 22">
                     </polyline>
                 </svg>
-
             </button>
-
             <div x-show="open" x-transition class="ml-8 space-y-2">
-
-                <a href="#" class="menu-item block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Transactions</a>
-                <a href="#" class="block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Payment
+                <a href="#" wire:navigate
+                    class="menu-item block text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">Transactions</a>
+                <a href="#" wire:navigate
+                    class="block text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">Payment
                     Methods</a>
             </div>
-
         </div>
 
         <!-- Marketing -->
         <div x-data="{ open: false }" class="space-y-3">
-
-            <button @click="open = !open" class="h-10 w-full group flex items-center justify-between p-3 rounded-lg 
-                    text-gray-700 dark:text-gray-300 
-                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">
-
+            <button @click="open = !open"
+                class="h-10 w-full group flex items-center justify-between p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">
                 <div class="flex items-center gap-3">
                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
@@ -223,25 +147,17 @@ hover:translate-x-1 transition-all duration-200 transition">
                     <polyline fill="none" stroke="currentColor" stroke-width="2" points="7 2 17 12 7 22">
                     </polyline>
                 </svg>
-
             </button>
-
             <div x-show="open" x-transition class="ml-8 space-y-2">
+                <a href="#" wire:navigate
+                    class="menu-item block text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">Coupons</a>
+                <a href="{{ route('banners.index') }}" wire:navigate
+                    class="block {{ request()->routeIs('banners.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400' }} hover:translate-x-1 transition-all duration-200">
+                    banners
 
-                <a href="#" class="menu-item block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Coupons</a>
-                <a href="{{ route('banners.index') }}" class="block
-{{ request()->routeIs('banners.*')
-    ? 'text-indigo-600 dark:text-indigo-400'
-    : 'text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400' 
-}} 
-hover:translate-x-1 transition-all duration-200">
-                    Banners
                 </a>
-                <a href="#" class="block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Promotions</a>
+                <a href="#" wire:navigate
+                    class="block text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">Promotions</a>
             </div>
 
         </div>
@@ -249,12 +165,8 @@ hover:translate-x-1 transition-all duration-200">
         <!-- Reports -->
         <div x-data="{ open: false }" class="space-y-3">
 
-            <button @click="open = !open" class="h-10 w-full group flex items-center justify-between p-3 rounded-lg 
-                    text-gray-700 dark:text-gray-300 
-                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">
-
+            <button @click="open = !open"
+                class="h-10 w-full group flex items-center justify-between p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">
                 <div class="flex items-center gap-3">
                     <svg class="w-4 h-4" width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -262,7 +174,6 @@ hover:translate-x-1 transition-all duration-200">
                             d="M9 21H15M9 21V16M9 21H3.6C3.26863 21 3 20.7314 3 20.4V16.6C3 16.2686 3.26863 16 3.6 16H9M15 21V9M15 21H20.4C20.7314 21 21 20.7314 21 20.4V3.6C21 3.26863 20.7314 3 20.4 3H15.6C15.2686 3 15 3.26863 15 3.6V9M15 9H9.6C9.26863 9 9 9.26863 9 9.6V16"
                             stroke="currentColor" stroke-width="1.5"></path>
                     </svg>
-
                     <span>Reports</span>
                 </div>
 
@@ -276,17 +187,14 @@ hover:translate-x-1 transition-all duration-200">
 
             <div x-show="open" x-transition class="ml-8 space-y-2">
 
-                <a href="#" class="menu-item block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Sales
+                <a href="#" wire:navigate
+                    class="menu-item block text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">Sales
                     Report</a>
-                <a href="#" class="block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Product
+                <a href="#" wire:navigate
+                    class="block text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">Product
                     Report</a>
-                <a href="#" class="block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">Customer
+                <a href="#" wire:navigate
+                    class="block text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">Customer
                     Report</a>
             </div>
 
@@ -294,13 +202,8 @@ hover:translate-x-1 transition-all duration-200">
 
         <!-- Settings -->
         <div x-data="{ open: false }" class="space-y-3">
-
-            <button @click="open = !open" class="h-10 w-full group flex items-center justify-between p-3 rounded-lg 
-                    text-gray-700 dark:text-gray-300 
-                    hover:bg-indigo-50 dark:hover:bg-indigo-500/10 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">
-
+            <button @click="open = !open"
+                class="h-10 w-full group flex items-center justify-between p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">
                 <div class="flex items-center gap-3">
                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="currentColor">
                         <path fill="currentColor"
@@ -321,55 +224,12 @@ hover:translate-x-1 transition-all duration-200">
 
             <div x-show="open" x-transition class="ml-8 space-y-2">
 
-                <a href="#" class="menu-item block text-gray-400 dark:text-gray-500 
-                    hover:text-indigo-600 dark:hover:text-indigo-400 
-                    hover:translate-x-1 transition-all duration-200 transition">General
+                <a href="#" wire:navigate
+                    class="menu-item block text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:translate-x-1 transition-all duration-200 transition">General
                     Settings</a>
-
             </div>
 
         </div>
 
     </div>
 </aside>
-
-
-
-<script>
-    // ScriptActiveMenu
-    const menuItems = document.querySelectorAll('.menu-item, .submenu-item');
-
-    menuItems.forEach(item => {
-        item.addEventListener('click', function () {
-
-            menuItems.forEach(i => {
-                i.classList.remove(
-                    'bg-indigo-100',
-                    'text-indigo-600',
-                    'dark:bg-indigo-500/10',
-                    'dark:text-indigo-400'
-                );
-
-                i.classList.add(
-                    'text-gray-500',
-                    'dark:text-gray-400'
-                );
-            });
-
-            this.classList.add(
-                'bg-indigo-100',
-                'text-indigo-600',
-                'dark:bg-indigo-500/10',
-                'dark:text-indigo-400'
-            );
-
-            this.classList.remove(
-                'text-gray-500',
-                'dark:text-gray-400'
-            );
-
-        });
-    });
-
-
-</script>
