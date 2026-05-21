@@ -1,0 +1,135 @@
+/* Fix scrollbar appearance in dark mode */
+aside {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.35) transparent;
+}
+
+/* WebKit browsers (Chrome, Edge, Safari) */
+aside::-webkit-scrollbar {
+    width: 8px;
+    /* slightly wider for better visibility */
+}
+
+aside::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 9999px;
+}
+
+aside::-webkit-scrollbar-thumb {
+    background-color: rgba(99, 102, 241, 0.25);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    /* creates spacing around thumb */
+    background-clip: content-box;
+}
+
+/* Light mode hover */
+aside::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(99, 102, 241, 0.45);
+}
+
+/* Dark mode specific styling */
+.dark aside {
+    scrollbar-color: rgba(129, 140, 248, 0.55) transparent;
+    /* Firefox */
+}
+
+.dark aside::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.dark aside::-webkit-scrollbar-thumb {
+    background-color: rgba(129, 140, 248, 0.45);
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.dark aside::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(129, 140, 248, 0.7);
+}
+
+.dark aside::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Put this at the END of your <style> block */
+
+/* Target the main page content scrollbar (the red-circled area) */
+main,
+.main-content,
+.content-wrapper,
+body {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.35) transparent;
+}
+
+/* Chrome, Edge, Safari */
+main::-webkit-scrollbar,
+.main-content::-webkit-scrollbar,
+.content-wrapper::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+main::-webkit-scrollbar-track,
+.main-content::-webkit-scrollbar-track,
+.content-wrapper::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 9999px;
+}
+
+main::-webkit-scrollbar-thumb,
+.main-content::-webkit-scrollbar-thumb,
+.content-wrapper::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    background-color: rgba(99, 102, 241, 0.25);
+    /* slate-400 */
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+main::-webkit-scrollbar-thumb:hover,
+.main-content::-webkit-scrollbar-thumb:hover,
+.content-wrapper::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(99, 102, 241, 0.45);
+}
+
+/* Dark mode */
+.dark main,
+.dark .main-content,
+.dark .content-wrapper,
+.dark body {
+    scrollbar-color: rgba(129, 140, 248, 0.55) transparent;
+    /* slate-300 */
+}
+
+.dark main::-webkit-scrollbar-track,
+.dark .main-content::-webkit-scrollbar-track,
+.dark .content-wrapper::-webkit-scrollbar-track,
+.dark body::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.dark main::-webkit-scrollbar-thumb,
+.dark .main-content::-webkit-scrollbar-thumb,
+.dark .content-wrapper::-webkit-scrollbar-thumb,
+.dark body::-webkit-scrollbar-thumb {
+    background-color: rgba(129, 140, 248, 0.45);
+    /* slate-200 */
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.dark main::-webkit-scrollbar-thumb:hover,
+.dark .main-content::-webkit-scrollbar-thumb:hover,
+.dark .content-wrapper::-webkit-scrollbar-thumb:hover,
+.dark body::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(129, 140, 248, 0.7);
+    /* slate-50 */
+}

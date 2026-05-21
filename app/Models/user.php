@@ -13,12 +13,14 @@ class user extends Authenticatable
     protected $table = 'users';
 
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'phone',
+        'facebook_id',
+        'avatar',
         'password',
         'role',
-        'avatar',
     ];
 
     protected $hidden = [
@@ -36,7 +38,7 @@ class user extends Authenticatable
         return $this->hasMany(OrderModel::class, 'user_id');
     }
 
-     public function addresses()
+    public function addresses()
     {
         return $this->hasMany(AddressModel::class, 'user_id');
     }

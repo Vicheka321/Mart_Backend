@@ -9,24 +9,84 @@ use Illuminate\Support\Facades\Storage;
 
 class BannerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // $banners = banners::where('status', true)
-        //     ->where(function ($query) {
-        //         $query->whereNull('start_date')
-        //             ->orWhere('start_date', '<=', now());
-        //     })
-        //     ->where(function ($query) {
-        //         $query->whereNull('end_date')
-        //             ->orWhere('end_date', '>=', now());
-        //     })
-        //     ->orderBy('sort_order', 'asc')
-        //     ->get();
+        $statusFilter = $request->query('status', 'all');
+        $now = now()->startOfDay();
 
-        $banners = banners::orderBy('sort_order')->get();
-        return view('Admin.banners', compact('banners'));
+        $query = Banners::orderBy('sort_order');
+
+        switch ($statusFilter) {
+            case 'active':
+                $query->where('status', 1)
+                    ->where(function ($q) use ($now) {
+                        $q->whereNull('start_date')
+                            ->orWhereDate('start_date', '<=', $now);
+                    })
+                    ->where(function ($q) use ($now) {
+                        $q->whereNull('end_date')
+                            ->orWhereDate('end_date', '>=', $now);
+                    });
+                break;
+
+            case 'scheduled':
+                $query->where('status', 1)
+                    ->whereNotNull('start_date')
+                    ->whereDate('start_date', '>', $now);
+                break;
+
+            case 'expired':
+                $query->where('status', 1)
+                    ->whereNotNull('end_date')
+                    ->whereDate('end_date', '<', $now);
+                break;
+
+            case 'inactive':
+                $query->where('status', 0);
+                break;
+
+                // 'all' — no filter, fall through
+        }
+
+        $banners = $query->get();
+
+        $banners->each(function ($banner) use ($now) {
+            $start = $banner->start_date
+                ? \Carbon\Carbon::parse($banner->start_date)->startOfDay()
+                : null;
+
+            $end = $banner->end_date
+                ? \Carbon\Carbon::parse($banner->end_date)->endOfDay()
+                : null;
+
+            // Manually disabled — check first, nothing else matters
+            if (! $banner->status) {
+                $banner->display_status = 'inactive';
+                $banner->is_lifetime    = false;  // disabled banners are never "lifetime"
+                return;
+            }
+
+            // Scheduled for the future
+            if ($start && $now->lt($start)) {
+                $banner->display_status = 'scheduled';
+                $banner->is_lifetime    = false;
+                return;
+            }
+
+            // Expired
+            if ($end && $now->gt($end)) {
+                $banner->display_status = 'expired';
+                $banner->is_lifetime    = false;
+                return;
+            }
+
+            // Active — lifetime only when there is no schedule at all
+            $banner->display_status = 'active';
+            $banner->is_lifetime    = is_null($start) && is_null($end);
+        });
+
+        return view('Admin.banners', compact('banners', 'statusFilter'));
     }
-
     // public function store(Request $request)
     // {
     //     $request->validate([

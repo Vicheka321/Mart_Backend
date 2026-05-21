@@ -26,7 +26,6 @@ class NewOrderCreated implements ShouldBroadcast
         ];
     }
 
-    // 👇 ADD THIS
     public function broadcastAs()
     {
         return 'new-order';

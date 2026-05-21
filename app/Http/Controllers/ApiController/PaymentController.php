@@ -441,6 +441,8 @@ class PaymentController extends Controller
                     'address',
                     'user'
                 ])->find($payment->order_id);
+
+                
                 broadcast(new NewOrderCreated($order));
 
 

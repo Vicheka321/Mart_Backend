@@ -15,6 +15,7 @@ use App\Http\Controllers\ApiController\AddressController;
 use App\Http\Controllers\ApiController\TelegramController;
 use App\Http\Controllers\ApiController\ProfileController;
 use App\Http\Controllers\ApiController\BannerController;
+use App\Http\Controllers\ApiController\CouponsController;
 use App\Http\Controllers\ApiController\PaymentController;
 
 Route::post('/send-otp', [AuthController::class, 'sendOtp'])->middleware('throttle:3,1');;
@@ -42,6 +43,10 @@ Route::get('/all-recommended', [ProductsController::class, 'allrecommended']);
 
 Route::post('/telegram/webhook', [TelegramController::class, 'handle']);
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/update-profile', [AuthController::class, 'updateProfile']);
+
+
     Route::post('/add-to-cart', [CartController::class, 'addToCart']);
     Route::get('/cart', [CartController::class, 'getCart']);
     Route::post('/update-cart', [CartController::class, 'updateCart']);
@@ -49,6 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::get('/checkout', [OrdersController::class, 'checkout']);
+    Route::post('/coupons/apply', [CouponsController::class, 'applyCoupon']);
     Route::post('/address', [AddressController::class, 'storeAddress']);
     Route::post('/payment/khqr', [PaymentController::class, 'generateQR']);
     Route::post('/check', [PaymentController::class, 'checkPayment']);
@@ -58,6 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/check-aba-pay', [PaymentController::class, 'checkStatusMD5ABA']);
 
     Route::post('/order', [OrdersController::class, 'placeOrder']);
+    Route::post('/order/cancel/{id}', [OrdersController::class, 'cancelOrder']);
     Route::get('/orders', [OrdersController::class, 'myOrders']);
 
 

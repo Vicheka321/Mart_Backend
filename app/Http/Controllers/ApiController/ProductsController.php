@@ -58,7 +58,9 @@ class ProductsController extends Controller
                     ->whereDate('start_date', '<=', $today)
                     ->whereDate('end_date', '>=', $today);
             }
-        ])->get();
+        ])->where('status', true)
+        ->where('quantity', '>', 0)
+        ->get();
 
         $products = $products->map(function ($product) {
 
@@ -364,6 +366,8 @@ class ProductsController extends Controller
             ->groupBy('products.id')
             ->orderByDesc('sold')
             ->take(20)
+            ->where('status', true)
+            ->where('quantity', '>', 0)
             ->get();
 
         // ✅ Eager load relationships (IMPORTANT)
@@ -521,6 +525,8 @@ class ProductsController extends Controller
         ])
             ->orderByDesc('created_at')
             ->take(2)
+            ->where('status', true)
+            ->where('quantity', '>', 0)
             ->get();
 
         $products = $products->map(function ($product) {
@@ -778,6 +784,8 @@ class ProductsController extends Controller
             ->where('status', 1)
             ->orderBy('sale_price', 'asc')
             ->take(10)
+            ->where('status', true)
+            ->where('quantity', '>', 0)
             ->get();
 
         $products = $products->map(function ($product) {
@@ -835,6 +843,8 @@ class ProductsController extends Controller
             ->selectRaw('COALESCE(SUM(order_items.qty),0) as sold')
             ->groupBy('products.id')
             ->orderByDesc('sold')
+            ->where('status', true)
+            ->where('quantity', '>', 0)
             ->get();
 
         // ✅ Eager load ALL relationships (important)
@@ -995,6 +1005,8 @@ class ProductsController extends Controller
             ->where('products.created_at', '>=', Carbon::now()->subDays($days))
             ->groupBy('products.id')
             ->orderByDesc('products.created_at')
+            ->where('status', true)
+            ->where('quantity', '>', 0)
             ->get();
 
         // ✅ eager load everything (NO N+1)
@@ -1074,6 +1086,8 @@ class ProductsController extends Controller
             ->withSum('orderItems as sold', 'qty')
             ->where('status', 1)
             ->orderBy('sale_price', 'asc')
+            ->where('status', true)
+            ->where('quantity', '>', 0)
             ->get();
 
         $products = $products->map(function ($product) {

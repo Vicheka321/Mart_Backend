@@ -180,7 +180,7 @@
 
 
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en" class="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -188,7 +188,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 
-    {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}">  --}}
+
+    <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}">
 
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -204,13 +205,46 @@
 
     <!-- Dark Mode -->
     <script>
-        const theme = localStorage.getItem('theme');
+        // ==========================
+        // Dark Mode Toggle (Global)
+        // ==========================
+        window.toggleDarkMode = function () {
+            const html = document.documentElement;
 
-        if (theme === 'dark') {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+            if (html.classList.contains('dark')) {
+                // Switch to Light Mode
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                // Switch to Dark Mode
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        };
+
+        // ==========================
+        // Apply Saved Theme on Load
+        // ==========================
+        (function () {
+            const theme = localStorage.getItem('theme');
+
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+
+        // Re-apply theme after Livewire navigation
+        document.addEventListener('livewire:navigated', function () {
+            const theme = localStorage.getItem('theme');
+
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
     </script>
 
     <!-- Toast Animation -->
@@ -249,7 +283,7 @@
     </style>
 
     <!-- Pusher -->
-    <script defer>
+    {{-- <script defer>
         document.addEventListener('DOMContentLoaded', function () {
 
             // Turn off debug logs
@@ -304,11 +338,12 @@
                 });
             }
         });
-    </script>
+    </script> --}}
 
-    @livewireStyles
 
 </head>
+
+{{--
 
 <body
     class="h-screen overflow-hidden bg-gray-100 dark:bg-gray-900 dark:text-white font-[Inter] transition-colors duration-300">
@@ -317,13 +352,15 @@
 
         <!-- Navbar -->
         <nav class="flex-shrink-0">
+            @persist('navbar')
             @auth
-                @if(auth()->user()->role == 'admin')
-                    @include('Admin.navbar')
-                @else
-                    @include('Staff.navbar')
-                @endif
+            @if(auth()->user()->role == 'admin')
+            @include('Admin.navbar')
+            @else
+            @include('Staff.navbar')
+            @endif
             @endauth
+            @endpersist
         </nav>
 
         <!-- Toast Container -->
@@ -334,11 +371,11 @@
             <!-- Sidebar -->
             <aside class="w-72 overflow-y-auto">
                 @auth
-                    @if(auth()->user()->role == 'admin')
-                        @include('Admin.sidebar')
-                    @else
-                        @include('Staff.sidebar')
-                    @endif
+                @if(auth()->user()->role == 'admin')
+                @include('Admin.sidebar')
+                @else
+                @include('Staff.sidebar')
+                @endif
                 @endauth
             </aside>
 
@@ -357,15 +394,85 @@
 
         </div>
 
-    </div>
+    </div> --}}
 
-    <!-- Page-specific scripts -->
-    @stack('scripts')
+    <body
+        class="h-screen overflow-hidden bg-gray-100 dark:bg-gray-900 dark:text-white font-[Inter] transition-colors duration-300">
 
-    <!-- Notification Sound -->
-    <audio id="orderSound" src="/sounds/notify.wav" preload="auto"></audio>
-    @livewireScripts
+        <div class="flex flex-col h-screen">
 
-</body>
+            {{-- ── NAVBAR: always on top ── --}}
+            <nav class="flex-shrink-0 relative z-[100] isolate">
+                @persist('navbar')
+                @auth
+                    @if(auth()->user()->role == 'admin')
+                        @include('Admin.navbar')
+                    @else
+                        @include('Staff.navbar')
+                    @endif
+                @endauth
+                @endpersist
+            </nav>
+
+            {{-- ── Toast: above everything ── --}}
+            <div id="toastContainer" class="fixed top-5 right-5 space-y-3 z-[300]"></div>
+
+            {{-- ── Body row: sidebar + main, trapped below navbar ── --}}
+            <div class="flex flex-1 min-h-0 relative z-0 isolate">
+
+                {{-- Sidebar --}}
+                <aside class="w-72 overflow-y-auto relative z-0 isolate">
+                    @auth
+                        @if(auth()->user()->role == 'admin')
+                            @include('Admin.sidebar')
+                        @else
+                            @include('Staff.sidebar')
+                        @endif
+                    @endauth
+                </aside>
+
+                {{-- Main Content --}}
+                <main class="flex-1 min-h-0 flex flex-col bg-white dark:bg-gray-800 relative z-0 isolate">
+                    <div class="flex-1 overflow-y-auto pl-0 pt-3 pr-2 pb-0">
+                        <div class="max-w-7xl mx-auto bg-gray-100 dark:bg-slate-700 rounded-3xl pl-6 pr-6 py-6">
+                            @yield('content')
+                        </div>
+                    </div>
+                </main>
+
+            </div>
+        </div>
+
+        <!-- Page-specific scripts -->
+        @stack('scripts')
+
+        <!-- Notification Sound -->
+        @persist('order-sound')
+        <audio id="orderSound" src="/sounds/notify.wav" preload="auto"></audio>
+        @endpersist
+
+
+
+        <script defer>
+            (function () {
+
+                if (window._wireNavigateFixed) return;
+                window._wireNavigateFixed = true;
+
+                document.addEventListener('livewire:navigated', function () {
+                    // Reset page-specific flags only
+                    window._ordersRealtimeReady = false;
+                    window._productsRealtimeReady = false;
+                    window._dashboardReady = false;
+                });
+            })();
+        </script>
+
+
+
+
+    </body>
+
+
 
 </html>

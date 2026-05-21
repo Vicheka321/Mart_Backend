@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\OrderModel;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -11,18 +12,33 @@ class OrderController extends Controller
     {
         $status = request('status');
 
-        $orders = OrderModel::with(['orderItems.product.category', 'orderItems.product.brand', 'orderItems.product.image', 'user', 'address', 'payment'])
+        $orders = OrderModel::with([
+            'orderItems.product.category',
+            'orderItems.product.brand',
+            'orderItems.product.image',
+            'user',
+            'address',
+            'payment'
+        ])
+            // Show only orders where payment status = paid
+            ->whereHas('payment', function ($q) {
+                $q->where('payment_status', 'paid');
+            })
+
+            // Optional order status filter
             ->when($status && $status != 'all', function ($q) use ($status) {
                 $q->where('status', $status);
             })
+
+            // Custom order status sorting
             ->orderByRaw("
-        CASE 
-            WHEN status = 'pending' THEN 1
-            WHEN status = 'processing' THEN 2
-            WHEN status = 'completed' THEN 3
-            WHEN status = 'cancelled' THEN 4
-        END
-    ")
+            CASE 
+                WHEN status = 'pending' THEN 1
+                WHEN status = 'processing' THEN 2
+                WHEN status = 'completed' THEN 3
+                WHEN status = 'cancelled' THEN 4
+            END
+        ")
             ->orderBy('created_at', 'asc')
             ->paginate(10)
             ->withQueryString();
@@ -30,11 +46,14 @@ class OrderController extends Controller
         $orders->getCollection()->transform(function ($order) {
             return [
                 'id' => $order->id,
-                'user_name' => $order->user->name ?? '',
+                'first_name' => $order->user->first_name ?? 'Customer',
+                'last_name'  => $order->user->last_name ?? '',
+                'avatar'     => $order->user->avatar ?? null,
                 'phone' => $order->address->phone ?? '',
                 'address' => $order->address->address ?? '',
                 'total' => $order->total_amount,
                 'payment_method' => $order->payment->payment_method ?? '',
+                'payment_status' => $order->payment->payment_status ?? '',
                 'status' => $order->status,
                 'created_at' => $order->created_at->format('Y-m-d H:i'),
 
@@ -51,8 +70,27 @@ class OrderController extends Controller
             ];
         });
 
+        $totalOrders = OrderModel::whereHas('payment', function ($q) {
+            $q->where('payment_status', 'paid');
+        })->count();
 
-        return view('admin.orders', compact('orders'));
+        $pendingOrders = OrderModel::where('status', 'pending')
+            ->whereHas('payment', fn($q) => $q->where('payment_status', 'paid'))
+            ->count();
+
+        $processingOrders = OrderModel::where('status', 'processing')
+            ->whereHas('payment', fn($q) => $q->where('payment_status', 'paid'))
+            ->count();
+
+        $completedOrders = OrderModel::where('status', 'completed')
+            ->whereHas('payment', fn($q) => $q->where('payment_status', 'paid'))
+            ->count();
+
+        $cancelledOrders = OrderModel::where('status', 'cancelled')
+            ->whereHas('payment', fn($q) => $q->where('payment_status', 'paid'))
+            ->count();
+
+        return view('admin.orders', compact('orders', 'totalOrders', 'pendingOrders', 'processingOrders', 'completedOrders', 'cancelledOrders'));
     }
     public function latest()
     {
@@ -77,16 +115,7 @@ class OrderController extends Controller
 
     public function notifications()
     {
-        // $orders = OrderModel::where('status', 'pending')
-        //     ->latest()
-        //     ->take(100)
-        //     ->get();
-        // $orders = OrderModel::where('status', 'pending')
-        //     ->whereRelation('payment', 'payment_status', 'paid')
-        //     ->with('payment')
-        //     ->latest()
-        //     ->take(100)
-        //     ->get();
+
 
         $orders = OrderModel::select('orders.*')
             ->join('payments', 'payments.order_id', '=', 'orders.id')
@@ -214,5 +243,61 @@ class OrderController extends Controller
                 ];
             })->values()->toArray()
         ]);
+    }
+
+    public function exportCSV()
+    {
+        $fileName = "orders.csv";
+
+        $orders = OrderModel::with('user')
+            ->orderBy('id')
+            ->get();
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+        ];
+
+        $callback = function () use ($orders) {
+            $file = fopen('php://output', 'w');
+
+            // Header
+            fputcsv($file, [
+                'ID',
+                'Customer',
+                'Phone',
+                'Total',
+                'Payment Method',
+                'Status',
+                'Created At'
+            ]);
+
+            foreach ($orders as $order) {
+                fputcsv($file, [
+                    $order->id,
+                    $order->user->name ?? 'Customer',
+                    $order->phone,
+                    $order->total,
+                    $order->payment_method,
+                    $order->status,
+                    $order->created_at,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportPDF()
+    {
+        $orders = OrderModel::with('user')
+            ->orderBy('id')
+            ->get();
+
+        $pdf = Pdf::loadView('Admin.PDF.orders_pdf', compact('orders'));
+
+        return $pdf->download('orders.pdf');
     }
 }

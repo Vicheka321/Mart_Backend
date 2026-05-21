@@ -128,7 +128,7 @@ class BrandsController extends Controller
     {
         $brands = BrandModel::orderBy('id')->get();
 
-        $pdf = Pdf::loadView('Admin.brands_pdf', compact('brands'));
+        $pdf = Pdf::loadView('Admin.PDF.brands_pdf', compact('brands'));
 
         return $pdf->download('brands.pdf');
     }

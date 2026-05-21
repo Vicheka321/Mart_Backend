@@ -1,5 +1,6 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
@@ -10,7 +11,12 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\TelegramController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SettingController;
 
 Route::get('/', function () {
     return view('Auth.login');
@@ -26,9 +32,10 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'admin'])->name('admin.dashboard');
 
     Route::get('/admin/banners', [BannerController::class, 'index'])->name('banners.index');
-    Route::post('/admin/banners', [BannerController::class, 'store'])->name('banners.store'); 
+    Route::post('/admin/banners', [BannerController::class, 'store'])->name('banners.store');
     Route::put('/admin/banners/{banner}', [BannerController::class, 'update'])->name('banners.update');
     Route::delete('/admin/banners/{banner}', [BannerController::class, 'destroy'])->name('banners.destroy');
+
 
     Route::get('/admin/products', [ProductController::class, 'index'])->name('products.index');
     Route::post('/admin/products', [ProductController::class, 'store'])->name('products.store');
@@ -56,11 +63,44 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::post('/admin/orders/{id}/status', [OrderController::class, 'changeStatus']);
     Route::post('/admin/orders/{id}/cancel', [OrderController::class, 'cancel']);
     Route::get('/admin/orders/{id}', [OrderController::class, 'show']);
+    Route::get('/admin/orders/export/csv', [OrderController::class, 'exportCSV'])->name('orders.export.csv');
+    Route::get('/admin/orders/export/pdf', [OrderController::class, 'exportPDF'])->name('orders.export.pdf');
 
 
 
     Route::get('/admin/customers', [CustomersController::class, 'customers'])->name('customers.index');
-    Route::patch('/admin/customers/{user}/change-role', [CustomersController::class, 'changeCustomerRole'])->name('admin.customers.change-role');
+    Route::post('/admin/customers', [CustomersController::class, 'store'])->name('admin.customers.store');
+
+    Route::patch('/admin/customers/{user}', [CustomersController::class, 'updateCustomer'])->name('admin.updateCustomer');
+    Route::get('/admin/customers/export/csv', [CustomersController::class, 'exportCustomersCSV'])->name('customers.export.csv');
+    Route::get('/admin/customers/export/pdf', [CustomersController::class, 'exportCustomersPDF'])->name('customers.export.pdf');
+
+    Route::get('/admin/promotions',[PromotionController::class, 'index'])->name('promotions.index');
+    Route::post('/admin/promotions', [PromotionController::class, 'store'])->name('promotions.store');
+    Route::put('/admin/promotions/{promotion}', [PromotionController::class, 'update'])->name('promotions.update');
+    Route::delete('/admin/promotions/{promotion}', [PromotionController::class, 'destroy'])->name('promotions.destroy');
+    // Route::get('/admin/promotions/{promotion}/products',[PromotionController::class, 'manageProducts'])->name('promotions.products');
+    Route::post('/admin/promotions/{promotion}/products',[PromotionController::class, 'attachProducts'])->name('promotions.products.attach');
+
+
+    Route::get('/admin/coupons', [CouponController::class, 'index'])->name('coupons.index');
+    Route::post('/admin/coupons', [CouponController::class, 'store'])->name('coupons.store');
+    Route::put('/admin/coupons/{coupon}', [CouponController::class, 'update'])->name('coupons.update');
+    Route::delete('/admin/coupons/{coupon}', [CouponController::class, 'destroy'])->name('coupons.destroy');
+
+
+
+
+
+
+    Route::get('/admin/reports', [ReportsController::class, 'index'])->name('reports.index');
+
+
+    Route::get('/admin/notifitions', [NotificationController::class, 'index'])->name('notifitions.index');
+    Route::post('/admin/notifications/store', [NotificationController::class, 'store']);
+
+    Route::get('/admin/settings', [SettingController::class, 'index'])->name('settings.index');
+
 });
 
 

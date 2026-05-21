@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Hash;
 use Twilio\Rest\Client;
 use App\Services\SmsService;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -85,9 +87,6 @@ class AuthController extends Controller
         Auth::logout();
         return redirect('/login');
     }
-
-
-
     public function sendOtp(Request $request)
     {
         $request->validate(['email' => 'required|email']);
@@ -103,8 +102,6 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'OTP sent to email']);
     }
-
-
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -128,7 +125,7 @@ class AuthController extends Controller
 
         $user = user::firstOrCreate(
             ['email' => $request->email],
-            ['name' => preg_replace('/\d+$/', '', explode('@', $request->email)[0])] // Default name from email
+            ['first_name' => preg_replace('/\d+$/', '', explode('@', $request->email)[0])]
         );
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -179,7 +176,6 @@ class AuthController extends Controller
     // }
 
     protected SmsService $sms;
-
     public function __construct(SmsService $sms)
     {
         $this->sms = $sms;
@@ -293,5 +289,102 @@ class AuthController extends Controller
                 "raw" => $request->all()
             ], 500);
         }
+    }
+
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'first_name'      => 'nullable|string|max:255',
+            'last_name'       => 'nullable|string|max:255',
+            'email'           => 'nullable|email|unique:users,email,' . $user->id,
+            'phone'           => 'nullable|string|max:20',
+            'facebook_id'     => 'nullable|string|max:255',
+            'remember_token'  => 'nullable|string|max:100',
+            'avatar'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        // Keep old data if field is not sent
+        $data = [
+            'first_name' => $request->filled('first_name')
+                ? $request->first_name
+                : $user->first_name,
+
+            'last_name' => $request->filled('last_name')
+                ? $request->last_name
+                : $user->last_name,
+
+            'email' => $request->has('email')
+                ? $request->email
+                : $user->email,
+
+            'phone' => $request->has('phone')
+                ? $request->phone
+                : $user->phone,
+
+            'facebook_id' => $request->has('facebook_id')
+                ? $request->facebook_id
+                : $user->facebook_id,
+
+            'remember_token' => $request->has('remember_token')
+                ? $request->remember_token
+                : $user->remember_token,
+        ];
+
+        if ($request->hasFile('avatar')) {
+
+            if ($user->avatar) {
+                $oldPath = str_replace(
+                    rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/',
+                    '',
+                    $user->avatar
+                );
+
+                Storage::disk('r2')->delete($oldPath);
+            }
+
+            $file = $request->file('avatar');
+
+            $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+            $path = 'avatars/' . $fileName;
+
+            Storage::disk('r2')->put(
+                $path,
+                file_get_contents($file),
+                'public'
+            );
+
+          
+            $data['avatar'] = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $path;
+        } else {
+     
+            $data['avatar'] = $user->avatar;
+        }
+
+        // Update user
+        User::where('id', $user->id)->update($data);
+
+        // Reload fresh data
+        $user = User::find($user->id);
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user' => [
+                'id'             => $user->id,
+                'first_name'     => $user->first_name,
+                'last_name'      => $user->last_name,
+                'email'          => $user->email,
+                'phone'          => $user->phone,
+                'facebook_id'    => $user->facebook_id,
+                'remember_token' => $user->remember_token,
+                'avatar'         => $user->avatar
+                    ? rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $user->avatar
+                    : null,
+                'role'           => $user->role,
+            ]
+        ]);
     }
 }

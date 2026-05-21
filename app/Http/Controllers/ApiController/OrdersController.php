@@ -15,6 +15,8 @@ use App\Models\PaymentModel;
 use Illuminate\Support\Facades\Auth;
 use App\Services\TelegramService;
 use App\Events\NewOrderCreated;
+use App\Models\CouponModel;
+use App\Models\CouponUsageModel;
 
 class OrdersController extends Controller
 {
@@ -54,7 +56,8 @@ class OrdersController extends Controller
     {
         $request->validate([
             'payment_method' => 'required|in:cash,khqr,aba',
-            'address_id' => 'required|exists:address,id'
+            'address_id' => 'required|exists:address,id',
+            'code' => 'nullable|string',
         ]);
 
         $user_id = Auth::id();
@@ -78,6 +81,7 @@ class OrdersController extends Controller
                 ], 400);
             }
             $total = 0;
+            $totalDiscount = 0;
 
             foreach ($items as $item) {
 
@@ -88,9 +92,119 @@ class OrdersController extends Controller
                         "Not enough stock for {$product->name}"
                     );
                 }
+                $unitPrice = $item->price;
+                $lineTotal = $item->qty * $unitPrice;
 
-                $total += $item->qty * $item->price;
+                $promotion = $product->promotions()
+                    ->where('status', true)
+                    ->where(function ($q) {
+                        $q->whereNull('start_date')
+                            ->orWhere('start_date', '<=', now());
+                    })
+                    ->where(function ($q) {
+                        $q->whereNull('end_date')
+                            ->orWhere('end_date', '>=', now()->toDateString());
+                    })
+                    ->orderByDesc('discount_value')
+                    ->first();
+
+                $promotionDiscount = 0;
+
+                if ($promotion) {
+                    if ($promotion->discount_type === 'percent') {
+                        $promotionDiscount =
+                            ($unitPrice * $promotion->discount_value / 100) * $item->qty;
+
+                        if (!is_null($promotion->max_discount)) {
+                            $promotionDiscount = min(
+                                $promotionDiscount,
+                                $promotion->max_discount
+                            );
+                        }
+                    } else {
+                        $promotionDiscount =
+                            $promotion->discount_value * $item->qty;
+                    }
+                    $promotionDiscount = min($promotionDiscount, $lineTotal);
+                }
+
+                $finalLineTotal = $lineTotal - $promotionDiscount;
+                $total += $finalLineTotal;
+                $totalDiscount += $promotionDiscount;
             }
+
+            $coupon = null;
+            $couponDiscount = 0;
+
+            if ($request->filled('code')) {
+                $couponCode = trim($request->code);
+
+                $coupon = CouponModel::where('code', 'ILIKE', $couponCode)
+                    ->where('status', true)
+                    ->first();
+
+                if (!$coupon) {
+                    throw new \Exception('Invalid coupon code.');
+                }
+
+                if (
+                    ($coupon->start_date && now()->lt($coupon->start_date)) ||
+                    ($coupon->end_date && now()->gt($coupon->end_date->endOfDay()))
+                ) {
+                    throw new \Exception(
+                        $coupon->start_date && now()->lt($coupon->start_date)
+                            ? 'This coupon is not active yet.'
+                            : 'This coupon has expired.'
+                    );
+                }
+
+                if ($total < $coupon->min_order_amount) {
+                    throw new \Exception(
+                        'Minimum order amount is $' .
+                            number_format($coupon->min_order_amount, 2)
+                    );
+                }
+
+                // Check global usage limit
+                if (
+                    !is_null($coupon->usage_limit) &&
+                    $coupon->used_count >= $coupon->usage_limit
+                ) {
+                    throw new \Exception('This coupon has reached its usage limit.');
+                }
+
+                // Check per-user usage limit
+                $userUsageCount = CouponUsageModel::where('coupon_id', $coupon->id)
+                    ->where('user_id', $user_id)
+                    ->count();
+
+                if ($userUsageCount >= $coupon->usage_limit_per_user) {
+                    throw new \Exception('You have already used this coupon.');
+                }
+
+                // Calculate coupon discount
+                if ($coupon->discount_type === 'percent') {
+                    $couponDiscount = ($total * $coupon->discount_value) / 100;
+
+                    // Apply maximum discount if configured
+                    if (!is_null($coupon->max_discount)) {
+                        $couponDiscount = min(
+                            $couponDiscount,
+                            $coupon->max_discount
+                        );
+                    }
+                } else {
+                    // Fixed discount
+                    $couponDiscount = $coupon->discount_value;
+                }
+
+                // Prevent discount from exceeding total
+                $couponDiscount = min($couponDiscount, $total);
+
+                // Apply coupon discount to final total
+                $total -= $couponDiscount;
+            }
+
 
             $order = OrderModel::create([
                 'user_id' => $user_id,
@@ -99,11 +213,19 @@ class OrdersController extends Controller
                 'total_amount' => $total,
                 'status' => 'pending'
             ]);
-            broadcast(new NewOrderCreated($order));
-            
 
+            if ($coupon && $couponDiscount > 0) {
+                CouponUsageModel::create([
+                    'coupon_id'       => $coupon->id,
+                    'user_id'         => $user_id,
+                    'order_id'        => $order->id,
+                    'discount_amount' => round($couponDiscount, 2),
+                ]);
+
+                // Increment used count
+                $coupon->increment('used_count');
+            }
             foreach ($items as $item) {
-
                 Order_itemModel::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
@@ -119,14 +241,13 @@ class OrdersController extends Controller
                 'payment_status' => 'pending',
                 'amount' => $total
             ]);
-
             CartItemModel::where('cart_id', $cart->id)
                 ->delete();
             DB::commit();
 
             if ($request->payment_method == 'cash') {
 
-            
+
                 app(TelegramService::class)->send(
                     "🚀 *NEW CASH ORDER*\n" .
                         "━━━━━━━━━━━━━━━\n" .
@@ -146,12 +267,9 @@ class OrdersController extends Controller
                 'data' => [
                     'order_id' => $order->id,
                     'payment_id' => $payment->id,
-
                     'payment_method' => $payment->payment_method,
                     'payment_status' => $payment->payment_status,
-
                     'amount' => number_format($total, 2, '.', ''),
-
                     'status' => $order->status
                 ]
             ]);
@@ -167,6 +285,126 @@ class OrdersController extends Controller
     }
 
 
+    // public function cancelOrder($id)
+    // {
+    //     DB::beginTransaction();
+
+    //     try {
+
+    //         $order = OrderModel::with('orderItems')->findOrFail($id);
+
+    //         // Prevent double cancel
+    //         if ($order->status === 'cancelled') {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Order already cancelled'
+    //             ]);
+    //         }
+
+    //         // Restore product stock
+    //         foreach ($order->orderItems as $item) {
+
+    //             ProductsModel::where('id', $item->product_id)
+    //                 ->increment('quantity', $item->qty);
+    //         }
+
+    //         // Remove coupon usage
+    //         $couponUsage = CouponUsageModel::where('order_id', $order->id)->first();
+
+    //         if ($couponUsage) {
+
+    //             $coupon = CouponModel::find($couponUsage->coupon_id);
+
+    //             if ($coupon && $coupon->used_count > 0) {
+    //                 $coupon->decrement('used_count');
+    //             }
+
+    //             $couponUsage->delete();
+    //         }
+
+    //         // Update payment status
+    //         // PaymentModel::where('order_id', $order->id)
+    //         //     ->update([
+    //         //         'payment_status' => 'cancelled'
+    //         //     ]);
+
+    //         // Update order status
+    //         $order->update([
+    //             'status' => 'cancelled'
+    //         ]);
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Order cancelled successfully'
+    //         ]);
+    //     } catch (\Exception $e) {
+
+    //         DB::rollback();
+
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+
+    public function cancelOrder($id)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $order = OrderModel::with('orderItems')->findOrFail($id);
+
+            // Restore stock
+            foreach ($order->orderItems as $item) {
+
+                ProductsModel::where('id', $item->product_id)
+                    ->increment('quantity', $item->qty);
+            }
+
+            // Remove coupon usage
+            $couponUsage = CouponUsageModel::where('order_id', $order->id)->first();
+
+            if ($couponUsage) {
+
+                $coupon = CouponModel::find($couponUsage->coupon_id);
+
+                if ($coupon && $coupon->used_count > 0) {
+                    $coupon->decrement('used_count');
+                }
+
+                $couponUsage->delete();
+            }
+
+            // Delete payment
+            PaymentModel::where('order_id', $order->id)->delete();
+
+            // Delete order items
+            Order_itemModel::where('order_id', $order->id)->delete();
+
+            // Delete order
+            $order->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order cancelled and deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+
+            DB::rollback();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function updateOrder(Request $request)
     {
         $validated = $request->validate([
