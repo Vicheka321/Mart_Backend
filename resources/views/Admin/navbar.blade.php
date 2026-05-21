@@ -300,7 +300,7 @@
     }
 </style>
 
-<nav class="w-full relative z-[100] isolate">
+<nav class="w-full relative">
     <div class="flex items-center justify-between px-6 pt-3 pb-3
                 bg-white dark:bg-gray-800
                 border-b border-gray-100 dark:border-gray-700/60
@@ -346,7 +346,7 @@
             </div>
 
             {{-- Notification bell --}}
-            <div class="nav-item-2 relative z-[110]">
+            <div class="nav-item-2">
                 <button onclick="toggleNotification()" class="bell-btn relative p-2 rounded-xl
                            text-gray-500 dark:text-gray-300
                            hover:bg-gray-100 dark:hover:bg-slate-700
@@ -402,7 +402,7 @@
             </div>
 
             {{-- Avatar / profile dropdown --}}
-            <div class="nav-item-3 nav-avatar relative z-[110]" x-data="{ open: false }">
+            <div class="nav-item-3 nav-avatar" x-data="{ open: false }">
                 <img @click="open = !open" src="{{ asset('images/icons/profile.jpg') }}"
                     class="w-9 h-9 rounded-full cursor-pointer border-2 border-gray-200 dark:border-gray-600"
                     alt="Profile">
