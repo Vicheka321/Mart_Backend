@@ -18,6 +18,13 @@ use App\Http\Controllers\ApiController\BannerController;
 use App\Http\Controllers\ApiController\CouponsController;
 use App\Http\Controllers\ApiController\PaymentController;
 
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'userLogin']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/verify-reset-otp', [AuthController::class, 'verifyResetOtp']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->middleware('throttle:3,1');;
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/send-otp', [AuthController::class, 'sendOtp'])->middleware('throttle:3,1');;
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/send-sms', [AuthController::class, 'sendSms']);
@@ -74,4 +81,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/my-profile', [ProfileController::class, 'myProfile']);
     Route::post('/my-profile/update', [ProfileController::class, 'updateProfile']);
+    Route::get('/my-addresses', [AddressController::class,'myAddress']);
 });

@@ -52,4 +52,9 @@ return [
         'app_id'  => env('PUSHER_APP_ID'),
         'cluster' => env('PUSHER_APP_CLUSTER'),
     ],
+
+    'unimtx' => [
+    'access_key' => env('UNIMTX_ACCESS_KEY'),
+    'base_url'   => env('UNIMTX_BASE_URL'),
+],
 ];

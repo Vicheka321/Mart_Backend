@@ -533,7 +533,7 @@
 
 
     {{-- ==================== EXPORT MODAL ==================== --}}
-    <div id="exportModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div id="exportModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[70] p-4">
         <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
                     rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
             <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
@@ -546,7 +546,7 @@
                     <h3 class="text-base font-semibold text-gray-900 dark:text-white">Export Data</h3>
                 </div>
                 <button onclick="closeExportModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" backdropstroke-width="1.8">
                         <path d="M18 6 6 18M6 6l12 12"/>
                     </svg>
                 </button>
@@ -607,7 +607,7 @@
 
     {{-- ==================== ADD / EDIT PRODUCT MODAL ==================== --}}
     <div id="productModal"
-         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-start justify-center z-50 px-4 py-8 overflow-y-auto">
+         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-start justify-center z-[70] px-4 py-8 overflow-y-auto">
         <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
                     rounded-2xl w-full max-w-3xl mx-auto shadow-2xl">
 

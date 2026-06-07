@@ -18,40 +18,315 @@ use App\Services\SmsService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use App\Services\UnimtxService;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    public function index() {}
 
+    protected UnimtxService $sms;
+    public function __construct(UnimtxService $sms)
+    {
+        $this->sms = $sms;
+    }
+    public function register(Request $request)
+    {
+        $request->validate([
+            'full_name' => 'required',
+            'login'      => 'required',
+
+            'password' => [
+                'required',
+                Password::min(8)
+                    ->mixedCase()
+                    ->letters()
+                    ->numbers()
+                    ->symbols(),
+            ],
+        ]);
+
+        $login = $request->login;
+
+        $otp = random_int(100000, 999999);
+
+        $payload = [
+            'full_name' => $request->full_name,
+            'password'   => Hash::make($request->password),
+        ];
+
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+
+            Otp::updateOrCreate(
+                ['email' => $login],
+                [
+                    'otp' => $otp,
+                    'payload' => json_encode($payload),
+                    'expires_at' => now()->addMinutes(5),
+                ]
+            );
+
+            Mail::to($login)->queue(new SendOtpMail($otp));
+        } else {
+
+            Otp::updateOrCreate(
+                ['phone' => $login],
+                [
+                    'otp' => $otp,
+                    'payload' => json_encode($payload),
+                    'expires_at' => now()->addMinutes(5),
+                ]
+            );
+            dd($otp);
+
+            $this->sms->sms(
+                $login,
+                "Your OTP is {$otp}"
+            );
+        }
+
+        return response()->json([
+            'message' => 'OTP sent successfully'
+        ]);
+    }
+    public function userLogin(Request $request)
+    {
+        $request->validate([
+            'login' => 'required',
+            'password' => 'required',
+        ]);
+
+        $field = filter_var($request->login, FILTER_VALIDATE_EMAIL)
+            ? 'email'
+            : 'phone';
+
+        if (!Auth::attempt([
+            $field => $request->login,
+            'password' => $request->password
+        ])) {
+
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
+        }
+
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        if ($user->role !== 'customer') {
+            Auth::logout();
+
+            return response()->json([
+                'message' => 'Access denied'
+            ], 403);
+        }
+        $user = User::find($user->id);
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login successful',
+            'token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user
+        ]);
+    }
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'login' => 'required'
+        ]);
+
+        $field = filter_var($request->login, FILTER_VALIDATE_EMAIL)
+            ? 'email'
+            : 'phone';
+
+        $user = User::where($field, $request->login)->first();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        $otp = random_int(100000, 999999);
+
+        Otp::updateOrCreate(
+            [$field => $request->login],
+            [
+                'otp' => $otp,
+                'expires_at' => now()->addMinutes(5),
+            ]
+        );
+
+        if ($field === 'email') {
+            Mail::to($request->login)
+                ->queue(new SendOtpMail($otp));
+        } else {
+            $this->sms->sms(
+                $request->login,
+                "Your reset OTP is {$otp}"
+            );
+        }
+
+        return response()->json([
+            'message' => 'OTP sent successfully'
+        ]);
+    }
+    public function verifyResetOtp(Request $request)
+    {
+        $request->validate([
+            'login' => 'required',
+            'otp' => 'required',
+        ]);
+
+        $field = filter_var($request->login, FILTER_VALIDATE_EMAIL)
+            ? 'email'
+            : 'phone';
+
+        $verify = Otp::where($field, $request->login)
+            ->first();
+
+        if (!$verify) {
+            return response()->json([
+                'message' => 'OTP record not found'
+            ], 404);
+        }
+
+        if ($verify->otp != $request->otp) {
+            return response()->json([
+                'message' => 'Invalid OTP'
+            ], 400);
+        }
+
+        if (now()->isAfter($verify->expires_at)) {
+            return response()->json([
+                'message' => 'OTP expired'
+            ], 400);
+        }
+
+        $resetToken = Str::random(64);
+
+        $verify->update([
+            'reset_token' => $resetToken,
+        ]);
+
+        return response()->json([
+            'message' => 'OTP verified',
+            'reset_token' => $resetToken,
+        ]);
+    }
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'reset_token' => 'required',
+            'new_password' => [
+                'required',
+                'confirmed',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
+            ],
+        ]);
+
+        $verify = Otp::where(
+            'reset_token',
+            $request->reset_token
+        )->first();
+
+        if (!$verify) {
+            return response()->json([
+                'message' => 'Invalid reset token'
+            ], 400);
+        }
+
+        $field = $verify->email ? 'email' : 'phone';
+
+        $login = $verify->email ?? $verify->phone;
+
+        $user = User::where($field, $login)->first();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        $user->update([
+            'password' => Hash::make(
+                $request->new_password
+            ),
+        ]);
+
+        $verify->delete();
+
+        $user->tokens()->delete();
+
+        $token = $user->createToken(
+            'auth_token'
+        )->plainTextToken;
+
+        return response()->json([
+            'message' => 'Password reset successfully',
+            'token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user,
+        ]);
+    }
+    public function resendOtp(Request $request)
+    {
+        $request->validate([
+            'login' => 'required',
+        ]);
+
+        $field = filter_var(
+            $request->login,
+            FILTER_VALIDATE_EMAIL
+        )
+            ? 'email'
+            : 'phone';
+
+        $otpRecord = Otp::where(
+            $field,
+            $request->login
+        )->first();
+
+        if (!$otpRecord) {
+            return response()->json([
+                'message' => 'OTP record not found'
+            ], 404);
+        }
+
+        $otp = random_int(100000, 999999);
+
+        $otpRecord->update([
+            'otp' => $otp,
+            'expires_at' => now()->addMinutes(5),
+        ]);
+
+        if ($field === 'email') {
+            Mail::to($request->login)
+                ->queue(new SendOtpMail($otp));
+        } else {
+            $this->sms->sms(
+                $request->login,
+                "Your OTP is {$otp}"
+            );
+        }
+
+        return response()->json([
+            'message' => 'OTP resent successfully'
+        ]);
+    }
     public function showLoginForm()
     {
         return view('Auth.login');
     }
-    // public function login(Request $request)
-    // {
-    //     $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
-
-    //     if (!Auth::attempt($request->only('email', 'password'))) {
-    //         return back()->withErrors([
-    //             'email' => 'Invalid email or password',
-    //         ]);
-    //     }
-
-    //     $user = Auth::user();
-
-    //     if ($user->role === 'admin') {
-    //         return redirect()->intended('admin/dashboard');
-    //     } elseif ($user->role === 'staff') {
-    //         return redirect()->intended('/staff/dashboard');
-    //     }
-    //     Auth::logout();
-    //     abort(403, 'Access denied');
-    // }
-
-
     public function login(Request $request)
     {
         $request->validate([
@@ -105,146 +380,60 @@ class AuthController extends Controller
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required'
+            'login' => 'required',
+            'otp'   => 'required'
         ]);
 
-        $verify = Otp::where('email', $request->email)->first();
+        $field = filter_var($request->login, FILTER_VALIDATE_EMAIL)
+            ? 'email'
+            : 'phone';
+
+        $verify = Otp::where($field, $request->login)->first();
 
         if (!$verify) {
-            return response()->json(['message' => 'Email not found'], 404);
+            return response()->json([
+                'message' => 'OTP record not found'
+            ], 404);
         }
 
         if ($verify->otp != $request->otp) {
-            return response()->json(['message' => 'Invalid OTP'], 400);
-        }
-
-        if (now()->isAfter($verify->expires_at)) {
-            return response()->json(['message' => 'OTP expired'], 400);
-        }
-
-        $user = user::firstOrCreate(
-            ['email' => $request->email],
-            ['first_name' => preg_replace('/\d+$/', '', explode('@', $request->email)[0])]
-        );
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-
-        return response()->json([
-            'status' => 'Otp Verified Successfully',
-            'token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
-        ]);
-    }
-
-    // public function sendSms(Request $request, TwilioService $twilio)
-    // {
-    //     $request->validate([
-    //         'phone' => 'required'
-    //     ]);
-
-    //     $phone = $request->phone;
-
-    //     $otp = random_int(100000, 999999); // better than rand()
-
-    //     Otp::updateOrCreate(
-    //         ['phone' => $phone],
-    //         [
-    //             'otp' => $otp,
-    //             'expires_at' => now()->addMinutes(5)
-    //         ]
-    //     );
-
-    //     try {
-
-    //         $twilio->sendSms(
-    //             $phone,
-    //             "Your OTP is $otp"
-    //         );
-
-    //         return response()->json([
-    //             'message' => 'OTP Sent'
-    //         ]);
-    //     } catch (\Exception $e) {
-
-    //         return response()->json([
-    //             'error' => $e->getMessage()
-    //         ], 400);
-    //     }
-    // }
-
-    protected SmsService $sms;
-    public function __construct(SmsService $sms)
-    {
-        $this->sms = $sms;
-    }
-    public function send(Request $request)
-    {
-        $request->validate([
-            'phone'   => 'required|string',
-            'message' => 'required|string|max:160',
-        ]);
-
-        // ផ្ញើ SMS ជាភាសាខ្មែរបានដែរ ✅
-        $success = $this->sms->send(
-            $request->phone,
-            $request->message
-        );
-
-        if ($success) {
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'SMS បានផ្ញើដោយជោគជ័យ!',
-            ]);
-        }
-
-        return response()->json([
-            'status'  => 'error',
-            'message' => 'ផ្ញើ SMS មិនបានទេ!',
-        ], 500);
-    }
-    public function sendSms(Request $request)
-    {
-        $request->validate([
-            'phone' => 'required|string'
-        ]);
-
-        $phone = $request->phone;
-
-        $code = random_int(100000, 999999);
-        $msg  = "លេខកូដ OTP: {$code} (មានសុពលភាព 5 នាទី)";
-
-        $this->sms->send($phone, $msg);
-
-        Cache::put("otp_{$phone}", $code, now()->addMinutes(5));
-
-        return response()->json([
-            'status' => 'success'
-        ]);
-    }
-
-    public function verifySms(Request $request)
-    {
-        $otp = Otp::where('phone', $request->phone)
-            ->where('otp', $request->otp)
-            ->where('expires_at', '>', now())
-            ->first();
-
-        if (!$otp) {
             return response()->json([
                 'message' => 'Invalid OTP'
             ], 400);
         }
 
-        $otp->delete();
+        if (now()->isAfter($verify->expires_at)) {
+            return response()->json([
+                'message' => 'OTP expired'
+            ], 400);
+        }
+
+        $payload = json_decode($verify->payload, true);
+
+        $userData = [
+            'full_name' => $payload['full_name'],
+            'password'   => $payload['password'],
+        ];
+
+        if ($field === 'email') {
+            $userData['email'] = $request->login;
+        } else {
+            $userData['phone'] = $request->login;
+        }
+
+        $user = User::create($userData);
+
+        $verify->delete();
+
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Verified'
+            'status' => 'OTP Verified Successfully',
+            'token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user
         ]);
     }
-
     public function googleLogin(Request $request)
     {
         try {
@@ -290,15 +479,12 @@ class AuthController extends Controller
             ], 500);
         }
     }
-
-
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
 
         $request->validate([
-            'first_name'      => 'nullable|string|max:255',
-            'last_name'       => 'nullable|string|max:255',
+            'full_name'      => 'nullable|string|max:255',
             'email'           => 'nullable|email|unique:users,email,' . $user->id,
             'phone'           => 'nullable|string|max:20',
             'facebook_id'     => 'nullable|string|max:255',
@@ -308,13 +494,10 @@ class AuthController extends Controller
 
         // Keep old data if field is not sent
         $data = [
-            'first_name' => $request->filled('first_name')
-                ? $request->first_name
-                : $user->first_name,
+            'full_name' => $request->filled('full_name')
+                ? $request->full_name
+                : $user->full_name,
 
-            'last_name' => $request->filled('last_name')
-                ? $request->last_name
-                : $user->last_name,
 
             'email' => $request->has('email')
                 ? $request->email
@@ -357,10 +540,10 @@ class AuthController extends Controller
                 'public'
             );
 
-          
+
             $data['avatar'] = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $path;
         } else {
-     
+
             $data['avatar'] = $user->avatar;
         }
 
@@ -374,8 +557,7 @@ class AuthController extends Controller
             'message' => 'Profile updated successfully',
             'user' => [
                 'id'             => $user->id,
-                'first_name'     => $user->first_name,
-                'last_name'      => $user->last_name,
+                'full_name'      => $user->full_name,
                 'email'          => $user->email,
                 'phone'          => $user->phone,
                 'facebook_id'    => $user->facebook_id,
@@ -387,4 +569,138 @@ class AuthController extends Controller
             ]
         ]);
     }
+
+
+
+
+
+
+
+
+
+
+    // public function verifyOtp(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'otp' => 'required'
+    //     ]);
+
+    //     $verify = Otp::where('email', $request->email)->first();
+
+    //     if (!$verify) {
+    //         return response()->json(['message' => 'Email not found'], 404);
+    //     }
+
+    //     if ($verify->otp != $request->otp) {
+    //         return response()->json(['message' => 'Invalid OTP'], 400);
+    //     }
+
+    //     if (now()->isAfter($verify->expires_at)) {
+    //         return response()->json(['message' => 'OTP expired'], 400);
+    //     }
+
+    //     $user = user::firstOrCreate(
+    //         ['email' => $request->email],
+    //         ['first_name' => preg_replace('/\d+$/', '', explode('@', $request->email)[0])]
+    //     );
+
+    //     $token = $user->createToken('auth_token')->plainTextToken;
+
+
+    //     return response()->json([
+    //         'status' => 'Otp Verified Successfully',
+    //         'token' => $token,
+    //         'token_type' => 'Bearer',
+    //         'user' => $user
+    //     ]);
+    // }
+
+    // public function sendSms(Request $request, TwilioService $twilio)
+    // {
+    //     $request->validate([
+    //         'phone' => 'required'
+    //     ]);
+
+    //     $phone = $request->phone;
+
+    //     $otp = random_int(100000, 999999); // better than rand()
+
+    //     Otp::updateOrCreate(
+    //         ['phone' => $phone],
+    //         [
+    //             'otp' => $otp,
+    //             'expires_at' => now()->addMinutes(5)
+    //         ]
+    //     );
+
+    //     try {
+
+    //         $twilio->sendSms(
+    //             $phone,
+    //             "Your OTP is $otp"
+    //         );
+
+    //         return response()->json([
+    //             'message' => 'OTP Sent'
+    //         ]);
+    //     } catch (\Exception $e) {
+
+    //         return response()->json([
+    //             'error' => $e->getMessage()
+    //         ], 400);
+    //     }
+    // }
+
+    // protected SmsService $sms;
+    // public function __construct(SmsService $sms)
+    // {
+    //     $this->sms = $sms;
+    // }
+    // public function send(Request $request)
+    // {
+    //     $request->validate([
+    //         'phone'   => 'required|string',
+    //         'message' => 'required|string|max:160',
+    //     ]);
+
+    //     // ផ្ញើ SMS ជាភាសាខ្មែរបានដែរ ✅
+    //     $success = $this->sms->send(
+    //         $request->phone,
+    //         $request->message
+    //     );
+
+    //     if ($success) {
+    //         return response()->json([
+    //             'status'  => 'success',
+    //             'message' => 'SMS បានផ្ញើដោយជោគជ័យ!',
+    //         ]);
+    //     }
+
+    //     return response()->json([
+    //         'status'  => 'error',
+    //         'message' => 'ផ្ញើ SMS មិនបានទេ!',
+    //     ], 500);
+    // }
+    // public function sendSms(Request $request)
+    // {
+    //     $request->validate([
+    //         'phone' => 'required|string'
+    //     ]);
+
+    //     $phone = $request->phone;
+
+    //     $code = random_int(100000, 999999);
+    //     $msg  = "លេខកូដ OTP: {$code} (មានសុពលភាព 5 នាទី)";
+
+    //     $this->sms->send($phone, $msg);
+
+    //     Cache::put("otp_{$phone}", $code, now()->addMinutes(5));
+
+    //     return response()->json([
+    //         'status' => 'success'
+    //     ]);
+    // }
+
+
 }

@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
     {
         // Admin
         User::create([
-            'first_name' => 'Admin',
+            'full_name' => 'Admin',
             'email' => 'admin@gmail.com',
             'phone' => '012345678',
             'password' => Hash::make('11112222'),
@@ -22,17 +22,16 @@ class UserSeeder extends Seeder
 
         // Staff
         User::create([
-            'first_name' => 'Staff',
+            'full_name' => 'Staff',
             'email' => 'staff@gmail.com',
             'phone' => '098765432',
             'password' => Hash::make('11112222'),
             'role' => 'staff'
         ]);
 
-        for ($i = 1; $i <= 5000; $i++) {
+        for ($i = 1; $i <= 500; $i++) {
             User::create([
-                'first_name' => fake()->firstName(),
-                'last_name'  => fake()->lastName(),
+                'full_name' => fake()->firstName() . ' ' . fake()->lastName(),
                 'email'      => fake()->unique()->safeEmail(),
                 'phone'      => '09' . rand(10000000, 99999999),
 

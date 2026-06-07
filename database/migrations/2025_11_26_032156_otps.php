@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('otp');
+            $table->longText('payload')->nullable()->after('otp');
+            $table->string('reset_token')->nullable()->after('otp');
             $table->timestamp('expires_at');
             $table->timestamps();
         });

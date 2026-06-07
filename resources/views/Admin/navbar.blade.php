@@ -300,7 +300,7 @@
     }
 </style>
 
-<nav class="w-full relative">
+<nav class="w-full relative z-40">
     <div class="flex items-center justify-between px-6 pt-3 pb-3
                 bg-white dark:bg-gray-800
                 border-b border-gray-100 dark:border-gray-700/60
@@ -373,7 +373,7 @@
                 <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80
                             bg-white dark:bg-[#1e293b]
                             border border-gray-200 dark:border-gray-700
-                            rounded-2xl shadow-2xl overflow-hidden z-[200]">
+                            rounded-2xl shadow-2xl overflow-hidden z-[65]">
 
                     <div class="px-4 py-3 flex items-center justify-between
                                 border-b border-gray-100 dark:border-gray-700">
@@ -402,7 +402,7 @@
             </div>
 
             {{-- Avatar / profile dropdown --}}
-            <div class="nav-item-3 nav-avatar" x-data="{ open: false }">
+            <div class="nav-item-3 nav-avatar relative" x-data="{ open: false }">
                 <img @click="open = !open" src="{{ asset('images/icons/profile.jpg') }}"
                     class="w-9 h-9 rounded-full cursor-pointer border-2 border-gray-200 dark:border-gray-600"
                     alt="Profile">
@@ -410,7 +410,7 @@
                 <div x-cloak x-show="open" @click.outside="open = false"
                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95"
                     x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute right-6 mt-3 w-56
+                    x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute right-6  top-full mt-3 w-56 z-50
             bg-white dark:bg-gray-900
             border border-gray-100 dark:border-gray-700
             rounded-2xl shadow-2xl p-3 space-y-1 z-[200]">

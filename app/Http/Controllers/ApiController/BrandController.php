@@ -7,11 +7,21 @@ use Illuminate\Http\Request;
 use App\Models\BrandModel;
 use App\Models\ProductsModel;
 use Carbon\Carbon;
+
 class BrandController extends Controller
 {
+    // public function index()
+    // {
+    //     return BrandModel::all();
+    // }
+
     public function index()
     {
-        return BrandModel::all();
+        $brands = BrandModel::with([
+            'products.firstImage'
+        ])->get();
+
+        return response()->json($brands);
     }
     // public function getProductById($id)
     // {

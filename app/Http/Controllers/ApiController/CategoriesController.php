@@ -12,9 +12,18 @@ use App\Models\PromotionModel;
 
 class CategoriesController extends Controller
 {
+    // public function index()
+    // {
+    //     return Category::all();
+    // }
+
     public function index()
     {
-        return Category::all();
+        $categories = Category::with([
+            'products.firstImage'
+        ])->get();
+
+        return response()->json($categories);
     }
 
     public function getProductsByCategory($id)

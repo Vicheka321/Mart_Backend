@@ -494,7 +494,7 @@
                         @forelse($customers as $user)
                             @php
                                 $isVip      = $user->total_spent > 1000;
-                                $words      = preg_split('/\s+/', trim($user->name ?? ''));
+                                $words      = preg_split('/\s+/', trim($user->full_name ?? ''));
                                 $initials   = strtoupper(substr($words[0] ?? '', 0, 1) . substr($words[1] ?? '', 0, 1));
                                 $avatarGrad = match ($user->role ?? 'customer') {
                                     'staff'  => 'from-violet-500 to-purple-600',
@@ -507,8 +507,7 @@
 
                             <tr class="customer-row hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-all duration-200"
                                 data-id="{{ $user->id }}"
-                                data-first_name="{{ strtolower($user->first_name ?? '') }}"
-                                data-last_name="{{ strtolower($user->last_name ?? '') }}"
+                                data-full_name="{{ strtolower($user->full_name ?? '') }}"
                                 data-email="{{ strtolower($user->email) }}"
                                 data-phone="{{ strtolower($user->phone ?? '') }}"
                                 data-role="{{ $user->role ?? 'customer' }}">
@@ -517,18 +516,18 @@
                                 <td class="px-4 sm:px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         @if($user->avatar)
-                                            <img src="{{ $user->avatar }}" alt="{{ $user->first_name }}"
+                                            <img src="{{ $user->avatar }}" alt="{{ $user->full_name }}"
                                                  class="avatar-ring w-9 h-9 rounded-2xl object-cover shadow-md ring-2 ring-white dark:ring-gray-800">
                                         @else
                                             <div class="avatar-ring w-9 h-9 rounded-2xl bg-gradient-to-br {{ $avatarGrad }}
                                                         shadow-md ring-2 ring-white dark:ring-gray-800
                                                         flex items-center justify-center text-xs font-bold text-white">
-                                                {{ $initials ?: strtoupper(substr($user->first_name ?? 'U', 0, 1)) }}
+                                                {{ $initials ?: strtoupper(substr($user->full_name ?? 'U', 0, 1)) }}
                                             </div>
                                         @endif
                                         <div class="min-w-0">
                                             <div class="font-medium text-gray-900 dark:text-white truncate text-sm">
-                                                {{ trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) }}
+                                                {{ $user->full_name }}
                                             </div>
                                             {{-- Show email inline on mobile --}}
                                             <div class="text-[11px] text-gray-400 truncate md:hidden">
@@ -602,12 +601,12 @@
                                 <td class="px-4 sm:px-6 py-4 text-right">
                                     <button onclick="editUser(
                                                 {{ $user->id }},
-                                                '{{ addslashes($user->first_name ?? '') }}',
-                                                '{{ addslashes($user->last_name ?? '') }}',
+                                                '{{ addslashes($user->full_name ?? '') }}',
                                                 '{{ addslashes($user->email) }}',
                                                 '{{ addslashes($user->phone ?? '') }}',
                                                 '{{ $user->role ?? 'customer' }}',
-                                                '{{ $user->avatar ?? '' }}')"
+                                                '{{ $user->avatar ?? '' }}'
+                                            )"
                                         class="action-btn inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg
                                                bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400
                                                hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
@@ -776,25 +775,18 @@
                             <span class="text-[11px] font-medium tracking-widest text-gray-400 dark:text-gray-500 uppercase whitespace-nowrap">Personal details</span>
                             <div class="flex-1 h-px bg-gray-100 dark:bg-gray-700"></div>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">First name</label>
+                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Full name</label>
                                 <div class="relative">
                                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                                     </svg>
-                                    <input type="text" name="first_name" id="editFirstName" required
+                                    <input type="text" name="full_name" id="editFullName" required placeholder="John Doe"
                                         class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
                                                bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400
                                                focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
                                 </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Last name</label>
-                                <input type="text" name="last_name" id="editLastName"
-                                    class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
-                                           bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400
-                                           focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
@@ -804,7 +796,7 @@
                                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                                         <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
                                     </svg>
-                                    <input type="email" name="email" id="editEmail" required
+                                    <input type="email" name="email" id="editEmail" required placeholder="john.doe@example.com"
                                         class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
                                                bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400
                                                focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
@@ -816,7 +808,7 @@
                                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
                                     </svg>
-                                    <input type="text" name="phone" id="editPhone"
+                                    <input type="text" name="phone" id="editPhone" placeholder="+855 0123-4567"
                                         class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
                                                bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400
                                                focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
@@ -985,18 +977,16 @@
     // ══════════════════════════════════════════════════════
     //  EDIT USER
     // ══════════════════════════════════════════════════════
-    function editUser(id, firstName, lastName, email, phone, role, avatar) {
+    function editUser(id, fullName, email, phone, role, avatar) {
         document.getElementById('userModalTitle').textContent = 'Edit profile';
         document.getElementById('userForm').action = '/admin/customers/' + id;
         document.getElementById('formMethod').value = 'PATCH';
 
-        document.getElementById('editFirstName').value = firstName ?? '';
-        document.getElementById('editLastName').value  = lastName  ?? '';
+        document.getElementById('editFullName').value = fullName ?? '';
         document.getElementById('editEmail').value     = email     ?? '';
         document.getElementById('editPhone').value     = phone     ?? '';
         document.getElementById('editRole').value      = role      ?? 'customer';
 
-        const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'User';
         document.getElementById('avatarName').textContent  = fullName;
         document.getElementById('avatarEmail').textContent = email ?? '';
         document.getElementById('editAvatar').src = (avatar && avatar.trim())
@@ -1029,7 +1019,7 @@
         document.getElementById('userModalTitle').textContent = 'Add User';
         document.getElementById('userForm').action = '/admin/customers';
         document.getElementById('formMethod').value = 'POST';
-        ['editFirstName','editLastName','editEmail','editPhone','editPassword','editPasswordConfirmation'].forEach(id => {
+        ['editFullName','editEmail','editPhone','editPassword','editPasswordConfirmation'].forEach(id => {
             document.getElementById(id).value = '';
         });
         document.getElementById('editRole').value = 'customer';
@@ -1083,19 +1073,57 @@
                     const rowId   = url.split('/').pop();
                     const row     = document.querySelector(`tr[data-id="${rowId}"]`);
                     if (row) {
-                        const fullName = [payload.first_name, payload.last_name].filter(Boolean).join(' ');
-                        const nameCell = row.querySelector('td:first-child .font-medium');
-                        if (nameCell) nameCell.textContent = fullName;
+                        const fullName = payload.full_name || 'User';
 
-                        // Update data attributes for search
-                        row.dataset.first_name = (payload.first_name || '').toLowerCase();
-                        row.dataset.last_name  = (payload.last_name  || '').toLowerCase();
-                        row.dataset.email      = (payload.email      || '').toLowerCase();
-                        row.dataset.phone      = (payload.phone      || '').toLowerCase();
+                        // name
+                        const nameCell = row.querySelector(
+                            'td:first-child .font-medium'
+                        );
 
-                        // Flash row
-                        row.style.background = 'rgba(99,102,241,.08)';
-                        setTimeout(() => { row.style.background = ''; }, 1200);
+                        if (nameCell) {
+                            nameCell.textContent = fullName;
+                        }
+
+                        // email
+                        const emailCell = row.querySelector(
+                            'td:nth-child(2) .text-sm'
+                        );
+
+                        if (emailCell) {
+                            emailCell.textContent = payload.email || '';
+                        }
+
+                        // phone
+                        const phoneCell = row.querySelector(
+                            'td:nth-child(2) .text-xs'
+                        );
+
+                        if (phoneCell) {
+                            phoneCell.textContent =
+                                payload.phone || 'No phone';
+                        }
+
+                        // role dataset
+                        row.dataset.role =
+                            (payload.role || 'customer').toLowerCase();
+
+                        // search dataset
+                        row.dataset.full_name =
+                            (payload.full_name || '').toLowerCase();
+
+                        row.dataset.email =
+                            (payload.email || '').toLowerCase();
+
+                        row.dataset.phone =
+                            (payload.phone || '').toLowerCase();
+
+                        // flash effect
+                        row.style.background =
+                            'rgba(99,102,241,.08)';
+
+                        setTimeout(() => {
+                            row.style.background = '';
+                        }, 1200);
                     }
                 } else {
                     // New user: reload after short delay so the toast shows
@@ -1124,7 +1152,7 @@
         let vis     = 0;
 
         rows.forEach(row => {
-            const match = ['first_name','last_name','email','phone','id'].some(k =>
+            const match = ['full_name','email','phone','id'].some(k =>
                 (row.dataset[k] || '').includes(q));
             row.style.display = match ? '' : 'none';
             if (match) vis++;

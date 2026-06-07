@@ -27,7 +27,7 @@ class OrderSeeder extends Seeder
         }
 
         // Create 50,000 fake orders
-        for ($i = 1; $i <= 50000; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             $customerId = $customers->random();
 
             // Random order date in last 2 years
@@ -65,10 +65,10 @@ class OrderSeeder extends Seeder
                 'user_id'        => $customerId,
                 'address_id'     => $address->id,
                 'status'         => fake()->randomElement([
-                    'pending',
-                    'processing',
+                    // 'pending',
+                    // 'processing',
                     'completed',
-                    'cancelled'
+                    // 'cancelled'
                 ]),
                 'total_amount'   => 0, // update later
                 'payment_method' => $paymentMethod,

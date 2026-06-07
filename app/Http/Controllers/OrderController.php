@@ -46,8 +46,7 @@ class OrderController extends Controller
         $orders->getCollection()->transform(function ($order) {
             return [
                 'id' => $order->id,
-                'first_name' => $order->user->first_name ?? 'Customer',
-                'last_name'  => $order->user->last_name ?? '',
+                'full_name' => $order->user->full_name ?? 'Customer',
                 'avatar'     => $order->user->avatar ?? null,
                 'phone' => $order->address->phone ?? '',
                 'address' => $order->address->address ?? '',

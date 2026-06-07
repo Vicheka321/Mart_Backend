@@ -107,8 +107,7 @@ class CustomersController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'first_name' => ['required', 'string', 'max:100'],
-            'last_name'  => ['nullable', 'string', 'max:100'],
+            'full_name'  => ['nullable', 'string', 'max:100'],
             'email'      => ['required', 'email', 'unique:users,email'],
             'phone'      => ['nullable', 'string', 'unique:users,phone'],
             'role'       => ['required', 'in:customer,staff,admin'],
@@ -284,8 +283,7 @@ class CustomersController extends Controller
         }
 
         $validated = $request->validate([
-            'first_name' => ['required', 'string', 'max:100'],
-            'last_name'  => ['nullable', 'string', 'max:100'],
+            'full_name' => ['required', 'string', 'max:100'],
             'email'      => [
                 'required',
                 'email',
@@ -304,8 +302,7 @@ class CustomersController extends Controller
 
         // Prepare data for update
         $data = [
-            'first_name' => $validated['first_name'],
-            'last_name'  => $validated['last_name'] ?? null,
+            'full_name' => $validated['full_name'],
             'email'      => $validated['email'],
             'phone'      => $validated['phone'] ?? null,
             'role'       => $validated['role'],

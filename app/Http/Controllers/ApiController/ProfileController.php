@@ -17,7 +17,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'id' => $user->id,
-            'name' => $user->name,
+            'full_name' => $user->full_name,
             'email' => $user->email,
             'phone' => $user->phone,
             'avatar' => $user->avatar,
@@ -25,56 +25,81 @@ class ProfileController extends Controller
         ]);
     }
 
-    // public function update(Request $request)
-    // {
-    //     $user = Auth::user();
+    public function updateProfile(Request $request)
+    {
+        $user_id = Auth::id();
+        $user = User::find($user_id);
 
-    //     $request->validate([
-    //         'name' => 'required',
-    //         'phone' => 'nullable',
-    //         'avatar' => 'nullable|image|max:2048'
-    //     ]);
+        $validated = $request->validate([
+            'full_name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+            'avatar' => 'nullable|image|max:2048',
+            'facebook_id' => 'nullable|string|max:255|unique:users,facebook_id,' . $user->id,
+            'fcm_token' => 'nullable|string|max:255',
+        ]);
 
-    //     $data = [
-    //         'name' => $request->name,
-    //         'phone' => $request->phone,
-    //     ];
+        /// Default update data
+        $data = [
+            'full_name' => $validated['first_name'] ?? $user->first_name,
+            'last_name' => $validated['last_name'] ?? $user->last_name,
+            'email' => $validated['email'] ?? $user->email,
+            'phone' => $validated['phone'] ?? $user->phone,
+            'facebook_id' => $validated['facebook_id'] ?? $user->facebook_id,
+            'fcm_token' => $validated['fcm_token'] ?? $user->fcm_token,
+            'avatar' => $user->avatar,
+        ];
+        /// Upload avatar
+        if ($request->hasFile('avatar')) {
 
-    //     if ($request->hasFile('avatar')) {
+            /// Delete old avatar
+            if ($user->avatar) {
+                Storage::disk('r2')->delete(
+                    $user->avatar
+                );
+            }
 
-    //         // 🔥 delete old avatar (optional but good)
-    //         if ($user->avatar) {
-    //             Storage::disk('r2')->delete($user->avatar);
-    //         }
+            $file = $request->file('avatar');
 
-    //         $file = $request->file('avatar');
+            $fileName =
+                Str::uuid() . '.' .
+                $file->getClientOriginalExtension();
 
-    //         $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            $path = 'avatars/' . $fileName;
 
-    //         $path = 'avatars/' . $fileName;
+            /// Upload to R2
+            Storage::disk('r2')->put(
+                $path,
+                file_get_contents($file),
+                'public'
+            );
 
-    //         Storage::disk('r2')->putFileAs(
-    //             'avatars',
-    //             $file,
-    //             $fileName,
-    //             'public'
-    //         );
+            /// Save full URL
+            $data['avatar'] =
+                rtrim(
+                    env('R2_PUBLIC_BASE_URL'),
+                    '/'
+                ) . '/' . $path;
+        }
 
-    //         $data['avatar'] = $path;
-    //     }
+        /// Update user
+        $user->update($data);
 
-    //     $user->update($data);
+        return response()->json([
 
-    //     return response()->json([
-    //         'message' => 'Profile updated',
+            'message' => 'Profile updated',
 
-    //         'avatar' => isset($data['avatar'])
-    //             ? rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $data['avatar']
-    //             : (
-    //                 $user->avatar
-    //                 ? rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $user->avatar
-    //                 : null
-    //             )
-    //     ]);
-    // }
+            'user' => [
+                'id' => $user->id,
+                'phone' => $user->phone,
+
+                'avatar' => $user->avatar
+                    ? rtrim(
+                        env('R2_PUBLIC_BASE_URL'),
+                        '/'
+                    ) . '/' . $user->avatar
+                    : null,
+            ]
+        ]);
+    }
 }

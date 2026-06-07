@@ -11,6 +11,8 @@ class Otp extends Model
         'email',
         'phone',
         'otp',
+        'payload',
+        'reset_token',
         'expires_at',
         'type'
     ];

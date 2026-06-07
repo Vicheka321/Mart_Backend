@@ -194,7 +194,7 @@
         }
     </style>
 
-    <div class="space-y-6 isolate z-0 overflow-visible">
+    <div class="space-y-6  z-0 overflow-visible">
 
         {{-- ==================== HEADER ==================== --}}
         <div class="dash-header flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -233,7 +233,7 @@
                         <div id="rangeDropdown" class="hidden absolute right-0 top-full mt-2 w-52 rounded-xl
 border border-gray-200 dark:border-gray-700
 bg-white dark:bg-gray-800 shadow-2xl
-z-[9999] overflow-hidden isolate">
+z-[9999] overflow-hidden ">
                             @php
                                 $ranges = [
                                     'today'      => 'Today',
@@ -276,7 +276,7 @@ z-[9999] overflow-hidden isolate">
         </div>
 
         {{-- ==================== STAT CARDS ==================== --}}
-        <div class="top-cards grid grid-cols-2 lg:grid-cols-4 gap-3 isolate">
+        <div class="top-cards grid grid-cols-2 lg:grid-cols-4 gap-3 ">
 
             {{-- Revenue --}}
             <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
@@ -489,7 +489,7 @@ z-[9999] overflow-hidden isolate">
             $barCount = $chartData->count();
         @endphp
 
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 isolate">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 ">
 
             {{-- ===================== TOTAL SALES BAR CHART ===================== --}}
             <div class="chart-card-main xl:col-span-7">
@@ -706,7 +706,7 @@ z-[9999] overflow-hidden isolate">
         </div>
 
         {{-- ==================== LOWER SECTION ==================== --}}
-        <div class="lower-grid grid grid-cols-1 lg:grid-cols-2 gap-4 isolate">
+        <div class="lower-grid grid grid-cols-1 lg:grid-cols-2 gap-4 ">
 
             {{-- Revenue by Products --}}
             <div class="lower-card-anim bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700

@@ -16,16 +16,24 @@ class bannerseeder extends Seeder
         $data = [
             [
                 'title' => 'Coca-Cola',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/6975285.jpg'
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/Screenshot%202026-05-28%20172829.png'
             ],
             [
                 'title' => 'Pepsi',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/7173417.jpg'
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/Screenshot%202026-05-28%20172942.png'
 
             ],
             [
                 'title' => 'Nestlé',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/7529420.jpg'
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/Screenshot%202026-05-28%20173028.png'
+            ],
+            [
+                'title' => 'Nestlée',
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/Screenshot%202026-05-28%20173119.png'
+            ],
+            [
+                'title' => 'Nestléss',
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/Screenshot%202026-05-28%20173211.png'
             ],
 
         ];

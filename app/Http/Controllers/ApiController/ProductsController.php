@@ -59,8 +59,8 @@ class ProductsController extends Controller
                     ->whereDate('end_date', '>=', $today);
             }
         ])->where('status', true)
-        ->where('quantity', '>', 0)
-        ->get();
+            ->where('quantity', '>', 0)
+            ->get();
 
         $products = $products->map(function ($product) {
 
@@ -524,7 +524,7 @@ class ProductsController extends Controller
             }
         ])
             ->orderByDesc('created_at')
-            ->take(2)
+            ->take(10)
             ->where('status', true)
             ->where('quantity', '>', 0)
             ->get();
@@ -768,12 +768,76 @@ class ProductsController extends Controller
     // }
 
 
+    // public function recommended()
+    // {
+    //     $today = Carbon::today();
+
+    //     $products = ProductsModel::with([
+    //         'image',
+    //         'promotions' => function ($q) use ($today) {
+    //             $q->where('status', true)
+    //                 ->whereDate('start_date', '<=', $today)
+    //                 ->whereDate('end_date', '>=', $today);
+    //         }
+    //     ])
+    //         ->withSum('orderItems as sold', 'qty')
+    //         ->where('status', 1)
+    //         ->orderBy('sale_price', 'asc')
+    //         ->take(10)
+    //         ->where('status', true)
+    //         ->where('quantity', '>', 0)
+    //         ->get();
+
+    //     $products = $products->map(function ($product) {
+
+    //         $final_price = $product->sale_price;
+    //         $discount = null;
+
+    //         $promotion = $product->promotions->first();
+
+    //         if ($promotion) {
+    //             if ($promotion->discount_type === 'percent') {
+
+    //                 $final_price = $product->sale_price -
+    //                     ($product->sale_price * $promotion->discount_value / 100);
+
+    //                 $discount = $promotion->discount_value . '%';
+    //             } else {
+
+    //                 $final_price = $product->sale_price - $promotion->discount_value;
+
+    //                 $discount = '$' . $promotion->discount_value;
+    //             }
+    //         }
+
+    //         return [
+    //             'id' => $product->id,
+    //             'name' => $product->name,
+
+    //             // ✅ formatted correctly
+    //             'sale_price' => number_format($product->sale_price, 2, '.', ''),
+    //             'final_price' => number_format($final_price, 2, '.', ''),
+
+    //             'discount' => $discount,
+    //             'sold' => (int) ($product->sold ?? 0),
+
+    //             'images' => $product->image
+    //                 ->pluck('image_url')
+    //                 ->values(),
+    //         ];
+    //     });
+
+    //     return response()->json($products);
+    // }
+
     public function recommended()
     {
         $today = Carbon::today();
 
         $products = ProductsModel::with([
             'image',
+            'category',
+            'brand',
             'promotions' => function ($q) use ($today) {
                 $q->where('status', true)
                     ->whereDate('start_date', '<=', $today)
@@ -781,9 +845,9 @@ class ProductsController extends Controller
             }
         ])
             ->withSum('orderItems as sold', 'qty')
+            ->take(10)
             ->where('status', 1)
             ->orderBy('sale_price', 'asc')
-            ->take(10)
             ->where('status', true)
             ->where('quantity', '>', 0)
             ->get();
@@ -801,24 +865,31 @@ class ProductsController extends Controller
                     $final_price = $product->sale_price -
                         ($product->sale_price * $promotion->discount_value / 100);
 
-                    $discount = $promotion->discount_value . '%';
+                    $discount = number_format($promotion->discount_value, 2) . '%';
                 } else {
 
                     $final_price = $product->sale_price - $promotion->discount_value;
 
-                    $discount = '$' . $promotion->discount_value;
+                    $discount = '$' . number_format($promotion->discount_value, 2);
                 }
             }
 
             return [
                 'id' => $product->id,
                 'name' => $product->name,
+                'description' => $product->description,
+                'unit' => $product->unit,
+                'quantity' => $product->quantity,
 
-                // ✅ formatted correctly
+                // ✅ FIXED formatting
                 'sale_price' => number_format($product->sale_price, 2, '.', ''),
                 'final_price' => number_format($final_price, 2, '.', ''),
 
                 'discount' => $discount,
+
+                'category_name' => optional($product->category)->name,
+                'brand_name' => optional($product->brand)->name,
+
                 'sold' => (int) ($product->sold ?? 0),
 
                 'images' => $product->image

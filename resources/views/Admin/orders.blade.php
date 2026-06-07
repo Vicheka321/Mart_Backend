@@ -386,10 +386,8 @@
                     <tbody id="ordersTableBody" class="divide-y divide-gray-100 dark:divide-gray-700">
                         @forelse($orders as $order)
                             @php
-                                $firstName = $order['first_name'] ?? 'Customer';
-                                $lastName  = $order['last_name'] ?? '';
-                                $fullName  = trim($firstName . ' ' . $lastName);
-                                $initials  = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
+                                $fullName = $order['full_name'] ?? 'Customer';
+                                $initials  = strtoupper(substr($fullName, 0, 1));
                                 $avatar    = $order['avatar'] ?? null;
 
                                 $badge = match ($order['status']) {
@@ -413,7 +411,7 @@
                                         @else
                                             <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300
                                                         flex items-center justify-center text-xs font-semibold flex-shrink-0">
-                                                {{ $initials ?: strtoupper(substr($firstName, 0, 1)) }}
+                                                {{ $initials ?: strtoupper(substr($fullName, 0, 1)) }}
                                             </div>
                                         @endif
                                         <span class="font-medium text-gray-900 dark:text-white whitespace-nowrap">{{ $fullName }}</span>
@@ -705,9 +703,7 @@
     //  ORDER DETAIL MODAL
     // ══════════════════════════════════════════════════════
     function openOrderModal(order) {
-        const firstName = order.first_name ?? 'Customer';
-        const lastName  = order.last_name  ?? '';
-        const fullName  = [firstName, lastName].filter(Boolean).join(' ');
+        const fullName = order.full_name ?? 'Customer';
 
         document.getElementById('modalOrderId').textContent    = 'Order #' + order.id;
         document.getElementById('modalOrderTotal').textContent = '$' + parseFloat(order.total).toFixed(2);
@@ -903,18 +899,17 @@
             const badgeClass = { pending:'bg-amber-100 text-amber-700', processing:'bg-blue-100 text-blue-700', completed:'bg-emerald-100 text-emerald-700', cancelled:'bg-red-100 text-red-700' }[order.status] || 'bg-gray-100 text-gray-600';
             const total      = parseFloat(order.total_amount ?? 0).toFixed(2);
             const createdAt  = new Date(order.created_at || Date.now()).toLocaleString();
-            const firstName  = order.first_name ?? 'Customer';
-            const lastName   = order.last_name  ?? '';
-            const initials   = ((firstName[0] ?? '') + (lastName[0] ?? '')).toUpperCase();
+            const fullName  = order.full_name ?? 'Customer';
+            const initials   = ((fullName[0] ?? '')).toUpperCase();
 
             tbody.insertAdjacentHTML('afterbegin', `
                 <tr id="order-row-${order.id}" class="new-order-row hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-all duration-200">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
-                                ${initials || firstName[0]?.toUpperCase() || '?'}
+                                ${initials || fullName[0]?.toUpperCase() || '?'}
                             </div>
-                            <span class="font-medium text-gray-900 dark:text-white whitespace-nowrap">${[firstName, lastName].filter(Boolean).join(' ')}</span>
+                            <span class="font-medium text-gray-900 dark:text-white whitespace-nowrap">${fullName}</span>
                         </div>
                     </td>
                     <td class="px-6 py-4 text-gray-500">${order.phone ?? '—'}</td>

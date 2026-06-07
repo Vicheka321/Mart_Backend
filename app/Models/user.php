@@ -13,8 +13,7 @@ class user extends Authenticatable
     protected $table = 'users';
 
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'full_name',
         'email',
         'phone',
         'facebook_id',
