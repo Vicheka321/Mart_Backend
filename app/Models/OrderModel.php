@@ -15,7 +15,9 @@ class OrderModel extends Model
     protected $primaryKey = "id";
     protected $fillable = [
         'user_id',
-        'address_id',
+        'delivery_address',
+        'lat',
+        'lng',
         'total_amount',
         'payment_method',
         'status',

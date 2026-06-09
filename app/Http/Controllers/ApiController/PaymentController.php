@@ -143,7 +143,7 @@ class PaymentController extends Controller
 
                 'bill_number' => 'ORDER-' . $order->id,
 
-                'mobile_number' => optional($order->address)->phone,
+                'mobile_number' => optional($order)->phone,
 
                 'store_label' => 'MART SHOP',
 
@@ -197,7 +197,7 @@ class PaymentController extends Controller
 
                 'bill_number' => 'ORDER-' . $order->id,
 
-                'mobile_number' => optional($order->address)->phone,
+                'mobile_number' => optional($order)->phone,
 
                 'store_label' => 'MART SHOP',
 
@@ -207,7 +207,7 @@ class PaymentController extends Controller
 
                 'payment_status' => 'pending',
 
-                'expires_at' => now()->addMinutes(5),
+                'expires_at' => now()->addMinutes(50),
             ]);
 
             /// ✅ UPDATE PAYMENT TABLE
@@ -401,9 +401,12 @@ class PaymentController extends Controller
                 ]);
             }
 
+
             /// ✅ CHECK WITH BAKONG
             $result = $this->khqrService
                 ->checkPayment($validated['md5']);
+            
+            
 
             /// ✅ INCREMENT CHECK COUNT
             $payment->incrementCheckAttempts();
@@ -438,11 +441,10 @@ class PaymentController extends Controller
                 /// ✅ FIND ORDER
                 $order = OrderModel::with([
                     'payment',
-                    'address',
                     'user'
                 ])->find($payment->order_id);
 
-                
+
                 broadcast(new NewOrderCreated($order));
 
 
@@ -451,30 +453,28 @@ class PaymentController extends Controller
                     /// ✅ UPDATE PAYMENT TABLE
                     $order->payment->update([
                         'payment_status' => 'paid',
-                        'paid_at' => now(),
                     ]);
 
                     /// ✅ UPDATE ORDER
                     $order->update([
-                        'payment_status' => 'paid',
                         'status' => 'pending',
                     ]);
 
 
                     /// ✅ SEND TELEGRAM
-                    app(TelegramService::class)->send(
-                        "🚀 *NEW PAID ORDER*\n" .
-                            "━━━━━━━━━━━━━━━\n" .
-                            "🆔 Order: #{$order->id}\n" .
-                            "👤 Customer: {$order->user->name}\n" .
-                            "📞 Phone: {$order->address->phone}\n" .
-                            "📍 Address: {$order->address->address}\n" .
-                            "📍 *Location:* https://www.google.com/maps?q={$order->address->lat},{$order->address->lng}\n" .
-                            "💰 Total: $" . number_format($order->total_amount, 2) . "\n" .
-                            "💳 Payment: {$order->payment->payment_method}\n" .
-                            "━━━━━━━━━━━━━━━",
-                        $order
-                    );
+                    // app(TelegramService::class)->send(
+                    //     "🚀 *NEW PAID ORDER*\n" .
+                    //         "━━━━━━━━━━━━━━━\n" .
+                    //         "🆔 Order: #{$order->id}\n" .
+                    //         "👤 Customer: {$order->user->name}\n" .
+                    //         "📞 Phone: {$order->phone}\n" .
+                    //         "📍 Address: {$order->address}\n" .
+                    //         "📍 *Location:* https://www.google.com/maps?q={$order->lat},{$order->lng}\n",
+                    //         "💰 Total: $" . number_format($order->total_amount, 2) . "\n" .
+                    //         "💳 Payment: {$order->payment->payment_method}\n" .
+                    //         "━━━━━━━━━━━━━━━",
+                    //     $order
+                    // );
                 }
 
                 DB::commit();

@@ -17,7 +17,6 @@ class OrderController extends Controller
             'orderItems.product.brand',
             'orderItems.product.image',
             'user',
-            'address',
             'payment'
         ])
             // Show only orders where payment status = paid
@@ -48,8 +47,8 @@ class OrderController extends Controller
                 'id' => $order->id,
                 'full_name' => $order->user->full_name ?? 'Customer',
                 'avatar'     => $order->user->avatar ?? null,
-                'phone' => $order->address->phone ?? '',
-                'address' => $order->address->address ?? '',
+                'phone' => $order->user->phone ?? '',
+                'address' => $order->delivery_address ?? '',
                 'total' => $order->total_amount,
                 'payment_method' => $order->payment->payment_method ?? '',
                 'payment_status' => $order->payment->payment_status ?? '',

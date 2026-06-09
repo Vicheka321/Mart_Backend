@@ -38,16 +38,16 @@ class OrderSeeder extends Seeder
         | Address
         |--------------------------------------------------------------------------
         */
-            $address = AddressModel::create([
-                'user_id'    => $customerId,
-                'full_name'  => fake()->name(),
-                'phone'      => '09' . rand(10000000, 99999999),
-                'address'    => fake()->address(),
-                'lat'        => fake()->latitude(10.0, 14.8),
-                'lng'        => fake()->longitude(102.3, 107.7),
-                'created_at' => $createdAt,
-                'updated_at' => $createdAt,
-            ]);
+            // $address = AddressModel::create([
+            //     'user_id'    => $customerId,
+            //     'full_name'  => fake()->name(),
+            //     'phone'      => '09' . rand(10000000, 99999999),
+            //     'address'    => fake()->address(),
+            //     'lat'        => fake()->latitude(10.0, 14.8),
+            //     'lng'        => fake()->longitude(102.3, 107.7),
+            //     'created_at' => $createdAt,
+            //     'updated_at' => $createdAt,
+            // ]);
 
             /*
         |--------------------------------------------------------------------------
@@ -63,7 +63,10 @@ class OrderSeeder extends Seeder
 
             $order = OrderModel::create([
                 'user_id'        => $customerId,
-                'address_id'     => $address->id,
+                // 'address_id'     => $address->id,
+                'delivery_address' => fake()->address(),
+                'lat'        => fake()->latitude(10.0, 14.8),
+                'lng'        => fake()->longitude(102.3, 107.7),
                 'status'         => fake()->randomElement([
                     // 'pending',
                     // 'processing',

@@ -56,7 +56,9 @@ class OrdersController extends Controller
     {
         $request->validate([
             'payment_method' => 'required|in:cash,khqr,aba',
-            'address_id' => 'required|exists:address,id',
+            'delivery_address' => 'required|string',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
             'code' => 'nullable|string',
         ]);
 
@@ -208,10 +210,14 @@ class OrdersController extends Controller
 
             $order = OrderModel::create([
                 'user_id' => $user_id,
-                'address_id' => $request->address_id,
+
+                'delivery_address' => $request->delivery_address,
+                'lat' => $request->lat,
+                'lng' => $request->lng,
+
                 'payment_method' => $request->payment_method,
                 'total_amount' => $total,
-                'status' => 'pending'
+                'status' => 'pending',
             ]);
 
             if ($coupon && $couponDiscount > 0) {
