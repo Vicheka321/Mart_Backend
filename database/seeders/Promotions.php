@@ -20,9 +20,9 @@ class Promotions extends Seeder
             'status' => true,
         ]);
 
-        $productIds = collect(range(1, 50))
+        $productIds = collect(range(1, 10))
             ->shuffle()
-            ->take(200);
+            ->take(8);
 
         foreach ($productIds as $productId) {
             DB::table('promotion_products')->insert([

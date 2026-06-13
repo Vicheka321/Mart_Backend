@@ -380,11 +380,11 @@
             </aside>
 
             <!-- Main Content -->
-            <main class=" z-0 flex-1 min-h-0  flex flex-col bg-white dark:bg-gray-800">
+            <main class=" flex-1 min-h-0  flex flex-col bg-white dark:bg-gray-800">
 
                 <div class="flex-1 overflow-y-auto pl-0 pt-3 pr-2 pb-0">
 
-                    <div class="max-w-7xl mx-auto bg-gray-100 dark:bg-slate-700 rounded-3xl pl-6 pr-6 py-6">
+                    <div class="max-w-7xl mx-auto bg-gray-100 dark:bg-slate-700 rounded-3xl pl-6 pr-6 py-6 overflow-visible">
                         @yield('content')
                     </div>
 

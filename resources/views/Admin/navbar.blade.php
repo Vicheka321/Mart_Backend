@@ -158,6 +158,8 @@
     /* Applied classes */
     nav {
         animation: navSlideDown .4s cubic-bezier(.22, 1, .36, 1) both;
+        position: relative;
+        z-index: 40;   /* higher than .dash-header (30) since navbar sits above page content */
     }
 
     .nav-logo {

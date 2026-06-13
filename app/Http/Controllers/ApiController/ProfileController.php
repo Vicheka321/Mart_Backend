@@ -41,7 +41,7 @@ class ProfileController extends Controller
 
         /// Default update data
         $data = [
-            'full_name' => $validated['first_name'] ?? $user->first_name,
+            'full_name' => $validated['full_name'] ?? $user->full_name,
             'email' => $validated['email'] ?? $user->email,
             'phone' => $validated['phone'] ?? $user->phone,
             'facebook_id' => $validated['facebook_id'] ?? $user->facebook_id,

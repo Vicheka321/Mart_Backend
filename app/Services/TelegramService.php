@@ -42,7 +42,8 @@ class TelegramService
 
             $order->update([
                 'telegram_message_id' => $data['result']['message_id'],
-                'telegram_chat_id' => $chat_id
+                'telegram_chat_id' => $chat_id,
+                'is_sent' => true,
             ]);
         }
     }
@@ -54,74 +55,155 @@ class TelegramService
             return;
         }
 
-        $token = "8685152870:AAEuHrQ7DXHm_W_y6Ty4AxhUbptWOzp4bzM";
+        $order->load([
+            'user',
+            'payment'
+        ]);
+
+        $token = env('TELEGRAM_BOT_TOKEN');
 
         $statusEmoji = match ($order->status) {
+            'pending'    => '📦',
             'processing' => '🔄',
             'completed'  => '✅',
             'cancelled'  => '❌',
             default      => '📦',
         };
 
-        $mapUrl = "https://www.google.com/maps?q={$order->address->lat},{$order->address->lng}";
+        $statusText = match ($order->status) {
+            'pending'    => 'Pending',
+            'processing' => 'Processing',
+            'completed'  => 'Completed',
+            'cancelled'  => 'Cancelled',
+            default      => ucfirst($order->status),
+        };
+
+        $mapUrl = "https://www.google.com/maps?q={$order->lat},{$order->lng}";
+
+        $customerName = $order->user?->full_name ?? 'Customer';
+        $phone = $order->user?->phone ?? 'N/A';
+
+        $paymentMethod = strtoupper(
+            $order->payment?->payment_method
+                ?? $order->payment_method
+                ?? 'N/A'
+        );
 
         $text =
-            "🛒 *ORDER UPDATED*  •  `#{$order->id}`\n" .
+            "🛒 *ORDER UPDATE*\n" .
             "━━━━━━━━━━━━━━━━━━\n\n" .
-            "👤 *{$order->user->name}*\n" .
-            "📞 `{$order->address->phone}`\n\n" .
-            "📍 *Address*\n" .
-            "{$order->address->address}\n" .
-            "[View on map]({$mapUrl})\n\n" .
+
+            "🆔 *Order:* #{$order->id}\n\n" .
+
+            "👤 *Customer:* {$customerName}\n" .
+            "📞 *Phone:* {$phone}\n\n" .
+
+            "📍 *Address:*\n" .
+            "{$order->delivery_address}\n\n" .
+
+            "🗺️ [Open Location]({$mapUrl})\n\n" .
+
             "━━━━━━━━━━━━━━━━━━\n" .
-            "💰 *\$" . number_format($order->total_amount, 2) . "*" .
-            "   •   💳 {$order->payment->payment_method}\n" .
+
+            "💰 *Total:* $" .
+            number_format($order->total_amount, 2) .
+            "\n" .
+
+            "💳 *Payment:* {$paymentMethod}\n\n" .
+
             "━━━━━━━━━━━━━━━━━━\n" .
-            "{$statusEmoji} Status: `{$order->status}`";
+
+            "{$statusEmoji} *Status:* {$statusText}";
 
         $buttons = [];
 
-        if ($order->status === 'processing') {
+        if ($order->status === 'pending') {
+
             $buttons[] = [
-                ['text' => '📦 Complete', 'callback_data' => "complete_{$order->id}"],
-                ['text' => '❌ Cancel',   'callback_data' => "cancel_{$order->id}"],
+                [
+                    'text' => '✅ Accept',
+                    'callback_data' => "accept_{$order->id}"
+                ],
+                [
+                    'text' => '❌ Cancel',
+                    'callback_data' => "cancel_{$order->id}"
+                ]
             ];
         }
 
-        Http::post("https://api.telegram.org/bot{$token}/editMessageText", [
-            'chat_id'      => $order->telegram_chat_id,
-            'message_id'   => $order->telegram_message_id,
-            'text'         => $text,
-            'parse_mode'   => 'Markdown',
-            'reply_markup' => json_encode(['inline_keyboard' => $buttons]),
-        ]);
+        if ($order->status === 'processing') {
+
+            $buttons[] = [
+                [
+                    'text' => '📦 Complete',
+                    'callback_data' => "complete_{$order->id}"
+                ],
+                [
+                    'text' => '❌ Cancel',
+                    'callback_data' => "cancel_{$order->id}"
+                ]
+            ];
+        }
+
+        Http::post(
+            "https://api.telegram.org/bot{$token}/editMessageText",
+            [
+                'chat_id'    => $order->telegram_chat_id,
+                'message_id' => $order->telegram_message_id,
+                'text'       => $text,
+                'parse_mode' => 'Markdown',
+                'reply_markup' => json_encode([
+                    'inline_keyboard' => $buttons
+                ]),
+            ]
+        );
     }
 
     public function sendNextPending()
     {
-        $next = OrderModel::with(['user', 'address', 'payment'])
+
+        $next = OrderModel::with([
+            'user',
+            'payment'
+        ])
             ->where('status', 'pending')
-            ->whereNull('telegram_message_id')
+            ->where('is_sent', false)
             ->orderBy('created_at', 'asc')
             ->first();
 
-        if (!$next) return;
+        if (!$next) {
+            return;
+        }
 
-        $mapUrl = "https://www.google.com/maps?q={$next->address->lat},{$next->address->lng}";
+        $mapUrl =
+            "https://www.google.com/maps?q={$next->lat},{$next->lng}";
 
         $message =
-            "🚀 *NEW ORDER*  •  `#{$next->id}`\n" .
-            "━━━━━━━━━━━━━━━━━━\n\n" .
-            "👤 *{$next->user->name}*\n" .
-            "📞 `{$next->address->phone}`\n\n" .
-            "📍 *Address*\n" .
-            "{$next->address->address}\n" .
-            "[View on map]({$mapUrl})\n\n" .
-            "━━━━━━━━━━━━━━━━━━\n" .
-            "💰 *\$" . number_format($next->total_amount, 2) . "*" .
-            "   •   💳 {$next->payment->payment_method}\n" .
-            "━━━━━━━━━━━━━━━━━━\n" .
-            "📦 Status: `{$next->status}`";
+            "🚀 *NEW ORDER RECEIVED*\n" .
+            "━━━━━━━━━━━━━━━\n\n" .
+
+            "🆔 *Order:* #{$next->id}\n" .
+
+            "👤 *Customer:* {$next->user->full_name}\n" .
+
+            "📞 *Phone:* {$next->user->phone}\n\n" .
+
+            "📍 *Address:*\n" .
+            "{$next->delivery_address}\n\n" .
+
+            "🗺️ [Open Location]({$mapUrl})\n\n" .
+
+            "━━━━━━━━━━━━━━━\n" .
+
+            "💰 *Total:* $" .
+            number_format($next->total_amount, 2) .
+            "\n" .
+
+            "💳 *Payment:* " .
+            strtoupper($next->payment->payment_method) .
+            "\n\n" .
+
+            "📦 *Status:* Pending";
 
         $this->send($message, $next);
     }

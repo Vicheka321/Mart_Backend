@@ -355,6 +355,194 @@ class PaymentController extends Controller
     //     ]);
     // }
 
+    // public function checkPayment(Request $request): JsonResponse
+    // {
+    //     $validated = $request->validate([
+    //         'md5' => 'required|string',
+    //     ]);
+
+    //     try {
+
+    //         /// ✅ FIND KHQR PAYMENT
+    //         $payment = khqr_payments::where('md5', $validated['md5'])
+    //             ->first();
+
+    //         if (!$payment) {
+
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Payment not found',
+    //             ], 404);
+    //         }
+
+    //         /// ✅ ALREADY SUCCESS
+    //         if ($payment->status === 'SUCCESS') {
+
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'status' => 'SUCCESS',
+    //                 'message' => 'Payment already completed!',
+    //                 'data' => [
+    //                     'amount' => $payment->amount,
+    //                     'currency' => $payment->currency,
+    //                     'paid_at' => $payment->paid_at,
+    //                     'transaction_id' => $payment->transaction_id,
+    //                 ],
+    //             ]);
+    //         }
+
+
+    //         /// ✅ CHECK EXPIRED
+    //         if ($payment->isExpired()) {
+
+    //             $payment->markAsExpired();
+
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'status' => 'EXPIRED',
+    //                 'message' => 'Payment has expired',
+    //             ]);
+    //         }
+
+
+    //         /// ✅ CHECK WITH BAKONG
+    //         $result = $this->khqrService
+    //             ->checkPayment($validated['md5']);
+
+
+
+    //         /// ✅ INCREMENT CHECK COUNT
+    //         $payment->incrementCheckAttempts();
+
+    //         Log::info('Manual payment check', [
+    //             'payment_id'      => $payment->id,
+    //             'md5'             => $payment->md5,
+    //             'bakong_response' => $result,
+    //         ]);
+
+    //         /// ✅ CHECK SUCCESS
+    //         $responseCode = $result['responseCode'] ?? -1;
+
+    //         $isSuccess = $responseCode === 0;
+
+    //         if ($isSuccess) {
+
+    //             /// ✅ GET TRANSACTION DETAIL
+    //             $txInfo = $this->khqrService
+    //                 ->getPayment($validated['md5']);
+
+    //             $transactionId =
+    //                 $txInfo['data']['hash']
+    //                 ?? $result['data']['hash']
+    //                 ?? null;
+
+    //             DB::beginTransaction();
+
+    //             /// ✅ UPDATE KHQR PAYMENT
+    //             $payment->markAsSuccess($result, $transactionId);
+
+    //             /// ✅ FIND ORDER
+    //             $order = OrderModel::with([
+    //                 'payment',
+    //                 'user',
+    //                 'orderItems'
+    //             ])->find($payment->order_id);
+
+
+    //             broadcast(new NewOrderCreated($order));
+
+
+    //             if ($order && $order->payment) {
+
+    //                 /// ✅ UPDATE PAYMENT TABLE
+    //                 $order->payment->update([
+    //                     'payment_status' => 'paid',
+    //                 ]);
+
+
+    //                 $cart = CartModel::where(
+    //                     'user_id',
+    //                     $order->user_id
+    //                 )->first();
+
+    //                 if ($cart) {
+    //                     CartItemModel::where(
+    //                         'cart_id',
+    //                         $cart->id
+    //                     )->delete();
+    //                 }
+    //                 foreach ($order->orderItems as $item) {
+
+    //                     ProductsModel::where(
+    //                         'id',
+    //                         $item->product_id
+    //                     )->decrement(
+    //                         'quantity',
+    //                         $item->qty
+    //                     );
+    //                 }
+
+
+    //                 /// ✅ SEND TELEGRAM
+    //                 // app(TelegramService::class)->send(
+    //                 //     "🚀 *NEW PAID ORDER*\n" .
+    //                 //         "━━━━━━━━━━━━━━━\n" .
+    //                 //         "🆔 Order: #{$order->id}\n" .
+    //                 //         "👤 Customer: {$order->user->name}\n" .
+    //                 //         "📞 Phone: {$order->phone}\n" .
+    //                 //         "📍 Address: {$order->address}\n" .
+    //                 //         "📍 *Location:* https://www.google.com/maps?q={$order->lat},{$order->lng}\n",
+    //                 //         "💰 Total: $" . number_format($order->total_amount, 2) . "\n" .
+    //                 //         "💳 Payment: {$order->payment->payment_method}\n" .
+    //                 //         "━━━━━━━━━━━━━━━",
+    //                 //     $order
+    //                 // );
+    //             }
+
+    //             DB::commit();
+
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'status' => 'SUCCESS',
+    //                 'message' => 'Payment completed successfully!',
+    //                 'data' => [
+    //                     'order_id' => $order?->id,
+    //                     'amount' => $payment->amount,
+    //                     'currency' => $payment->currency,
+    //                     'paid_at' => $payment->paid_at,
+    //                     'transaction_id' => $payment->transaction_id,
+    //                 ],
+    //             ]);
+    //         }
+
+    //         /// ❌ PAYMENT STILL PENDING
+    //         return response()->json([
+    //             'success' => false,
+    //             'status'  => 'PENDING',
+    //             'message' => $result['responseMessage']
+    //                 ?? 'Payment not yet completed',
+    //             'data'    => [
+    //                 'check_attempts'  => $payment->check_attempts,
+    //                 'last_checked_at' => $payment->last_checked_at,
+    //                 'expires_at'      => $payment->expires_at,
+    //             ],
+    //         ]);
+    //     } catch (\Exception $e) {
+
+    //         DB::rollBack();
+
+    //         Log::error('checkPayment error', [
+    //             'message' => $e->getMessage(),
+    //             'trace' => $e->getTraceAsString()
+    //         ]);
+
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
     public function checkPayment(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -445,7 +633,7 @@ class PaymentController extends Controller
                 $order = OrderModel::with([
                     'payment',
                     'user',
-                    'orderItems'
+                    'orderItems.product.firstImage'
                 ])->find($payment->order_id);
 
 
@@ -481,22 +669,53 @@ class PaymentController extends Controller
                             $item->qty
                         );
                     }
+                    $productsText = '';
 
+                    foreach ($order->orderItems as $item) {
 
-                    /// ✅ SEND TELEGRAM
-                    // app(TelegramService::class)->send(
-                    //     "🚀 *NEW PAID ORDER*\n" .
-                    //         "━━━━━━━━━━━━━━━\n" .
-                    //         "🆔 Order: #{$order->id}\n" .
-                    //         "👤 Customer: {$order->user->name}\n" .
-                    //         "📞 Phone: {$order->phone}\n" .
-                    //         "📍 Address: {$order->address}\n" .
-                    //         "📍 *Location:* https://www.google.com/maps?q={$order->lat},{$order->lng}\n",
-                    //         "💰 Total: $" . number_format($order->total_amount, 2) . "\n" .
-                    //         "💳 Payment: {$order->payment->payment_method}\n" .
-                    //         "━━━━━━━━━━━━━━━",
-                    //     $order
-                    // );
+                        $productsText .=
+                            "• {$item->product->name}\n" .
+                            "Qty: {$item->qty}\n" .
+                            "Price: $" . number_format($item->price, 2) .
+                            "\n\n";
+                    }
+                    $mapUrl =
+                        "https://www.google.com/maps?q={$order->lat},{$order->lng}";
+
+                    $message =
+                        "🚀 *NEW PAID ORDER*\n\n" .
+
+                        "🆔 *Order:* #{$order->id}\n\n" .
+
+                        "👤 *Customer:* {$order->user->full_name}\n" .
+
+                        "📞 *Phone:* {$order->user->phone}\n\n" .
+
+                        "📍 *Address:*\n" .
+                        "{$order->delivery_address}\n\n" .
+
+                        "🗺️ [Open Location]({$mapUrl})\n\n" .
+
+                        "🛒 *Products*\n\n" .
+
+                        $productsText .
+
+                        "━━━━━━━━━━━━━━━\n" .
+
+                        "💰 *Total:* $" .
+                        number_format($order->total_amount, 2) .
+                        "\n\n" .
+
+                        "💳 *Payment:* " .
+                        strtoupper($order->payment_method) .
+                        "\n\n" .
+
+                        "✅ *PAID*";
+
+                    app(TelegramService::class)->send(
+                        $message,
+                        $order
+                    );
                 }
 
                 DB::commit();

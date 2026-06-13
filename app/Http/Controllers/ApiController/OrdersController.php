@@ -272,17 +272,57 @@ class OrdersController extends Controller
             // CartItemModel::where('cart_id', $cart->id)
             //     ->delete();
             DB::commit();
+            
+            $order->load([
+                'user',
+                'payment',
+                'orderItems.product.firstImage'
+            ]);
+            $productsText = '';
+            foreach ($order->orderItems as $item) {
+
+                $productsText .=
+                    "• {$item->product->name}\n" .
+                    "Qty: {$item->qty}\n" .
+                    "Price: $" . number_format($item->price, 2) . "\n\n";
+            }
+            $customerName = $order->user->full_name;
+            $phone = $order->user->phone;
+            $mapUrl =
+                "https://www.google.com/maps?q={$order->lat},{$order->lng}";
+            $message =
+                "🚀 *NEW ORDER*\n\n" .
+
+                "🆔 *Order:* #{$order->id}\n\n" .
+
+                "👤 *Customer:* {$customerName}\n" .
+                "📞 *Phone:* {$phone}\n\n" .
+
+                "📍 *Address:*\n" .
+                "{$order->delivery_address}\n\n" .
+
+                "🗺️ [Open Location]({$mapUrl})\n\n" .
+
+                "🛒 *Products*\n\n" .
+
+                $productsText .
+
+                "━━━━━━━━━━━━━━━\n" .
+
+                "💰 *Total:* $" .
+                number_format($order->total_amount, 2) .
+                "\n\n" .
+
+                "💳 *Payment:* " .
+                strtoupper($order->payment_method) .
+                "\n\n" .
+
+                "📦 *Status:* Pending";
 
             if ($request->payment_method == 'cash') {
-
-
+                broadcast(new NewOrderCreated($order));
                 app(TelegramService::class)->send(
-                    "🚀 *NEW CASH ORDER*\n" .
-                        "━━━━━━━━━━━━━━━\n" .
-                        "🆔 Order: #{$order->id}\n" .
-                        "💰 Total: $" . number_format($total, 2) . "\n" .
-                        "💳 Payment: CASH\n" .
-                        "━━━━━━━━━━━━━━━",
+                    $message,
                     $order
                 );
             }
@@ -772,8 +812,8 @@ class OrdersController extends Controller
                 'total' => number_format($order->total_amount, 2, '.', ''),
                 'payment_method' => $order->payment->payment_method ?? '',
                 'payment_status' => $order->payment->payment_status ?? '',
-                'phone' => $order->address->phone ?? '',
-                'address' => $order->address->address ?? '',
+                'phone' => $order->user->phone ?? '',
+                'address' => $order->delivery_address ?? '',
                 'created_at' => $order->created_at->format('Y-m-d H:i'),
 
                 'items' => $order->orderItems->map(function ($item) {

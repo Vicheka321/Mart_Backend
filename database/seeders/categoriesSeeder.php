@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+
 use App\Models\Category;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -29,13 +30,62 @@ class categoriesSeeder extends Seeder
     public function run(): void
     {
         // Create 50 fake categories with fake names and random images
-        for ($i = 1; $i <= 50; $i++) {
-            Category::create([
-                // Fake category name (1 to 3 random words)
-                'name' => ucwords(fake()->unique()->words(rand(1, 3), true)),
+        // for ($i = 1; $i <= 50; $i++) {
+        //     Category::create([
+        //         // Fake category name (1 to 3 random words)
+        //         'name' => ucwords(fake()->unique()->words(rand(1, 3), true)),
 
-                // Fake image URL
-                'image' => 'https://picsum.photos/seed/category' . $i . '/600/600',
+        //         // Fake image URL
+        //         'image' => 'https://picsum.photos/seed/category' . $i . '/600/600',
+        //     ]);
+        // }
+        $categories = [
+            [
+                'name' => 'Beverages',
+                'image' => 'https://png.pngtree.com/png-vector/20230909/ourmid/pngtree-drink-water-can-realistic-shadow-png-image_10010025.png',
+            ],
+            [
+                'name' => 'Snacks',
+                'image' => 'https://png.pngtree.com/png-vector/20250425/ourmid/pngtree-chocolate-chip-cookie-icon-white-background-png-image_16100260.png',
+            ],
+            [
+                'name' => 'Dairy Products',
+                'image' => 'https://previews.123rf.com/images/budolga/budolga1901/budolga190100004/126608412-dairy-products-vector-illustration-isolated-on-white-background-milk-cheese-butter.jpg',
+            ],
+            [
+                'name' => 'Fresh Fruits',
+                'image' => 'https://thumbs.dreamstime.com/b/fresh-red-apple-fruit-isolated-white-background-130051566.jpg',
+            ],
+            [
+                'name' => 'Vegetables',
+                'image' => 'https://t4.ftcdn.net/jpg/05/37/04/61/360_F_537046123_s8JVn2NrClPQDOryhSm8jonYZPfIzPRX.jpg',
+            ],
+            [
+                'name' => 'Instant Noodles',
+                'image' => 'https://img.magnific.com/free-psd/delicious-instant-noodles-with-chopsticks-white-bowl_84443-64651.jpg?semt=ais_hybrid&w=740&q=80',
+            ],
+            [
+                'name' => 'Frozen Foods',
+                'image' => 'https://png.pngtree.com/png-clipart/20231026/original/pngtree-frozen-food-edible-photo-png-image_13432796.png',
+            ],
+            [
+                'name' => 'Bakery',
+                'image' => 'https://img.magnific.com/free-photo/concept-tasty-bakery-bagels-isolated-white-background_185193-109388.jpg?semt=ais_hybrid&w=740&q=80',
+            ],
+            [
+                'name' => 'Personal Care',
+                'image' => 'https://img.magnific.com/premium-vector/circle-label-hygienic-supplies-cosmetics-department-grocery-store-personal-care-goods_172149-457.jpg?semt=ais_hybrid&w=740&q=80',
+            ],
+            [
+                'name' => 'Household Essentials',
+                'image' => 'https://png.pngtree.com/png-clipart/20250111/original/pngtree-household-cleaning-essentials-set-png-image_19048522.png',
+            ],
+        ];
+
+        foreach ($categories as $category) {
+            Category::create([
+                'name' => $category['name'],
+                'image' => $category['image'],
             ]);
         }
     }

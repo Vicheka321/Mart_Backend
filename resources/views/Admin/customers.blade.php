@@ -430,7 +430,7 @@
                              xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                         </svg>
-                        <input type="text" id="customerSearch" placeholder="Search customers…" oninput="filterCustomers()"
+                        <input type="text" id="customerSearch" placeholder="Search users…" oninput="filterCustomers()"
                                autocomplete="off"
                                class="w-full sm:w-56 pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
                                       bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400

@@ -15,25 +15,17 @@ class bannerseeder extends Seeder
     {
         $data = [
             [
-                'title' => 'Coca-Cola',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/Screenshot%202026-05-28%20172829.png'
+                'title' => 'Banner',
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/photo_2026-06-14_01-08-24%20(2).jpg'
             ],
             [
-                'title' => 'Pepsi',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/Screenshot%202026-05-28%20172942.png'
+                'title' => 'Banner',
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/photo_2026-06-14_01-08-24.jpg'
 
             ],
             [
-                'title' => 'Nestlé',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/Screenshot%202026-05-28%20173028.png'
-            ],
-            [
-                'title' => 'Nestlée',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/Screenshot%202026-05-28%20173119.png'
-            ],
-            [
-                'title' => 'Nestléss',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/Screenshot%202026-05-28%20173211.png'
+                'title' => 'Banner',
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/photo_2026-06-14_01-08-25.jpg'
             ],
 
         ];

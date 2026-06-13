@@ -71,7 +71,11 @@
         }
 
         /* Header */
-        .dash-header { animation: fadeSlideUp .4s ease both; }
+        .dash-header {
+            animation: fadeSlideUp .4s ease both;
+            position: relative;   /* required for z-index to apply */
+            z-index: 30;          /* explicit context, higher than sibling cards */
+        }
 
         /* Stat cards staggered */
         .stat-card { animation: fadeSlideUp .5s ease both; }
@@ -194,7 +198,7 @@
         }
     </style>
 
-    <div class="space-y-6  z-0 overflow-visible">
+    <div class="space-y-6 overflow-visible">
 
         {{-- ==================== HEADER ==================== --}}
         <div class="dash-header flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -205,8 +209,8 @@
 
             <div class="flex flex-wrap items-center gap-3">
                 {{-- Range Filter --}}
-                <form method="GET" action="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-                    <div class="relative min-w-[210px] z-[200] overflow-visible">
+                <form method="GET" action="{{ route('admin.dashboard') }}" class="relative flex items-center gap-3">
+                    <div class="relative min-w-[210px] z-[200] z-[99999] overflow-visible">
                         <button type="button" id="rangeButton"
                             class="btn-sm w-full flex items-center justify-between gap-3
                                    rounded-xl border border-gray-200 dark:border-gray-700
@@ -218,11 +222,11 @@
                                 @if(request('range') === 'custom' && request('date_range'))
                                     {{ str_replace(' to ', ' → ', request('date_range')) }}
                                 @elseif(request('range') === 'today')       Today
-                                @elseif(request('range') === '30days')      Last 30 Days
+                                @elseif(request('range') === '7days')      Last 7 Days
                                 @elseif(request('range') === 'this_month')  This Month
                                 @elseif(request('range') === 'last_month')  Last Month
                                 @elseif(request('range') === 'this_year')   This Year
-                                @else                                         Last 7 Days
+                                @else                                         Last 30 Days
                                 @endif
                             </span>
                             <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -476,7 +480,7 @@ z-[9999] overflow-hidden ">
 
         {{-- ==================== MAIN CHARTS ==================== --}}
         @php
-            $currentRange = request('range', '7days');
+            $currentRange = request('range', '30days');
 
             // Determine label format based on range
             $labelFormat = match($currentRange) {
@@ -515,7 +519,7 @@ z-[9999] overflow-hidden ">
                             @elseif($currentRange === 'last_month') Last Month
                             @elseif($currentRange === 'this_year')  This Year
                             @elseif($currentRange === 'custom')  Custom
-                            @else Last 7 Days
+                            @else Last 30 Days
                             @endif
                         </span>
                     </div>
@@ -615,7 +619,7 @@ z-[9999] overflow-hidden ">
                             @elseif($currentRange === 'last_month') Last Month
                             @elseif($currentRange === 'this_year')  This Year
                             @elseif($currentRange === 'custom')  Custom
-                            @else Last 7 Days
+                            @else Last 30 Days
                             @endif
                         </span>
                     </div>
