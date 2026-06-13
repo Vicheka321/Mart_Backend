@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Log;
 use App\Models\OrderModel;
 use Illuminate\Support\Facades\DB;
 use App\Services\TelegramService;
+use App\Models\CartModel;
+use App\Models\CartItemModel;
+use App\Models\ProductsModel;
 
 class PaymentController extends Controller
 {
@@ -405,8 +408,8 @@ class PaymentController extends Controller
             /// ✅ CHECK WITH BAKONG
             $result = $this->khqrService
                 ->checkPayment($validated['md5']);
-            
-            
+
+
 
             /// ✅ INCREMENT CHECK COUNT
             $payment->incrementCheckAttempts();
@@ -441,7 +444,8 @@ class PaymentController extends Controller
                 /// ✅ FIND ORDER
                 $order = OrderModel::with([
                     'payment',
-                    'user'
+                    'user',
+                    'orderItems'
                 ])->find($payment->order_id);
 
 
@@ -455,10 +459,28 @@ class PaymentController extends Controller
                         'payment_status' => 'paid',
                     ]);
 
-                    /// ✅ UPDATE ORDER
-                    $order->update([
-                        'status' => 'pending',
-                    ]);
+
+                    $cart = CartModel::where(
+                        'user_id',
+                        $order->user_id
+                    )->first();
+
+                    if ($cart) {
+                        CartItemModel::where(
+                            'cart_id',
+                            $cart->id
+                        )->delete();
+                    }
+                    foreach ($order->orderItems as $item) {
+
+                        ProductsModel::where(
+                            'id',
+                            $item->product_id
+                        )->decrement(
+                            'quantity',
+                            $item->qty
+                        );
+                    }
 
 
                     /// ✅ SEND TELEGRAM

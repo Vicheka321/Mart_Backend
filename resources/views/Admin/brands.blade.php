@@ -324,6 +324,26 @@
                                     <img src="{{ asset($brand->image) }}" alt="{{ $brand->name }}"
                                          class="brand-img w-full h-full object-cover">
                                 </div>
+
+                                                                {{-- <div class="relative aspect-square overflow-hidden
+                                            bg-gradient-to-br
+                                            from-slate-50
+                                            to-slate-100
+                                            dark:from-slate-800
+                                            dark:to-slate-700">
+
+                                    <div class="w-full h-full p-5 flex items-center justify-center">
+
+                                        <img src="{{ asset($brand->image) }}"
+                                            alt="{{ $brand->name }}"
+                                            class="brand-img
+                                                    max-w-full
+                                                    max-h-full
+                                                    object-contain">
+
+                                    </div>
+
+                                </div> --}}
                             @else
                                 <div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200
                                             dark:from-gray-700 dark:to-gray-600
@@ -397,15 +417,78 @@
 
             {{-- PAGINATION --}}
             <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700
-                        flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3
+                        bg-gray-50/50 dark:bg-gray-800/30">
+
                 <p class="text-xs text-gray-400 dark:text-gray-500">
                     @if($brands->total())
-                        Showing {{ $brands->firstItem() }}–{{ $brands->lastItem() }} of {{ number_format($brands->total()) }}
+                        Showing
+                        <span class="font-semibold text-gray-700 dark:text-gray-200">{{ $brands->firstItem() }}–{{ $brands->lastItem() }}</span>
+                        of
+                        <span class="font-semibold text-gray-700 dark:text-gray-200">{{ number_format($brands->total()) }}</span>
+                        results
                     @else
                         No brands found
                     @endif
                 </p>
-                {{ $brands->links() }}
+
+                @if($brands->hasPages())
+                    <nav class="flex items-center gap-1">
+                        {{-- Previous --}}
+                        @if($brands->onFirstPage())
+                            <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-600 cursor-not-allowed">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                            </span>
+                        @else
+                            <a href="{{ $brands->previousPageUrl() }}"
+                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400
+                                    hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white
+                                    transition-colors duration-150">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                            </a>
+                        @endif
+
+                        {{-- Page Numbers --}}
+                        @foreach($brands->getUrlRange(max(1, $brands->currentPage() - 2), min($brands->lastPage(), $brands->currentPage() + 2)) as $page => $url)
+                            @if($page == $brands->currentPage())
+                                <span class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                            bg-indigo-600 text-white text-sm font-semibold shadow-md shadow-indigo-500/25">
+                                    {{ $page }}
+                                </span>
+                            @else
+                                <a href="{{ $url }}"
+                                class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                        text-sm font-medium text-gray-500 dark:text-gray-400
+                                        hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white
+                                        transition-colors duration-150">
+                                    {{ $page }}
+                                </a>
+                            @endif
+                        @endforeach
+
+                        {{-- Next --}}
+                        @if($brands->hasMorePages())
+                            <a href="{{ $brands->nextPageUrl() }}"
+                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400
+                                    hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white
+                                    transition-colors duration-150">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        @else
+                            <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-600 cursor-not-allowed">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </span>
+                        @endif
+                    </nav>
+                @endif
             </div>
         </div>
     </div>

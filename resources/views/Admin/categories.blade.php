@@ -397,15 +397,78 @@
 
             {{-- PAGINATION --}}
             <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700
-                        flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3
+                        bg-gray-50/50 dark:bg-gray-800/30">
+
                 <p class="text-xs text-gray-400 dark:text-gray-500">
                     @if($categories->total())
-                        Showing {{ $categories->firstItem() }}–{{ $categories->lastItem() }} of {{ number_format($categories->total()) }}
+                        Showing
+                        <span class="font-semibold text-gray-700 dark:text-gray-200">{{ $categories->firstItem() }}–{{ $categories->lastItem() }}</span>
+                        of
+                        <span class="font-semibold text-gray-700 dark:text-gray-200">{{ number_format($categories->total()) }}</span>
+                        results
                     @else
                         No categories found
                     @endif
                 </p>
-                {{ $categories->links() }}
+
+                @if($categories->hasPages())
+                    <nav class="flex items-center gap-1">
+                        {{-- Previous --}}
+                        @if($categories->onFirstPage())
+                            <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-600 cursor-not-allowed">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                            </span>
+                        @else
+                            <a href="{{ $categories->previousPageUrl() }}"
+                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400
+                                    hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white
+                                    transition-colors duration-150">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                            </a>
+                        @endif
+
+                        {{-- Page Numbers --}}
+                        @foreach($categories->getUrlRange(max(1, $categories->currentPage() - 2), min($categories->lastPage(), $categories->currentPage() + 2)) as $page => $url)
+                            @if($page == $categories->currentPage())
+                                <span class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                            bg-indigo-600 text-white text-sm font-semibold shadow-md shadow-indigo-500/25">
+                                    {{ $page }}
+                                </span>
+                            @else
+                                <a href="{{ $url }}"
+                                class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                        text-sm font-medium text-gray-500 dark:text-gray-400
+                                        hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white
+                                        transition-colors duration-150">
+                                    {{ $page }}
+                                </a>
+                            @endif
+                        @endforeach
+
+                        {{-- Next --}}
+                        @if($categories->hasMorePages())
+                            <a href="{{ $categories->nextPageUrl() }}"
+                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400
+                                    hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white
+                                    transition-colors duration-150">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        @else
+                            <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-600 cursor-not-allowed">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </span>
+                        @endif
+                    </nav>
+                @endif
             </div>
         </div>
     </div>

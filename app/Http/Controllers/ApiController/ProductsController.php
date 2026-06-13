@@ -53,13 +53,15 @@ class ProductsController extends Controller
 
         $products = ProductsModel::with([
             'image',
+            'category',
+            'brand',
             'promotions' => function ($q) use ($today) {
                 $q->where('status', true)
                     ->whereDate('start_date', '<=', $today)
                     ->whereDate('end_date', '>=', $today);
             }
-        ])->where('status', true)
-            ->where('quantity', '>', 0)
+        ])
+            ->where('status', true)
             ->get();
 
         $products = $products->map(function ($product) {
@@ -75,12 +77,19 @@ class ProductsController extends Controller
                     $final_price = $product->sale_price -
                         ($product->sale_price * $promotion->discount_value / 100);
 
-                    $discount = $promotion->discount_value . '%';
+                    $discount = number_format(
+                        $promotion->discount_value,
+                        2
+                    ) . '%';
                 } else {
 
-                    $final_price = $product->sale_price - $promotion->discount_value;
+                    $final_price = $product->sale_price -
+                        $promotion->discount_value;
 
-                    $discount = '$' . $promotion->discount_value;
+                    $discount = '$' . number_format(
+                        $promotion->discount_value,
+                        2
+                    );
                 }
             }
 
@@ -91,10 +100,24 @@ class ProductsController extends Controller
                 'unit' => $product->unit,
                 'quantity' => $product->quantity,
 
-                // ✅ formatted prices
-                'sale_price' => number_format($product->sale_price, 2, '.', ''),
-                'final_price' => number_format($final_price, 2, '.', ''),
+                'sale_price' => number_format(
+                    $product->sale_price,
+                    2,
+                    '.',
+                    ''
+                ),
+
+                'final_price' => number_format(
+                    $final_price,
+                    2,
+                    '.',
+                    ''
+                ),
+
                 'discount' => $discount,
+
+                'category_name' => optional($product->category)->name,
+                'brand_name' => optional($product->brand)->name,
 
                 'images' => $product->image
                     ->pluck('image_url')

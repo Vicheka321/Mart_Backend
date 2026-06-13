@@ -12,19 +12,133 @@ use App\Models\PromotionModel;
 
 class CategoriesController extends Controller
 {
-    // public function index()
-    // {
-    //     return Category::all();
-    // }
 
     public function index()
     {
         $categories = Category::with([
             'products.firstImage'
-        ])->get();
+        ])
+        ->get();
 
         return response()->json($categories);
     }
+
+    //     public function index()
+    // {
+    //     $today = Carbon::today();
+
+    //     $categories = Category::with([
+    //         'products' => function ($query) use ($today) {
+    //             $query->where('status', true)
+    //                 ->with([
+    //                     'firstImage',
+    //                     'promotions' => function ($q) use ($today) {
+    //                         $q->where('status', true)
+    //                             ->whereDate('start_date', '<=', $today)
+    //                             ->whereDate('end_date', '>=', $today);
+    //                     }
+    //                 ]);
+    //         }
+    //     ])->get();
+
+    //     return response()->json($categories);
+    // }
+
+    // public function index()
+    // {
+    //     $today = Carbon::today();
+
+    //     $categories = Category::with([
+    //         'products' => function ($query) use ($today) {
+    //             $query->where('status', true)
+    //                 ->with([
+    //                     'image',
+    //                     'brand',
+    //                     'category',
+    //                     'promotions' => function ($q) use ($today) {
+    //                         $q->where('status', true)
+    //                             ->whereDate('start_date', '<=', $today)
+    //                             ->whereDate('end_date', '>=', $today);
+    //                     }
+    //                 ]);
+    //         }
+    //     ])->get();
+
+    //     $categories = $categories->map(function ($category) {
+
+    //         return [
+    //             'id' => $category->id,
+    //             'name' => $category->name,
+    //             'image' => $category->image,
+    //             'created_at' => $category->created_at,
+    //             'updated_at' => $category->updated_at,
+
+    //             'products' => $category->products->map(function ($product) {
+
+    //                 $final_price = $product->sale_price;
+    //                 $discount = null;
+
+    //                 $promotion = $product->promotions->first();
+
+    //                 if ($promotion) {
+
+    //                     if ($promotion->discount_type === 'percent') {
+
+    //                         $final_price = $product->sale_price -
+    //                             ($product->sale_price * $promotion->discount_value / 100);
+
+    //                         $discount = number_format(
+    //                             $promotion->discount_value,
+    //                             2
+    //                         ) . '%';
+    //                     } else {
+
+    //                         $final_price = $product->sale_price -
+    //                             $promotion->discount_value;
+
+    //                         $discount = '$' . number_format(
+    //                             $promotion->discount_value,
+    //                             2
+    //                         );
+    //                     }
+    //                 }
+
+    //                 return [
+    //                     'id' => $product->id,
+    //                     'name' => $product->name,
+    //                     'description' => $product->description,
+    //                     'unit' => $product->unit,
+    //                     'quantity' => $product->quantity,
+
+    //                     'sale_price' => number_format(
+    //                         $product->sale_price,
+    //                         2,
+    //                         '.',
+    //                         ''
+    //                     ),
+
+    //                     'final_price' => number_format(
+    //                         $final_price,
+    //                         2,
+    //                         '.',
+    //                         ''
+    //                     ),
+
+    //                     'discount' => $discount,
+
+    //                     'category_name' => optional($product->category)->name,
+    //                     'brand_name' => optional($product->brand)->name,
+
+    //                     'images' => $product->image
+    //                         ->pluck('image_url')
+    //                         ->values(),
+    //                 ];
+    //             })->values(),
+    //         ];
+    //     });
+
+    //     return response()->json($categories);
+    // }
 
     public function getProductsByCategory($id)
     {

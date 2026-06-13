@@ -28,7 +28,6 @@ Route::get('/admin', [AdminController::class, 'index']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'is_admin'])->group(function () {
 
-
     Route::get('/admin/dashboard', [DashboardController::class, 'admin'])->name('admin.dashboard');
 
     Route::get('/admin/banners', [BannerController::class, 'index'])->name('banners.index');

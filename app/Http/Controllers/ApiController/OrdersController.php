@@ -64,6 +64,28 @@ class OrdersController extends Controller
 
         $user_id = Auth::id();
 
+        $existingOrder = OrderModel::with('payment')
+            ->where('user_id', $user_id)
+            ->where('status', 'pending')
+            ->whereHas('payment', function ($q) {
+                $q->where('payment_status', 'pending');
+            })
+            ->latest()
+            ->first();
+
+        if ($existingOrder) {
+
+            $existingOrder->update([
+                'status' => 'cancelled',
+            ]);
+
+            if ($existingOrder->payment) {
+                $existingOrder->payment->update([
+                    'payment_status' => 'cancelled',
+                ]);
+            }
+        }
+
         DB::beginTransaction();
 
         try {
@@ -238,8 +260,8 @@ class OrdersController extends Controller
                     'qty' => $item->qty,
                     'price' => $item->price
                 ]);
-                ProductsModel::where('id', $item->product_id)
-                    ->decrement('quantity', $item->qty);
+                // ProductsModel::where('id', $item->product_id)
+                //     ->decrement('quantity', $item->qty);
             }
             $payment = PaymentModel::create([
                 'order_id' => $order->id,
@@ -247,8 +269,8 @@ class OrdersController extends Controller
                 'payment_status' => 'pending',
                 'amount' => $total
             ]);
-            CartItemModel::where('cart_id', $cart->id)
-                ->delete();
+            // CartItemModel::where('cart_id', $cart->id)
+            //     ->delete();
             DB::commit();
 
             if ($request->payment_method == 'cash') {
@@ -365,12 +387,6 @@ class OrdersController extends Controller
 
             $order = OrderModel::with('orderItems')->findOrFail($id);
 
-            // Restore stock
-            foreach ($order->orderItems as $item) {
-
-                ProductsModel::where('id', $item->product_id)
-                    ->increment('quantity', $item->qty);
-            }
 
             // Remove coupon usage
             $couponUsage = CouponUsageModel::where('order_id', $order->id)->first();
@@ -733,12 +749,9 @@ class OrdersController extends Controller
 
         $orders = OrderModel::with([
             'payment:id,order_id,payment_method,payment_status',
-            'address:id,phone,address',
             'orderItems:id,order_id,product_id,qty,price',
-
             'orderItems.product:id,name,sale_price',
             'orderItems.product.firstImage:id,product_id,image_url',
-
             'orderItems.product.promotions' => function ($q) use ($today) {
                 $q->where('status', true)
                     ->whereDate('start_date', '<=', $today)
@@ -746,9 +759,11 @@ class OrdersController extends Controller
             }
         ])
             ->where('user_id', $user_id)
+            ->whereHas('payment', function ($q) {
+                $q->where('payment_status', 'paid');
+            })
             ->latest()
             ->get();
-
         $orders = $orders->map(function ($order) {
 
             return [

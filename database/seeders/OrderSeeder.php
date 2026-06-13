@@ -27,7 +27,7 @@ class OrderSeeder extends Seeder
         }
 
         // Create 50,000 fake orders
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 10000; $i++) {
             $customerId = $customers->random();
 
             // Random order date in last 2 years

@@ -14,24 +14,23 @@ class Promotions extends Seeder
         $promotion = PromotionModel::create([
             'name' => 'Weekend Sale',
             'discount_type' => 'percent',
-            'discount_value' => 20, // 20% off
-            'start_date' => Carbon::now(),
-            'end_date' => Carbon::now()->addDays(3),
-            'status' => true
+            'discount_value' => 20,
+            'start_date' => now(),
+            'end_date' => now()->addDays(3),
+            'status' => true,
         ]);
-        DB::table('promotion_products')->insert([
-            [
+
+        $productIds = collect(range(1, 50))
+            ->shuffle()
+            ->take(200);
+
+        foreach ($productIds as $productId) {
+            DB::table('promotion_products')->insert([
                 'promotion_id' => $promotion->id,
-                'product_id' => 4,
+                'product_id' => $productId,
                 'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'promotion_id' => $promotion->id,
-                'product_id' => 9,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]
-        ]);
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

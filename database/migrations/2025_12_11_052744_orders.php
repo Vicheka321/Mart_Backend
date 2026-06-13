@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('telegram_message_id')->nullable();
             $table->string('telegram_chat_id')->nullable();
             $table->boolean('is_sent')->default(false);
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }

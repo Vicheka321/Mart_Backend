@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
             'role' => 'staff'
         ]);
 
-        for ($i = 1; $i <= 500; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             User::create([
                 'full_name' => fake()->firstName() . ' ' . fake()->lastName(),
                 'email'      => fake()->unique()->safeEmail(),
