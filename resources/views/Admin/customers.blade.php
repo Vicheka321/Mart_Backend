@@ -199,7 +199,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h4 class="text-xs font-semibold text-gray-900 dark:text-white leading-tight">Total Customers</h4>
+                            <h4 class="text-xs font-semibold text-gray-900 dark:text-white leading-tight">Total Users</h4>
                             <p class="text-[10px] text-gray-400 dark:text-gray-500 leading-tight">All registered</p>
                         </div>
                     </div>
@@ -282,7 +282,7 @@
                         <h2 class="text-3xl font-bold tracking-tight leading-none
                                    bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 bg-clip-text text-transparent"
                             data-count="{{ $thisMonthCustomers }}">0</h2>
-                        <p class="mt-1 text-[10px] text-gray-400 dark:text-gray-500">{{ $thisMonthPct }}% of total customers</p>
+                        <p class="mt-1 text-[10px] text-gray-400 dark:text-gray-500">{{ $thisMonthPct }}% of total users</p>
                     </div>
                     <div class="w-24 h-10">
                         <svg viewBox="0 0 96 40" class="w-full h-full overflow-visible">
@@ -381,7 +381,7 @@
             {{-- CARD HEADER --}}
             <div class="p-4 sm:p-5 border-b border-gray-100 dark:border-gray-700
                         flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-                <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Customer List</h2>
+                <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Users List</h2>
 
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-wrap">
 
@@ -621,7 +621,7 @@
                         @empty
                             <tr>
                                 <td colspan="8" class="px-6 py-16 text-center text-sm text-gray-400 dark:text-gray-500">
-                                    No customers found.
+                                    No users found.
                                 </td>
                             </tr>
                         @endforelse
@@ -629,7 +629,7 @@
                 </table>
 
                 <div id="searchEmpty" class="hidden px-6 py-12 text-center text-sm text-gray-400 dark:text-gray-500">
-                    No customers match your search.
+                    No users match your search.
                 </div>
             </div>
 
@@ -646,7 +646,7 @@
                         <span class="font-semibold text-gray-700 dark:text-gray-200">{{ number_format($customers->total()) }}</span>
                         results
                     @else
-                        No customers found
+                        No users found
                     @endif
                 </p>
 
