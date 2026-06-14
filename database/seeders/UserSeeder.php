@@ -21,13 +21,13 @@ class UserSeeder extends Seeder
         ]);
 
         // Staff
-        User::create([
-            'full_name' => 'Staff',
-            'email' => 'staff@gmail.com',
-            'phone' => '098765432',
-            'password' => Hash::make('11112222'),
-            'role' => 'staff'
-        ]);
+        // User::create([
+        //     'full_name' => 'Staff',
+        //     'email' => 'staff@gmail.com',
+        //     'phone' => '098765432',
+        //     'password' => Hash::make('11112222'),
+        //     'role' => 'staff'
+        // ]);
 
         for ($i = 1; $i <= 100; $i++) {
             User::create([

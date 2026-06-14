@@ -412,7 +412,7 @@
                             @foreach([
                                 'all' => 'All',
                                 'customer' => 'Customers',
-                                'staff' => 'Staff',
+                                // 'staff' => 'Staff',
                                 'admin' => 'Admin'
                             ] as $value => $label)
                                 <option value="{{ $value }}"
@@ -449,7 +449,7 @@
                     </button>
 
                     {{-- ADD --}}
-                    <button type="button" onclick="openModal()"
+                    {{-- <button type="button" onclick="openModal()"
                         class="action-btn inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
                                rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all duration-200
                                shadow-md shadow-indigo-500/25">
@@ -457,7 +457,7 @@
                             <path d="M12 5v14M5 12h14"/>
                         </svg>
                         <span class="hidden sm:inline">Add User</span>
-                    </button>
+                    </button> --}}
                 </div>
             </div>
 
@@ -486,7 +486,7 @@
                             <th class="px-4 sm:px-6 py-3">Spent</th>
                             <th class="px-4 sm:px-6 py-3">Status</th>
                             <th class="px-4 sm:px-6 py-3 table-col-hide">Role</th>
-                            <th class="px-4 sm:px-6 py-3 text-right">Action</th>
+                            {{-- <th class="px-4 sm:px-6 py-3 text-right">Action</th> --}}
                         </tr>
                     </thead>
 
@@ -598,7 +598,7 @@
                                 </td>
 
                                 {{-- ACTIONS --}}
-                                <td class="px-4 sm:px-6 py-4 text-right">
+                                {{-- <td class="px-4 sm:px-6 py-4 text-right">
                                     <button onclick="editUser(
                                                 {{ $user->id }},
                                                 '{{ addslashes($user->full_name ?? '') }}',
@@ -616,7 +616,7 @@
                                         </svg>
                                         Edit
                                     </button>
-                                </td>
+                                </td> --}}
                             </tr>
                         @empty
                             <tr>
