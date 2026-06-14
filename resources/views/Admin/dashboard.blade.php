@@ -310,7 +310,7 @@ z-[9999] overflow-hidden ">
                         <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
                         </svg>
-                        +8.4%
+                        
                     </span>
                 </div>
 
@@ -329,7 +329,7 @@ z-[9999] overflow-hidden ">
                              style="width: 68%"></div>
                     </div>
                     <div class="mt-1 flex items-center justify-between">
-                        <span class="text-[10px] text-gray-400 dark:text-gray-500">68% of target</span>
+                        <span class="text-[10px] text-gray-400 dark:text-gray-500"></span>
                         <span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">${{ number_format($totalRevenue, 0) }}</span>
                     </div>
                 </div>
@@ -375,7 +375,7 @@ z-[9999] overflow-hidden ">
                              style="width: 61%"></div>
                     </div>
                     <div class="mt-1 flex items-center justify-between">
-                        <span class="text-[10px] text-gray-400 dark:text-gray-500">61% of monthly goal</span>
+                        <span class="text-[10px] text-gray-400 dark:text-gray-500"></span>
                         <span class="text-[10px] font-semibold text-blue-600 dark:text-blue-400">{{ number_format($totalSales) }} total</span>
                     </div>
                 </div>

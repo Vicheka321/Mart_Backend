@@ -405,7 +405,7 @@
 
             {{-- Avatar / profile dropdown --}}
             <div class="nav-item-3 nav-avatar relative" x-data="{ open: false }">
-                <img @click="open = !open" src="{{ asset('images/icons/profile.jpg') }}"
+                <img @click="open = !open" src="{{ asset('images/icons/profile3.jpg') }}"
                     class="w-9 h-9 rounded-full cursor-pointer border-2 border-gray-200 dark:border-gray-600"
                     alt="Profile">
 
@@ -419,7 +419,7 @@
 
                     {{-- User info header --}}
                     <div class="flex items-center gap-3 px-3 py-2 mb-1">
-                        <img src="{{ asset('images/icons/profile.jpg') }}"
+                        <img src="{{ asset('images/icons/profile3.jpg') }}"
                             class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700">
                         <div class="min-w-0">
                             <p class="text-xs font-semibold text-gray-900 dark:text-white truncate">Admin</p>
