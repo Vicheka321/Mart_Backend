@@ -109,13 +109,13 @@
                         {{ $order->id }}
                     </td>
                     <td>
-                        {{ $order->user->name ?? 'Customer' }}
+                        {{ $order->user->full_name ?? 'Customer' }}
                     </td>
                     <td>
-                        {{ $order->phone ?: '—' }}
+                        {{ $order->user->phone ?: '—' }}
                     </td>
                     <td class="text-right">
-                        ${{ number_format($order->total, 2) }}
+                        ${{ number_format($order->total_amount, 2) }}
                     </td>
                     <td>
                         {{ $order->payment_method ?: '—' }}

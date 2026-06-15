@@ -242,52 +242,116 @@ class OrderController extends Controller
             })->values()->toArray()
         ]);
     }
+    // {
+    //     $fileName = "orders.csv";
+
+    //     $orders = OrderModel::with('user')
+    //         ->orderBy('id')
+    //         ->get();
+
+    //     $headers = [
+    //         "Content-type"        => "text/csv",
+    //         "Content-Disposition" => "attachment; filename={$fileName}",
+    //     ];
+
+    //     $callback = function () use ($orders) {
+    //         $file = fopen('php://output', 'w');
+
+    //         // Header
+    //         fputcsv($file, [
+    //             'No.',
+    //             'Client',
+    //             'Phone',
+    //             'Total',
+    //             'Payment Method',
+    //             'Status',
+    //             'address',
+    //             'Created At'
+    //         ]);
+
+    //         foreach ($orders as $order) {
+    //             fputcsv($file, [
+    //                 $order->id,
+    //                 $order->user->name ?? 'Customer',
+    //                 $order->phone,
+    //                 $order->total,
+    //                 $order->payment_method,
+    //                 $order->status,
+    //                 $order->delivery_address,
+    //                 $order->created_at,
+    //             ]);
+    //         }
+
+    //         fclose($file);
+    //     };
+
+    //     return response()->stream($callback, 200, $headers);
+    // }
 
     public function exportCSV()
     {
-        $fileName = "orders.csv";
+        $fileName = 'orders_' . now()->format('Ymd_His') . '.csv';
 
         $orders = OrderModel::with('user')
             ->orderBy('id')
             ->get();
 
         $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename={$fileName}",
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename={$fileName}",
         ];
 
         $callback = function () use ($orders) {
+
             $file = fopen('php://output', 'w');
 
-            // Header
+            // UTF-8 BOM (Excel Khmer/Chinese support)
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
             fputcsv($file, [
-                'ID',
-                'Customer',
+                'Order ID',
+                'Customer Name',
                 'Phone',
-                'Total',
+                'Total Amount',
                 'Payment Method',
-                'Status',
-                'Created At'
+                'Order Status',
+                'Delivery Address',
+                'Created At',
             ]);
 
             foreach ($orders as $order) {
+
                 fputcsv($file, [
                     $order->id,
-                    $order->user->name ?? 'Customer',
-                    $order->phone,
-                    $order->total,
-                    $order->payment_method,
-                    $order->status,
-                    $order->created_at,
+
+                    $order->user?->full_name
+                        ?? $order->user?->name
+                        ?? 'Guest',
+
+                    $order->user->phone,
+
+                    number_format($order->total_amount, 2),
+
+                    ucfirst($order->payment_method),
+
+                    ucfirst($order->status),
+
+                    $order->delivery_address,
+
+                    optional($order->created_at)
+                        ->format('Y-m-d H:i:s'),
                 ]);
             }
 
             fclose($file);
         };
 
-        return response()->stream($callback, 200, $headers);
+        return response()->stream(
+            $callback,
+            200,
+            $headers
+        );
     }
-
     public function exportPDF()
     {
         $orders = OrderModel::with('user')

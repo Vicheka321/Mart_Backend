@@ -219,7 +219,10 @@ class CouponsController extends Controller
             ], 422);
         }
 
-        if ($total < $coupon->min_order_amount) {
+        if (
+            !is_null($coupon->min_order_amount) &&
+            $total < $coupon->min_order_amount
+        ) {
             return response()->json([
                 'success' => false,
                 'message' => 'Minimum order amount is $' .
@@ -242,7 +245,10 @@ class CouponsController extends Controller
             ->whereNotNull('order_id')
             ->count();
 
-        if ($userUsageCount >= $coupon->usage_limit_per_user) {
+        if (
+            !is_null($coupon->usage_limit_per_user) &&
+            $userUsageCount >= $coupon->usage_limit_per_user
+        ) {
             return response()->json([
                 'success' => false,
                 'message' => 'You have already used this coupon.',

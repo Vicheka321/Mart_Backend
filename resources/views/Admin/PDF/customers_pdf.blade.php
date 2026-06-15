@@ -112,7 +112,6 @@
                 <th width="8%">Role</th>
                 <th width="8%" class="text-center">Orders</th>
                 <th width="12%" class="text-right">Total Spent</th>
-                <th width="7%" class="text-center">VIP</th>
                 <th width="10%">Joined</th>
             </tr>
         </thead>
@@ -121,7 +120,7 @@
             @forelse($customers as $customer)
                 <tr>
                     <td>{{ $customer->id }}</td>
-                    <td>{{ $customer->name }}</td>
+                    <td>{{ $customer->full_name }}</td>
                     <td>{{ $customer->email ?: '-' }}</td>
                     <td>{{ $customer->phone ?: '-' }}</td>
                     <td>{{ ucfirst($customer->role) }}</td>
@@ -129,13 +128,13 @@
                     <td class="text-right">
                         ${{ number_format($customer->total_spent, 2) }}
                     </td>
-                    <td class="text-center">
+                    {{-- <td class="text-center">
                         @if($customer->total_spent > 1000)
                             <span class="vip">YES</span>
                         @else
                             No
                         @endif
-                    </td>
+                    </td> --}}
                     <td>
                         {{ $customer->created_at->format('Y-m-d') }}
                     </td>

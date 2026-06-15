@@ -210,7 +210,7 @@
             <div class="flex flex-wrap items-center gap-3">
                 {{-- Range Filter --}}
                 <form method="GET" action="{{ route('admin.dashboard') }}" class="relative flex items-center gap-3">
-                    <div class="relative min-w-[210px] z-[200] z-[99999] overflow-visible">
+                    <div class="relative min-w-[130px] z-[200] z-[99999] overflow-visible">
                         <button type="button" id="rangeButton"
                             class="btn-sm w-full flex items-center justify-between gap-3
                                    rounded-xl border border-gray-200 dark:border-gray-700
@@ -266,7 +266,7 @@ z-[9999] overflow-hidden ">
                 </form>
 
                 {{-- Export --}}
-                <button type="button"
+                {{-- <button type="button"
                     class="btn-sm inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium
                            rounded-xl border border-gray-200 dark:border-gray-600
                            bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200
@@ -275,7 +275,7 @@ z-[9999] overflow-hidden ">
                         <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/>
                     </svg>
                     Export
-                </button>
+                </button> --}}
             </div>
         </div>
 

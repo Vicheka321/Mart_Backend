@@ -85,7 +85,7 @@ class CouponController extends Controller
             'usage_limit_per_user' => 'nullable|integer|min:1',
             'start_date'           => 'nullable|date',
             'end_date'             => 'nullable|date|after_or_equal:start_date',
-            'status'               => 'required|in:0,1',             // ← was 'active,inactive'
+            'status'               => 'required|in:0,1',          
         ]);
 
         $validated['status'] = (bool) $request->status;

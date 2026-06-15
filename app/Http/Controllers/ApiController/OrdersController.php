@@ -60,6 +60,7 @@ class OrdersController extends Controller
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
             'code' => 'nullable|string',
+            'note' => 'nullable|string',
         ]);
 
         $user_id = Auth::id();
@@ -182,13 +183,21 @@ class OrdersController extends Controller
                     );
                 }
 
-                if ($total < $coupon->min_order_amount) {
+                // if ($total < $coupon->min_order_amount) {
+                //     throw new \Exception(
+                //         'Minimum order amount is $' .
+                //             number_format($coupon->min_order_amount, 2)
+                //     );
+                // }
+                if (
+                    !is_null($coupon->min_order_amount) &&
+                    $total < $coupon->min_order_amount
+                ) {
                     throw new \Exception(
                         'Minimum order amount is $' .
                             number_format($coupon->min_order_amount, 2)
                     );
                 }
-
                 // Check global usage limit
                 if (
                     !is_null($coupon->usage_limit) &&
@@ -202,8 +211,13 @@ class OrdersController extends Controller
                     ->where('user_id', $user_id)
                     ->count();
 
-                if ($userUsageCount >= $coupon->usage_limit_per_user) {
-                    throw new \Exception('You have already used this coupon.');
+                if (
+                    !is_null($coupon->usage_limit_per_user) &&
+                    $userUsageCount >= $coupon->usage_limit_per_user
+                ) {
+                    throw new \Exception(
+                        'You have already used this coupon.'
+                    );
                 }
 
                 // Calculate coupon discount
@@ -240,6 +254,7 @@ class OrdersController extends Controller
                 'payment_method' => $request->payment_method,
                 'total_amount' => $total,
                 'status' => 'pending',
+                'note' => $request->note,
             ]);
 
             if ($coupon && $couponDiscount > 0) {
@@ -272,7 +287,7 @@ class OrdersController extends Controller
             // CartItemModel::where('cart_id', $cart->id)
             //     ->delete();
             DB::commit();
-            
+
             $order->load([
                 'user',
                 'payment',
@@ -856,6 +871,93 @@ class OrdersController extends Controller
 
         return response()->json([
             'orders' => $orders
+        ]);
+    }
+
+    public function orderDetail($id)
+    {
+        $user_id = Auth::id();
+
+        $order = OrderModel::with([
+            'payment:id,order_id,payment_method,payment_status',
+            'orderItems:id,order_id,product_id,qty,price',
+            'orderItems.product:id,name,sale_price',
+            'orderItems.product.firstImage:id,product_id,image_url',
+        ])
+            ->where('user_id', $user_id)
+            ->find($id);
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+
+            'data' => [
+
+                'id' => $order->id,
+
+                // 'status' => $order->status,
+
+                'total' => number_format(
+                    $order->total_amount,
+                    2,
+                    '.',
+                    ''
+                ),
+
+                'payment_method' =>
+                $order->payment->payment_method ?? '',
+
+                'payment_status' =>
+                $order->payment->payment_status ?? '',
+
+                'phone' =>
+                $order->user->phone ?? '',
+
+                'address' =>
+                $order->delivery_address ?? '',
+
+                // 'note' =>
+                // $order->note ?? '',
+
+                'created_at' =>
+                $order->created_at->format('Y-m-d H:i'),
+
+                'items' => $order->orderItems->map(
+                    function ($item) {
+
+                        return [
+
+                            'product_id' =>
+                            $item->product_id,
+
+                            'name' =>
+                            $item->product->name ?? '',
+
+                            'qty' =>
+                            $item->qty,
+
+                            'price' =>
+                            number_format(
+                                $item->price,
+                                2,
+                                '.',
+                                ''
+                            ),
+
+                            'image' =>
+                            optional(
+                                $item->product->firstImage
+                            )->image_url,
+                        ];
+                    }
+                )->values()
+            ]
         ]);
     }
 }

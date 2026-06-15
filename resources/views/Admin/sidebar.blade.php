@@ -491,11 +491,11 @@
                     </span>
                     <span>Notifications</span>
                     {{-- @if($unreadCount > 0) --}}
-                        <span class="notif-badge ml-auto inline-flex items-center justify-center
+                        {{-- <span class="notif-badge ml-auto inline-flex items-center justify-center
                                          px-1.5 py-0.5 min-w-[20px] h-5
-                                         rounded-full bg-indigo-500 text-white text-[10px] font-bold leading-none">
+                                         rounded-full bg-indigo-500 text-white text-[10px] font-bold leading-none"> --}}
                             {{-- {{ $unreadCount > 99 ? '99+' : $unreadCount }} --}}
-                        </span>
+                        {{-- </span> --}}
                     {{-- @endif --}}
                 </a>
             </div>

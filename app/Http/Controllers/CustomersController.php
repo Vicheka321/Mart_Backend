@@ -167,7 +167,6 @@ class CustomersController extends Controller
                 'Role',
                 'Orders Count',
                 'Total Spent',
-                'VIP',
                 'Joined At',
             ]);
 
@@ -175,13 +174,12 @@ class CustomersController extends Controller
             foreach ($customers as $customer) {
                 fputcsv($file, [
                     $customer->id,
-                    $customer->name,
+                    $customer->full_name,
                     $customer->email,
                     $customer->phone,
                     ucfirst($customer->role),
                     $customer->orders_count,
                     number_format($customer->total_spent, 2, '.', ''),
-                    $customer->total_spent > 1000 ? 'Yes' : 'No',
                     $customer->created_at->format('Y-m-d H:i:s'),
                 ]);
             }

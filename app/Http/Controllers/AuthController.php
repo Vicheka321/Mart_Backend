@@ -14,19 +14,18 @@ use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Twilio\Rest\Client;
-use App\Services\SmsService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use App\Services\UnimtxService;
+use App\Services\InfobipService;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
 
-    protected UnimtxService $sms;
-    public function __construct(UnimtxService $sms)
+    protected InfobipService $sms;
+    public function __construct(InfobipService $sms)
     {
         $this->sms = $sms;
     }
@@ -68,6 +67,11 @@ class AuthController extends Controller
 
             Mail::to($login)->queue(new SendOtpMail($otp));
         } else {
+            $login = preg_replace('/\D/', '', $login);
+
+            if (str_starts_with($login, '0')) {
+                $login = '855' . substr($login, 1);
+            }
 
             Otp::updateOrCreate(
                 ['phone' => $login],
@@ -77,12 +81,27 @@ class AuthController extends Controller
                     'expires_at' => now()->addMinutes(5),
                 ]
             );
-            dd($otp);
 
-            $this->sms->sms(
-                $login,
-                "Your OTP is {$otp}"
-            );
+            try {
+
+                $this->sms->sendSms(
+                    $login,
+                    "Your OTP is {$otp}"
+                );
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'OTP sent successfully'
+                ]);
+            } catch (\Exception $e) {
+
+
+
+                return response()->json([
+                    'success' => false,
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
         }
 
         return response()->json([
@@ -167,10 +186,10 @@ class AuthController extends Controller
             Mail::to($request->login)
                 ->queue(new SendOtpMail($otp));
         } else {
-            $this->sms->sms(
-                $request->login,
-                "Your reset OTP is {$otp}"
-            );
+            // $this->sms->sendSms(
+            //     $request->login,
+            //     "Your reset OTP is {$otp}"
+            // );
         }
 
         return response()->json([
@@ -313,10 +332,10 @@ class AuthController extends Controller
             Mail::to($request->login)
                 ->queue(new SendOtpMail($otp));
         } else {
-            $this->sms->sms(
-                $request->login,
-                "Your OTP is {$otp}"
-            );
+            // $this->sms->sms(
+            //     $request->login,
+            //     "Your OTP is {$otp}"
+            // );
         }
 
         return response()->json([

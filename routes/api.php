@@ -70,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/order', [OrdersController::class, 'placeOrder']);
     Route::post('/order/cancel/{id}', [OrdersController::class, 'cancelOrder']);
     Route::get('/orders', [OrdersController::class, 'myOrders']);
+    Route::get('/orders/{id}', [OrdersController::class, 'orderDetail']);
     Route::post('/favorite', [FavoriteController::class, 'addFavorite']);
     Route::get('/favorites', [FavoriteController::class, 'myFavorites']);
     Route::delete('/favorite/{product_id}', [FavoriteController::class, 'removeFavorite']);

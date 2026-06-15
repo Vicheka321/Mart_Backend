@@ -411,12 +411,12 @@ class ProductController extends Controller
             // CSV Header
             fputcsv($file, [
                 'ID',
-                'Product Code',
+                // 'Product Code',
                 'Name',
                 'Category',
                 'Brand',
                 'Description',
-                'Unit',
+                // 'Unit',
                 'Cost Price',
                 'Sale Price',
                 'Quantity',
@@ -428,12 +428,12 @@ class ProductController extends Controller
             foreach ($products as $product) {
                 fputcsv($file, [
                     $product->id,
-                    $product->product_code,
+                    // $product->product_code,
                     $product->name,
                     $product->category->name ?? '',
                     $product->brand->name ?? '',
                     $product->description,
-                    $product->unit,
+                    // $product->unit,
                     number_format($product->cost_price ?? 0, 2, '.', ''),
                     number_format($product->sale_price ?? 0, 2, '.', ''),
                     $product->quantity,

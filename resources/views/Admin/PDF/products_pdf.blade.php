@@ -296,7 +296,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>No.</th>
                     <th>Product</th>
                     <th>Category</th>
                     <th>Brand</th>
@@ -316,7 +316,7 @@
                         {{-- Product --}}
                         <td>
                             <div class="product-name">{{ $p->name }}</div>
-                            <div class="product-id">#{{ $p->id }}</div>
+                            {{-- <div class="product-id">#{{ $p->id }}</div> --}}
                         </td>
 
                         {{-- Category --}}
