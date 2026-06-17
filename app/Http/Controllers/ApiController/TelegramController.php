@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\ApiController;
 
+use App\Events\OrderStatusChanged;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -34,6 +35,12 @@ class TelegramController extends Controller
                 $order->update([
                     'status' => 'processing'
                 ]);
+                broadcast(
+                    new OrderStatusChanged(
+                        $order->id,
+                        'processing'
+                    )
+                );
 
                 $order->refresh();
 
@@ -47,6 +54,12 @@ class TelegramController extends Controller
                 $order->update([
                     'status' => 'completed'
                 ]);
+                broadcast(
+                    new OrderStatusChanged(
+                        $order->id,
+                        'completed'
+                    )
+                );
 
                 $order->refresh();
 

@@ -47,6 +47,32 @@ class AuthController extends Controller
 
         $login = $request->login;
 
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+
+            if (User::where('email', $login)->exists()) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Email already registered'
+                ], 409);
+            }
+        } else {
+
+            $phone = preg_replace('/\D/', '', $login);
+
+            if (str_starts_with($phone, '0')) {
+                $phone = '855' . substr($phone, 1);
+            }
+
+            if (User::where('phone', $phone)->exists()) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Phone number already registered'
+                ], 409);
+            }
+        }
+
         $otp = random_int(100000, 999999);
 
         $payload = [
@@ -125,7 +151,7 @@ class AuthController extends Controller
         ])) {
 
             return response()->json([
-                'message' => 'Invalid credentials'
+                'message' => 'Invalid email/phone or password'
             ], 401);
         }
 

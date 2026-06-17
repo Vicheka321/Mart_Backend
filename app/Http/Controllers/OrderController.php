@@ -124,7 +124,10 @@ class OrderController extends Controller
         $orders = OrderModel::select('orders.*')
             ->join('payments', 'payments.order_id', '=', 'orders.id')
             ->where('orders.status', 'pending')
-            ->where('payments.payment_status', 'paid')
+            ->whereIn('payments.payment_status', [
+                'paid',
+                'unpaid'
+            ])
             ->with('payment')
             ->orderBy('payments.updated_at', 'desc')
             ->take(100)

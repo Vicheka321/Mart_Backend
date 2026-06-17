@@ -356,9 +356,19 @@
                                 <div class="flex gap-1.5 mt-auto pt-1">
                                     <button type="button"
                                         onclick="editCategory({{ $category->id }}, '{{ addslashes($category->name) }}', '{{ $category->image }}')"
-                                        class="action-btn flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
-                                               bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors
-                                               dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50">
+                                        class="action-btn flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium rounded-xl
+                                                border border-gray-200
+                                                bg-white
+                                                text-gray-600
+                                                hover:text-gray-900
+                                                hover:border-gray-300
+                                                hover:shadow-sm
+                                                transition-all duration-200
+                                                dark:bg-gray-800
+                                                dark:border-gray-700
+                                                dark:text-gray-400
+                                                dark:hover:text-white
+                                                dark:hover:bg-gray-700">
                                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -371,8 +381,17 @@
                                         @csrf @method('DELETE')
                                         <button type="submit"
                                             class="action-btn w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
-                                                   bg-red-50 text-red-500 hover:bg-red-100 transition-colors
-                                                   dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40">
+                                                border border-gray-200
+                                                bg-white
+                                                text-gray-600
+                                                hover:bg-gray-50
+                                                hover:text-red-500
+                                                transition-all duration-200
+                                                dark:bg-gray-800
+                                                dark:border-gray-700
+                                                dark:text-gray-400
+                                                dark:hover:bg-gray-700
+                                                dark:hover:text-red-400">
                                             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"/>
                                             </svg>

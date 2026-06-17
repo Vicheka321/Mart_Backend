@@ -29,23 +29,23 @@ class UserSeeder extends Seeder
         //     'role' => 'staff'
         // ]);
 
-        // for ($i = 1; $i <= 100; $i++) {
-        //     User::create([
-        //         'full_name' => fake()->firstName() . ' ' . fake()->lastName(),
-        //         'email'      => fake()->unique()->safeEmail(),
-        //         'phone'      => '09' . rand(10000000, 99999999),
+        for ($i = 1; $i <= 100; $i++) {
+            User::create([
+                'full_name' => fake()->firstName() . ' ' . fake()->lastName(),
+                'email'      => fake()->unique()->safeEmail(),
+                'phone'      => '09' . rand(10000000, 99999999),
 
-        //         // Fake avatar image URL
-        //         'avatar'     => 'https://i.pravatar.cc/150?img=' . rand(1, 70),
+                // Fake avatar image URL
+                'avatar'     => 'https://i.pravatar.cc/150?img=' . rand(1, 70),
 
-        //         'role'       => 'customer',
+                'role'       => 'customer',
 
-        //         // Optional fields
-        //         'password'   => Hash::make('12345678'),
-        //         // Random dates within the last 2 years
-        //         'created_at' => Carbon::now()->subDays(rand(1, 730)),
-        //         'updated_at' => Carbon::now()->subDays(rand(1, 730)),
-        //     ]);
-        // }
+                // Optional fields
+                'password'   => Hash::make('12345678'),
+                // Random dates within the last 2 years
+                'created_at' => Carbon::now()->subDays(rand(1, 730)),
+                'updated_at' => Carbon::now()->subDays(rand(1, 730)),
+            ]);
+        }
     }
 }

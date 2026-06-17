@@ -159,7 +159,8 @@
     nav {
         animation: navSlideDown .4s cubic-bezier(.22, 1, .36, 1) both;
         position: relative;
-        z-index: 40;   /* higher than .dash-header (30) since navbar sits above page content */
+        z-index: 40;
+        /* higher than .dash-header (30) since navbar sits above page content */
     }
 
     .nav-logo {
@@ -606,7 +607,8 @@
             window.pusher.subscribe('orders').bind('new-order', function (data) {
                 const order = data.order;
 
-                window.notifCount++;
+                window.notifCount =
+                    Number(window.notifCount || 0) + 1;
                 _updateBadge(window.notifCount);
 
                 const audio = document.getElementById('orderSound');
@@ -639,24 +641,45 @@
     }
 
     // ── Badge helper ─────────────────────────────────────────────────────────
-    function _updateBadge(n) {
-        const badge = document.getElementById('notifCount');
-        const hb = document.getElementById('notifBadgeHeader');
-        if (!badge) return;
-        const label = n > 99 ? '99+' : n;
-        badge.innerText = label;
-        badge.classList.remove('hidden');
-        badge.style.animation = 'none';
-        badge.offsetHeight;
-        badge.style.animation = '';
-        if (hb) { hb.textContent = label + ' new'; hb.classList.remove('hidden'); }
-    }
+    // function _updateBadge(n) {
+    //     const badge = document.getElementById('notifCount');
+    //     const hb = document.getElementById('notifBadgeHeader');
+    //     if (!badge) return;
+    //     const label = n > 99 ? '99+' : n;
+    //     badge.innerText = label;
+    //     badge.classList.remove('hidden');
+    //     badge.style.animation = 'none';
+    //     badge.offsetHeight;
+    //     badge.style.animation = '';
+    //     if (hb) { hb.textContent = label + ' new'; hb.classList.remove('hidden'); }
+    // }
 
+
+    function _updateBadge(n) {
+
+        n = Number(n) || 0;
+
+        const badge = document.getElementById('notifCount');
+
+        if (!badge) return;
+
+        badge.textContent =
+            n > 99 ? '99+' : n;
+
+        if (n > 0) {
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
     // ── Load existing notifications from API ─────────────────────────────────
     async function loadNotifications() {
         try {
             const res = await fetch('/admin/orders/notifications');
             const orders = await res.json();
+
+
+
 
             const list = document.getElementById('notifList');
             if (!list) return;
@@ -678,7 +701,10 @@
                 return;
             }
 
-            window.notifCount = orders.length;
+            window.notifCount =
+                Array.isArray(orders)
+                    ? orders.length
+                    : 0;
             _updateBadge(window.notifCount);
 
             orders.forEach((o, i) => {

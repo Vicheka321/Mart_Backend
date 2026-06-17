@@ -196,6 +196,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js" defer></script>
+    {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> --}}
 
     <script>
         tailwind.config = {
