@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\OrderModel;
+use App\Services\TelegramService;
 
 class TelegramController extends Controller
 {
@@ -41,9 +42,7 @@ class TelegramController extends Controller
 
                 app(\App\Services\TelegramService::class)
                     ->sendNextPending();
-            }
-
-            elseif ($action === 'complete') {
+            } elseif ($action === 'complete') {
 
                 $order->update([
                     'status' => 'completed'
@@ -53,9 +52,29 @@ class TelegramController extends Controller
 
                 app(\App\Services\TelegramService::class)
                     ->edit($order);
-            }
+            } elseif ($action === 'print') {
 
-            elseif ($action === 'cancel') {
+                $invoiceUrl =
+                    url("/admin/orders/{$order->id}/invoice");
+
+                $token = '8685152870:AAEuHrQ7DXHm_W_y6Ty4AxhUbptWOzp4bzM';
+
+                Http::post(
+                    "https://api.telegram.org/bot{$token}/sendMessage",
+                    [
+                        'chat_id' => $chat_id,
+                        'text' =>
+                        "🖨 Invoice Link\n\n" .
+                            $invoiceUrl
+                    ]
+                );
+            } elseif ($action === 'cancel') {
+
+                if ($order->status !== 'pending') {
+                    return response()->json([
+                        'error' => 'Only pending orders can cancel'
+                    ]);
+                }
 
                 $order->update([
                     'status' => 'cancelled'
@@ -63,21 +82,9 @@ class TelegramController extends Controller
 
                 $order->refresh();
 
-                app(\App\Services\TelegramService::class)
-                    ->edit($order);
+                app(TelegramService::class)->edit($order);
 
-                app(\App\Services\TelegramService::class)
-                    ->sendNextPending();
-
-                $token = env('8685152870:AAEuHrQ7DXHm_W_y6Ty4AxhUbptWOzp4bzM');
-
-                Http::post(
-                    "https://api.telegram.org/bot{$token}/answerCallbackQuery",
-                    [
-                        'callback_query_id' => $callback_id,
-                        'text' => "Order #{$order->id} updated"
-                    ]
-                );
+                app(TelegramService::class)->sendNextPending();
             }
 
             // $order->load([

@@ -21,7 +21,10 @@ class OrderController extends Controller
         ])
             // Show only orders where payment status = paid
             ->whereHas('payment', function ($q) {
-                $q->where('payment_status', 'paid');
+                $q->whereIn('payment_status', [
+                    'paid',
+                    'unpaid'
+                ]);
             })
 
             // Optional order status filter
@@ -69,23 +72,26 @@ class OrderController extends Controller
         });
 
         $totalOrders = OrderModel::whereHas('payment', function ($q) {
-            $q->where('payment_status', 'paid');
+            $q->whereIn('payment_status', [
+                'paid',
+                'unpaid'
+            ]);
         })->count();
 
         $pendingOrders = OrderModel::where('status', 'pending')
-            ->whereHas('payment', fn($q) => $q->where('payment_status', 'paid'))
+            ->whereHas('payment', fn($q) => $q->whereIn('payment_status', ['paid', 'unpaid']))
             ->count();
 
         $processingOrders = OrderModel::where('status', 'processing')
-            ->whereHas('payment', fn($q) => $q->where('payment_status', 'paid'))
+            ->whereHas('payment', fn($q) => $q->whereIn('payment_status', ['paid', 'unpaid']))
             ->count();
 
         $completedOrders = OrderModel::where('status', 'completed')
-            ->whereHas('payment', fn($q) => $q->where('payment_status', 'paid'))
+            ->whereHas('payment', fn($q) => $q->whereIn('payment_status', ['paid', 'unpaid']))
             ->count();
 
         $cancelledOrders = OrderModel::where('status', 'cancelled')
-            ->whereHas('payment', fn($q) => $q->where('payment_status', 'paid'))
+            ->whereHas('payment', fn($q) => $q->whereIn('payment_status', ['paid', 'unpaid']))
             ->count();
 
         return view('admin.orders', compact('orders', 'totalOrders', 'pendingOrders', 'processingOrders', 'completedOrders', 'cancelledOrders'));
@@ -134,57 +140,133 @@ class OrderController extends Controller
         }));
     }
 
+    // public function changeStatus(Request $request, $id)
+    // {
+    //     $order = OrderModel::findOrFail($id);
+
+    //     $valid = ['pending', 'processing', 'completed', 'cancelled'];
+
+    //     if (
+    //         $request->status === 'cancelled'
+    //         && $order->status !== 'pending'
+    //     ) {
+    //         return response()->json([
+    //             'error' => 'Only pending orders can be cancelled'
+    //         ], 400);
+    //     }
+
+    //     if (!in_array($request->status, $valid)) {
+    //         return response()->json(['error' => 'Invalid status'], 400);
+    //     }
+
+    //     if ($order->status == 'completed') {
+    //         return response()->json(['error' => 'Already completed'], 400);
+    //     }
+
+    //     // ✅ UPDATE STATUS
+    //     $order->update([
+    //         'status' => $request->status
+    //     ]);
+
+    //     // 🔥 UPDATE TELEGRAM MESSAGE
+    //     app(\App\Services\TelegramService::class)->edit($order);
+
+    //     // ===============================
+    //     // 🚀 SEND NEXT ORDER (FIFO)
+    //     // ===============================
+
+    //     if (in_array($request->status, ['processing', 'cancelled'])) {
+
+    //         $next = OrderModel::where('status', 'pending')
+    //             ->whereNull('telegram_message_id')
+    //             ->orderBy('created_at', 'asc')
+    //             ->first();
+
+    //         if ($next) {
+
+    //             app(\App\Services\TelegramService::class)->send(
+    //                 "🚀 *NEW ORDER RECEIVED*\n" .
+    //                     "━━━━━━━━━━━━━━━\n" .
+    //                     "🆔 *Order:* #{$next->id}\n" .
+    //                     "👤 *Customer:* {$next->user->name}\n" .
+    //                     "📞 *Phone:* {$next->address->phone}\n" .
+    //                     "📍 *Address:* {$next->address->address}\n" .
+    //                     "📍 *Location:* https://www.google.com/maps?q={$next->address->lat},{$next->address->lng}\n" .
+    //                     "━━━━━━━━━━━━━━━\n" .
+    //                     "💰 *Total:* $" . number_format($next->total_amount, 2) . "\n" .
+    //                     "💳 *Payment:* {$next->payment->payment_method}\n" .
+    //                     "📦 *Status:* {$next->status}\n" .
+    //                     "━━━━━━━━━━━━━━━",
+    //                 $next
+    //             );
+    //         }
+    //     }
+
+
+    //     return response()->json([
+    //         'message' => 'Updated successfully'
+    //     ]);
+    // }
+
+
     public function changeStatus(Request $request, $id)
     {
-        $order = OrderModel::findOrFail($id);
+        $order = OrderModel::with('payment')
+            ->findOrFail($id);
 
-        $valid = ['pending', 'processing', 'completed', 'cancelled'];
+        $valid = [
+            'pending',
+            'processing',
+            'completed',
+            'cancelled'
+        ];
 
         if (!in_array($request->status, $valid)) {
-            return response()->json(['error' => 'Invalid status'], 400);
+            return response()->json([
+                'error' => 'Invalid status'
+            ], 400);
         }
 
-        if ($order->status == 'completed') {
-            return response()->json(['error' => 'Already completed'], 400);
+        if (
+            $request->status === 'cancelled' &&
+            $order->status !== 'pending'
+        ) {
+            return response()->json([
+                'error' => 'Only pending orders can be cancelled'
+            ], 400);
         }
 
-        // ✅ UPDATE STATUS
+        if ($order->status === 'completed') {
+            return response()->json([
+                'error' => 'Already completed'
+            ], 400);
+        }
+
         $order->update([
             'status' => $request->status
         ]);
 
-        // 🔥 UPDATE TELEGRAM MESSAGE
-        app(\App\Services\TelegramService::class)->edit($order);
+        if (
+            $request->status === 'completed' &&
+            $order->payment &&
+            $order->payment->payment_status === 'unpaid'
+        ) {
+            $order->payment->update([
+                'payment_status' => 'paid'
+            ]);
+        }
 
-        // ===============================
-        // 🚀 SEND NEXT ORDER (FIFO)
-        // ===============================
+        app(\App\Services\TelegramService::class)
+            ->edit($order);
 
-        if (in_array($request->status, ['processing', 'cancelled'])) {
-
-            $next = OrderModel::where('status', 'pending')
-                ->whereNull('telegram_message_id')
-                ->orderBy('created_at', 'asc')
-                ->first();
-
-            if ($next) {
-
-                app(\App\Services\TelegramService::class)->send(
-                    "🚀 *NEW ORDER RECEIVED*\n" .
-                        "━━━━━━━━━━━━━━━\n" .
-                        "🆔 *Order:* #{$next->id}\n" .
-                        "👤 *Customer:* {$next->user->name}\n" .
-                        "📞 *Phone:* {$next->address->phone}\n" .
-                        "📍 *Address:* {$next->address->address}\n" .
-                        "📍 *Location:* https://www.google.com/maps?q={$next->address->lat},{$next->address->lng}\n" .
-                        "━━━━━━━━━━━━━━━\n" .
-                        "💰 *Total:* $" . number_format($next->total_amount, 2) . "\n" .
-                        "💳 *Payment:* {$next->payment->payment_method}\n" .
-                        "📦 *Status:* {$next->status}\n" .
-                        "━━━━━━━━━━━━━━━",
-                    $next
-                );
-            }
+        if (
+            in_array(
+                $request->status,
+                ['processing', 'cancelled']
+            )
+        ) {
+            app(\App\Services\TelegramService::class)
+                ->sendNextPending();
         }
 
         return response()->json([
@@ -361,5 +443,17 @@ class OrderController extends Controller
         $pdf = Pdf::loadView('Admin.PDF.orders_pdf', compact('orders'));
 
         return $pdf->download('orders.pdf');
+    }
+
+
+    public function invoice($id)
+    {
+        $order = OrderModel::with([
+            'user',
+            'payment',
+            'orderItems.product'
+        ])->findOrFail($id);
+
+        return view('admin.order.invoice', compact('order'));
     }
 }

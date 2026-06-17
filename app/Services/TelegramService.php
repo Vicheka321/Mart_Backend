@@ -24,7 +24,11 @@ class TelegramService
         if ($order->status == 'processing') {
             $buttons[] = [
                 ['text' => '📦 Complete', 'callback_data' => "complete_{$order->id}"],
-                ['text' => '❌ Cancel', 'callback_data' => "cancel_{$order->id}"],
+                [
+                    'text' => '🖨 Print',
+                    'callback_data' => "print_{$order->id}"
+                ]
+                
             ];
         }
 
@@ -60,7 +64,7 @@ class TelegramService
             'payment'
         ]);
 
-        $token = env('TELEGRAM_BOT_TOKEN');
+        $token = '8685152870:AAEuHrQ7DXHm_W_y6Ty4AxhUbptWOzp4bzM';
 
         $statusEmoji = match ($order->status) {
             'pending'    => '📦',
@@ -138,10 +142,6 @@ class TelegramService
                     'text' => '📦 Complete',
                     'callback_data' => "complete_{$order->id}"
                 ],
-                [
-                    'text' => '❌ Cancel',
-                    'callback_data' => "cancel_{$order->id}"
-                ]
             ];
         }
 
@@ -161,17 +161,20 @@ class TelegramService
 
     public function sendNextPending()
     {
-
         $next = OrderModel::with([
             'user',
             'payment'
         ])
             ->where('status', 'pending')
             ->where('is_sent', false)
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at')
             ->first();
 
         if (!$next) {
+            return;
+        }
+
+        if ($next->telegram_message_id) {
             return;
         }
 

@@ -377,6 +377,7 @@
                             <th class="px-6 py-3">Phone</th>
                             <th class="px-6 py-3">Total</th>
                             <th class="px-6 py-3">Payment</th>
+                            <th class="px-6 py-3">Payment Status</th>
                             <th class="px-6 py-3">Status</th>
                             <th class="px-6 py-3">Date</th>
                             <th class="px-6 py-3 text-right">Actions</th>
@@ -445,6 +446,33 @@
                                     </span>
                                 </td>
 
+                                @php
+                                $paymentStatusBadge = match(strtolower($order['payment_status'] ?? '')) {
+
+                                    'paid' =>
+                                    'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400',
+
+                                    'pending' =>
+                                    'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400',
+
+                                    'unpaid' =>
+                                    'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
+
+                                    'failed' =>
+                                    'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
+
+                                    default =>
+                                    'bg-gray-100 text-gray-700 dark:bg-gray-500/10 dark:text-gray-400',
+                                };
+                                @endphp
+
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold {{ $paymentStatusBadge }}">
+                                        {{ ucfirst($order['payment_status'] ?? 'Unknown') }}
+                                    </span>
+                                </td>
+
                                 {{-- STATUS --}}
                                 <td class="px-6 py-4">
                                     <span id="status-badge-{{ $order['id'] }}"
@@ -483,11 +511,32 @@
                                         @endif
 
                                         @if($order['status'] === 'processing')
+                                            <button
+                                                    onclick="printInvoice({{ $order['id'] }})"
+                                                    class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
+                                                        border border-purple-200 dark:border-purple-500/30
+                                                        bg-purple-50 dark:bg-purple-500/10
+                                                        text-purple-600 dark:text-purple-400">
+
+                                                    Print
+                                            </button>
                                             <button type="button" onclick="confirmChange({{ $order['id'] }}, 'completed', this)"
                                                 class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
                                                        border border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10
                                                        text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all duration-200">
                                                 Complete
+                                            </button>
+                                        @endif
+
+                                        @if($order['status'] === 'completed')
+                                            <button
+                                                    onclick="printInvoice({{ $order['id'] }})"
+                                                    class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
+                                                        border border-purple-200 dark:border-purple-500/30
+                                                        bg-purple-50 dark:bg-purple-500/10
+                                                        text-purple-600 dark:text-purple-400">
+
+                                                    Print
                                             </button>
                                         @endif
 
@@ -918,22 +967,88 @@
         });
     }
 
+    // function updateRowActions(orderId, newStatus) {
+    //     const container = document.getElementById('actions-' + orderId);
+    //     if (!container) return;
+    //     const viewBtn = container.querySelector('button:first-child');
+    //     let html = '';
+    //     if (newStatus === 'processing') {
+    //         html = `<button type="button" onclick="confirmChange(${orderId},'completed',this)"
+    //             class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
+    //                    border border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10
+    //                    text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 transition-all duration-200">
+    //             Complete
+    //         </button>`;
+    //     }
+    //     container.innerHTML = '';
+    //     if (viewBtn) container.appendChild(viewBtn);
+    //     if (html)    container.insertAdjacentHTML('beforeend', html);
+    // }
+
     function updateRowActions(orderId, newStatus) {
-        const container = document.getElementById('actions-' + orderId);
+
+        const container = document.getElementById(
+            'actions-' + orderId
+        );
+
         if (!container) return;
-        const viewBtn = container.querySelector('button:first-child');
+
+        const viewBtn =
+            container.querySelector('button:first-child');
+
         let html = '';
+
         if (newStatus === 'processing') {
-            html = `<button type="button" onclick="confirmChange(${orderId},'completed',this)"
-                class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
-                       border border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10
-                       text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 transition-all duration-200">
-                Complete
-            </button>`;
+
+            html = `
+                <button
+                    onclick="printInvoice(${orderId})"
+                    class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
+                        border border-purple-200
+                        bg-purple-50
+                        text-purple-600">
+
+                    Print
+                </button>
+
+                <button
+                    type="button"
+                    onclick="confirmChange(${orderId}, 'completed', this)"
+                    class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
+                        border border-emerald-200
+                        bg-emerald-50
+                        text-emerald-600">
+
+                    Complete
+                </button>
+            `;
         }
+
+        if (newStatus === 'completed') {
+
+            html = `
+                <button
+                    onclick="printInvoice(${orderId})"
+                    class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
+                        border border-purple-200
+                        bg-purple-50
+                        text-purple-600">
+
+                    Print
+                </button>
+            `;
+        }
+
         container.innerHTML = '';
-        if (viewBtn) container.appendChild(viewBtn);
-        if (html)    container.insertAdjacentHTML('beforeend', html);
+
+        if (viewBtn) {
+            container.appendChild(viewBtn);
+        }
+
+        container.insertAdjacentHTML(
+            'beforeend',
+            html
+        );
     }
 
     // ══════════════════════════════════════════════════════
@@ -1003,6 +1118,25 @@
             }, 5000);
         });
     });
+
+
+    function printInvoice(orderId) {
+
+        let iframe = document.createElement('iframe');
+
+        iframe.style.display = 'none';
+
+        iframe.src = `/admin/orders/${orderId}/invoice`;
+
+        document.body.appendChild(iframe);
+
+        iframe.onload = function () {
+
+            iframe.contentWindow.focus();
+
+            iframe.contentWindow.print();
+        };
+    }
     </script>
     @endpush
 

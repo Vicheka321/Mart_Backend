@@ -281,7 +281,7 @@ class OrdersController extends Controller
             $payment = PaymentModel::create([
                 'order_id' => $order->id,
                 'payment_method' => $request->payment_method,
-                'payment_status' => 'pending',
+                'payment_status' => 'unpaid',
                 'amount' => $total
             ]);
             // CartItemModel::where('cart_id', $cart->id)
@@ -335,11 +335,28 @@ class OrdersController extends Controller
                 "📦 *Status:* Pending";
 
             if ($request->payment_method == 'cash') {
+
+                CartItemModel::where(
+                    'cart_id',
+                    $cart->id
+                )->delete();
+
                 broadcast(new NewOrderCreated($order));
-                app(TelegramService::class)->send(
-                    $message,
-                    $order
-                );
+
+                $firstPending = OrderModel::where('status', 'pending')
+                    ->where('is_sent', false)
+                    ->orderBy('created_at')
+                    ->first();
+
+                if (
+                    $firstPending &&
+                    $firstPending->id == $order->id
+                ) {
+                    app(TelegramService::class)->send(
+                        $message,
+                        $order
+                    );
+                }
             }
 
             /// ✅ RESPONSE
@@ -815,7 +832,10 @@ class OrdersController extends Controller
         ])
             ->where('user_id', $user_id)
             ->whereHas('payment', function ($q) {
-                $q->where('payment_status', 'paid');
+                $q->whereIn('payment_status', [
+                    'paid',
+                    'unpaid'
+                ]);
             })
             ->latest()
             ->get();

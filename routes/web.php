@@ -64,6 +64,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/orders/{id}', [OrderController::class, 'show']);
     Route::get('/admin/orders/export/csv', [OrderController::class, 'exportCSV'])->name('orders.export.csv');
     Route::get('/admin/orders/export/pdf', [OrderController::class, 'exportPDF'])->name('orders.export.pdf');
+    Route::get('/admin/orders/{id}/invoice',[OrderController::class, 'invoice'])->name('admin.orders.invoice');
 
 
 

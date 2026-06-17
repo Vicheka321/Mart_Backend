@@ -637,7 +637,6 @@ class PaymentController extends Controller
                 ])->find($payment->order_id);
 
 
-                broadcast(new NewOrderCreated($order));
 
 
                 if ($order && $order->payment) {
@@ -646,7 +645,7 @@ class PaymentController extends Controller
                     $order->payment->update([
                         'payment_status' => 'paid',
                     ]);
-
+                    broadcast(new NewOrderCreated($order));
 
                     $cart = CartModel::where(
                         'user_id',
@@ -712,10 +711,20 @@ class PaymentController extends Controller
 
                         "✅ *PAID*";
 
-                    app(TelegramService::class)->send(
-                        $message,
-                        $order
-                    );
+                    $firstPending = OrderModel::where('status', 'pending')
+                        ->where('is_sent', false)
+                        ->orderBy('created_at')
+                        ->first();
+
+                    if (
+                        $firstPending &&
+                        $firstPending->id == $order->id
+                    ) {
+                        app(TelegramService::class)->send(
+                            $message,
+                            $order
+                        );
+                    }
                 }
 
                 DB::commit();
