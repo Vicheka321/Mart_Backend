@@ -468,8 +468,9 @@
 
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
+                                        id="payment-badge-{{ $order['id'] }}"
                                         class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold {{ $paymentStatusBadge }}">
-                                        {{ ucfirst($order['payment_status'] ?? 'Unknown') }}
+                                        {{ ucfirst($order['payment_status']) }}
                                     </span>
                                 </td>
 
@@ -1051,6 +1052,75 @@
         );
     }
 
+       function updateOrderRealtime(
+            orderId,
+            newStatus
+        ) {
+
+            const badge =
+                document.getElementById(
+                    'status-badge-' + orderId
+                );
+
+            if (!badge) return;
+
+            const statusMap = {
+
+                pending:
+                    'bg-amber-100 text-amber-700',
+
+                processing:
+                    'bg-blue-100 text-blue-700',
+
+                completed:
+                    'bg-emerald-100 text-emerald-700',
+
+                cancelled:
+                    'bg-red-100 text-red-700',
+            };
+
+            badge.className =
+                'status-badge inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ' +
+                statusMap[newStatus];
+
+            badge.textContent =
+                newStatus.charAt(0).toUpperCase() +
+                newStatus.slice(1);
+
+            updateRowActions(
+                orderId,
+                newStatus
+            );
+
+            const row =
+                document.getElementById(
+                    'order-row-' + orderId
+                );
+
+            if (row) {
+
+                row.dataset.status =
+                    newStatus;
+
+                row.classList.add(
+                    'new-order-row'
+                );
+
+                setTimeout(() => {
+
+                    row.classList.remove(
+                        'new-order-row'
+                    );
+
+                }, 3000);
+            }
+
+            showToast(
+                `Order #${orderId} updated to ${newStatus}`,
+                'success'
+            );
+        }
+
     // ══════════════════════════════════════════════════════
     //  REAL-TIME (Pusher)
     // ══════════════════════════════════════════════════════
@@ -1117,6 +1187,36 @@
                 if (row) row.classList.remove('new-order-row');
             }, 5000);
         });
+
+        channel.bind(
+            'order-status-changed',
+            function(data) {
+
+                updateOrderRealtime(
+                    data.orderId,
+                    data.status
+                );
+
+            }
+        );
+
+        channel.bind(
+            'payment-status-changed',
+            function(data) {
+
+                const badge =
+                    document.getElementById(
+                        'payment-badge-' + data.orderId
+                    );
+
+                if (!badge) return;
+
+                badge.className =
+                    'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700';
+
+                badge.textContent = 'Paid';
+            }
+        );
     });
 
 

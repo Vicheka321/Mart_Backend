@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ApiController;
 
 use App\Events\OrderStatusChanged;
+use App\Events\PaymentStatusChanged;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -54,12 +55,32 @@ class TelegramController extends Controller
                 $order->update([
                     'status' => 'completed'
                 ]);
+
+                if (
+                    $order->payment &&
+                    $order->payment->payment_method === 'cash' &&
+                    $order->payment->payment_status === 'unpaid'
+                ) {
+
+                    $order->payment->update([
+                        'payment_status' => 'paid'
+                    ]);
+
+                    broadcast(
+                        new PaymentStatusChanged(
+                            $order->id,
+                            'paid'
+                        )
+                    );
+                }
+
                 broadcast(
                     new OrderStatusChanged(
                         $order->id,
                         'completed'
                     )
                 );
+
 
                 $order->refresh();
 

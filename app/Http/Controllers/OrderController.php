@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PaymentStatusChanged;
 use App\Models\OrderModel;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -257,6 +258,12 @@ class OrderController extends Controller
             $order->payment->update([
                 'payment_status' => 'paid'
             ]);
+            broadcast(
+                new PaymentStatusChanged(
+                    $order->id,
+                    'paid'
+                )
+            );
         }
 
         app(\App\Services\TelegramService::class)
