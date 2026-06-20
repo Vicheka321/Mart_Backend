@@ -12,247 +12,367 @@ use App\Models\Coupon;
 use App\Models\CouponModel;
 use App\Models\khqr_payments;
 use App\Models\KhqrPayment;
+use App\Models\Order_itemModel;
+use App\Models\OrderModel;
+use App\Models\PaymentModel;
+use App\Models\ProductsModel;
+use App\Models\PromotionModel;
+use App\Models\user;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
 {
-    // public function index()
-    // {
-    //     $now = now();
-
-    //     // Core metrics
-    //     $paidOrders = OrderModel::whereHas('payment', function ($q) {
-    //         $q->where('payment_status', 'paid');
-    //     });
-
-    //     $totalOrders = (clone $paidOrders)->count();
-
-    //     $totalRevenue = PaymentModel::where('payment_status', 'paid')
-    //         ->sum('amount');
-
-    //     $averageOrderValue = $totalOrders > 0
-    //         ? $totalRevenue / $totalOrders
-    //         : 0;
-
-    //     // Profit = Revenue - Cost
-    //     $profit = Order_itemModel::with('product')
-    //         ->whereHas('order.payment', function ($q) {
-    //             $q->where('payment_status', 'paid');
-    //         })
-    //         ->get()
-    //         ->sum(function ($item) {
-    //             $revenue = $item->price * $item->qty;
-    //             $cost = ($item->product->cost_price ?? 0) * $item->qty;
-    //             return $revenue - $cost;
-    //         });
-
-    //     // Conversion rate (demo metric)
-    //     $totalCustomers = \App\Models\User::where('role', 'customer')->count();
-    //     $conversionRate = $totalCustomers > 0
-    //         ? ($totalOrders / $totalCustomers) * 100
-    //         : 0;
-
-    //     // Bounce rate (demo metric)
-    //     $bounceRate = 28.4;
-
-    //     // Monthly revenue for last 10 months
-    //     $months = [];
-    //     $monthlyRevenue = [];
-    //     $monthlyProfit = [];
-
-    //     for ($i = 9; $i >= 0; $i--) {
-    //         $date = $now->copy()->subMonths($i);
-
-    //         $months[] = $date->format('M');
-
-    //         $revenue = PaymentModel::where('payment_status', 'paid')
-    //             ->whereYear('created_at', $date->year)
-    //             ->whereMonth('created_at', $date->month)
-    //             ->sum('amount');
-
-    //         $profitMonth = Order_itemModel::with('product')
-    //             ->whereHas('order.payment', function ($q) {
-    //                 $q->where('payment_status', 'paid');
-    //             })
-    //             ->whereHas('order', function ($q) use ($date) {
-    //                 $q->whereYear('created_at', $date->year)
-    //                   ->whereMonth('created_at', $date->month);
-    //             })
-    //             ->get()
-    //             ->sum(function ($item) {
-    //                 $revenue = $item->price * $item->qty;
-    //                 $cost = ($item->product->cost_price ?? 0) * $item->qty;
-    //                 return $revenue - $cost;
-    //             });
-
-    //         $monthlyRevenue[] = (float) $revenue;
-    //         $monthlyProfit[] = (float) $profitMonth;
-    //     }
-
-    //     // Sales by category
-    //     $salesByCategory = Category::select('categories.name')
-    //         ->join('products', 'products.categories_id', '=', 'categories.id')
-    //         ->join('order_items', 'order_items.product_id', '=', 'products.id')
-    //         ->join('orders', 'orders.id', '=', 'order_items.order_id')
-    //         ->join('payments', 'payments.order_id', '=', 'orders.id')
-    //         ->where('payments.payment_status', 'paid')
-    //         ->groupBy('categories.id', 'categories.name')
-    //         ->selectRaw('SUM(order_items.qty) as total_sold')
-    //         ->orderByDesc('total_sold')
-    //         ->take(5)
-    //         ->get();
-
-    //     // Top selling products
-    //     $topProducts = ProductsModel::with('image')
-    //         ->withSum('orderItems as sold_qty', 'qty')
-    //         ->orderByDesc('sold_qty')
-    //         ->take(5)
-    //         ->get();
-
-    //     // Demo traffic sources
-    //     $trafficSources = [
-    //         ['name' => 'Organic Search', 'percent' => 42],
-    //         ['name' => 'Social Media', 'percent' => 28],
-    //         ['name' => 'Direct', 'percent' => 18],
-    //         ['name' => 'Email Marketing', 'percent' => 12],
-    //     ];
-
-    //     return view('Admin.reports', compact(
-    //         'conversionRate',
-    //         'averageOrderValue',
-    //         'totalOrders',
-    //         'bounceRate',
-    //         'totalRevenue',
-    //         'profit',
-    //         'months',
-    //         'monthlyRevenue',
-    //         'monthlyProfit',
-    //         'salesByCategory',
-    //         'topProducts',
-    //         'trafficSources'
-    //     ));
-    // }
-
-    public function index()
+    public function dashboard()
     {
-        $now = now();
+        $totalRevenue = OrderModel::where('status', 'completed')
+            ->sum('total_amount');
 
-        // ── Core KPIs ─────────────────────────────────────────────────────────
-        $paidOrders = Order::whereHas('payment', fn($q) => $q->where('payment_status', 'paid'));
+        $todayRevenue = OrderModel::where('status', 'completed')
+            ->whereDate('created_at', today())
+            ->sum('total_amount');
 
-        $totalOrders   = (clone $paidOrders)->count();
-        $totalRevenue  = Payment::where('payment_status', 'paid')->sum('amount');
-        $averageOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
+        $monthRevenue = OrderModel::where('status', 'completed')
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('total_amount');
 
-        $profit = OrderItem::with('product')
-            ->whereHas('order.payment', fn($q) => $q->where('payment_status', 'paid'))
-            ->get()
-            ->sum(
-                fn($item) => ($item->price - ($item->product->cost_price ?? 0)) * $item->qty
+        $totalOrders = OrderModel::count();
+
+        $pendingOrders = OrderModel::where(
+            'status',
+            'pending'
+        )->count();
+
+        $processingOrders = OrderModel::where(
+            'status',
+            'processing'
+        )->count();
+
+        $completedOrders = OrderModel::where(
+            'status',
+            'completed'
+        )->count();
+
+        $cancelledOrders = OrderModel::where(
+            'status',
+            'cancelled'
+        )->count();
+
+        $totalCustomers = User::where(
+            'role',
+            'customer'
+        )->count();
+
+        $totalProducts = ProductsModel::count();
+
+        $outOfStock = ProductsModel::where(
+            'quantity',
+            0
+        )->count();
+
+        $lowStock = ProductsModel::where(
+            'quantity',
+            '<=',
+            5
+        )->count();
+
+        $topProducts = Order_itemModel::select(
+            'product_id',
+            DB::raw('SUM(qty) as total_sold'),
+            DB::raw('SUM(qty * price) as revenue')
+        )
+            ->with('product')
+            ->groupBy('product_id')
+            ->orderByDesc('total_sold')
+            ->limit(10)
+            ->get();
+
+        $latestOrders = OrderModel::with('user')
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $revenueChart = OrderModel::selectRaw(
+            'DATE(created_at) as date,
+         SUM(total_amount) as revenue'
+        )
+            ->where('status', 'completed')
+            ->whereDate(
+                'created_at',
+                '>=',
+                now()->subDays(30)
+            )
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        return view(
+            'admin.reports.dashboard',
+            compact(
+                'totalRevenue',
+                'todayRevenue',
+                'monthRevenue',
+                'totalOrders',
+                'pendingOrders',
+                'processingOrders',
+                'completedOrders',
+                'cancelledOrders',
+                'totalCustomers',
+                'totalProducts',
+                'outOfStock',
+                'lowStock',
+                'topProducts',
+                'latestOrders',
+                'revenueChart'
+            )
+        );
+    }
+
+
+    public function sales(Request $request)
+    {
+        $query = OrderModel::query();
+
+        if ($request->filled('start_date')) {
+            $query->whereDate(
+                'created_at',
+                '>=',
+                $request->start_date
             );
-
-        // ── Monthly Revenue & Profit (last 10 months) ─────────────────────────
-        $months = $monthlyRevenue = $monthlyProfit = [];
-
-        for ($i = 9; $i >= 0; $i--) {
-            $date    = $now->copy()->subMonths($i);
-            $months[] = $date->format('M');
-
-            $rev = Payment::where('payment_status', 'paid')
-                ->whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
-                ->sum('amount');
-
-            $prof = OrderItem::with('product')
-                ->whereHas('order.payment', fn($q) => $q->where('payment_status', 'paid'))
-                ->whereHas(
-                    'order',
-                    fn($q) => $q
-                        ->whereYear('created_at', $date->year)
-                        ->whereMonth('created_at', $date->month)
-                )
-                ->get()
-                ->sum(
-                    fn($item) => ($item->price - ($item->product->cost_price ?? 0)) * $item->qty
-                );
-
-            $monthlyRevenue[] = (float) $rev;
-            $monthlyProfit[]  = (float) $prof;
         }
 
-        // ── Sales by Category (top 5) ─────────────────────────────────────────
-        $salesByCategory = Category::select('categories.id', 'categories.name')
-            ->join('products',    'products.categories_id', '=', 'categories.id')
-            ->join('order_items', 'order_items.product_id', '=', 'products.id')
-            ->join('orders',      'orders.id',              '=', 'order_items.order_id')
-            ->join('payments',    'payments.order_id',      '=', 'orders.id')
-            ->where('payments.payment_status', 'paid')
-            ->groupBy('categories.id', 'categories.name')
-            ->selectRaw('SUM(order_items.qty) as total_sold')
+        if ($request->filled('end_date')) {
+            $query->whereDate(
+                'created_at',
+                '<=',
+                $request->end_date
+            );
+        }
+
+        if ($request->filled('status')) {
+            $query->where(
+                'status',
+                $request->status
+            );
+        }
+
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('id', 'like', "%{$search}%")
+                    ->orWhere(
+                        'coupon_code',
+                        'like',
+                        "%{$search}%"
+                    );
+            });
+        }
+
+        $sales = $query
+            ->selectRaw("
+            DATE(created_at) as sale_date,
+            COUNT(*) as total_orders,
+            SUM(total_amount) as revenue,
+            SUM(coupon_discount + promotion_discount) as discount
+        ")
+            ->groupBy('sale_date')
+            ->orderByDesc('sale_date')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view(
+            'admin.reports.sales',
+            compact('sales')
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ORDERS REPORT
+    |--------------------------------------------------------------------------
+    */
+    public function orders(Request $request)
+    {
+        $query = OrderModel::with('user');
+
+        if ($request->filled('status')) {
+            $query->where(
+                'status',
+                $request->status
+            );
+        }
+
+        if ($request->filled('payment_method')) {
+            $query->where(
+                'payment_method',
+                $request->payment_method
+            );
+        }
+
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('id', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($u) use ($search) {
+
+                        $u->where(
+                            'full_name',
+                            'like',
+                            "%{$search}%"
+                        );
+                    });
+            });
+        }
+
+        $orders = $query
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view(
+            'admin.reports.orders',
+            compact('orders')
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PRODUCTS REPORT
+    |--------------------------------------------------------------------------
+    */
+    public function products()
+    {
+        $products = Order_itemModel::select(
+            'product_id',
+            DB::raw('SUM(qty) as total_sold'),
+            DB::raw('SUM(qty * price) as revenue')
+        )
+            ->with('product')
+            ->groupBy('product_id')
             ->orderByDesc('total_sold')
-            ->take(5)
-            ->get();
+            ->paginate(20);
 
-        // ── Top Selling Products (top 5) ──────────────────────────────────────
-        $topProducts = Product::with('image')
-            ->withSum('orderItems as sold_qty', 'qty')
-            ->orderByDesc('sold_qty')
-            ->take(5)
-            ->get();
+        return view(
+            'admin.reports.products',
+            compact('products')
+        );
+    }
 
-        // ── Payment Methods Breakdown ─────────────────────────────────────────
-        $paymentMethods = Payment::where('payment_status', 'paid')
-            ->select('payment_method as method', DB::raw('COUNT(*) as count'))
+    /*
+    |--------------------------------------------------------------------------
+    | INVENTORY REPORT
+    |--------------------------------------------------------------------------
+    */
+    public function inventory()
+    {
+        $products = ProductsModel::with([
+            'brand',
+            'category'
+        ])
+            ->latest()
+            ->paginate(20);
+
+        $totalStockValue = ProductsModel::selectRaw(
+            'SUM(quantity * cost_price) as total'
+        )->value('total');
+
+        $outOfStock = ProductsModel::where(
+            'quantity',
+            0
+        )->count();
+
+        $lowStock = ProductsModel::where(
+            'quantity',
+            '<=',
+            5
+        )->count();
+
+        return view(
+            'admin.reports.inventory',
+            compact(
+                'products',
+                'totalStockValue',
+                'outOfStock',
+                'lowStock'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | CUSTOMER REPORT
+    |--------------------------------------------------------------------------
+    */
+    public function customers()
+    {
+        $customers = User::where('role', 'customer')
+            ->withCount('orders')
+            ->withSum('orders', 'total_amount')
+            ->paginate(20);
+
+        return view(
+            'admin.reports.customers',
+            compact('customers')
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAYMENT REPORT
+    |--------------------------------------------------------------------------
+    */
+    public function payments()
+    {
+        $payments = PaymentModel::latest()
+            ->paginate(20);
+
+        $paymentSummary = PaymentModel::select(
+            'payment_method',
+            DB::raw('COUNT(*) as total_transactions'),
+            DB::raw('SUM(amount) as total_amount')
+        )
             ->groupBy('payment_method')
-            ->orderByDesc('count')
             ->get();
 
-        // ── Order Status Breakdown ────────────────────────────────────────────
-        $ordersByStatus = Order::select('status', DB::raw('COUNT(*) as count'))
-            ->groupBy('status')
-            ->orderByDesc('count')
-            ->get();
+        return view(
+            'admin.reports.payments',
+            compact(
+                'payments',
+                'paymentSummary'
+            )
+        );
+    }
 
-        // ── Coupon Performance ────────────────────────────────────────────────
-        $coupons = CouponModel::orderByDesc('used_count')->get();
+    /*
+    |--------------------------------------------------------------------------
+    | PROMOTION REPORT
+    |--------------------------------------------------------------------------
+    */
+    public function promotions()
+    {
+        $promotions = PromotionModel::withCount(
+            'products'
+        )
+            ->latest()
+            ->paginate(20);
 
-        // ── KHQR Stats ────────────────────────────────────────────────────────
-        $khqrStats   = khqr_payments::select('status', DB::raw('COUNT(*) as count'))->groupBy('status')->get()->keyBy('status');
-        $khqrTotal   = $khqrStats->sum('count');
-        $khqrSuccess = $khqrStats->get('SUCCESS')?->count ?? 0;
-        $khqrPending = $khqrStats->get('PENDING')?->count ?? 0;
-        $khqrExpired = $khqrStats->get('EXPIRED')?->count ?? 0;
-        $khqrFailed  = $khqrStats->get('FAILED')?->count  ?? 0;
-        $khqrSuccessRate = $khqrTotal > 0 ? ($khqrSuccess / $khqrTotal) * 100 : 0;
+        $totalDiscountGiven = OrderModel::sum(
+            'promotion_discount'
+        );
 
-        // ── Demo Traffic Sources ──────────────────────────────────────────────
-        $trafficSources = [
-            ['name' => 'Organic Search',  'percent' => 42],
-            ['name' => 'Social Media',    'percent' => 28],
-            ['name' => 'Direct',          'percent' => 18],
-            ['name' => 'Email Marketing', 'percent' => 12],
-        ];
-
-        return view('Admin.reports', compact(
-            'totalRevenue',
-            'profit',
-            'totalOrders',
-            'averageOrderValue',
-            'months',
-            'monthlyRevenue',
-            'monthlyProfit',
-            'salesByCategory',
-            'topProducts',
-            'paymentMethods',
-            'ordersByStatus',
-            'coupons',
-            'khqrTotal',
-            'khqrSuccess',
-            'khqrPending',
-            'khqrExpired',
-            'khqrFailed',
-            'khqrSuccessRate',
-            'trafficSources',
-        ));
+        return view(
+            'admin.reports.promotions',
+            compact(
+                'promotions',
+                'totalDiscountGiven'
+            )
+        );
     }
 }

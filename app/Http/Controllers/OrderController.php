@@ -144,74 +144,6 @@ class OrderController extends Controller
         }));
     }
 
-    // public function changeStatus(Request $request, $id)
-    // {
-    //     $order = OrderModel::findOrFail($id);
-
-    //     $valid = ['pending', 'processing', 'completed', 'cancelled'];
-
-    //     if (
-    //         $request->status === 'cancelled'
-    //         && $order->status !== 'pending'
-    //     ) {
-    //         return response()->json([
-    //             'error' => 'Only pending orders can be cancelled'
-    //         ], 400);
-    //     }
-
-    //     if (!in_array($request->status, $valid)) {
-    //         return response()->json(['error' => 'Invalid status'], 400);
-    //     }
-
-    //     if ($order->status == 'completed') {
-    //         return response()->json(['error' => 'Already completed'], 400);
-    //     }
-
-    //     // ✅ UPDATE STATUS
-    //     $order->update([
-    //         'status' => $request->status
-    //     ]);
-
-    //     // 🔥 UPDATE TELEGRAM MESSAGE
-    //     app(\App\Services\TelegramService::class)->edit($order);
-
-    //     // ===============================
-    //     // 🚀 SEND NEXT ORDER (FIFO)
-    //     // ===============================
-
-    //     if (in_array($request->status, ['processing', 'cancelled'])) {
-
-    //         $next = OrderModel::where('status', 'pending')
-    //             ->whereNull('telegram_message_id')
-    //             ->orderBy('created_at', 'asc')
-    //             ->first();
-
-    //         if ($next) {
-
-    //             app(\App\Services\TelegramService::class)->send(
-    //                 "🚀 *NEW ORDER RECEIVED*\n" .
-    //                     "━━━━━━━━━━━━━━━\n" .
-    //                     "🆔 *Order:* #{$next->id}\n" .
-    //                     "👤 *Customer:* {$next->user->name}\n" .
-    //                     "📞 *Phone:* {$next->address->phone}\n" .
-    //                     "📍 *Address:* {$next->address->address}\n" .
-    //                     "📍 *Location:* https://www.google.com/maps?q={$next->address->lat},{$next->address->lng}\n" .
-    //                     "━━━━━━━━━━━━━━━\n" .
-    //                     "💰 *Total:* $" . number_format($next->total_amount, 2) . "\n" .
-    //                     "💳 *Payment:* {$next->payment->payment_method}\n" .
-    //                     "📦 *Status:* {$next->status}\n" .
-    //                     "━━━━━━━━━━━━━━━",
-    //                 $next
-    //             );
-    //         }
-    //     }
-
-
-    //     return response()->json([
-    //         'message' => 'Updated successfully'
-    //     ]);
-    // }
-
 
     public function changeStatus(Request $request, $id)
     {
@@ -245,10 +177,30 @@ class OrderController extends Controller
                 'error' => 'Already completed'
             ], 400);
         }
-
         $order->update([
             'status' => $request->status
         ]);
+
+        $order->refresh();
+
+        $order->load([
+            'user',
+            'payment',
+            'orderItems.product'
+        ]);
+
+        if (
+            $request->status === 'processing' &&
+            $order->telegram_chat_id &&
+            $order->telegram_message_id
+        ) {
+            app(\App\Services\TelegramService::class)
+                ->sendInvoicePdf(
+                    $order,
+                    $order->telegram_chat_id,
+                    $order->telegram_message_id
+                );
+        }
 
         if (
             $request->status === 'completed' &&
@@ -464,6 +416,27 @@ class OrderController extends Controller
             'orderItems.product'
         ])->findOrFail($id);
 
-        return view('admin.order.invoice', compact('order'));
+        return view(
+            'admin.order.invoice',
+            compact('order')
+        );
+    }
+
+    public function invoicePdf($id)
+    {
+        $order = OrderModel::with([
+            'user',
+            'payment',
+            'orderItems.product'
+        ])->findOrFail($id);
+
+        $pdf = Pdf::loadView(
+            'admin.order.invoice',
+            compact('order')
+        );
+
+        return $pdf->download(
+            "invoice-{$order->id}.pdf"
+        );
     }
 }

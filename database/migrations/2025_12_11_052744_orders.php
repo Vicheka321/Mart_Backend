@@ -16,10 +16,17 @@ return new class extends Migration
             $table->text('delivery_address');
             $table->decimal('lat', 10, 7);
             $table->decimal('lng', 10, 7);
-            
+
             $table->decimal('total_amount', 10, 2);
             $table->enum('status', ['pending', 'processing', 'cancelled', 'completed'])->default('pending');
             $table->enum('payment_method', ['cash', 'card', 'aba', 'wing', 'paypal', 'khqr']);
+
+            $table->decimal('promotion_discount', 10, 2)->default(0);
+            $table->string('coupon_code')->nullable();
+            $table->enum('coupon_type',['percent', 'fixed'])->nullable();
+
+            $table->decimal('coupon_value', 10, 2)->default(0);
+            $table->decimal('coupon_discount', 10, 2)->default(0);
             $table->string('telegram_message_id')->nullable();
             $table->string('telegram_chat_id')->nullable();
             $table->boolean('is_sent')->default(false);

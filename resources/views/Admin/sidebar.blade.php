@@ -454,11 +454,103 @@
                 System
             </p>
 
+            {{-- ─── Report ─── --}}
+
+            <div class="nav-item" x-data="{ open: {{ request()->routeIs('reports.*') ? 'true' : 'false' }} }">
+
+                <button @click="open = !open" :aria-expanded="open.toString()"
+                    class="nav-link group w-full relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
+        {{ request()->routeIs('reports.*')
+    ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+
+                    <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path d="M3 3v18h18" />
+                            <path d="M7 14l4-4 3 3 5-6" />
+                        </svg>
+                    </span>
+
+                    <span>Reports</span>
+
+                    <svg class="chevron w-3 h-3 ml-auto text-gray-400" :class="open ? 'rotate-90' : ''"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                </button>
+
+                <div x-show="open" x-cloak x-transition
+                    class="ml-9 mt-1 space-y-0.5 border-l border-gray-100 dark:border-gray-700 pl-3">
+
+                    <a href="{{ route('reports.dashboard') }}" class="block py-1.5 text-xs font-medium
+            {{ request()->routeIs('reports.dashboard')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                        Dashboard
+                    </a>
+
+                    <a href="{{ route('reports.sales') }}" class="block py-1.5 text-xs font-medium
+            {{ request()->routeIs('reports.sales')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                        Sales Report
+                    </a>
+
+                    <a href="{{ route('reports.orders') }}" class="block py-1.5 text-xs font-medium
+            {{ request()->routeIs('reports.orders')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                        Order Report
+                    </a>
+
+                    <a href="{{ route('reports.products') }}" class="block py-1.5 text-xs font-medium
+            {{ request()->routeIs('reports.products')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                        Product Report
+                    </a>
+
+                    <a href="{{ route('reports.inventory') }}" class="block py-1.5 text-xs font-medium
+            {{ request()->routeIs('reports.inventory')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                        Inventory Report
+                    </a>
+
+                    <a href="{{ route('reports.customers') }}" class="block py-1.5 text-xs font-medium
+            {{ request()->routeIs('reports.customers')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                        Customer Report
+                    </a>
+
+                    <a href="{{ route('reports.payments') }}" class="block py-1.5 text-xs font-medium
+            {{ request()->routeIs('reports.payments')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                        Payment Report
+                    </a>
+
+                    <a href="{{ route('reports.promotions') }}" class="block py-1.5 text-xs font-medium
+            {{ request()->routeIs('reports.promotions')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                        Promotion Report
+                    </a>
+
+                </div>
+            </div>
+
+
+
+
+
+
             {{-- Reports --}}
             <div class="nav-item">
-                <a href="{{ route('reports.index') }}"
+                <a href="{{ route('analysis.index') }}"
                     class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                          {{ request()->routeIs('reports.*')
+                          {{ request()->routeIs('analysis.*')
     ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                     <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
@@ -468,7 +560,7 @@
                                 d="M9 21H15M9 21V16M9 21H3.6A.6.6 0 0 1 3 20.4V16.6A.6.6 0 0 1 3.6 16H9M15 21V9M15 21H20.4A.6.6 0 0 0 21 20.4V3.6A.6.6 0 0 0 20.4 3H15.6A.6.6 0 0 0 15 3.6V9M15 9H9.6A.6.6 0 0 0 9 9.6V16" />
                         </svg>
                     </span>
-                    <span>Reports</span>
+                    <span>Analysis</span>
                 </a>
             </div>
 
@@ -491,10 +583,11 @@
                     </span>
                     <span>Notifications</span>
                     {{-- @if($unreadCount > 0) --}}
-                        {{-- <span class="notif-badge ml-auto inline-flex items-center justify-center
+                    {{-- <span class="notif-badge ml-auto inline-flex items-center justify-center
                                          px-1.5 py-0.5 min-w-[20px] h-5
-                                         rounded-full bg-indigo-500 text-white text-[10px] font-bold leading-none"> --}}
-                            {{-- {{ $unreadCount > 99 ? '99+' : $unreadCount }} --}}
+                                         rounded-full bg-indigo-500 text-white text-[10px] font-bold leading-none">
+                        --}}
+                        {{-- {{ $unreadCount > 99 ? '99+' : $unreadCount }} --}}
                         {{-- </span> --}}
                     {{-- @endif --}}
                 </a>

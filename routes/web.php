@@ -4,6 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\DashboardController;
@@ -64,7 +65,11 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/orders/{id}', [OrderController::class, 'show']);
     Route::get('/admin/orders/export/csv', [OrderController::class, 'exportCSV'])->name('orders.export.csv');
     Route::get('/admin/orders/export/pdf', [OrderController::class, 'exportPDF'])->name('orders.export.pdf');
-    Route::get('/admin/orders/{id}/invoice',[OrderController::class, 'invoice'])->name('admin.orders.invoice');
+    Route::get('/admin/orders/{id}/invoice', [OrderController::class, 'invoice'])->name('admin.orders.invoice');
+    Route::get(
+        '/admin/orders/{id}/invoice/pdf',
+        [OrderController::class, 'invoicePdf']
+    );
 
 
 
@@ -75,12 +80,12 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/customers/export/csv', [CustomersController::class, 'exportCustomersCSV'])->name('customers.export.csv');
     Route::get('/admin/customers/export/pdf', [CustomersController::class, 'exportCustomersPDF'])->name('customers.export.pdf');
 
-    Route::get('/admin/promotions',[PromotionController::class, 'index'])->name('promotions.index');
+    Route::get('/admin/promotions', [PromotionController::class, 'index'])->name('promotions.index');
     Route::post('/admin/promotions', [PromotionController::class, 'store'])->name('promotions.store');
     Route::put('/admin/promotions/{promotion}', [PromotionController::class, 'update'])->name('promotions.update');
     Route::delete('/admin/promotions/{promotion}', [PromotionController::class, 'destroy'])->name('promotions.destroy');
     // Route::get('/admin/promotions/{promotion}/products',[PromotionController::class, 'manageProducts'])->name('promotions.products');
-    Route::post('/admin/promotions/{promotion}/products',[PromotionController::class, 'attachProducts'])->name('promotions.products.attach');
+    Route::post('/admin/promotions/{promotion}/products', [PromotionController::class, 'attachProducts'])->name('promotions.products.attach');
 
 
     Route::get('/admin/coupons', [CouponController::class, 'index'])->name('coupons.index');
@@ -89,18 +94,26 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::delete('/admin/coupons/{coupon}', [CouponController::class, 'destroy'])->name('coupons.destroy');
 
 
+    Route::get('/admin/reports/dash', [ReportsController::class, 'dashboard'])->name('reports.dashboard');
+    Route::get('/admin/reports/sales', [ReportsController::class, 'sales'])->name('reports.sales');
+    Route::get('/admin/reports/orders', [ReportsController::class, 'orders'])->name('reports.orders');
+    Route::get('/admin/reports/products', [ReportsController::class, 'products'])->name('reports.products');
+    Route::get('/admin/reports/inventory', [ReportsController::class, 'inventory'])->name('reports.inventory');
+    Route::get('/admin/reports/customers', [ReportsController::class, 'customers'])->name('reports.customers');
+    Route::get('/admin/reports/payments', [ReportsController::class, 'payments'])->name('reports.payments');
+    Route::get('/admin/reports/promotions', [ReportsController::class, 'promotions'])->name('reports.promotions');
 
 
 
 
-    Route::get('/admin/reports', [ReportsController::class, 'index'])->name('reports.index');
+
+    Route::get('/admin/analysis', [AnalysisController::class, 'index'])->name('analysis.index');
 
 
     Route::get('/admin/notifitions', [NotificationController::class, 'index'])->name('notifitions.index');
     Route::post('/admin/notifications/store', [NotificationController::class, 'store']);
 
     Route::get('/admin/settings', [SettingController::class, 'index'])->name('settings.index');
-
 });
 
 

@@ -22,8 +22,11 @@ class PromotionModel extends Model
     {
         return $this->belongsToMany(ProductsModel::class, 'promotion_products', 'promotion_id', 'product_id');
     }
-
-    
-
+    public function usages()
+    {
+        return $this->hasMany(
+            PromotionUsagesModel::class,
+            'promotion_id'
+        );
+    }
 }
-

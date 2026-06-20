@@ -14,16 +14,30 @@ class OrderModel extends Model
     protected $table = "orders";
     protected $primaryKey = "id";
     protected $fillable = [
+
         'user_id',
+
         'delivery_address',
         'lat',
         'lng',
+
         'total_amount',
+
+        'promotion_discount',
+
+        'coupon_code',
+        'coupon_type',
+        'coupon_value',
+        'coupon_discount',
+
         'payment_method',
         'status',
-        'telegram_message_id',
-        'telegram_chat_id'
 
+        'telegram_message_id',
+        'telegram_chat_id',
+
+        'is_sent',
+        'note',
     ];
 
     public function user()
@@ -46,5 +60,19 @@ class OrderModel extends Model
         return $this->hasOne(PaymentModel::class, 'order_id');
     }
 
-    
+    public function promotionUsages()
+    {
+        return $this->hasMany(
+            PromotionUsagesModel::class,
+            'order_id'
+        );
+    }
+
+    public function couponUsage()
+    {
+        return $this->hasOne(
+            CouponUsageModel::class,
+            'order_id'
+        );
+    }
 }
