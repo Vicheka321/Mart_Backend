@@ -7,7 +7,6 @@ use App\Models\Order_itemModel;
 use App\Models\PaymentModel;
 use App\Models\User;
 use App\Models\ProductsModel;
-use App\Models\AddressModel;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -18,7 +17,8 @@ class OrderSeeder extends Seeder
      */
     public function run(): void
     {
-        $customers = User::where('role', 'customer')->pluck('id');
+        // Get only users who have Customer role via Spatie
+        $customers = User::role('Customer')->pluck('id');
         $products  = ProductsModel::all();
 
         if ($customers->isEmpty() || $products->isEmpty()) {
@@ -26,7 +26,7 @@ class OrderSeeder extends Seeder
             return;
         }
 
-        // Create 50,000 fake orders
+        // Create fake orders
         for ($i = 1; $i <= 500; $i++) {
             $customerId = $customers->random();
 
@@ -34,26 +34,10 @@ class OrderSeeder extends Seeder
             $createdAt = Carbon::now()->subDays(rand(1, 730));
 
             /*
-        |--------------------------------------------------------------------------
-        | Address
-        |--------------------------------------------------------------------------
-        */
-            // $address = AddressModel::create([
-            //     'user_id'    => $customerId,
-            //     'full_name'  => fake()->name(),
-            //     'phone'      => '09' . rand(10000000, 99999999),
-            //     'address'    => fake()->address(),
-            //     'lat'        => fake()->latitude(10.0, 14.8),
-            //     'lng'        => fake()->longitude(102.3, 107.7),
-            //     'created_at' => $createdAt,
-            //     'updated_at' => $createdAt,
-            // ]);
-
-            /*
-        |--------------------------------------------------------------------------
-        | Order
-        |--------------------------------------------------------------------------
-        */
+            |--------------------------------------------------------------------------
+            | Order
+            |--------------------------------------------------------------------------
+            */
             $paymentMethod = fake()->randomElement([
                 'cash',
                 'aba',
@@ -61,49 +45,45 @@ class OrderSeeder extends Seeder
                 'khqr'
             ]);
 
+            $status = fake()->randomElement([
+                'pending',
+                'processing',
+                'completed',
+                'cancelled'
+            ]);
+
             $order = OrderModel::create([
-                'user_id'        => $customerId,
-                // 'address_id'     => $address->id,
-                'delivery_address' => fake()->address(),
-                'lat'        => fake()->latitude(10.0, 14.8),
-                'lng'        => fake()->longitude(102.3, 107.7),
-                'status'         => fake()->randomElement([
-                    // 'pending',
-                    // 'processing',
-                    'completed',
-                    // 'cancelled'
-                ]),
-                'total_amount'   => 0, // update later
-                'payment_method' => $paymentMethod,
-                'created_at'     => $createdAt,
-                'updated_at'     => $createdAt,
+                'user_id'           => $customerId,
+                'delivery_address'  => fake()->address(),
+                'lat'               => fake()->latitude(10.0, 14.8),
+                'lng'               => fake()->longitude(102.3, 107.7),
+                'status'            => $status,
+                'total_amount'      => 0, // update later
+                'payment_method'    => $paymentMethod,
+                'created_at'        => $createdAt,
+                'updated_at'        => $createdAt,
             ]);
 
             /*
-        |--------------------------------------------------------------------------
-        | Order Items
-        |--------------------------------------------------------------------------
-        */
+            |--------------------------------------------------------------------------
+            | Order Items
+            |--------------------------------------------------------------------------
+            */
             $itemCount = rand(1, 5);
             $subtotal  = 0;
 
-            // Keep track of products already added to this order
+            // Track used product ids so same product won't repeat in one order
             $usedProductIds = [];
 
             for ($j = 1; $j <= $itemCount; $j++) {
 
-                // Get products not already used in this order
                 $availableProducts = $products->whereNotIn('id', $usedProductIds);
 
-                // Stop if no products left
                 if ($availableProducts->isEmpty()) {
                     break;
                 }
 
-                // Select a unique product
                 $product = $availableProducts->random();
-
-                // Remember this product ID
                 $usedProductIds[] = $product->id;
 
                 $qty   = rand(1, 5);
@@ -120,11 +100,12 @@ class OrderSeeder extends Seeder
 
                 $subtotal += $price * $qty;
             }
+
             /*
-        |--------------------------------------------------------------------------
-        | Update Order Total
-        |--------------------------------------------------------------------------
-        */
+            |--------------------------------------------------------------------------
+            | Update Order Total
+            |--------------------------------------------------------------------------
+            */
             $finalTotal = max(0, $subtotal);
 
             $order->update([
@@ -132,10 +113,12 @@ class OrderSeeder extends Seeder
             ]);
 
             /*
-        |--------------------------------------------------------------------------
-        | Payment (only for non-cancelled orders)
-        |--------------------------------------------------------------------------
-        */
+            |--------------------------------------------------------------------------
+            | Payment
+            |--------------------------------------------------------------------------
+            | If cancelled => optional skip payment
+            | If not cancelled => create payment
+            */
             if ($order->status !== 'cancelled') {
                 PaymentModel::create([
                     'order_id'       => $order->id,
@@ -145,7 +128,7 @@ class OrderSeeder extends Seeder
                         'paid',
                         'paid',
                         'paid',
-                       
+                        'unpaid',
                     ]),
                     'transaction_id' => strtoupper(fake()->bothify('TXN######')),
                     'created_at'     => $createdAt,

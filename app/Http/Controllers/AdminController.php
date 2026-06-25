@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\user;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
@@ -14,18 +13,13 @@ class AdminController extends Controller
             return redirect()->route('login');
         }
 
+        /** @var User $user */
         $user = Auth::user();
 
-        if ($user->role !== 'admin') {
-            Auth::logout();
-            abort(403, 'Access denied');
+        if ($user->can('access_admin_panel')) {
+            return redirect()->route('admin.dashboard');
         }
-        return redirect('/admin/dashboard');
-    }
-    public function dashboard()
-    {
-        return view('Admin.dashboard');
-    }
 
-
+        abort(403, 'Access denied');
+    }
 }

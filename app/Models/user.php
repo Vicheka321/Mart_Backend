@@ -5,12 +5,15 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
-class user extends Authenticatable
+class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, HasRoles;
 
     protected $table = 'users';
+
+    protected $guard_name = 'web';
 
     protected $fillable = [
         'full_name',
@@ -19,17 +22,22 @@ class user extends Authenticatable
         'facebook_id',
         'avatar',
         'password',
-        'role',
+     
     ];
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
-
 
     public function favorites()
     {
-        return $this->belongsToMany(ProductsModel::class, 'favorites', 'user_id', 'product_id')->withTimestamps();
+        return $this->belongsToMany(
+            ProductsModel::class,
+            'favorites',
+            'user_id',
+            'product_id'
+        )->withTimestamps();
     }
 
     public function orders()

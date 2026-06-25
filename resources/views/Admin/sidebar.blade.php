@@ -288,7 +288,7 @@
             </p>
 
             {{-- Products accordion --}}
-            <div class="nav-item"
+            {{-- <div class="nav-item"
                 x-data="{ open: {{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('brands.*') ? 'true' : 'false' }} }">
                 <button @click="open = !open" :aria-expanded="open.toString()"
                     class="nav-link group w-full relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
@@ -331,7 +331,66 @@
                         Brands
                     </a>
                 </div>
-            </div>
+            </div> --}}
+
+            @canany(['view_products', 'view_categories', 'view_brands'])
+                    <div class="nav-item"
+                        x-data="{ open: {{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('brands.*') ? 'true' : 'false' }} }">
+
+                        <button @click="open = !open" :aria-expanded="open.toString()"
+                            class="nav-link group w-full relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
+                                   {{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('brands.*')
+                ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                            <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M7,2H3A1,1,0,0,0,2,3V21a1,1,0,0,0,1,1H7a1,1,0,0,0,1-1V3A1,1,0,0,0,7,2ZM5,21a2,2,0,1,1,2-2A2,2,0,0,1,5,21Zm2-9H3V3H7ZM6,19a1,1,0,1,1-1-1A1,1,0,0,1,6,19ZM14,2H10A1,1,0,0,0,9,3V21a1,1,0,0,0,1,1h4a1,1,0,0,0,1-1V3A1,1,0,0,0,14,2ZM12,21a2,2,0,1,1,2-2A2,2,0,0,1,12,21Zm2-9H10V3h4Zm-1,7a1,1,0,1,1-1-1A1,1,0,0,1,13,19ZM21,2H17a1,1,0,0,0-1,1V21a1,1,0,0,0,1,1h4a1,1,0,0,0,1-1V3A1,1,0,0,0,21,2ZM19,21a2,2,0,1,1,2-2A2,2,0,0,1,19,21Zm2-9H17V3h4Zm-1,7a1,1,0,1,1-1-1A1,1,0,0,1,20,19Z" />
+                                </svg>
+                            </span>
+                            <span>Products</span>
+                            <svg class="chevron w-3 h-3 ml-auto text-gray-400" :class="open ? 'rotate-90' : ''"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                        </button>
+
+                        <div x-show="open" x-cloak
+                            class="ml-9 mt-1 space-y-0.5 border-l border-gray-100 dark:border-gray-700 pl-3">
+
+                            @can('view_products')
+                                        <a href="{{ route('products.index') }}"
+                                            class="sub-link {{ request()->routeIs('products.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
+                                                                              {{ request()->routeIs('products.*')
+                                ? 'text-indigo-600 dark:text-indigo-400'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                            All Products
+                                        </a>
+                            @endcan
+
+                            @can('view_categories')
+                                        <a href="{{ route('categories.index') }}"
+                                            class="sub-link {{ request()->routeIs('categories.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
+                                                                              {{ request()->routeIs('categories.*')
+                                ? 'text-indigo-600 dark:text-indigo-400'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                            Categories
+                                        </a>
+                            @endcan
+
+                            @can('view_brands')
+                                        <a href="{{ route('brands.index') }}"
+                                            class="sub-link {{ request()->routeIs('brands.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
+                                                                              {{ request()->routeIs('brands.*')
+                                ? 'text-indigo-600 dark:text-indigo-400'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                            Brands
+                                        </a>
+                            @endcan
+
+                        </div>
+                    </div>
+            @endcanany
 
             <div class="nav-divider mx-3 my-2"></div>
 
@@ -448,6 +507,40 @@
 
             <div class="nav-divider mx-3 my-2"></div>
 
+            <p
+                class="nav-section-label px-3 pt-2 pb-1.5 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
+                App
+            </p>
+
+            {{-- Notifications --}}
+            <div class="nav-item">
+                {{-- @php $unreadCount = auth()->user()?->unreadNotifications()->count() ?? 0; @endphp --}}
+                <a href="{{ route('notifitions.index') }}"
+                    class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
+                          {{ request()->routeIs('notifitions.*')
+    ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                    <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
+                        <svg class="w-4 h-4" viewBox="0 0 512 512" fill="none" stroke="currentColor">
+                            <path
+                                d="M427.68,351.43C402,320,383.87,304,383.87,217.35c0-79.35-40.52-107.63-73.87-121.35-4.43-1.82-8.6-6-9.95-10.55C294.2,65.54,277.8,48,256,48S217.79,65.55,212,85.47c-1.35,4.6-5.52,8.71-9.95,10.53-33.39,13.75-73.87,41.92-73.87,121.35C128.13,304,110,320,84.32,351.43,73.68,364.45,83,384,101.61,384H410.49C429,384,438.26,364.39,427.68,351.43Z"
+                                style="fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px" />
+                            <path d="M320,384v16a64,64,0,0,1-128,0V384"
+                                style="fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px" />
+                        </svg>
+                    </span>
+                    <span>Push Notifications</span>
+                    {{-- @if($unreadCount > 0) --}}
+                    {{-- <span class="notif-badge ml-auto inline-flex items-center justify-center
+                                         px-1.5 py-0.5 min-w-[20px] h-5
+                                         rounded-full bg-indigo-500 text-white text-[10px] font-bold leading-none">
+                        --}}
+                        {{-- {{ $unreadCount > 99 ? '99+' : $unreadCount }} --}}
+                        {{-- </span> --}}
+                    {{-- @endif --}}
+                </a>
+            </div>
+
             {{-- ─── System ─── --}}
             <p
                 class="nav-section-label px-3 pt-2 pb-1.5 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
@@ -482,12 +575,12 @@
                 <div x-show="open" x-cloak x-transition
                     class="ml-9 mt-1 space-y-0.5 border-l border-gray-100 dark:border-gray-700 pl-3">
 
-                    <a href="{{ route('reports.dashboard') }}" class="block py-1.5 text-xs font-medium
+                    {{-- <a href="{{ route('reports.dashboard') }}" class="block py-1.5 text-xs font-medium
             {{ request()->routeIs('reports.dashboard')
     ? 'text-indigo-600 dark:text-indigo-400'
     : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                         Dashboard
-                    </a>
+                    </a> --}}
 
                     <a href="{{ route('reports.sales') }}" class="block py-1.5 text-xs font-medium
             {{ request()->routeIs('reports.sales')
@@ -564,34 +657,65 @@
                 </a>
             </div>
 
-            {{-- Notifications --}}
-            <div class="nav-item">
-                {{-- @php $unreadCount = auth()->user()?->unreadNotifications()->count() ?? 0; @endphp --}}
-                <a href="{{ route('notifitions.index') }}"
-                    class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                          {{ request()->routeIs('notifitions.*')
-    ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+
+            <div class="nav-item" x-data="{ open: {{ request()->routeIs('roles.*') ? 'true' : 'false' }} }">
+
+                <button @click="open = !open" :aria-expanded="open.toString()"
+                    class="nav-link group w-full relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
+               {{ request()->routeIs('admin.roles.*')
+    ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+
                     <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
-                        <svg class="w-4 h-4" viewBox="0 0 512 512" fill="none" stroke="currentColor">
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23,19a4,4,0,0,1-4,4H17V21h2a2,2,0,0,0,0-4H17V15h2A4,4,0,0,1,23,19Z"></path>
+                            <path d="M9,19a4,4,0,0,1,4-4h2v2H13a2,2,0,0,0,0,4h2v2H13A4,4,0,0,1,9,19Z"></path>
+                            <rect x="14" y="18" width="4" height="2"></rect>
                             <path
-                                d="M427.68,351.43C402,320,383.87,304,383.87,217.35c0-79.35-40.52-107.63-73.87-121.35-4.43-1.82-8.6-6-9.95-10.55C294.2,65.54,277.8,48,256,48S217.79,65.55,212,85.47c-1.35,4.6-5.52,8.71-9.95,10.53-33.39,13.75-73.87,41.92-73.87,121.35C128.13,304,110,320,84.32,351.43,73.68,364.45,83,384,101.61,384H410.49C429,384,438.26,364.39,427.68,351.43Z"
-                                style="fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px" />
-                            <path d="M320,384v16a64,64,0,0,1-128,0V384"
-                                style="fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px" />
+                                d="M9,5a3,3,0,1,0,3,3A3.00879,3.00879,0,0,0,9,5ZM9,9a1,1,0,1,1,1-1A1.003,1.003,0,0,1,9,9Z">
+                            </path>
+                            <path
+                                d="M5.31,15A7.01113,7.01113,0,0,1,9,13.88a5.641,5.641,0,0,1,.77789.06415A5.96518,5.96518,0,0,1,13,13h.25433A9.39757,9.39757,0,0,0,9,11.89c-2.03,0-6,1.07-6,3.58V17H7.34875a5.98581,5.98581,0,0,1,1.18812-2Z">
+                            </path>
+                            <path
+                                d="M16,2H11.82A2.98811,2.98811,0,0,0,6.18,2H2A2.00587,2.00587,0,0,0,0,4V18a2.00591,2.00591,0,0,0,2,2H7.14142a3.60628,3.60628,0,0,1,0-2H2V4H16v9h2V4A2.00587,2.00587,0,0,0,16,2ZM9,3.25a.7555.7555,0,0,1-.75-.75.75007.75007,0,0,1,1.5,0A.7555.7555,0,0,1,9,3.25Z">
+                            </path>
                         </svg>
                     </span>
-                    <span>Notifications</span>
-                    {{-- @if($unreadCount > 0) --}}
-                    {{-- <span class="notif-badge ml-auto inline-flex items-center justify-center
-                                         px-1.5 py-0.5 min-w-[20px] h-5
-                                         rounded-full bg-indigo-500 text-white text-[10px] font-bold leading-none">
-                        --}}
-                        {{-- {{ $unreadCount > 99 ? '99+' : $unreadCount }} --}}
-                        {{-- </span> --}}
-                    {{-- @endif --}}
-                </a>
+
+                    <span>Role Management</span>
+
+                    <svg class="chevron w-3 h-3 ml-auto text-gray-400" :class="open ? 'rotate-90' : ''"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                </button>
+
+                <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 -translate-y-1"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-1"
+                    class="ml-9 mt-1 space-y-0.5 border-l border-gray-100 dark:border-gray-700 pl-3">
+
+                    <a href="{{ route('roles.index') }}" class="sub-link {{ request()->routeIs('roles.index') ? 'active' : '' }} block py-1.5 text-xs font-medium
+                  {{ request()->routeIs('roles.index')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                        Roles & Permissions
+                    </a>
+
+                    <a href="{{ route('roles.users') }}" class="sub-link {{ request()->routeIs('roles.users') ? 'active' : '' }} block py-1.5 text-xs font-medium
+                  {{ request()->routeIs('roles.users')
+    ? 'text-indigo-600 dark:text-indigo-400'
+    : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                        Assign User Roles
+                    </a>
+                </div>
             </div>
+
+
 
             {{-- Settings --}}
             <div class="nav-item">

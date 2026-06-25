@@ -10,10 +10,9 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $users = User::select('id', 'full_name')
-            ->where('role', 'customer')
+        $users = User::role('Customer')
+            ->select('id', 'full_name')
             ->orderBy('full_name')
-
             ->get();
 
         return view('admin.notifications', compact('users'));

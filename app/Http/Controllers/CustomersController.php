@@ -11,13 +11,123 @@ use Illuminate\Validation\Rule;
 
 class CustomersController extends Controller
 {
+    // public function customers(Request $request)
+    // {
+    //     $roleFilter = $request->input('role', 'all');
+
+    //     $query = User::query()
+    //         ->when($roleFilter !== 'all', fn($q) => $q->where('role', $roleFilter))
+    //         ->when($roleFilter === 'all', fn($q) => $q->whereIn('role', ['customer', 'staff']))
+    //         ->withCount('orders')
+    //         ->latest();
+
+    //     $customers = $query->paginate(10)->withQueryString();
+
+    //     $customers->getCollection()->transform(function ($customer) {
+    //         $customer->total_spent = PaymentModel::where('payment_status', 'paid')
+    //             ->whereHas('order', fn($q) => $q->where('user_id', $customer->id))
+    //             ->sum('amount');
+    //         return $customer;
+    //     });
+    //     $totalCustomers = User::where('role', 'customer')->count();
+    //     $activeCustomers = User::where('role', 'customer')
+    //         ->where(function ($q) {
+    //             $q->where('created_at', '>=', now()->subDays(30))
+    //                 ->orWhereHas('orders');
+    //         })
+    //         ->count();
+    //     $vipMembers = $customers->getCollection()
+    //         ->filter(fn($c) => $c->total_spent > 1000)
+    //         ->count();
+    //     $now = now();
+
+    //     $totalThisMonth = User::whereIn('role', ['customer', 'staff'])
+    //         ->whereYear('created_at', $now->year)
+    //         ->whereMonth('created_at', $now->month)
+    //         ->count();
+
+    //     $totalLastMonth = User::whereIn('role', ['customer', 'staff'])
+    //         ->whereYear('created_at', $now->copy()->subMonth()->year)
+    //         ->whereMonth('created_at', $now->copy()->subMonth()->month)
+    //         ->count();
+
+    //     $totalGrowth = $totalLastMonth > 0
+    //         ? round((($totalThisMonth - $totalLastMonth) / $totalLastMonth) * 100, 1)
+    //         : ($totalThisMonth > 0 ? 100 : 0);
+    //     $thisMonthCustomers = User::where('role', 'customer')
+    //         ->whereYear('created_at', $now->year)
+    //         ->whereMonth('created_at', $now->month)
+    //         ->count();
+    //     $inactiveCustomers = User::where('role', 'customer')
+    //         ->where('created_at', '<', now()->subDays(30))
+    //         ->whereDoesntHave('orders')
+    //         ->count();
+    //     $activePct = $totalCustomers > 0
+    //         ? round(($activeCustomers / $totalCustomers) * 100)
+    //         : 0;
+
+    //     $lastMonthCustomers = User::where('role', 'customer')
+    //         ->whereYear('created_at', $now->copy()->subMonth()->year)
+    //         ->whereMonth('created_at', $now->copy()->subMonth()->month)
+    //         ->count();
+
+    //     $thisMonthPct = $totalCustomers > 0
+    //         ? round(($thisMonthCustomers / $totalCustomers) * 100)
+    //         : 0;
+
+    //     $thisMonthGrowth = $lastMonthCustomers > 0
+    //         ? round((($thisMonthCustomers - $lastMonthCustomers) / $lastMonthCustomers) * 100)
+    //         : ($thisMonthCustomers > 0 ? 100 : 0);
+    //     $last7Days = collect(range(6, 0))->map(function ($daysAgo) {
+    //         $date = now()->subDays($daysAgo);
+    //         return [
+    //             'date'  => $date->format('D'),
+    //             'full'  => $date->format('M j'),
+    //             'count' => User::where('role', 'customer')
+    //                 ->whereDate('created_at', $date->toDateString())
+    //                 ->count(),
+    //         ];
+    //     });
+    //     return view('admin.customers', compact(
+    //         'customers',
+    //         'totalCustomers',
+    //         'activeCustomers',
+    //         'roleFilter',
+    //         'totalGrowth',
+    //         'thisMonthCustomers',
+    //         'lastMonthCustomers',
+    //         'thisMonthPct',
+    //         'thisMonthGrowth',
+    //         'activePct',
+    //         'inactiveCustomers',
+    //         'last7Days'
+    //     ));
+    // }
+
+
+
     public function customers(Request $request)
     {
         $roleFilter = $request->input('role', 'all');
 
         $query = User::query()
-            ->when($roleFilter !== 'all', fn($q) => $q->where('role', $roleFilter))
-            ->when($roleFilter === 'all', fn($q) => $q->whereIn('role', ['customer', 'staff']))
+            ->when($roleFilter !== 'all', function ($q) use ($roleFilter) {
+                if ($roleFilter === 'customer') {
+                    $q->role('Customer');
+                } elseif ($roleFilter === 'staff') {
+                    $q->role('Staff');
+                } elseif ($roleFilter === 'manager') {
+                    $q->role('Manager');
+                } elseif ($roleFilter === 'admin') {
+                    $q->role('Admin');
+                }
+            })
+            ->when($roleFilter === 'all', function ($q) {
+                $q->whereHas('roles', function ($roleQuery) {
+                    $roleQuery->whereIn('name', ['Customer', 'Staff', 'Manager', 'Admin']);
+                });
+            })
+            ->with('roles')
             ->withCount('orders')
             ->latest();
 
@@ -27,48 +137,61 @@ class CustomersController extends Controller
             $customer->total_spent = PaymentModel::where('payment_status', 'paid')
                 ->whereHas('order', fn($q) => $q->where('user_id', $customer->id))
                 ->sum('amount');
+
             return $customer;
         });
-        $totalCustomers = User::where('role', 'customer')->count();
-        $activeCustomers = User::where('role', 'customer')
+
+        /*
+        |--------------------------------------------------------------------------
+        | Stats
+        |--------------------------------------------------------------------------
+        */
+
+        // only customer role count
+        $totalCustomers = User::role('Customer')->count();
+
+        $activeCustomers = User::role('Customer')
             ->where(function ($q) {
                 $q->where('created_at', '>=', now()->subDays(30))
                     ->orWhereHas('orders');
             })
             ->count();
-        $vipMembers = $customers->getCollection()
-            ->filter(fn($c) => $c->total_spent > 1000)
-            ->count();
-        $now = now();
 
-        $totalThisMonth = User::whereIn('role', ['customer', 'staff'])
+        $inactiveCustomers = User::role('Customer')
+            ->where('created_at', '<', now()->subDays(30))
+            ->whereDoesntHave('orders')
+            ->count();
+
+        $now = now();
+        $lastMonthDate = now()->copy()->subMonth();
+
+        // this month total users in admin-side manageable roles
+        $totalThisMonth = User::whereHas('roles', function ($q) {
+            $q->whereIn('name', ['Customer', 'Staff', 'Manager', 'Admin']);
+        })
             ->whereYear('created_at', $now->year)
             ->whereMonth('created_at', $now->month)
             ->count();
 
-        $totalLastMonth = User::whereIn('role', ['customer', 'staff'])
-            ->whereYear('created_at', $now->copy()->subMonth()->year)
-            ->whereMonth('created_at', $now->copy()->subMonth()->month)
+        $totalLastMonth = User::whereHas('roles', function ($q) use ($lastMonthDate) {
+            $q->whereIn('name', ['Customer', 'Staff', 'Manager', 'Admin']);
+        })
+            ->whereYear('created_at', $lastMonthDate->year)
+            ->whereMonth('created_at', $lastMonthDate->month)
             ->count();
 
         $totalGrowth = $totalLastMonth > 0
             ? round((($totalThisMonth - $totalLastMonth) / $totalLastMonth) * 100, 1)
             : ($totalThisMonth > 0 ? 100 : 0);
-        $thisMonthCustomers = User::where('role', 'customer')
+
+        $thisMonthCustomers = User::role('Customer')
             ->whereYear('created_at', $now->year)
             ->whereMonth('created_at', $now->month)
             ->count();
-        $inactiveCustomers = User::where('role', 'customer')
-            ->where('created_at', '<', now()->subDays(30))
-            ->whereDoesntHave('orders')
-            ->count();
-        $activePct = $totalCustomers > 0
-            ? round(($activeCustomers / $totalCustomers) * 100)
-            : 0;
 
-        $lastMonthCustomers = User::where('role', 'customer')
-            ->whereYear('created_at', $now->copy()->subMonth()->year)
-            ->whereMonth('created_at', $now->copy()->subMonth()->month)
+        $lastMonthCustomers = User::role('Customer')
+            ->whereYear('created_at', $lastMonthDate->year)
+            ->whereMonth('created_at', $lastMonthDate->month)
             ->count();
 
         $thisMonthPct = $totalCustomers > 0
@@ -78,20 +201,50 @@ class CustomersController extends Controller
         $thisMonthGrowth = $lastMonthCustomers > 0
             ? round((($thisMonthCustomers - $lastMonthCustomers) / $lastMonthCustomers) * 100)
             : ($thisMonthCustomers > 0 ? 100 : 0);
+
+        $activePct = $totalCustomers > 0
+            ? round(($activeCustomers / $totalCustomers) * 100)
+            : 0;
+
+        /*
+        |--------------------------------------------------------------------------
+        | VIP members
+        |--------------------------------------------------------------------------
+        */
+        $vipMembers = User::role('Customer')
+            ->get()
+            ->filter(function ($customer) {
+                $totalSpent = PaymentModel::where('payment_status', 'paid')
+                    ->whereHas('order', fn($q) => $q->where('user_id', $customer->id))
+                    ->sum('amount');
+
+                return $totalSpent > 1000;
+            })
+            ->count();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Last 7 days customers chart
+        |--------------------------------------------------------------------------
+        */
         $last7Days = collect(range(6, 0))->map(function ($daysAgo) {
             $date = now()->subDays($daysAgo);
+
             return [
                 'date'  => $date->format('D'),
                 'full'  => $date->format('M j'),
-                'count' => User::where('role', 'customer')
+                'count' => User::role('Customer')
                     ->whereDate('created_at', $date->toDateString())
                     ->count(),
             ];
         });
+
         return view('admin.customers', compact(
             'customers',
             'totalCustomers',
             'activeCustomers',
+            'inactiveCustomers',
+            'vipMembers',
             'roleFilter',
             'totalGrowth',
             'thisMonthCustomers',
@@ -99,10 +252,11 @@ class CustomersController extends Controller
             'thisMonthPct',
             'thisMonthGrowth',
             'activePct',
-            'inactiveCustomers',
             'last7Days'
         ));
     }
+
+
 
     public function store(Request $request)
     {

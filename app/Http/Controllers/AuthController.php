@@ -149,12 +149,12 @@ class AuthController extends Controller
             $field => $request->login,
             'password' => $request->password
         ])) {
-
             return response()->json([
                 'message' => 'Invalid email/phone or password'
             ], 401);
         }
 
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         if (!$user) {
@@ -163,13 +163,15 @@ class AuthController extends Controller
             ], 404);
         }
 
-        if ($user->role !== 'customer') {
+        // Mobile app: allow only Customer role
+        if (!$user->hasRole('Customer')) {
             Auth::logout();
 
             return response()->json([
                 'message' => 'Access denied'
             ], 403);
         }
+
         $user = User::find($user->id);
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -382,24 +384,28 @@ class AuthController extends Controller
         if (!Auth::attempt($request->only('email', 'password'))) {
             return back()->withErrors([
                 'email' => 'Invalid email or password',
-            ]);
+            ])->withInput();
         }
 
+        $request->session()->regenerate();
+
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if ($user->role === 'admin') {
-            return redirect()->intended('admin/dashboard');
+        // Admin panel users
+        if ($user->can('access_admin_panel')) {
+            return redirect()->route('admin.dashboard');
         }
 
-        if ($user->role === 'staff') {
-            return redirect()->intended('staff/dashboard');
-        }
-
-        if ($user->role === 'customer') {
-            return redirect()->intended('/');
+        // If you later want web customer login, redirect somewhere else
+        if ($user->hasRole('Customer')) {
+            return redirect('/');
         }
 
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         abort(403, 'Access denied');
     }
     public function logout()
@@ -467,6 +473,7 @@ class AuthController extends Controller
         }
 
         $user = User::create($userData);
+        $user->assignRole('Customer');
 
         $verify->delete();
 

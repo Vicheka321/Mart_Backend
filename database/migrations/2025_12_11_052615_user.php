@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->string('password')->nullable();
             $table->text('fcm_token')->nullable();
-            $table->enum('role', ['admin', 'customer', 'staff'])->default('customer');
+            // $table->enum('role', ['admin', 'customer', 'staff'])->default('customer');
             $table->rememberToken()->nullable();
             $table->timestamps();
         });

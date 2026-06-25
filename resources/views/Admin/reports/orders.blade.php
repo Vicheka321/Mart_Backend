@@ -1,313 +1,250 @@
 @extends('layouts.app')
 
 @section('content')
+    <div class="space-y-5">
 
-<div class="space-y-4">
+        {{-- Header --}}
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                    Order Report
+                </h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Track order volume, order status, and fulfillment performance.
+                </p>
+            </div>
 
-    {{-- Header --}}
-    <div class="bg-white dark:bg-gray-800
-        border border-gray-200 dark:border-gray-700
-        rounded-2xl p-5">
+            <div class="flex items-center gap-2">
+                <button type="button"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 hover:bg-black
+                           dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200 text-white text-sm font-medium transition">
+                    Export
+                </button>
+            </div>
+        </div>
 
-        <h1 class="text-lg font-semibold
-            text-gray-900 dark:text-white">
+        {{-- KPI Cards --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
 
-            Orders Report
+            <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Total Orders</p>
+                <h3 class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+                    {{ number_format($totalOrders) }}
+                </h3>
+            </div>
 
-        </h1>
+            <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Pending</p>
+                <h3 class="mt-2 text-2xl font-bold text-amber-600 dark:text-amber-400">
+                    {{ number_format($pendingOrders) }}
+                </h3>
+            </div>
 
-        <p class="mt-1 text-sm
-            text-gray-500 dark:text-gray-400">
+            <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Processing</p>
+                <h3 class="mt-2 text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {{ number_format($processingOrders) }}
+                </h3>
+            </div>
 
-            View and export order transactions
+            <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Completed</p>
+                <h3 class="mt-2 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                    {{ number_format($completedOrders) }}
+                </h3>
+            </div>
 
-        </p>
+            <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Cancelled</p>
+                <h3 class="mt-2 text-2xl font-bold text-red-600 dark:text-red-400">
+                    {{ number_format($cancelledOrders) }}
+                </h3>
+            </div>
+        </div>
 
-    </div>
+        {{-- Main Card --}}
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden shadow-sm">
 
-    {{-- Table Card --}}
-    <div class="table-card
-        bg-white dark:bg-gray-800
-        border border-gray-200 dark:border-gray-700
-        rounded-2xl overflow-hidden">
+            {{-- Filters --}}
+            <div class="p-5 border-b border-gray-100 dark:border-gray-700">
+                <form method="GET" action="{{ route('reports.orders') }}"
+                    class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-3">
 
-        {{-- Filter --}}
-        <div class="p-5 border-b
-            border-gray-100 dark:border-gray-700">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                            Start Date
+                        </label>
+                        <input type="date" name="start_date" value="{{ request('start_date') }}"
+                            class="w-full px-3 py-2 rounded-xl text-sm border border-gray-200 dark:border-gray-600
+                                   bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white
+                                   focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
 
-            <form method="GET">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                            End Date
+                        </label>
+                        <input type="date" name="end_date" value="{{ request('end_date') }}"
+                            class="w-full px-3 py-2 rounded-xl text-sm border border-gray-200 dark:border-gray-600
+                                   bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white
+                                   focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
 
-                <div class="flex flex-col lg:flex-row
-                    gap-3 lg:items-center
-                    lg:justify-between">
-
-                    <div class="flex flex-wrap gap-2">
-
-                        <select
-                            name="status"
-                            class="px-3 py-2 rounded-xl
-                            border border-gray-200
-                            dark:border-gray-600
-                            bg-gray-50 dark:bg-gray-700">
-
-                            <option value="">
-                                All Status
-                            </option>
-
-                            <option value="pending">
-                                Pending
-                            </option>
-
-                            <option value="processing">
-                                Processing
-                            </option>
-
-                            <option value="completed">
-                                Completed
-                            </option>
-
-                            <option value="cancelled">
-                                Cancelled
-                            </option>
-
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                            Status
+                        </label>
+                        <select name="status"
+                            class="w-full px-3 py-2 rounded-xl text-sm border border-gray-200 dark:border-gray-600
+                                   bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white
+                                   focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="all">All</option>
+                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
+                            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                            <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>
+                    </div>
 
-                        <select
-                            name="payment_method"
-                            class="px-3 py-2 rounded-xl
-                            border border-gray-200
-                            dark:border-gray-600
-                            bg-gray-50 dark:bg-gray-700">
-
-                            <option value="">
-                                Payment Method
-                            </option>
-
-                            <option value="cash">
-                                Cash
-                            </option>
-
-                            <option value="aba">
-                                ABA
-                            </option>
-
-                            <option value="khqr">
-                                KHQR
-                            </option>
-
-                            <option value="wing">
-                                Wing
-                            </option>
-
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                            Payment Method
+                        </label>
+                        <select name="payment_method"
+                            class="w-full px-3 py-2 rounded-xl text-sm border border-gray-200 dark:border-gray-600
+                                   bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white
+                                   focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="all">All</option>
+                            <option value="cash" {{ request('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
+                            <option value="khqr" {{ request('payment_method') == 'khqr' ? 'selected' : '' }}>KHQR</option>
+                            <option value="aba" {{ request('payment_method') == 'aba' ? 'selected' : '' }}>ABA</option>
+                            <option value="acleda" {{ request('payment_method') == 'acleda' ? 'selected' : '' }}>Acleda</option>
                         </select>
+                    </div>
 
-                        <input
-                            type="text"
-                            name="search"
-                            value="{{ request('search') }}"
-                            placeholder="Search order..."
-                            class="px-3 py-2 rounded-xl
-                            border border-gray-200
-                            dark:border-gray-600
-                            bg-gray-50 dark:bg-gray-700">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                            Address
+                        </label>
+                        <input type="text" name="address" value="{{ request('address') }}"
+                            placeholder="Search address..."
+                            class="w-full px-3 py-2 rounded-xl text-sm border border-gray-200 dark:border-gray-600
+                                   bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white
+                                   focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
 
-                        <button
-                            class="px-4 py-2 rounded-xl
-                            bg-indigo-600
-                            hover:bg-indigo-700
-                            text-white">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                            Search
+                        </label>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Order ID / customer / phone / coupon"
+                            class="w-full px-3 py-2 rounded-xl text-sm border border-gray-200 dark:border-gray-600
+                                   bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white
+                                   focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
 
-                            Filter
-
+                    <div class="xl:col-span-6 flex flex-wrap gap-2 pt-1">
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition">
+                            Apply Filters
                         </button>
 
-                    </div>
-
-                    <div class="flex gap-2">
-
-                        <a href="#"
-                            class="px-4 py-2 rounded-xl
-                            border border-green-200
-                            text-green-600">
-
-                            Export Excel
-
+                        <a href="{{ route('reports.orders') }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600
+                                   bg-gray-50 dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200
+                                   hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                            Reset
                         </a>
-
-                        <a href="#"
-                            class="px-4 py-2 rounded-xl
-                            border border-red-200
-                            text-red-600">
-
-                            Export PDF
-
-                        </a>
-
                     </div>
+                </form>
+            </div>
 
+            {{-- Table --}}
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-gray-50 dark:bg-gray-700/40">
+                        <tr class="text-left">
+                            <th class="px-5 py-3 font-semibold text-gray-600 dark:text-gray-300">Date</th>
+                            <th class="px-5 py-3 font-semibold text-gray-600 dark:text-gray-300">Orders</th>
+                            <th class="px-5 py-3 font-semibold text-gray-600 dark:text-gray-300">Pending</th>
+                            <th class="px-5 py-3 font-semibold text-gray-600 dark:text-gray-300">Processing</th>
+                            <th class="px-5 py-3 font-semibold text-gray-600 dark:text-gray-300">Completed</th>
+                            <th class="px-5 py-3 font-semibold text-gray-600 dark:text-gray-300">Cancelled</th>
+                            <th class="px-5 py-3 font-semibold text-gray-600 dark:text-gray-300">Gross</th>
+                            <th class="px-5 py-3 font-semibold text-gray-600 dark:text-gray-300">Discount</th>
+                            <th class="px-5 py-3 font-semibold text-gray-600 dark:text-gray-300">Net</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        @forelse($orders as $row)
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
+                                <td class="px-5 py-4 font-semibold text-indigo-600 dark:text-indigo-400">
+                                    {{ \Carbon\Carbon::parse($row->order_date)->format('d M Y') }}
+                                </td>
+
+                                <td class="px-5 py-4 text-gray-900 dark:text-white font-medium">
+                                    {{ number_format($row->total_orders) }}
+                                </td>
+
+                                <td class="px-5 py-4 text-amber-600 dark:text-amber-400 font-medium">
+                                    {{ number_format($row->pending_count) }}
+                                </td>
+
+                                <td class="px-5 py-4 text-blue-600 dark:text-blue-400 font-medium">
+                                    {{ number_format($row->processing_count) }}
+                                </td>
+
+                                <td class="px-5 py-4 text-emerald-600 dark:text-emerald-400 font-medium">
+                                    {{ number_format($row->completed_count) }}
+                                </td>
+
+                                <td class="px-5 py-4 text-red-600 dark:text-red-400 font-medium">
+                                    {{ number_format($row->cancelled_count) }}
+                                </td>
+
+                                <td class="px-5 py-4 font-semibold text-gray-900 dark:text-white">
+                                    ${{ number_format($row->gross_amount, 2) }}
+                                </td>
+
+                                <td class="px-5 py-4 text-red-500 dark:text-red-400 font-medium">
+                                    ${{ number_format($row->total_discount, 2) }}
+                                </td>
+
+                                <td class="px-5 py-4 font-semibold text-emerald-600 dark:text-emerald-400">
+                                    ${{ number_format($row->net_amount, 2) }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="px-5 py-12 text-center text-gray-400 dark:text-gray-500">
+                                    No order report data found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Pagination --}}
+            <div class="px-5 py-4 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                    @if($orders->total())
+                        Showing
+                        <span class="font-semibold text-gray-700 dark:text-gray-200">{{ $orders->firstItem() }}–{{ $orders->lastItem() }}</span>
+                        of
+                        <span class="font-semibold text-gray-700 dark:text-gray-200">{{ $orders->total() }}</span>
+                        days
+                    @else
+                        No records found
+                    @endif
+                </p>
+
+                <div>
+                    {{ $orders->links() }}
                 </div>
-
-            </form>
-
+            </div>
         </div>
-
-        {{-- Table --}}
-        <div class="overflow-x-auto">
-
-            <table class="w-full text-sm">
-
-                <thead>
-
-                <tr class="border-b
-                    border-gray-100
-                    dark:border-gray-700
-                    bg-gray-50/60
-                    dark:bg-gray-700/30">
-
-                    <th class="px-5 py-3 text-left">
-                        Order #
-                    </th>
-
-                    <th class="px-5 py-3 text-left">
-                        Customer
-                    </th>
-
-                    <th class="px-5 py-3 text-left">
-                        Payment
-                    </th>
-
-                    <th class="px-5 py-3 text-left">
-                        Amount
-                    </th>
-
-                    <th class="px-5 py-3 text-left">
-                        Status
-                    </th>
-
-                    <th class="px-5 py-3 text-left">
-                        Date
-                    </th>
-
-                </tr>
-
-                </thead>
-
-                <tbody>
-
-                @forelse($orders as $order)
-
-                    <tr class="border-b
-                        border-gray-100
-                        dark:border-gray-700">
-
-                        <td class="px-5 py-4">
-                            #{{ $order->id }}
-                        </td>
-
-                        <td class="px-5 py-4">
-                            {{ $order->user->full_name ?? '-' }}
-                        </td>
-
-                        <td class="px-5 py-4">
-                            {{ strtoupper($order->payment_method) }}
-                        </td>
-
-                        <td class="px-5 py-4 font-semibold text-green-600">
-                            ${{ number_format(
-                                $order->total_amount,
-                                2
-                            ) }}
-                        </td>
-
-                        <td class="px-5 py-4">
-
-                            @if($order->status == 'pending')
-
-                                <span class="px-2.5 py-1
-                                    rounded-full text-xs
-                                    bg-amber-100
-                                    text-amber-700">
-
-                                    Pending
-
-                                </span>
-
-                            @elseif($order->status == 'processing')
-
-                                <span class="px-2.5 py-1
-                                    rounded-full text-xs
-                                    bg-blue-100
-                                    text-blue-700">
-
-                                    Processing
-
-                                </span>
-
-                            @elseif($order->status == 'completed')
-
-                                <span class="px-2.5 py-1
-                                    rounded-full text-xs
-                                    bg-green-100
-                                    text-green-700">
-
-                                    Completed
-
-                                </span>
-
-                            @else
-
-                                <span class="px-2.5 py-1
-                                    rounded-full text-xs
-                                    bg-red-100
-                                    text-red-700">
-
-                                    Cancelled
-
-                                </span>
-
-                            @endif
-
-                        </td>
-
-                        <td class="px-5 py-4">
-                            {{ $order->created_at->format('d M Y') }}
-                        </td>
-
-                    </tr>
-
-                @empty
-
-                    <tr>
-
-                        <td colspan="6"
-                            class="py-12 text-center
-                            text-gray-400">
-
-                            No orders found
-
-                        </td>
-
-                    </tr>
-
-                @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        {{-- Pagination --}}
-        <div class="p-4 border-t
-            border-gray-100
-            dark:border-gray-700">
-
-            {{ $orders->links() }}
-
-        </div>
-
     </div>
-
-</div>
-
 @endsection

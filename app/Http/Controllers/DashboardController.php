@@ -85,8 +85,7 @@ class DashboardController extends Controller
         $totalSales = OrderModel::where('status', 'completed')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->count();
-
-        $totalCustomers = User::where('role', 'customer')
+        $totalCustomers = User::role('Customer')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->count();
 
@@ -233,7 +232,7 @@ class DashboardController extends Controller
             'totalCat',
 
 
-       
+
         ));
     }
 
