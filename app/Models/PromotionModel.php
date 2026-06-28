@@ -18,6 +18,14 @@ class PromotionModel extends Model
         'status',
     ];
 
+    protected $casts = [
+
+        'start_date' => 'datetime',
+
+        'end_date' => 'datetime',
+
+    ];
+
     public function products()
     {
         return $this->belongsToMany(ProductsModel::class, 'promotion_products', 'promotion_id', 'product_id');

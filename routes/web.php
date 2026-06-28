@@ -344,6 +344,10 @@ Route::prefix('admin')
             ->middleware('permission:view_reports')
             ->name('reports.orders');
 
+        Route::get('/reports/orders/{order}', [ReportsController::class, 'orderDetails'])
+            ->middleware('permission:view_reports')
+            ->name('reports.orders.details');
+
         Route::get('/reports/products', [ReportsController::class, 'products'])
             ->middleware('permission:view_reports')
             ->name('reports.products');
@@ -356,13 +360,37 @@ Route::prefix('admin')
             ->middleware('permission:view_customers_report')
             ->name('reports.customers');
 
+        Route::get('/customers/export/csv', [ReportsController::class, 'exportCustomersCsv'])
+            ->middleware('permission:view_customers_report')
+            ->name('reports.customers.export.csv');
+
+        Route::get('/customers/export/pdf', [ReportsController::class, 'exportCustomersPdf'])
+            ->middleware('permission:view_customers_report')
+            ->name('reports.customers.export.pdf');
+
         Route::get('/reports/payments', [ReportsController::class, 'payments'])
             ->middleware('permission:view_reports')
             ->name('reports.payments');
 
+        Route::get('/payments/export/csv', [ReportsController::class, 'exportPaymentsCsv'])
+            ->middleware('permission:view_reports')
+            ->name('reports.payments.export.csv');
+
+        Route::get('/payments/export/pdf', [ReportsController::class, 'exportPaymentsPdf'])
+            ->middleware('permission:view_reports')
+            ->name('reports.payments.export.pdf');
+
         Route::get('/reports/promotions', [ReportsController::class, 'promotions'])
             ->middleware('permission:view_reports')
             ->name('reports.promotions');
+
+        Route::get('/promotions/export/csv', [ReportsController::class, 'exportPromotionsCsv'])
+            ->middleware('permission:view_reports')
+            ->name('reports.promotions.export.csv');
+
+        Route::get('/promotions/export/pdf', [ReportsController::class, 'exportPromotionsPdf'])
+            ->middleware('permission:view_reports')
+            ->name('reports.promotions.export.pdf');
 
         /*
         |--------------------------------------------------------------------------
@@ -375,7 +403,7 @@ Route::prefix('admin')
 
         /*
         |--------------------------------------------------------------------------
-        | Notifications
+        | Push Notifications
         |--------------------------------------------------------------------------
         |
         | 

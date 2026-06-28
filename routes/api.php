@@ -17,6 +17,7 @@ use App\Http\Controllers\ApiController\ProfileController;
 use App\Http\Controllers\ApiController\BannerController;
 use App\Http\Controllers\ApiController\CouponsController;
 use App\Http\Controllers\ApiController\PaymentController;
+use App\Http\Controllers\Api\DeviceTokenController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'userLogin']);
@@ -45,6 +46,7 @@ Route::get('/all-new-arrivals', [ProductsController::class, 'allNewArrivals']);
 Route::get('/recommended', [ProductsController::class, 'recommended']);
 Route::get('/all-recommended', [ProductsController::class, 'allrecommended']);
 Route::post('/telegram/webhook', [TelegramController::class, 'handle']);
+Route::post('/device-token', [DeviceTokenController::class, 'store']);
 
 
 

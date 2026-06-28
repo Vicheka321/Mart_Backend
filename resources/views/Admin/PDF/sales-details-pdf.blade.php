@@ -98,7 +98,7 @@
     <h1>Sales Details Report</h1>
 
     <div class="subtitle">
-        Date: {{ \Carbon\Carbon::parse($date)->format('F d, Y') }} |
+        Date: {{ \Carbon\Carbon::parse($targetDate)->format('F d, Y') }} |
         Generated on {{ now()->format('F d, Y h:i A') }}
     </div>
 

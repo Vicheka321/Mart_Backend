@@ -939,7 +939,7 @@
 
     <div class="center">
 
-        Thank You
+        Thank You.
 
         <br>
 

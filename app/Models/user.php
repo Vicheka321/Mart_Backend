@@ -6,6 +6,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\DeviceToken;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -22,7 +24,7 @@ class User extends Authenticatable
         'facebook_id',
         'avatar',
         'password',
-     
+
     ];
 
     protected $hidden = [
@@ -64,5 +66,10 @@ class User extends Authenticatable
             CouponUsageModel::class,
             'user_id'
         );
+    }
+
+    public function deviceTokens(): HasMany
+    {
+        return $this->hasMany(DeviceToken::class);
     }
 }

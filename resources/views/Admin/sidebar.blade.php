@@ -440,7 +440,7 @@
                                 d="m16,16c-3.86,0-7-3.14-7-7s3.14-7,7-7c1.988,0,3.89.85,5.217,2.333l-1.49 1.334c-.948-1.059-2.307-1.667-3.727-1.667-2.757,0-5,2.243-5,5s2.243,5,5,5v2Z" />
                         </svg>
                     </span>
-                    <span>User Management</span>
+                    <span>Users</span>
                     @if(request()->routeIs('customers.*'))
                         <span class="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500"
                             style="animation: dotPulse 2.5s ease-in-out infinite"></span>
