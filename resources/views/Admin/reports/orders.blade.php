@@ -127,7 +127,7 @@
         </div>
 
         {{-- ==================== KPI ROW 1 — ORDER STATUS ==================== --}}
-        @php
+        {{-- @php
             $statusKpis = [
                 [
                     'label' => 'Total Orders',
@@ -175,9 +175,9 @@
                     'pct'   => $totalOrders > 0 ? round(($cancelledOrders / $totalOrders) * 100) : 0,
                 ],
             ];
-        @endphp
+        @endphp --}}
 
-        <div class="grid grid-cols-2 xl:grid-cols-5 gap-3">
+        {{-- <div class="grid grid-cols-2 xl:grid-cols-5 gap-3">
             @foreach($statusKpis as $kpi)
                 <div class="kpi-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
                             border border-gray-100 dark:border-gray-700
@@ -216,7 +216,7 @@
                     </div>
                 </div>
             @endforeach
-        </div>
+        </div> --}}
 
         {{-- ==================== KPI ROW 2 — REVENUE ==================== --}}
         @php
@@ -420,7 +420,7 @@
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Order Analytics</h2>
             </div>
             <div class="p-4 sm:p-5">
-                <div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-3">
+                <div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 gap-3">
 
                     @php
                         $analytics = [
@@ -452,20 +452,20 @@
                                 'from'  => 'from-blue-500', 'to' => 'to-indigo-600',
                                 'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>',
                             ],
-                            [
-                                'label' => 'Peak Hour',
-                                'value' => $peakHour ? (($peakHour->hour % 12 ?: 12) . ($peakHour->hour >= 12 ? 'pm' : 'am')) : '—',
-                                'sub'   => $peakHour ? number_format($peakHour->total) . ' orders' : 'No data',
-                                'from'  => 'from-amber-500', 'to' => 'to-yellow-600',
-                                'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
-                            ],
-                            [
-                                'label' => 'Peak Day',
-                                'value' => $peakDay ? \Carbon\Carbon::parse($peakDay->day)->format('d M') : '—',
-                                'sub'   => $peakDay ? number_format($peakDay->total) . ' orders' : 'No data',
-                                'from'  => 'from-orange-500', 'to' => 'to-amber-600',
-                                'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>',
-                            ],
+                            // [
+                            //     'label' => 'Peak Hour',
+                            //     'value' => $peakHour ? (($peakHour->hour % 12 ?: 12) . ($peakHour->hour >= 12 ? 'pm' : 'am')) : '—',
+                            //     'sub'   => $peakHour ? number_format($peakHour->total) . ' orders' : 'No data',
+                            //     'from'  => 'from-amber-500', 'to' => 'to-yellow-600',
+                            //     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+                            // ],
+                            // [
+                            //     'label' => 'Peak Day',
+                            //     'value' => $peakDay ? \Carbon\Carbon::parse($peakDay->day)->format('d M') : '—',
+                            //     'sub'   => $peakDay ? number_format($peakDay->total) . ' orders' : 'No data',
+                            //     'from'  => 'from-orange-500', 'to' => 'to-amber-600',
+                            //     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>',
+                            // ],
                             [
                                 'label' => 'Top Payment',
                                 'value' => $topPayment ? strtoupper($topPayment->payment_method) : '—',

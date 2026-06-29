@@ -38,32 +38,10 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-/*
-|--------------------------------------------------------------------------
-| Admin Entry
-|--------------------------------------------------------------------------
-|
-| /admin = redirect to dashboard if user belongs to back-office roles
-|
-*/
 Route::get('/admin', [AdminController::class, 'index'])
     ->middleware('auth')
     ->name('admin.entry');
 
-/*
-|--------------------------------------------------------------------------
-| Admin / Back-office Routes
-|--------------------------------------------------------------------------
-|
-| Outer protection:
-| - user must be logged in
-| - user must have one of these roles:
-|   Super Admin | Admin | Staff
-|
-| Inner protection:
-| - each route uses permission:* middleware
-|
-*/
 Route::prefix('admin')
     ->middleware(['auth', 'permission:access_admin_panel'])
     ->group(function () {

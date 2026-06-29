@@ -136,7 +136,9 @@
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
 
             {{-- Total Orders --}}
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
+            
+            <a href="{{ route('orders.index', ['status' => 'all']) }}"
+                 class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
                         border border-gray-100 dark:border-gray-700
                         shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-3">
                 <div class="absolute -top-8 -right-8 w-24 h-24 rounded-full
@@ -179,11 +181,12 @@
                         <span class="text-[10px] font-semibold text-pink-600 dark:text-pink-400">100%</span>
                     </div>
                 </div>
-            </div>
+            </a>
 
             {{-- Pending Orders --}}
             @php $pendingPct = ($totalOrders ?? 0) > 0 ? round((($pendingOrders ?? 0) / $totalOrders) * 100) : 0; @endphp
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
+            <a href="{{ route('orders.index', ['status' => 'pending']) }}"
+                 class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
                         border border-gray-100 dark:border-gray-700
                         shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-3">
                 <div class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-900/20"></div>
@@ -215,11 +218,12 @@
                         <span class="text-[10px] font-semibold text-amber-600 dark:text-amber-400">{{ number_format($totalOrders ?? 0) }} total</span>
                     </div>
                 </div>
-            </div>
+            </a>
 
             {{-- Processing Orders --}}
             @php $processingPct = ($totalOrders ?? 0) > 0 ? round((($processingOrders ?? 0) / $totalOrders) * 100) : 0; @endphp
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
+            <a href="{{ route('orders.index', ['status' => 'processing']) }}"
+                 class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
                         border border-gray-100 dark:border-gray-700
                         shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-3">
                 <div class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20"></div>
@@ -250,11 +254,12 @@
                         <span class="text-[10px] font-semibold text-blue-600 dark:text-blue-400">{{ number_format($totalOrders ?? 0) }} total</span>
                     </div>
                 </div>
-            </div>
+            </a>
 
             {{-- Completed Orders --}}
             @php $completedPct = ($totalOrders ?? 0) > 0 ? round((($completedOrders ?? 0) / $totalOrders) * 100) : 0; @endphp
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
+            <a href="{{ route('orders.index', ['status' => 'completed']) }}"
+                 class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
                         border border-gray-100 dark:border-gray-700
                         shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-3">
                 <div class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/20"></div>
@@ -285,11 +290,12 @@
                         <span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">{{ number_format($totalOrders ?? 0) }} total</span>
                     </div>
                 </div>
-            </div>
+            </a>
 
             {{-- Cancelled Orders --}}
             @php $cancelledPct = ($totalOrders ?? 0) > 0 ? round((($cancelledOrders ?? 0) / $totalOrders) * 100) : 0; @endphp
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
+            <a href="{{ route('orders.index', ['status' => 'cancelled']) }}"
+                 class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
                         border border-gray-100 dark:border-gray-700
                         shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-3">
                 <div class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br from-red-50 to-rose-100 dark:from-red-900/20 dark:to-rose-900/20"></div>
@@ -320,7 +326,7 @@
                         <span class="text-[10px] font-semibold text-red-600 dark:text-red-400">{{ number_format($totalOrders ?? 0) }} total</span>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         {{-- ==================== TABLE CARD ==================== --}}
@@ -332,7 +338,7 @@
 
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                     {{-- STATUS FILTER PILLS --}}
-                    <div class="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-1 gap-1 flex-wrap">
+                    {{-- <div class="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-1 gap-1 flex-wrap">
                         @foreach(['all' => 'All', 'pending' => 'Pending', 'processing' => 'Processing', 'completed' => 'Completed', 'cancelled' => 'Cancelled'] as $value => $label)
                             <a href="?status={{ $value }}"
                                class="filter-pill px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200
@@ -342,7 +348,7 @@
                                 {{ $label }}
                             </a>
                         @endforeach
-                    </div>
+                    </div> --}}
 
                     {{-- EXPORT --}}
                     <button type="button" onclick="openExportModal()"

@@ -222,7 +222,11 @@
                                             <div class="flex items-center justify-end gap-1.5">
                                                 {{-- Products --}}
                                                 <button type="button"
-                                                    onclick="openProductsModal({{ $promotion->id }}, @js($promotion->name))"
+                                                    onclick="openProductsModal(
+                                                        {{ $promotion->id }},
+                                                        @js($promotion->name),
+                                                        @js($promotion->products->pluck('id'))
+                                                    )"
                                                     class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
                                                            bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400
                                                            hover:bg-violet-100 dark:hover:bg-violet-900/40 transition-colors">
@@ -743,13 +747,42 @@
             // ══════════════════════════════════════════════════════
             //  PRODUCTS MODAL
             // ══════════════════════════════════════════════════════
-            function openProductsModal(promotionId, promotionName) {
-                document.getElementById('productsForm').action = `/admin/promotions/${promotionId}/products`;
-                document.getElementById('productsModalPromotionName').textContent = promotionName;
-                document.getElementById('productSearch').value   = '';
-                document.getElementById('categoryFilter').value  = '';
-                document.getElementById('brandFilter').value     = '';
+            function openProductsModal(
+                promotionId,
+                promotionName,
+                selectedProducts = []
+            ) {
+
+                document.getElementById('productsForm').action =
+                    `/admin/promotions/${promotionId}/products`;
+
+                document.getElementById(
+                    'productsModalPromotionName'
+                ).textContent = promotionName;
+
+                document.getElementById('productSearch').value = '';
+                document.getElementById('categoryFilter').value = '';
+                document.getElementById('brandFilter').value = '';
+
+                // Clear Checkbox
+                document.querySelectorAll('.product-checkbox')
+                    .forEach(cb => cb.checked = false);
+
+                // Tick Product ដែលមានក្នុង Promotion
+                selectedProducts.forEach(id => {
+
+                    const checkbox = document.querySelector(
+                        `.product-checkbox[value="${id}"]`
+                    );
+
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+
+                });
+
                 filterPromoProducts();
+
                 showModal('productsModal');
             }
 
