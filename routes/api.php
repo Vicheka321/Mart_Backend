@@ -18,6 +18,7 @@ use App\Http\Controllers\ApiController\BannerController;
 use App\Http\Controllers\ApiController\CouponsController;
 use App\Http\Controllers\ApiController\PaymentController;
 use App\Http\Controllers\Api\DeviceTokenController;
+use App\Http\Controllers\PushNotificationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'userLogin']);
@@ -31,6 +32,8 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/send-sms', [AuthController::class, 'sendSms']);
 Route::post('/verify-sms', [AuthController::class, 'verifySms']);
 Route::post('/google-login', [AuthController::class, 'googleLogin']);
+Route::post('/device-token', [DeviceTokenController::class, 'store']);
+Route::post('/device-token/guest', [DeviceTokenController::class, 'storeGuest']);
 
 Route::get('/banners', [BannerController::class, 'index']);
 Route::get('/categories', [CategoriesController::class, 'index']);
@@ -46,12 +49,16 @@ Route::get('/all-new-arrivals', [ProductsController::class, 'allNewArrivals']);
 Route::get('/recommended', [ProductsController::class, 'recommended']);
 Route::get('/all-recommended', [ProductsController::class, 'allrecommended']);
 Route::post('/telegram/webhook', [TelegramController::class, 'handle']);
-Route::post('/device-token', [DeviceTokenController::class, 'store']);
+
+
+
+Route::get('/test-fcm', [PushNotificationController::class, 'test']);
+
 
 
 
 Route::middleware('auth:sanctum')->group(function () {
-
+    Route::post('/device-token', [DeviceTokenController::class, 'store']);
     Route::post('/update-profile', [AuthController::class, 'updateProfile']);
     Route::post('/add-to-cart', [CartController::class, 'addToCart']);
     Route::get('/cart', [CartController::class, 'getCart']);

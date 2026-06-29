@@ -117,7 +117,7 @@
             </div>
 
             <div class="flex gap-2">
-                <a href="{{ route('reports.customers.export.csv') }}"
+                {{-- <a href="{{ route('reports.customers.export.csv') }}"
                    class="action-btn inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl
                           border border-emerald-200 dark:border-emerald-500/30
                           bg-emerald-50 dark:bg-emerald-500/10
@@ -140,7 +140,17 @@
                         <path d="M14 2v6h6"/>
                     </svg>
                     Export PDF
-                </a>
+                </a> --}}
+
+                <button type="button" onclick="openExportModal()"
+                    class="action-btn inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
+                            rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700
+                            text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/>
+                    </svg>
+                    <span class="hidden sm:inline">Export</span>
+                </button>
             </div>
         </div>
 

@@ -191,7 +191,9 @@
                         </div>
                     </div>
 
-                    <form action="#" method="POST" class="space-y-4 relative">
+                    <form action="{{ route('notifications.store') }}" method="POST" 
+                    
+                    class="space-y-4 relative">
                         @csrf
 
                         {{-- Target Audience --}}

@@ -54,7 +54,11 @@ return [
     ],
 
     'unimtx' => [
-    'access_key' => env('UNIMTX_ACCESS_KEY'),
-    'base_url'   => env('UNIMTX_BASE_URL'),
-],
+        'access_key' => env('UNIMTX_ACCESS_KEY'),
+        'base_url'   => env('UNIMTX_BASE_URL'),
+    ],
+
+    'firebase' => [
+        'credentials' => storage_path('app/firebase/firebase-service-account.json'),
+    ],
 ];

@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Models\user;
+use App\Services\FirebaseNotificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\DeviceToken;
 
-class NotificationController extends Controller
+class PushNotificationController extends Controller
 {
     public function index()
     {
@@ -16,6 +19,137 @@ class NotificationController extends Controller
             ->get();
 
         return view('admin.notifications', compact('users'));
+    }
+
+
+    public function store(
+        Request $request,
+        FirebaseNotificationService $firebase
+    ) {
+        $request->validate([
+            'title'        => 'required|max:255',
+            'message'      => 'required|max:200',
+            'type'         => 'required',
+            'target'       => 'required',
+            'image_url'    => 'nullable|url',
+            'schedule'     => 'required',
+            'scheduled_at' => 'nullable',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            // Save Notification History
+            $notification = Notification::create([
+                'title'        => $request->title,
+                'message'      => $request->message,
+                'type'         => $request->type,
+                'target'       => $request->target,
+                'image_url'    => $request->image_url,
+                'status'       => $request->schedule == 'later'
+                    ? 'scheduled'
+                    : 'sent',
+                'scheduled_at' => $request->scheduled_at,
+            ]);
+
+            // Schedule only
+            if ($request->schedule == 'later') {
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Notification scheduled.',
+                ]);
+            }
+
+            // Send Now
+            $this->sendNotification($notification, $firebase);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Notification sent successfully.',
+            ]);
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    private function sendNotification(
+        Notification $notification,
+        FirebaseNotificationService $firebase
+    ) {
+        $tokens = collect();
+
+        switch ($notification->target) {
+
+            case 'all':
+                $tokens = DeviceToken::where('is_active', true)
+                    ->pluck('fcm_token');
+                break;
+
+            case 'customers':
+                $tokens = DeviceToken::whereHas('user', function ($q) {
+                    $q->role('Customer');
+                })
+                    ->where('is_active', true)
+                    ->pluck('fcm_token');
+                break;
+
+            case 'active':
+                $tokens = DeviceToken::where('is_active', true)
+                    ->pluck('fcm_token');
+                break;
+
+            case 'inactive':
+                $tokens = DeviceToken::where('is_active', false)
+                    ->pluck('fcm_token');
+                break;
+
+            default:
+                return;
+        }
+
+        $firebase->sendToTokens(
+            tokens: $tokens->toArray(),
+            title: $notification->title,
+            body: $notification->message,
+            data: [
+                'type' => $notification->type,
+                'notification_id' => (string) $notification->id,
+            ],
+            image: $notification->image_url,
+        );
+    }
+
+
+
+    public function test(FirebaseNotificationService $firebase)
+    {
+        $tokens = DeviceToken::pluck('fcm_token');
+
+        foreach ($tokens as $token) {
+
+            $firebase->sendToToken(
+                token: $token,
+                title: 'Laravel Test',
+                body: 'Hello All Devices 🎉',
+                data: [
+                    'type' => 'general',
+                ]
+            );
+        }
+
+        return 'Notification Sent!';
     }
 
     // public function send(Request $request, FirebaseNotificationService $firebase)
@@ -124,34 +258,5 @@ class NotificationController extends Controller
     //     }
     // }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|max:255',
-            'message' => 'required|max:200',
-            'type' => 'required',
-            'target' => 'required',
-            'image_url' => 'nullable|url',
-            'schedule' => 'required',
-            'scheduled_at' => 'nullable',
-        ]);
 
-        $notification = Notification::create([
-            'title'        => $request->title,
-            'message'      => $request->message,
-            'type'         => $request->type,
-            'target'       => $request->target,
-            'image_url'    => $request->image_url,
-            'status'       => $request->schedule === 'later'
-                ? 'scheduled'
-                : 'sent',
-            'scheduled_at' => $request->scheduled_at,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Notification created',
-            'data'    => $notification
-        ]);
-    }
 }

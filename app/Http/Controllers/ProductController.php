@@ -97,7 +97,7 @@ class ProductController extends Controller
                 break;
 
             case 'low-stock':
-                $query->where('quantity', '<=', 10);
+                $query->where('quantity', '<=', 20);
                 break;
 
                 // case 'all' => no filter
@@ -121,7 +121,7 @@ class ProductController extends Controller
         // Summary cards
         $totalProducts = ProductsModel::count();
         $totalActive   = ProductsModel::where('status', 1)->count();
-        $totalLowStock = ProductsModel::where('quantity', '<=', 10)->count();
+        $totalLowStock = ProductsModel::where('quantity', '<=', 20)->count();
 
         return view('admin.products', compact(
             'products',

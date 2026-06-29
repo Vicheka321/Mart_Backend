@@ -14,7 +14,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\CouponController;
-use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PushNotificationController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
@@ -223,14 +223,6 @@ Route::prefix('admin')
             ->middleware('permission:view_customers')
             ->name('customers.index');
 
-        Route::post('/customers', [CustomersController::class, 'store'])
-            ->middleware('permission:view_customers')
-            ->name('admin.customers.store');
-
-        Route::patch('/customers/{user}', [CustomersController::class, 'updateCustomer'])
-            ->middleware('permission:view_customers')
-            ->name('admin.updateCustomer');
-
         Route::get('/customers/export/csv', [CustomersController::class, 'exportCustomersCSV'])
             ->middleware('permission:view_customers')
             ->name('customers.export.csv');
@@ -388,11 +380,11 @@ Route::prefix('admin')
         | 
         |--------------------------------------------------------------------------
         */
-        Route::get('/notifitions', [NotificationController::class, 'index'])
+        Route::get('/notifitions', [PushNotificationController::class, 'index'])
             ->middleware('permission:view_notifications')
             ->name('notifitions.index');
 
-        Route::post('/notifications/store', [NotificationController::class, 'store'])
+        Route::post('/notifications', [PushNotificationController::class, 'store'])
             ->middleware('permission:view_notifications')
             ->name('notifications.store');
 
@@ -438,4 +430,12 @@ Route::prefix('admin')
         Route::put('/assign-roles/{user}', [RoleController::class, 'assignUserRole'])
             ->middleware('permission:assign_roles')
             ->name('roles.assign-user');
+
+        Route::post('/customers', [CustomersController::class, 'store'])
+            ->middleware('permission:view_customers')
+            ->name('admin.customers.store');
+
+        Route::patch('/customers/{user}', [CustomersController::class, 'updateCustomer'])
+            ->middleware('permission:view_customers')
+            ->name('admin.updateCustomer');
     });
