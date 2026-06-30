@@ -388,6 +388,18 @@ Route::prefix('admin')
             ->middleware('permission:view_notifications')
             ->name('notifications.store');
 
+        Route::put('/{notification}', [PushNotificationController::class, 'update'])
+            ->middleware('permission:view_notifications')
+            ->name('update');
+
+        Route::delete('/{notification}', [PushNotificationController::class, 'destroy'])
+            ->middleware('permission:view_notifications')
+            ->name('destroy');
+
+        Route::post('/{notification}/resend', [PushNotificationController::class, 'resend'])
+            ->middleware('permission:view_notifications')
+            ->name('resend');
+
         /*
         |--------------------------------------------------------------------------
         | Settings

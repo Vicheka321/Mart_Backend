@@ -17,14 +17,25 @@ return new class extends Migration
             $table->string('title');
             $table->text('message');
 
-            $table->string('type')->default('general');
+            // Target Audience
             $table->string('target')->default('all');
 
+            // Optional image
             $table->string('image_url')->nullable();
 
-            $table->enum('status', ['sent', 'scheduled'])->default('sent');
+            // Status
+            $table->enum('status', [
+                'pending',
+                'scheduled',
+                'sent',
+                'failed'
+            ])->default('pending');
 
+            // Schedule
             $table->timestamp('scheduled_at')->nullable();
+
+            // Sent time
+            $table->timestamp('sent_at')->nullable();
 
             $table->timestamps();
         });

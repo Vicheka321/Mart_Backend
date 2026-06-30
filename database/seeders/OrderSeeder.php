@@ -5,136 +5,183 @@ namespace Database\Seeders;
 use App\Models\OrderModel;
 use App\Models\Order_itemModel;
 use App\Models\PaymentModel;
-use App\Models\User;
 use App\Models\ProductsModel;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class OrderSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Get only users who have Customer role via Spatie
-        $customers = User::role('Customer')->pluck('id');
+        $districts = [
+            'Chamkar Mon',
+            'Daun Penh',
+            '7 Makara',
+            'Tuol Kork',
+            'Sen Sok',
+            'Russey Keo',
+            'Mean Chey',
+            'Chbar Ampov',
+            'Por Sen Chey',
+            'Prek Pnov',
+        ];
+
+        $communes = [
+            'Boeng Keng Kang I',
+            'Boeng Keng Kang II',
+            'Boeng Keng Kang III',
+            'Tonle Bassac',
+            'Olympic',
+            'Phsar Thmey I',
+            'Phsar Thmey II',
+            'Wat Phnom',
+            'Boeng Kak I',
+            'Boeng Kak II',
+            'Teuk Thla',
+            'Khmuonh',
+            'Kakab I',
+            'Kakab II',
+            'Choam Chao I',
+            'Choam Chao II',
+            'Nirouth',
+            'Veal Sbov',
+            'Chbar Ampov I',
+            'Chbar Ampov II',
+        ];
+
+        $streets = [
+            'Street 51',
+            'Street 63',
+            'Street 95',
+            'Street 110',
+            'Street 182',
+            'Street 214',
+            'Street 271',
+            'Street 278',
+            'Street 294',
+            'Street 310',
+            'Street 360',
+            'Street 432',
+            'Street 598',
+            'Russian Blvd',
+            'Monivong Blvd',
+            'Norodom Blvd',
+            'Mao Tse Toung Blvd',
+            'Hun Sen Blvd',
+        ];
+
+        $landmarks = [
+            'Near AEON Mall',
+            'Near Central Market',
+            'Near Olympic Market',
+            'Near Orussey Market',
+            'Near Royal Palace',
+            'Near Independence Monument',
+            'Near NagaWorld',
+            'Near Chip Mong Mall',
+            'Near Eden Garden',
+            'Near TK Avenue',
+            'Near Airport',
+            'Near Wat Phnom',
+        ];
+
+        $customers = User::role('Customer')->get();
         $products  = ProductsModel::all();
 
         if ($customers->isEmpty() || $products->isEmpty()) {
-            $this->command->warn('Please seed customers and products first.');
+            $this->command->warn('Customers or Products not found.');
             return;
         }
 
-        // Create fake orders
         for ($i = 1; $i <= 500; $i++) {
-            $customerId = $customers->random();
+            $customer = $customers->random();
 
-            // Random order date in last 2 years
-            $createdAt = Carbon::now()->subDays(rand(1, 730));
+            $createdAt = Carbon::now()
+                ->subDays(rand(0, 365))
+                ->subHours(rand(0, 23))
+                ->subMinutes(rand(0, 59));
 
-            /*
-            |--------------------------------------------------------------------------
-            | Order
-            |--------------------------------------------------------------------------
-            */
-            $paymentMethod = fake()->randomElement([
-                'cash',
-                'aba',
-                'wing',
-                'khqr'
-            ]);
+            $house = rand(1, 999);
+
+            $address =
+                "House {$house}, "
+                . $streets[array_rand($streets)]
+                . ", "
+                . $communes[array_rand($communes)]
+                . ", "
+                . $districts[array_rand($districts)]
+                . ", Phnom Penh, "
+                . $landmarks[array_rand($landmarks)];
 
             $status = fake()->randomElement([
                 'pending',
+                'pending',
+                'processing',
                 'processing',
                 'completed',
-                'cancelled'
+                'completed',
+                'completed',
+                'cancelled',
+            ]);
+
+            $paymentMethod = fake()->randomElement([
+                'cash',
+                'cash',
+                'khqr',
+
             ]);
 
             $order = OrderModel::create([
-                'user_id'           => $customerId,
-                'delivery_address'  => fake()->address(),
-                'lat'               => fake()->latitude(10.0, 14.8),
-                'lng'               => fake()->longitude(102.3, 107.7),
+                'user_id'           => $customer->id,
+                'delivery_address'  => $address,
+                'lat'               => fake()->latitude(11.45, 11.68),
+                'lng'               => fake()->longitude(104.80, 104.98),
                 'status'            => $status,
-                'total_amount'      => 0, // update later
                 'payment_method'    => $paymentMethod,
+                'total_amount'      => 0,
                 'created_at'        => $createdAt,
                 'updated_at'        => $createdAt,
             ]);
 
-            /*
-            |--------------------------------------------------------------------------
-            | Order Items
-            |--------------------------------------------------------------------------
-            */
-            $itemCount = rand(1, 5);
-            $subtotal  = 0;
+            // ── Order items ──────────────────────────────────────
+            $itemCount  = rand(1, 5);
+            $orderItems = $products->random(min($itemCount, $products->count()));
+            $totalAmount = 0;
 
-            // Track used product ids so same product won't repeat in one order
-            $usedProductIds = [];
-
-            for ($j = 1; $j <= $itemCount; $j++) {
-
-                $availableProducts = $products->whereNotIn('id', $usedProductIds);
-
-                if ($availableProducts->isEmpty()) {
-                    break;
-                }
-
-                $product = $availableProducts->random();
-                $usedProductIds[] = $product->id;
-
-                $qty   = rand(1, 5);
-                $price = $product->sale_price ?? $product->price ?? rand(1, 100);
+            foreach ($orderItems as $product) {
+                $quantity  = rand(1, 4);
+                $price     = $product->price ?? 0;
+                $lineTotal = $price * $quantity;
+                $totalAmount += $lineTotal;
 
                 Order_itemModel::create([
                     'order_id'   => $order->id,
                     'product_id' => $product->id,
-                    'qty'        => $qty,
+                    'qty'   => $quantity,
                     'price'      => $price,
                     'created_at' => $createdAt,
                     'updated_at' => $createdAt,
                 ]);
-
-                $subtotal += $price * $qty;
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Update Order Total
-            |--------------------------------------------------------------------------
-            */
-            $finalTotal = max(0, $subtotal);
+            // ── Update order total ───────────────────────────────
+            $order->update(['total_amount' => $totalAmount]);
 
-            $order->update([
-                'total_amount' => $finalTotal,
+            // ── Payment record ───────────────────────────────────
+            PaymentModel::create([
+                'order_id'       => $order->id,
+                'amount'         => $totalAmount,
+                'payment_method' => $paymentMethod,
+                'payment_status' => $status === 'cancelled'
+                    ? 'cancelled'
+                    : ($status === 'pending' ? 'pending' : 'paid'),
+                'transaction_id' => strtoupper(fake()->bothify('TXN########')),
+                'created_at'     => $createdAt,
+                'updated_at'     => $createdAt,
             ]);
-
-            /*
-            |--------------------------------------------------------------------------
-            | Payment
-            |--------------------------------------------------------------------------
-            | If cancelled => optional skip payment
-            | If not cancelled => create payment
-            */
-            if ($order->status !== 'cancelled') {
-                PaymentModel::create([
-                    'order_id'       => $order->id,
-                    'amount'         => $finalTotal,
-                    'payment_method' => $paymentMethod,
-                    'payment_status' => fake()->randomElement([
-                        'paid',
-                        'paid',
-                        'paid',
-                        'unpaid',
-                    ]),
-                    'transaction_id' => strtoupper(fake()->bothify('TXN######')),
-                    'created_at'     => $createdAt,
-                    'updated_at'     => $createdAt,
-                ]);
-            }
         }
+
+        $this->command->info('500 orders seeded successfully.');
     }
 }
