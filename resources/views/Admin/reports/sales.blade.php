@@ -408,10 +408,10 @@
                         <select name="payment_method" class="filter-select">
                             <option value="">All methods</option>
                             <option value="cash" {{ request('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
-                            <option value="aba" {{ request('payment_method') == 'aba' ? 'selected' : '' }}>ABA</option>
+                            {{-- <option value="aba" {{ request('payment_method') == 'aba' ? 'selected' : '' }}>ABA</option> --}}
                             <option value="khqr" {{ request('payment_method') == 'khqr' ? 'selected' : '' }}>KHQR</option>
-                            <option value="wing" {{ request('payment_method') == 'wing' ? 'selected' : '' }}>Wing</option>
-                            <option value="card" {{ request('payment_method') == 'card' ? 'selected' : '' }}>Card</option>
+                            {{-- <option value="wing" {{ request('payment_method') == 'wing' ? 'selected' : '' }}>Wing</option> --}}
+                            {{-- <option value="card" {{ request('payment_method') == 'card' ? 'selected' : '' }}>Card</option> --}}
                         </select>
                     </div>
 

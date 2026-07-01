@@ -15,28 +15,28 @@ class OrderSeeder extends Seeder
     public function run(): void
     {
         $districts = [
-            'Chamkar Mon',
-            'Daun Penh',
-            '7 Makara',
-            'Tuol Kork',
-            'Sen Sok',
-            'Russey Keo',
-            'Mean Chey',
-            'Chbar Ampov',
-            'Por Sen Chey',
-            'Prek Pnov',
+            'khan Chamkar Mon',
+            'khan Daun Penh',
+            'khan 7 Makara',
+            'khan Tuol Kork',
+            'khan Sen Sok',
+            'khan Russey Keo',
+            'khan Mean Chey',
+            'khan Chbar Ampov',
+            'khan Por Sen Chey',
+            'khan Prek Pnov',
         ];
 
         $communes = [
-            'Boeng Keng Kang I',
-            'Boeng Keng Kang II',
-            'Olympic',
-            'Tonle Bassac',
-            'Teuk Thla',
-            'Nirouth',
-            'Choam Chao I',
-            'Choam Chao II',
-            'Veal Sbov',
+            'sangkat Boeng Keng Kang I',
+            'sangkat Boeng Keng Kang II',
+            'sangkat Olympic',
+            'sangkat Tonle Bassac',
+            'sangkat Teuk Thla',
+            'sangkat Nirouth',
+            'sangkat Choam Chao I',
+            'sangkat Choam Chao II',
+            'sangkat Veal Sbov',
         ];
 
         $streets = [
@@ -52,14 +52,7 @@ class OrderSeeder extends Seeder
             'Monivong Blvd',
         ];
 
-        $landmarks = [
-            'Near AEON Mall',
-            'Near Central Market',
-            'Near Olympic Market',
-            'Near Royal Palace',
-            'Near Wat Phnom',
-            'Near Airport',
-        ];
+
 
         $customers = User::role('Customer')->get();
 
@@ -83,11 +76,11 @@ class OrderSeeder extends Seeder
             $house = rand(1, 999);
 
             $address =
-                "House {$house}, " .
+           
                 $streets[array_rand($streets)] . ", " .
                 $communes[array_rand($communes)] . ", " .
-                $districts[array_rand($districts)] . ", Phnom Penh, " .
-                $landmarks[array_rand($landmarks)];
+                $districts[array_rand($districts)] . ", Phnom Penh";
+
 
             $status = fake()->randomElement([
                 // 'pending',
