@@ -121,6 +121,7 @@ class ProductController extends Controller
         // Summary cards
         $totalProducts = ProductsModel::count();
         $totalActive   = ProductsModel::where('status', 1)->count();
+        $totalInactive = ProductsModel::where('status', 0)->count();
         $totalLowStock = ProductsModel::where('quantity', '<=', 20)->count();
 
         return view('admin.products', compact(
@@ -130,7 +131,8 @@ class ProductController extends Controller
             'statusFilter',
             'totalProducts',
             'totalActive',
-            'totalLowStock'
+            'totalLowStock',
+            'totalInactive'
         ));
     }
 

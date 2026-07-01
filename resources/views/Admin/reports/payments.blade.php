@@ -165,15 +165,15 @@
                     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
                     'pct'   => 100,
                 ],
-                [
-                    'label' => 'ABA Revenue',
-                    'value' => '$' . number_format($abaRevenue, 2),
-                    'sub'   => 'ABA Pay gateway',
-                    'from'  => 'from-cyan-500', 'to' => 'to-blue-600',
-                    'bg'    => 'from-cyan-50 to-blue-100 dark:from-cyan-900/20 dark:to-blue-900/20',
-                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>',
-                    'pct'   => $totalRevenue > 0 ? round(($abaRevenue / $totalRevenue) * 100) : 0,
-                ],
+                // [
+                //     'label' => 'ABA Revenue',
+                //     'value' => '$' . number_format($abaRevenue, 2),
+                //     'sub'   => 'ABA Pay gateway',
+                //     'from'  => 'from-cyan-500', 'to' => 'to-blue-600',
+                //     'bg'    => 'from-cyan-50 to-blue-100 dark:from-cyan-900/20 dark:to-blue-900/20',
+                //     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>',
+                //     'pct'   => $totalRevenue > 0 ? round(($abaRevenue / $totalRevenue) * 100) : 0,
+                // ],
                 [
                     'label' => 'KHQR Revenue',
                     'value' => '$' . number_format($khqrRevenue, 2),
@@ -183,19 +183,19 @@
                     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>',
                     'pct'   => $totalRevenue > 0 ? round(($khqrRevenue / $totalRevenue) * 100) : 0,
                 ],
-                [
-                    'label' => 'Avg Payment',
-                    'value' => '$' . number_format($averagePayment, 2),
-                    'sub'   => 'Per paid transaction',
-                    'from'  => 'from-orange-500', 'to' => 'to-amber-600',
-                    'bg'    => 'from-orange-50 to-amber-100 dark:from-orange-900/20 dark:to-amber-900/20',
-                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>',
-                    'pct'   => 100,
-                ],
+                // [
+                //     'label' => 'Avg Payment',
+                //     'value' => '$' . number_format($averagePayment, 2),
+                //     'sub'   => 'Per paid transaction',
+                //     'from'  => 'from-orange-500', 'to' => 'to-amber-600',
+                //     'bg'    => 'from-orange-50 to-amber-100 dark:from-orange-900/20 dark:to-amber-900/20',
+                //     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>',
+                //     'pct'   => 100,
+                // ],
             ];
         @endphp
 
-        <div class="grid grid-cols-2 xl:grid-cols-8 gap-3">
+        <div class="grid grid-cols-2 xl:grid-cols-6 gap-3">
             @foreach($kpis as $kpi)
                 <div class="kpi-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
                             border border-gray-100 dark:border-gray-700

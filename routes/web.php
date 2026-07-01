@@ -322,6 +322,10 @@ Route::prefix('admin')
             ->middleware('permission:view_reports')
             ->name('reports.products');
 
+        Route::get('/products/{product}', [ReportsController::class, 'productDetails'])
+            ->middleware('permission:view_reports')
+            ->name('reports.products.details');
+
         Route::get('/reports/inventory', [ReportsController::class, 'inventory'])
             ->middleware('permission:view_reports')
             ->name('reports.inventory');

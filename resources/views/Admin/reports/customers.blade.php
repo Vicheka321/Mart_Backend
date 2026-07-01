@@ -155,7 +155,7 @@
         </div>
 
         {{-- ==================== KPI CARDS ==================== --}}
-        <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+        <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             @php
                 $kpis = [
                     [
@@ -185,24 +185,24 @@
                         'pct'   => $totalCustomers > 0 ? round(($newCustomers / $totalCustomers) * 100) : 0,
                         'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>',
                     ],
-                    [
-                        'label' => 'VIP',
-                        'value' => number_format($vipCustomers),
-                        'sub'   => '20+ orders',
-                        'from'  => 'from-violet-500', 'to' => 'to-purple-600',
-                        'bg'    => 'from-violet-50 to-purple-100 dark:from-violet-900/20 dark:to-purple-900/20',
-                        'pct'   => $totalCustomers > 0 ? round(($vipCustomers / $totalCustomers) * 100) : 0,
-                        'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>',
-                    ],
-                    [
-                        'label' => 'Loyal',
-                        'value' => number_format($loyalCustomers),
-                        'sub'   => '10+ orders',
-                        'from'  => 'from-pink-500', 'to' => 'to-rose-600',
-                        'bg'    => 'from-pink-50 to-rose-100 dark:from-pink-900/20 dark:to-rose-900/20',
-                        'pct'   => $totalCustomers > 0 ? round(($loyalCustomers / $totalCustomers) * 100) : 0,
-                        'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>',
-                    ],
+                    // [
+                    //     'label' => 'VIP',
+                    //     'value' => number_format($vipCustomers),
+                    //     'sub'   => '20+ orders',
+                    //     'from'  => 'from-violet-500', 'to' => 'to-purple-600',
+                    //     'bg'    => 'from-violet-50 to-purple-100 dark:from-violet-900/20 dark:to-purple-900/20',
+                    //     'pct'   => $totalCustomers > 0 ? round(($vipCustomers / $totalCustomers) * 100) : 0,
+                    //     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>',
+                    // ],
+                    // [
+                    //     'label' => 'Loyal',
+                    //     'value' => number_format($loyalCustomers),
+                    //     'sub'   => '10+ orders',
+                    //     'from'  => 'from-pink-500', 'to' => 'to-rose-600',
+                    //     'bg'    => 'from-pink-50 to-rose-100 dark:from-pink-900/20 dark:to-rose-900/20',
+                    //     'pct'   => $totalCustomers > 0 ? round(($loyalCustomers / $totalCustomers) * 100) : 0,
+                    //     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>',
+                    // ],
                     [
                         'label' => 'Returning',
                         'value' => number_format($returningCustomers),

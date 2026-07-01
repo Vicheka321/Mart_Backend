@@ -1628,7 +1628,8 @@ class ReportsController extends Controller
             ->with([
                 'category',
                 'brand',
-                'orderItems'
+                'orderItems',
+                'firstImage'
             ]);
         /*
     |--------------------------------------------------------------------------
@@ -1895,6 +1896,29 @@ class ReportsController extends Controller
 
         ));
     }
+
+
+    public function productDetails(ProductsModel $product)
+    {
+        $product->load([
+            'category',
+            'brand',
+            'firstImage',
+        ]);
+
+        return response()->json([
+            'id'          => $product->id,
+            'name'        => $product->name,
+            'description' => $product->description,
+            'cost_price'  => $product->cost_price,
+            'sale_price'  => $product->sale_price,
+            'quantity'    => $product->quantity,
+            'status'      => $product->status,
+            'category'    => $product->category?->name,
+            'brand'       => $product->brand?->name,
+            'image'       => $product->firstImage?->image_url,
+        ]);
+    }
     /*
     |--------------------------------------------------------------------------
     | INVENTORY REPORT
@@ -1913,6 +1937,7 @@ class ReportsController extends Controller
                 'category',
                 'brand',
                 'orderItems',
+                'firstImage',
             ]);
 
         /*

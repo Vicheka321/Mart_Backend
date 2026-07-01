@@ -25,7 +25,7 @@
 <div x-data="assignRolePage()" class="min-h-screen bg-slate-50 dark:bg-slate-950">
 
     {{-- ── Page header ── --}}
-    {{-- <div class="s-header border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+    <div class="s-header border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <div class="mx-auto max-w-screen-xl px-6 py-5">
             <div class="flex items-center justify-between gap-4">
                 <div>
@@ -42,7 +42,7 @@
                 </button>
             </div>
         </div>
-    </div> --}}
+    </div>
 
     <div class="mx-auto max-w-screen-xl px-6 py-6">
 

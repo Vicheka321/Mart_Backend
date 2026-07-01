@@ -155,7 +155,7 @@
         </div>
 
         {{-- ==================== KPI CARDS ==================== --}}
-        <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+        <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
             @php
                 $kpis = [
                     [
@@ -203,15 +203,15 @@
                         'pct'   => 100,
                         'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
                     ],
-                    [
-                        'label' => 'Avg Stock',
-                        'value' => number_format($averageStock),
-                        'sub'   => 'Units per SKU',
-                        'from'  => 'from-cyan-500', 'to' => 'to-sky-600',
-                        'bg'    => 'from-cyan-50 to-sky-100 dark:from-cyan-900/20 dark:to-sky-900/20',
-                        'pct'   => 100,
-                        'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>',
-                    ],
+                    // [
+                    //     'label' => 'Avg Stock',
+                    //     'value' => number_format($averageStock),
+                    //     'sub'   => 'Units per SKU',
+                    //     'from'  => 'from-cyan-500', 'to' => 'to-sky-600',
+                    //     'bg'    => 'from-cyan-50 to-sky-100 dark:from-cyan-900/20 dark:to-sky-900/20',
+                    //     'pct'   => 100,
+                    //     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>',
+                    // ],
                     [
                         'label' => 'Dead Stock',
                         'value' => number_format($deadStock),
@@ -475,7 +475,7 @@
         </div>
 
         {{-- ==================== ANALYTICS SPOTLIGHT ==================== --}}
-        <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+        <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-3">
             @php
                 $spots = [
                     [
@@ -494,14 +494,14 @@
                         'metaColor'=> 'text-red-600 dark:text-red-400',
                         'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>',
                     ],
-                    [
-                        'label'    => 'Most Valuable',
-                        'name'     => $mostValuable->name ?? '—',
-                        'meta'     => '$' . number_format($mostValuable->inventory_value ?? 0, 2),
-                        'from'     => 'from-emerald-500', 'to' => 'to-green-600',
-                        'metaColor'=> 'text-emerald-600 dark:text-emerald-400',
-                        'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1"/>',
-                    ],
+                        // [
+                        //     'label'    => 'Most Valuable',
+                        //     'name'     => $mostValuable->name ?? '—',
+                        //     'meta'     => '$' . number_format($mostValuable->inventory_value ?? 0, 2),
+                        //     'from'     => 'from-emerald-500', 'to' => 'to-green-600',
+                        //     'metaColor'=> 'text-emerald-600 dark:text-emerald-400',
+                        //     'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1"/>',
+                        // ],
                     [
                         'label'    => 'Need Restock',
                         'name'     => $needRestock->name ?? '—',
@@ -518,30 +518,30 @@
                         'metaColor'=> 'text-red-600 dark:text-red-400',
                         'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636"/>',
                     ],
-                    [
-                        'label'    => 'Fast Moving',
-                        'name'     => $fastMoving->name ?? '—',
-                        'meta'     => number_format($fastMoving->sold_qty ?? 0) . ' sold',
-                        'from'     => 'from-blue-500', 'to' => 'to-cyan-600',
-                        'metaColor'=> 'text-blue-600 dark:text-blue-400',
-                        'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>',
-                    ],
-                    [
-                        'label'    => 'Slow Moving',
-                        'name'     => $slowMoving->name ?? '—',
-                        'meta'     => number_format($slowMoving->sold_qty ?? 0) . ' sold',
-                        'from'     => 'from-gray-400', 'to' => 'to-slate-500',
-                        'metaColor'=> 'text-gray-500 dark:text-gray-400',
-                        'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
-                    ],
-                    [
-                        'label'    => 'Highest Value',
-                        'name'     => $highestValue->name ?? '—',
-                        'meta'     => '$' . number_format($highestValue->stock_value ?? 0, 2),
-                        'from'     => 'from-violet-500', 'to' => 'to-purple-600',
-                        'metaColor'=> 'text-violet-600 dark:text-violet-400',
-                        'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>',
-                    ],
+                        // [
+                        //     'label'    => 'Fast Moving',
+                        //     'name'     => $fastMoving->name ?? '—',
+                        //     'meta'     => number_format($fastMoving->sold_qty ?? 0) . ' sold',
+                        //     'from'     => 'from-blue-500', 'to' => 'to-cyan-600',
+                        //     'metaColor'=> 'text-blue-600 dark:text-blue-400',
+                        //     'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>',
+                        // ],
+                    // [
+                    //     'label'    => 'Slow Moving',
+                    //     'name'     => $slowMoving->name ?? '—',
+                    //     'meta'     => number_format($slowMoving->sold_qty ?? 0) . ' sold',
+                    //     'from'     => 'from-gray-400', 'to' => 'to-slate-500',
+                    //     'metaColor'=> 'text-gray-500 dark:text-gray-400',
+                    //     'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+                    // ],
+                    // [
+                    //     'label'    => 'Highest Value',
+                    //     'name'     => $highestValue->name ?? '—',
+                    //     'meta'     => '$' . number_format($highestValue->stock_value ?? 0, 2),
+                    //     'from'     => 'from-violet-500', 'to' => 'to-purple-600',
+                    //     'metaColor'=> 'text-violet-600 dark:text-violet-400',
+                    //     'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>',
+                    // ],
                 ];
             @endphp
 
@@ -628,34 +628,38 @@
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors duration-150">
 
                                 {{-- Product --}}
-                                <td class="px-5 py-3.5">
-                                    <div class="flex items-center gap-3">
-                                        @php
-                                            $imgUrl = null;
-                                            if ($product->relationLoaded('image') && $product->image) {
-                                                $imgUrl = asset($product->image->image_url ?? '');
-                                            }
-                                        @endphp
-                                        @if($imgUrl)
-                                            <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
-                                                 class="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-gray-700 flex-shrink-0">
-                                        @else
-                                            <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700
-                                                        flex items-center justify-center text-xs font-semibold
-                                                        text-gray-500 dark:text-gray-400 flex-shrink-0">
-                                                {{ strtoupper(substr($product->name, 0, 1)) }}
-                                            </div>
-                                        @endif
-                                        <div class="min-w-0">
-                                            <p class="text-xs font-semibold text-gray-900 dark:text-white truncate max-w-[160px]">
-                                                {{ $product->name }}
-                                            </p>
-                                            <p class="text-[10px] text-gray-400 dark:text-gray-500">
-                                                {{ $product->product_code ?? '—' }}
-                                            </p>
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center gap-3">
+
+                                    @if($product->firstImage && $product->firstImage->image_url)
+
+                                        <img
+                                            src="{{ asset($product->firstImage->image_url) }}"
+                                            alt="{{ $product->name }}"
+                                            class="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-gray-700 flex-shrink-0">
+
+                                    @else
+
+                                        <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700
+                                                    flex items-center justify-center text-xs font-semibold
+                                                    text-gray-500 dark:text-gray-400 flex-shrink-0">
+                                            {{ strtoupper(substr($product->name, 0, 1)) }}
                                         </div>
+
+                                    @endif
+
+                                    <div class="min-w-0">
+                                        <p class="text-xs font-semibold text-gray-900 dark:text-white truncate max-w-[160px]">
+                                            {{ $product->name }}
+                                        </p>
+
+                                        <p class="text-[10px] text-gray-400 dark:text-gray-500">
+                                            {{ $product->product_code ?? '—' }}
+                                        </p>
                                     </div>
-                                </td>
+
+                                </div>
+                            </td>
 
                                 {{-- Category --}}
                                 <td class="px-5 py-3.5">
