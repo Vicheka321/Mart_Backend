@@ -352,38 +352,6 @@ class ProductController extends Controller
             ->route('products.index')
             ->with('success', 'Product deleted successfully.');
     }
-
-
-    // public function exportCSV()
-    // {
-    //     $fileName = "products.csv";
-
-    //     $products = ProductsModel::orderBy('id')->get();
-
-    //     $headers = [
-    //         "Content-type" => "text/csv",
-    //         "Content-Disposition" => "attachment; filename={$fileName}",
-    //     ];
-
-    //     $callback = function () use ($products) {
-    //         $file = fopen('php://output', 'w');
-
-    //         // Header
-    //         fputcsv($file, ['ID', 'Name', 'Created At']);
-
-    //         foreach ($products as $product) {
-    //             fputcsv($file, [
-    //                 $product->id,
-    //                 $product->name,
-    //                 $product->created_at->format('Y-m-d H:i')
-    //             ]);
-    //         }
-
-    //         fclose($file);
-    //     };
-
-    //     return response()->stream($callback, 200, $headers);
-    // }
     public function exportCSV()
     {
         $fileName = 'products_' . now()->format('Ymd_His') . '.csv';
@@ -450,24 +418,20 @@ class ProductController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-
-    // public function exportPDF()
-    // {
-    //     $products = ProductsModel::orderBy('id')->get();
-
-    //     $pdf = Pdf::loadView('admin.products_pdf', compact('products'))
-    //         ->setPaper('A4', 'portrait');
-
-    //     return $pdf->download('products_' . now()->format('Ymd_His') . '.pdf');
-
-    // }
-
     public function exportPDF()
     {
         // Load relationships to avoid N+1 queries in the PDF view
+        // $products = ProductsModel::with([
+        //     'category:id,name',
+        //     'brand:id,name'
+        // ])
+        //     ->orderBy('id')
+        //     ->get();
+
         $products = ProductsModel::with([
             'category:id,name',
-            'brand:id,name'
+            'brand:id,name',
+            'firstImage:id,product_id,image_url', // or image if that's your relationship
         ])
             ->orderBy('id')
             ->get();
@@ -477,6 +441,7 @@ class ProductController extends Controller
             compact('products')
         )
             ->setPaper('A4', 'portrait');
+
 
         return $pdf->download(
             'products_' . now()->format('Ymd_His') . '.pdf'

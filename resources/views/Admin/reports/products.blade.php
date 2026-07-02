@@ -428,13 +428,13 @@
                             class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Keyword</label>
                         <div class="flex gap-2">
                             <div class="relative flex-1">
-                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none"
+                                {{-- <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
-                                </svg>
+                                </svg> --}}
                                 <input type="text" name="keyword" value="{{ request('keyword') }}"
-                                    placeholder="Product name, SKU, barcode…" class="filter-select pl-8">
+                                    placeholder="Product name…" class="filter-select pl-8">
                             </div>
                             <button type="submit"
                                 class="action-btn px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700
@@ -886,7 +886,8 @@
             </div>
             <div class="p-6 space-y-3">
                 <p class="text-xs text-gray-400 dark:text-gray-500 mb-4">Choose your preferred export format:</p>
-                <a href="#" class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
+                <a href="{{ route('reports.products.export.csv') }}"
+                    class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
                               bg-gray-50 dark:bg-gray-700/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/10
                               hover:border-emerald-300 dark:hover:border-emerald-500/40 transition-all">
                     <div class="flex items-center gap-3">
@@ -910,7 +911,8 @@
                         <path d="m9 18 6-6-6-6" />
                     </svg>
                 </a>
-                <a href="#" class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
+                <a href="{{ route('reports.products.export.pdf') }}" 
+                    class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
                               bg-gray-50 dark:bg-gray-700/50 hover:bg-red-50 dark:hover:bg-red-500/10
                               hover:border-red-300 dark:hover:border-red-500/40 transition-all">
                     <div class="flex items-center gap-3">

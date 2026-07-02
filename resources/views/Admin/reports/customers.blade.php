@@ -312,11 +312,11 @@
                         <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500
                                       uppercase tracking-wider mb-1.5">Search</label>
                         <div class="relative">
-                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none"
+                            {{-- <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none"
                                  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
-                            </svg>
+                            </svg> --}}
                             <input type="text" name="keyword" value="{{ request('keyword') }}"
                                    placeholder="Name, email, phone…"
                                    class="filter-select pl-8">
@@ -346,7 +346,7 @@
                             <option value="">All types</option>
                             <option value="new"       {{ request('customer_type') == 'new'       ? 'selected' : '' }}>New</option>
                             <option value="returning" {{ request('customer_type') == 'returning' ? 'selected' : '' }}>Returning</option>
-                            <option value="vip"       {{ request('customer_type') == 'vip'       ? 'selected' : '' }}>VIP</option>
+                            {{-- <option value="vip"       {{ request('customer_type') == 'vip'       ? 'selected' : '' }}>VIP</option> --}}
                         </select>
                     </div>
 

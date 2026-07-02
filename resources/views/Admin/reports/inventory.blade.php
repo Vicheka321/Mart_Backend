@@ -27,6 +27,36 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes overlayIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #exportModal.flex {
+            animation: overlayIn .2s ease;
+        }
+
+        .modal-inner {
+            animation: modalIn .25s cubic-bezier(.34,1.56,.64,1) both;
+        }
+
         /* ── KPI cards staggered ──────────────────────────────────── */
         .kpi-card { animation: fadeSlideUp .5s ease both; transition: box-shadow .2s ease, transform .2s ease; }
         .kpi-card:nth-child(1) { animation-delay: .04s; }
@@ -102,6 +132,8 @@
             box-shadow: 0 0 0 2px rgba(99,102,241,.35);
             border-color: #6366f1;
         }
+
+        
     </style>
 
     <div class="space-y-4">
@@ -312,13 +344,13 @@
                         <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500
                                       uppercase tracking-wider mb-1.5">Search</label>
                         <div class="relative">
-                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none"
+                            {{-- <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none"
                                  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
-                            </svg>
+                            </svg> --}}
                             <input type="text" name="keyword" value="{{ request('keyword') }}"
-                                   placeholder="Product name, SKU…"
+                                   placeholder="Product name ..."
                                    class="filter-select pl-8">
                         </div>
                     </div>
@@ -836,6 +868,90 @@
 
     </div>{{-- /space-y-4 --}}
 
+    {{-- ==================== EXPORT MODAL ==================== --}}
+    <div id="exportModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
+                        rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="1.8">
+                            <path d="M12 3v12" />
+                            <path d="m7 10 5 5 5-5" />
+                            <path d="M4 21h16" />
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-semibold text-gray-900 dark:text-white">Export Data</h3>
+                </div>
+                <button onclick="closeExportModal()"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-3">
+                <p class="text-xs text-gray-400 dark:text-gray-500 mb-4">Choose your preferred export format:</p>
+                <a href="{{ route('reports.products.export.csv') }}"
+                    class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
+                              bg-gray-50 dark:bg-gray-700/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/10
+                              hover:border-emerald-300 dark:hover:border-emerald-500/40 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600
+                                        group-hover:border-emerald-300 flex items-center justify-center transition-all">
+                            <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="1.8">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <path d="M14 2v6h6" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p
+                                class="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                                CSV File</p>
+                            <p class="text-[11px] text-gray-400">Spreadsheet compatible</p>
+                        </div>
+                    </div>
+                    <svg class="w-4 h-4 text-gray-300 group-hover:text-emerald-500 transition-colors" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path d="m9 18 6-6-6-6" />
+                    </svg>
+                </a>
+                <a href="{{ route('reports.products.export.pdf') }}" 
+                    class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
+                              bg-gray-50 dark:bg-gray-700/50 hover:bg-red-50 dark:hover:bg-red-500/10
+                              hover:border-red-300 dark:hover:border-red-500/40 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600
+                                        group-hover:border-red-300 flex items-center justify-center transition-all">
+                            <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="1.8">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <path d="M14 2v6h6" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p
+                                class="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors">
+                                PDF File</p>
+                            <p class="text-[11px] text-gray-400">Print-ready document</p>
+                        </div>
+                    </div>
+                    <svg class="w-4 h-4 text-gray-300 group-hover:text-red-500 transition-colors" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path d="m9 18 6-6-6-6" />
+                    </svg>
+                </a>
+            </div>
+            <div class="px-6 pb-6">
+                <button onclick="closeExportModal()" class="w-full py-2 text-sm font-medium rounded-xl border border-gray-200 dark:border-gray-600
+                               text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
 
     @push('scripts')
     <script>
@@ -980,6 +1096,34 @@
             }
         });
     });
+
+    const exportModal = document.getElementById("exportModal");
+
+    function openExportModal() {
+            exportModal.classList.remove("hidden");
+            exportModal.classList.add("flex");
+
+            document.body.classList.add("overflow-hidden");
+        }
+
+        function closeExportModal() {
+            exportModal.classList.add("hidden");
+            exportModal.classList.remove("flex");
+
+            document.body.classList.remove("overflow-hidden");
+        }
+
+        exportModal.addEventListener("click", function (e) {
+            if (e.target === this) {
+                closeExportModal();
+            }
+        });
+
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") {
+                closeExportModal();
+            }
+        });
     </script>
     @endpush
 

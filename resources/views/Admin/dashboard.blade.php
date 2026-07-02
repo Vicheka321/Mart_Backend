@@ -626,84 +626,12 @@ z-[9999] overflow-hidden ">
 
                     {{-- Line Chart --}}
                     <div class="mt-4">
-                        <svg viewBox="0 0 300 150"
-                            class="w-full h-44"
-                            overflow="visible">
-
-                            <defs>
-                                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%"   stop-color="#10b981" stop-opacity="0.22" />
-                                    <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
-                                </linearGradient>
-                            </defs>
-
-                            {{-- Area fill — fades in after line draws --}}
-                            <polygon class="rev-area"
-                                     points="{{ $svgAStr }}"
-                                     fill="url(#revenueGradient)" />
-
-                            {{-- Animated line draw --}}
-                            <polyline class="rev-line"
-                                      points="{{ $svgPStr }}"
-                                      fill="none"
-                                      stroke="#10b981"
-                                      stroke-width="2.5"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round" />
-
-                            {{-- Last point dot --}}
-                            @foreach($revenueChartData as $i => $item)
-                                @if($loop->last)
-                                    @php
-                                        $x = ($svgCount > 1)
-                                            ? ($i / ($svgCount - 1)) * ($svgW - $svgPad * 2) + $svgPad
-                                            : $svgPad;
-
-                                        $y = $svgH - (
-                                            (($item->total / max($svgMaxRevenue, 1))
-                                            * ($svgH - $svgPad * 2))
-                                            + $svgPad
-                                        );
-                                    @endphp
-
-                                    {{-- Outer glow ring --}}
-                                    <circle class="rev-dot"
-                                            cx="{{ $x }}" cy="{{ $y }}"
-                                            r="7"
-                                            fill="#10b981"
-                                            fill-opacity="0.18" />
-
-                                    {{-- Main dot --}}
-                                    <circle class="rev-dot"
-                                            cx="{{ $x }}" cy="{{ $y }}"
-                                            r="4"
-                                            fill="#10b981"
-                                            stroke="white"
-                                            stroke-width="2.5" />
-                                @endif
-                            @endforeach
-
-                            {{-- X Labels --}}
-                            @foreach($revenueChartData as $i => $item)
-                                @if($i % max(1, ceil($svgCount / 4)) === 0 || $loop->last)
-                                    @php
-                                        $x = ($svgCount > 1)
-                                            ? ($i / ($svgCount - 1)) * ($svgW - $svgPad * 2) + $svgPad
-                                            : $svgPad;
-                                    @endphp
-
-                                    <text class="rev-label"
-                                          x="{{ $x }}" y="148"
-                                          text-anchor="middle"
-                                          font-size="8"
-                                          fill="#9ca3af"
-                                          style="animation-delay: {{ 1.0 + $loop->index * 0.1 }}s">
-                                        {{ \Carbon\Carbon::parse($item->date)->format('d M') }}
-                                    </text>
-                                @endif
-                            @endforeach
-                        </svg>
+                        <div class="h-56">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
                     </div>
+
+
                 </div>
             </div>
 
@@ -953,6 +881,165 @@ z-[9999] overflow-hidden ">
                 rangeDropdown.classList.add('hidden');
             }
         });
+    });
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const canvas = document.getElementById("revenueChart");
+        const ctx = canvas.getContext("2d");
+
+        const gradient = ctx.createLinearGradient(0,0,0,250);
+        gradient.addColorStop(0,'rgba(16,185,129,.25)');
+        gradient.addColorStop(1,'rgba(16,185,129,0)');
+
+        new Chart(ctx,{
+
+            type:'line',
+
+            data:{
+
+                labels:[
+                    @foreach($revenueChartData as $item)
+                        "{{ \Carbon\Carbon::parse($item->date)->format('d M') }}",
+                    @endforeach
+                ],
+
+                datasets:[{
+
+                    label:'Revenue',
+
+                    data:[
+                        @foreach($revenueChartData as $item)
+                            {{ $item->total }},
+                        @endforeach
+                    ],
+
+                    borderColor:'#10B981',
+
+                    backgroundColor:gradient,
+
+                    fill:true,
+
+                    borderWidth:3,
+
+                    tension:.45,
+
+                    pointRadius:0,
+
+                    pointHoverRadius:6,
+
+                    pointHoverBorderWidth:3,
+
+                    pointHoverBackgroundColor:'#fff',
+
+                    pointHoverBorderColor:'#10B981'
+
+                }]
+
+            },
+
+            options:{
+
+                responsive:true,
+
+                maintainAspectRatio:false,
+
+                interaction:{
+                    mode:'index',
+                    intersect:false
+                },
+
+                animation:{
+                    duration:1500
+                },
+
+                plugins:{
+
+                    legend:{
+                        display:false
+                    },
+
+                    tooltip:{
+
+                        backgroundColor:'#111827',
+
+                        titleColor:'#fff',
+
+                        bodyColor:'#fff',
+
+                        padding:14,
+
+                        cornerRadius:12,
+
+                        displayColors:true,
+
+                        callbacks:{
+
+                            title:function(context){
+
+                                return context[0].label;
+
+                            },
+
+                            label:function(context){
+
+                                return ' Revenue : $'+Number(context.parsed.y).toFixed(2);
+
+                            }
+
+                        }
+
+                    }
+
+                },
+
+                scales:{
+
+                    x:{
+
+                        grid:{
+                            display:false
+                        },
+
+                        ticks:{
+                            color:'#9CA3AF'
+                        }
+
+                    },
+
+                    y:{
+
+                        beginAtZero:true,
+
+                        grid:{
+                            color:'#F3F4F6'
+                        },
+
+                        ticks:{
+
+                            color:'#9CA3AF',
+
+                            callback:function(value){
+
+                                return '$'+value;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
     });
     </script>
 

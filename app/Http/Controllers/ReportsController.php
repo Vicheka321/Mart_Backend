@@ -862,199 +862,6 @@ class ReportsController extends Controller
             'sales_details_' . $targetDate . '.pdf'
         );
     }
-    // public function sales(Request $request)
-    // {
-    //     [$range, $startDate, $endDate] = $this->resolveDateRange($request);
-
-    //     $sort = $request->input('sort', 'sale_date');
-    //     $direction = $request->input('direction', 'desc');
-
-    //     $allowedSorts = [
-    //         'sale_date',
-    //         'total_orders',
-    //         'gross_sales',
-    //         'total_discount',
-    //         'paid_revenue',
-    //     ];
-
-    //     if (! in_array($sort, $allowedSorts)) {
-    //         $sort = 'sale_date';
-    //     }
-
-    //     $direction = $direction === 'asc'
-    //         ? 'asc'
-    //         : 'desc';
-
-    //     // raw orders for building address dropdowns
-    //     $rawOrders = OrderModel::query()
-    //         ->select('id', 'delivery_address', 'total_amount', 'status', 'created_at')
-    //         ->whereBetween('created_at', [$startDate, $endDate])
-    //         ->get();
-
-    //     $addressRows = $this->getAddressRowsFromOrders($rawOrders);
-
-    //     [
-    //         'provinceOptions' => $provinceOptions,
-    //         'districtOptions' => $districtOptions,
-    //         'sangkatOptions'  => $sangkatOptions,
-    //         'streetOptions'   => $streetOptions,
-    //     ] = $this->buildAddressOptions($addressRows, $request);
-
-    //     // get matched order IDs from parsed delivery_address
-    //     $matchedOrderIds = $this->getMatchedOrderIdsByAddressFilter($request, $startDate, $endDate);
-
-    //     $hasAddressFilter = $request->filled('province')
-    //         || $request->filled('district')
-    //         || $request->filled('sangkat')
-    //         || $request->filled('street');
-
-    //     $ordersQuery = $this->salesBaseQuery($request, $startDate, $endDate);
-
-    //     if ($hasAddressFilter) {
-    //         if (empty($matchedOrderIds)) {
-    //             $ordersQuery->whereRaw('1 = 0');
-    //         } else {
-    //             $ordersQuery->whereIn('orders.id', $matchedOrderIds);
-    //         }
-    //     }
-
-    //     // grouped daily rows
-    //     $salesRows = $this->salesDailyGroupedQuery(
-    //         $request,
-    //         $startDate,
-    //         $endDate,
-    //         $matchedOrderIds,
-    //         $hasAddressFilter
-    //     )
-    //         ->orderBy($sort, $direction)
-    //         ->paginate(15)
-    //         ->withQueryString();
-
-    //     // KPI summary
-    //     $summaryRows = (clone $ordersQuery)->get();
-    //     $highestSellingDay = $this->salesDailyGroupedQuery(
-    //         $request,
-    //         $startDate,
-    //         $endDate,
-    //         $matchedOrderIds,
-    //         $hasAddressFilter
-    //     )
-    //         ->orderByDesc('gross_sales')
-    //         ->first();
-
-    //     $totalOrders = $summaryRows->count();
-    //     $grossSales = (float) $summaryRows->sum('total_amount');
-    //     $paidRevenue = (float) $summaryRows->where('payment_status', 'paid')->sum('paid_amount');
-    //     $totalDiscount = (float) $summaryRows->sum(function ($row) {
-    //         return (float) ($row->coupon_discount ?? 0) + (float) ($row->promotion_discount ?? 0);
-    //     });
-    //     $averageOrderValue = $totalOrders > 0 ? round($grossSales / $totalOrders, 2) : 0;
-
-    //     // address analytics based on filtered rows
-    //     $filteredAddressRows = $this->filterAddressRows($addressRows, $request);
-
-    //     $topProvinces = collect($filteredAddressRows)
-    //         ->groupBy('province')
-    //         ->map(fn($items, $key) => [
-    //             'name'    => $key,
-    //             'orders'  => count($items),
-    //             'revenue' => collect($items)->sum('amount'),
-    //         ])
-    //         ->filter(fn($x) => !empty($x['name']))
-    //         ->sortByDesc('revenue')
-    //         ->take(8)
-    //         ->values();
-
-    //     $topDistricts = collect($filteredAddressRows)
-    //         ->groupBy('district')
-    //         ->map(fn($items, $key) => [
-    //             'name'    => $key,
-    //             'orders'  => count($items),
-    //             'revenue' => collect($items)->sum('amount'),
-    //         ])
-    //         ->filter(fn($x) => !empty($x['name']))
-    //         ->sortByDesc('revenue')
-    //         ->take(8)
-    //         ->values();
-
-    //     $topSangkats = collect($filteredAddressRows)
-    //         ->groupBy('sangkat')
-    //         ->map(fn($items, $key) => [
-    //             'name'    => $key,
-    //             'orders'  => count($items),
-    //             'revenue' => collect($items)->sum('amount'),
-    //         ])
-    //         ->filter(fn($x) => !empty($x['name']))
-    //         ->sortByDesc('revenue')
-    //         ->take(8)
-    //         ->values();
-
-    //     $topStreets = collect($filteredAddressRows)
-    //         ->groupBy('street')
-    //         ->map(fn($items, $key) => [
-    //             'name'    => $key,
-    //             'orders'  => count($items),
-    //             'revenue' => collect($items)->sum('amount'),
-    //         ])
-    //         ->filter(fn($x) => !empty($x['name']))
-    //         ->sortByDesc('revenue')
-    //         ->take(8)
-    //         ->values();
-
-    //     return view('admin.reports.sales', compact(
-    //         'range',
-    //         'startDate',
-    //         'endDate',
-    //         'salesRows',
-    //         'totalOrders',
-    //         'grossSales',
-    //         'paidRevenue',
-    //         'totalDiscount',
-    //         'averageOrderValue',
-    //         'provinceOptions',
-    //         'districtOptions',
-    //         'sangkatOptions',
-    //         'streetOptions',
-    //         'topProvinces',
-    //         'topDistricts',
-    //         'topSangkats',
-    //         'topStreets',
-    //         'highestSellingDay',
-    //         'sort',
-    //         'direction'
-    //     ));
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -1617,6 +1424,126 @@ class ReportsController extends Controller
         );
     }
 
+    private function ordersQuery(Request $request)
+    {
+        [$range, $startDate, $endDate] = $this->resolveDateRange($request);
+
+        $query = OrderModel::with([
+            'user',
+            'payment',
+            'orderItems.product'
+        ])
+            ->whereBetween('created_at', [$startDate, $endDate]);
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
+        }
+
+        if ($request->filled('payment_status')) {
+            $query->whereHas('payment', function ($q) use ($request) {
+                $q->where('payment_status', $request->payment_status);
+            });
+        }
+
+        if ($request->filled('keyword')) {
+
+            $keyword = trim($request->keyword);
+
+            $query->where(function ($q) use ($keyword) {
+
+                $q->where('id', 'like', "%{$keyword}%")
+                    ->orWhere('delivery_address', 'like', "%{$keyword}%")
+                    ->orWhereHas('user', function ($user) use ($keyword) {
+
+                        $user->where('full_name', 'like', "%{$keyword}%")
+                            ->orWhere('phone', 'like', "%{$keyword}%")
+                            ->orWhere('email', 'like', "%{$keyword}%");
+                    });
+            });
+        }
+
+        return $query;
+    }
+
+    public function exportOrdersCsv(Request $request): StreamedResponse
+    {
+        $orders = $this->ordersQuery($request)
+            ->latest()
+            ->get();
+
+        $filename = 'orders_' . now()->format('Ymd_His') . '.csv';
+
+        return response()->streamDownload(function () use ($orders) {
+
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, [
+                'Order ID',
+                'Customer',
+                'Phone',
+                'Email',
+                'Payment Method',
+                'Payment Status',
+                'Order Status',
+                'Items',
+                'Total',
+                'Address',
+                'Created At'
+            ]);
+
+            foreach ($orders as $order) {
+
+                fputcsv($handle, [
+
+                    $order->id,
+
+                    optional($order->user)->full_name,
+
+                    optional($order->user)->phone,
+
+                    optional($order->user)->email,
+
+                    strtoupper($order->payment_method),
+
+                    optional($order->payment)->payment_status,
+
+                    ucfirst($order->status),
+
+                    $order->orderItems->sum('qty'),
+
+                    $order->total_amount,
+
+                    $order->delivery_address,
+
+                    $order->created_at->format('Y-m-d H:i'),
+
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename);
+    }
+
+    public function exportOrdersPdf(Request $request)
+    {
+        $orders = $this->ordersQuery($request)
+            ->latest()
+            ->get();
+
+        $pdf = Pdf::loadView(
+            'admin.PDF.orders_report_pdf',
+            compact('orders')
+        )->setPaper('A4', 'landscape');
+
+        return $pdf->download(
+            'orders_' . now()->format('Ymd_His') . '.pdf'
+        );
+    }
+
     /*
     |--------------------------------------------------------------------------
     | PRODUCTS REPORT
@@ -1897,7 +1824,6 @@ class ReportsController extends Controller
         ));
     }
 
-
     public function productDetails(ProductsModel $product)
     {
         $product->load([
@@ -1919,6 +1845,182 @@ class ReportsController extends Controller
             'image'       => $product->firstImage?->image_url,
         ]);
     }
+
+    private function productReportQuery(Request $request)
+    {
+        $query = ProductsModel::query()
+            ->with([
+                'category',
+                'brand',
+                'orderItems',
+                'firstImage'
+            ]);
+
+        // Search
+        if ($request->filled('keyword')) {
+
+            $keyword = trim($request->keyword);
+
+            $query->where(function ($q) use ($keyword) {
+
+                $q->where('name', 'ILIKE', "%{$keyword}%")
+                    ->orWhere('product_code', 'ILIKE', "%{$keyword}%")
+                    ->orWhere('barcode', 'ILIKE', "%{$keyword}%");
+            });
+        }
+
+        // Category
+        if ($request->filled('category')) {
+            $query->where('categories_id', $request->category);
+        }
+
+        // Brand
+        if ($request->filled('brand')) {
+            $query->where('brand_id', $request->brand);
+        }
+
+        // Stock Status
+        if ($request->stock_status == 'instock') {
+            $query->where('quantity', '>', 20);
+        }
+
+        if ($request->stock_status == 'lowstock') {
+            $query->whereBetween('quantity', [1, 20]);
+        }
+
+        if ($request->stock_status == 'outstock') {
+            $query->where('quantity', 0);
+        }
+
+        // Sort
+        switch ($request->sort) {
+
+            case 'price_high':
+                $query->orderByDesc('sale_price');
+                break;
+
+            case 'price_low':
+                $query->orderBy('sale_price');
+                break;
+
+            case 'stock':
+                $query->orderByDesc('quantity');
+                break;
+
+            default:
+                $query->latest();
+        }
+
+        return $query;
+    }
+
+    public function exportProductsCsv(Request $request): StreamedResponse
+    {
+        $products = $this->productReportQuery($request)->get();
+
+        return response()->streamDownload(function () use ($products) {
+
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, [
+
+                'ID',
+                'Product',
+                'Category',
+                'Brand',
+                'Cost Price',
+                'Sale Price',
+                'Stock',
+                'Sold',
+                'Revenue',
+                'Profit'
+
+            ]);
+
+            foreach ($products as $product) {
+
+                $sold = $product->orderItems->sum('qty');
+
+                $revenue = $product->orderItems->sum(function ($item) {
+                    return $item->qty * $item->price;
+                });
+
+                $profit = ($product->sale_price - $product->cost_price) * $sold;
+
+                fputcsv($handle, [
+
+                    $product->id,
+
+                    $product->name,
+
+                    $product->product_code,
+
+                    optional($product->category)->name,
+
+                    optional($product->brand)->name,
+
+                    $product->cost_price,
+
+                    $product->sale_price,
+
+                    $product->quantity,
+
+                    $sold,
+
+                    $revenue,
+
+                    $profit,
+
+                ]);
+            }
+
+            fclose($handle);
+        }, 'products_' . now()->format('Ymd_His') . '.csv');
+    }
+
+    public function exportProductsPdf(Request $request)
+    {
+        $products = $this->productReportQuery($request)->get();
+
+        // Calculate report values
+        foreach ($products as $product) {
+
+            $sold = $product->orderItems->sum('qty');
+
+            $revenue = $product->orderItems->sum(function ($item) {
+                return $item->qty * $item->price;
+            });
+
+            $profit = ($product->sale_price - $product->cost_price) * $sold;
+
+            $margin = 0;
+
+            if ($product->sale_price > 0) {
+
+                $margin = (($product->sale_price - $product->cost_price)
+                    / $product->sale_price) * 100;
+            }
+
+            $product->sold_qty = $sold;
+            $product->revenue = $revenue;
+            $product->profit = $profit;
+            $product->margin = round($margin);
+        }
+
+        $pdf = Pdf::loadView(
+            'admin.PDF.products_reports_pdf',
+            compact('products')
+        )->setPaper('A4', 'landscape');
+
+        return $pdf->download(
+            'products_' . now()->format('Ymd_His') . '.pdf'
+        );
+    }
+
+
+
+
+
     /*
     |--------------------------------------------------------------------------
     | INVENTORY REPORT

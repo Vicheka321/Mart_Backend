@@ -196,11 +196,13 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}">
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> --}}
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js" defer></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
 
     <script>
         tailwind.config = {
@@ -346,6 +348,10 @@
             });
         })();
     </script>
+
+   
+
+
 
 </body>
 

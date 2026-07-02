@@ -364,10 +364,10 @@
                         <select name="payment_method" class="filter-select">
                             <option value="">All methods</option>
                             <option value="cash"   {{ request('payment_method') == 'cash'   ? 'selected' : '' }}>Cash</option>
-                            <option value="aba"    {{ request('payment_method') == 'aba'    ? 'selected' : '' }}>ABA</option>
+                            {{-- <option value="aba"    {{ request('payment_method') == 'aba'    ? 'selected' : '' }}>ABA</option> --}}
                             <option value="khqr"   {{ request('payment_method') == 'khqr'   ? 'selected' : '' }}>KHQR</option>
-                            <option value="wing"   {{ request('payment_method') == 'wing'   ? 'selected' : '' }}>Wing</option>
-                            <option value="card"   {{ request('payment_method') == 'card'   ? 'selected' : '' }}>Card</option>
+                            {{-- <option value="wing"   {{ request('payment_method') == 'wing'   ? 'selected' : '' }}>Wing</option> --}}
+                            {{-- <option value="card"   {{ request('payment_method') == 'card'   ? 'selected' : '' }}>Card</option> --}}
                         </select>
                     </div>
 
@@ -387,10 +387,10 @@
                         <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Keyword</label>
                         <div class="flex gap-2">
                             <div class="relative flex-1">
-                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400"
+                                {{-- <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400"
                                      fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
-                                </svg>
+                                </svg> --}}
                                 <input type="text" name="keyword" value="{{ request('keyword') }}"
                                        placeholder="Order ID, customer name, phone, email, address…"
                                        class="filter-select pl-8">
@@ -846,7 +846,7 @@
             <div class="p-6 space-y-3">
                 <p class="text-xs text-gray-400 dark:text-gray-500 mb-4">Choose your preferred export format:</p>
 
-                <a href="#"
+                <a href="{{ route('reports.orders.export.csv', request()->query()) }}"
                    class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
                           bg-gray-50 dark:bg-gray-700/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/10
                           hover:border-emerald-300 dark:hover:border-emerald-500/40 transition-all">
@@ -867,7 +867,7 @@
                     </svg>
                 </a>
 
-                <a href="#"
+                <a href="{{ route('reports.orders.export.pdf', request()->query()) }}"
                    class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
                           bg-gray-50 dark:bg-gray-700/50 hover:bg-red-50 dark:hover:bg-red-500/10
                           hover:border-red-300 dark:hover:border-red-500/40 transition-all">

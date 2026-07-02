@@ -55,26 +55,6 @@ Route::prefix('admin')
             ->middleware('permission:view_dashboard')
             ->name('admin.dashboard');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Banners
-        |--------------------------------------------------------------------------
-        */
-        Route::get('/banners', [BannerController::class, 'index'])
-            ->middleware('permission:view_banners')
-            ->name('banners.index');
-
-        Route::post('/banners', [BannerController::class, 'store'])
-            ->middleware('permission:create_banners')
-            ->name('banners.store');
-
-        Route::put('/banners/{banner}', [BannerController::class, 'update'])
-            ->middleware('permission:edit_banners')
-            ->name('banners.update');
-
-        Route::delete('/banners/{banner}', [BannerController::class, 'destroy'])
-            ->middleware('permission:delete_banners')
-            ->name('banners.destroy');
 
         /*
         |--------------------------------------------------------------------------
@@ -105,6 +85,7 @@ Route::prefix('admin')
             ->middleware('permission:view_products')
             ->name('products.export.pdf');
 
+
         /*
         |--------------------------------------------------------------------------
         | Categories
@@ -133,6 +114,31 @@ Route::prefix('admin')
         Route::get('/category/export/pdf', [CategoryController::class, 'exportPDF'])
             ->middleware('permission:view_categories')
             ->name('categories.export.pdf');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Banners
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/banners', [BannerController::class, 'index'])
+            ->middleware('permission:view_banners')
+            ->name('banners.index');
+
+        Route::post('/banners', [BannerController::class, 'store'])
+            ->middleware('permission:create_banners')
+            ->name('banners.store');
+
+        Route::put('/banners/{banner}', [BannerController::class, 'update'])
+            ->middleware('permission:edit_banners')
+            ->name('banners.update');
+
+        Route::delete('/banners/{banner}', [BannerController::class, 'destroy'])
+            ->middleware('permission:delete_banners')
+            ->name('banners.destroy');
+
+
+
+
 
         /*
         |--------------------------------------------------------------------------
@@ -318,6 +324,14 @@ Route::prefix('admin')
             ->middleware('permission:view_reports')
             ->name('reports.orders.details');
 
+        Route::get('/reports/orders/export/csv', [ReportsController::class, 'exportOrdersCsv'])
+            ->middleware('permission:view_orders_report')
+            ->name('reports.orders.export.csv');
+
+        Route::get('/reports/orders/export/pdf', [ReportsController::class, 'exportOrdersPdf'])
+            ->middleware('permission:view_orders_report')
+            ->name('reports.orders.export.pdf');
+
         Route::get('/reports/products', [ReportsController::class, 'products'])
             ->middleware('permission:view_reports')
             ->name('reports.products');
@@ -325,6 +339,19 @@ Route::prefix('admin')
         Route::get('/products/{product}', [ReportsController::class, 'productDetails'])
             ->middleware('permission:view_reports')
             ->name('reports.products.details');
+
+        Route::get('/reports/products/export/csv', [ReportsController::class, 'exportProductsCsv'])
+            ->middleware('permission:view_reports')
+            ->name('reports.products.export.csv');
+
+        Route::get('/reports/products/export/pdf', [ReportsController::class, 'exportProductsPdf'])
+            ->middleware('permission:view_reports')
+            ->name('reports.products.export.pdf');
+
+
+
+
+            
 
         Route::get('/reports/inventory', [ReportsController::class, 'inventory'])
             ->middleware('permission:view_reports')
