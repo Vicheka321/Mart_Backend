@@ -588,7 +588,13 @@
                 </p>
 
                 @if($orders->hasPages())
-                    @php $orders->appends(['status' => $current]); @endphp
+                    @php
+                        $orders->appends(['status' => $current]);
+                        $currentPage = $orders->currentPage();
+                        $last        = $orders->lastPage();
+                        $start       = max(1, $currentPage - 2);
+                        $end         = min($last, $currentPage + 2);
+                    @endphp
                     <nav class="flex items-center gap-1">
                         {{-- Previous --}}
                         @if($orders->onFirstPage())
@@ -608,9 +614,23 @@
                             </a>
                         @endif
 
+                        {{-- First page + leading ellipsis --}}
+                        @if($start > 1)
+                            <a href="{{ $orders->url(1) }}"
+                               class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                      text-sm font-medium text-gray-500 dark:text-gray-400
+                                      hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white
+                                      transition-colors duration-150">
+                                1
+                            </a>
+                            @if($start > 2)
+                                <span class="w-8 h-8 flex items-center justify-center text-sm text-gray-300 dark:text-gray-600 select-none">…</span>
+                            @endif
+                        @endif
+
                         {{-- Page Numbers --}}
-                        @foreach($orders->getUrlRange(max(1, $orders->currentPage() - 2), min($orders->lastPage(), $orders->currentPage() + 2)) as $page => $url)
-                            @if($page == $orders->currentPage())
+                        @foreach($orders->getUrlRange($start, $end) as $page => $url)
+                            @if($page == $currentPage)
                                 <span class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
                                             bg-indigo-600 text-white text-sm font-semibold shadow-md shadow-indigo-500/25">
                                     {{ $page }}
@@ -625,6 +645,20 @@
                                 </a>
                             @endif
                         @endforeach
+
+                        {{-- Trailing ellipsis + last page --}}
+                        @if($end < $last)
+                            @if($end < $last - 1)
+                                <span class="w-8 h-8 flex items-center justify-center text-sm text-gray-300 dark:text-gray-600 select-none">…</span>
+                            @endif
+                            <a href="{{ $orders->url($last) }}"
+                               class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                      text-sm font-medium text-gray-500 dark:text-gray-400
+                                      hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white
+                                      transition-colors duration-150">
+                                {{ $last }}
+                            </a>
+                        @endif
 
                         {{-- Next --}}
                         @if($orders->hasMorePages())

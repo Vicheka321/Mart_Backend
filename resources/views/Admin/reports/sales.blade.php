@@ -690,16 +690,19 @@
 
             {{-- Pagination --}}
             <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700
-                            flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3
-                            bg-gray-50/50 dark:bg-gray-800/30">
+                        flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3
+                        bg-gray-50/50 dark:bg-gray-800/30">
+
                 <p class="text-xs text-gray-400 dark:text-gray-500">
                     @if($salesRows->total())
                         Showing
-                        <span
-                            class="font-semibold text-gray-700 dark:text-gray-200">{{ $salesRows->firstItem() }}–{{ $salesRows->lastItem() }}</span>
+                        <span class="font-semibold text-gray-700 dark:text-gray-200">
+                            {{ $salesRows->firstItem() }}–{{ $salesRows->lastItem() }}
+                        </span>
                         of
-                        <span
-                            class="font-semibold text-gray-700 dark:text-gray-200">{{ number_format($salesRows->total()) }}</span>
+                        <span class="font-semibold text-gray-700 dark:text-gray-200">
+                            {{ number_format($salesRows->total()) }}
+                        </span>
                         results
                     @else
                         No records found
@@ -707,59 +710,115 @@
                 </p>
 
                 @if($salesRows->hasPages())
+                    @php
+                        $currentPage = $salesRows->currentPage();
+                        $lastPage = $salesRows->lastPage();
+                        $start = max(1, $currentPage - 2);
+                        $end = min($lastPage, $currentPage + 2);
+                    @endphp
+
                     <nav class="flex items-center gap-1">
+
+                        {{-- Previous --}}
                         @if($salesRows->onFirstPage())
-                            <span
-                                class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-600 cursor-not-allowed">
+                            <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-600 cursor-not-allowed">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </span>
                         @else
                             <a href="{{ $salesRows->previousPageUrl() }}"
-                                class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400
-                                                  hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                class="w-8 h-8 flex items-center justify-center rounded-lg
+                                    text-gray-500 dark:text-gray-400
+                                    hover:bg-gray-100 dark:hover:bg-gray-700
+                                    hover:text-gray-900 dark:hover:text-white
+                                    transition-colors duration-150">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </a>
                         @endif
 
-                        @foreach($salesRows->getUrlRange(max(1, $salesRows->currentPage() - 2), min($salesRows->lastPage(), $salesRows->currentPage() + 2)) as $page => $url)
-                            @if($page == $salesRows->currentPage())
-                                <span
-                                    class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
-                                                            bg-indigo-600 text-white text-sm font-semibold shadow-md shadow-indigo-500/25">
+                        {{-- First Page --}}
+                        @if($start > 1)
+                            <a href="{{ $salesRows->url(1) }}"
+                                class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                    text-sm font-medium text-gray-500 dark:text-gray-400
+                                    hover:bg-gray-100 dark:hover:bg-gray-700
+                                    hover:text-gray-900 dark:hover:text-white
+                                    transition-colors duration-150">
+                                1
+                            </a>
+
+                            @if($start > 2)
+                                <span class="w-8 h-8 flex items-center justify-center text-sm text-gray-300 dark:text-gray-600 select-none">
+                                    …
+                                </span>
+                            @endif
+                        @endif
+
+                        {{-- Pages --}}
+                        @foreach($salesRows->getUrlRange($start, $end) as $page => $url)
+                            @if($page == $currentPage)
+                                <span class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                            bg-indigo-600 text-white text-sm font-semibold shadow-md shadow-indigo-500/25">
                                     {{ $page }}
                                 </span>
                             @else
                                 <a href="{{ $url }}"
                                     class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
-                                                          text-sm font-medium text-gray-500 dark:text-gray-400
-                                                          hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                        text-sm font-medium text-gray-500 dark:text-gray-400
+                                        hover:bg-gray-100 dark:hover:bg-gray-700
+                                        hover:text-gray-900 dark:hover:text-white
+                                        transition-colors duration-150">
                                     {{ $page }}
                                 </a>
                             @endif
                         @endforeach
 
+                        {{-- Last Page --}}
+                        @if($end < $lastPage)
+
+                            @if($end < $lastPage - 1)
+                                <span class="w-8 h-8 flex items-center justify-center text-sm text-gray-300 dark:text-gray-600 select-none">
+                                    …
+                                </span>
+                            @endif
+
+                            <a href="{{ $salesRows->url($lastPage) }}"
+                                class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                    text-sm font-medium text-gray-500 dark:text-gray-400
+                                    hover:bg-gray-100 dark:hover:bg-gray-700
+                                    hover:text-gray-900 dark:hover:text-white
+                                    transition-colors duration-150">
+                                {{ $lastPage }}
+                            </a>
+
+                        @endif
+
+                        {{-- Next --}}
                         @if($salesRows->hasMorePages())
                             <a href="{{ $salesRows->nextPageUrl() }}"
-                                class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400
-                                                  hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                class="w-8 h-8 flex items-center justify-center rounded-lg
+                                    text-gray-500 dark:text-gray-400
+                                    hover:bg-gray-100 dark:hover:bg-gray-700
+                                    hover:text-gray-900 dark:hover:text-white
+                                    transition-colors duration-150">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                                 </svg>
                             </a>
                         @else
-                            <span
-                                class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-600 cursor-not-allowed">
+                            <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-600 cursor-not-allowed">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                                 </svg>
                             </span>
                         @endif
+
                     </nav>
                 @endif
+
             </div>
         </div>
 

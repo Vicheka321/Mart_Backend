@@ -461,7 +461,7 @@
             </div>
 
             {{-- PAGINATION --}}
-            <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700
+<div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700
                         flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3
                         bg-gray-50/50 dark:bg-gray-800/30">
 
@@ -478,6 +478,13 @@
                 </p>
 
                 @if($brands->hasPages())
+                    @php
+                        $brands->appends(request()->query());
+                        $current = $brands->currentPage();
+                        $last    = $brands->lastPage();
+                        $start   = max(1, $current - 2);
+                        $end     = min($last, $current + 2);
+                    @endphp
                     <nav class="flex items-center gap-1">
                         {{-- Previous --}}
                         @if($brands->onFirstPage())
@@ -497,9 +504,23 @@
                             </a>
                         @endif
 
+                        {{-- First page + leading ellipsis --}}
+                        @if($start > 1)
+                            <a href="{{ $brands->url(1) }}"
+                               class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                      text-sm font-medium text-gray-500 dark:text-gray-400
+                                      hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white
+                                      transition-colors duration-150">
+                                1
+                            </a>
+                            @if($start > 2)
+                                <span class="w-8 h-8 flex items-center justify-center text-sm text-gray-300 dark:text-gray-600 select-none">…</span>
+                            @endif
+                        @endif
+
                         {{-- Page Numbers --}}
-                        @foreach($brands->getUrlRange(max(1, $brands->currentPage() - 2), min($brands->lastPage(), $brands->currentPage() + 2)) as $page => $url)
-                            @if($page == $brands->currentPage())
+                        @foreach($brands->getUrlRange($start, $end) as $page => $url)
+                            @if($page == $current)
                                 <span class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
                                             bg-indigo-600 text-white text-sm font-semibold shadow-md shadow-indigo-500/25">
                                     {{ $page }}
@@ -514,6 +535,20 @@
                                 </a>
                             @endif
                         @endforeach
+
+                        {{-- Trailing ellipsis + last page --}}
+                        @if($end < $last)
+                            @if($end < $last - 1)
+                                <span class="w-8 h-8 flex items-center justify-center text-sm text-gray-300 dark:text-gray-600 select-none">…</span>
+                            @endif
+                            <a href="{{ $brands->url($last) }}"
+                               class="min-w-[32px] h-8 px-2 inline-flex items-center justify-center rounded-lg
+                                      text-sm font-medium text-gray-500 dark:text-gray-400
+                                      hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white
+                                      transition-colors duration-150">
+                                {{ $last }}
+                            </a>
+                        @endif
 
                         {{-- Next --}}
                         @if($brands->hasMorePages())

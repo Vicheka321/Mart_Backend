@@ -17,6 +17,7 @@ use App\Models\ProductsModel;
 use App\Models\Category;
 use App\Models\BrandModel;
 use App\Models\CouponModel;
+use App\Models\CouponUsageModel;
 use App\Models\PromotionModel;
 use App\Models\PromotionsModel;
 
@@ -3123,6 +3124,23 @@ class ReportsController extends Controller
             now()
         )->count();
 
+
+        $totalCoupons = CouponModel::count();
+
+        $activeCoupons = CouponModel::whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->count();
+
+        $expiredCoupons = CouponModel::whereDate('end_date', '<', now())
+            ->count();
+
+        $scheduledCoupons = CouponModel::whereDate('start_date', '>', now())
+            ->count();
+
+        $averageCouponDiscount = CouponModel::avg('discount_value');
+
+        $highestCouponDiscount = CouponModel::max('discount_value');
+
         /*
     |--------------------------------------------------------------------------
     | Statistics
@@ -3171,7 +3189,43 @@ class ReportsController extends Controller
             ->groupBy('discount_type')
             ->get();
 
+
+
         /*
+|--------------------------------------------------------------------------
+| Coupon Chart
+|--------------------------------------------------------------------------
+*/
+
+        $couponTrend = CouponModel::selectRaw("
+    DATE(start_date) as day,
+    COUNT(*) as total
+")
+            ->groupBy('day')
+            ->orderBy('day')
+            ->get();
+
+        $couponStatusChart = [
+
+            'Active' => $activeCoupons,
+
+            'Scheduled' => $scheduledCoupons,
+
+            'Expired' => $expiredCoupons,
+
+        ];
+
+        $couponTypeChart = CouponModel::select(
+            'discount_type',
+            DB::raw('COUNT(*) as total')
+        )
+            ->groupBy('discount_type')
+            ->get();
+
+        /*
+
+
+        
     |--------------------------------------------------------------------------
     | Insights
     |--------------------------------------------------------------------------
@@ -3198,6 +3252,55 @@ class ReportsController extends Controller
             ->orderByDesc('discount_value')
             ->limit(10)
             ->get();
+
+
+        /*
+|--------------------------------------------------------------------------
+| Coupon Insights
+|--------------------------------------------------------------------------
+*/
+        $totalCoupons = CouponModel::count();
+        $activeCoupons = CouponModel::whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->count();
+
+        $scheduledCoupons = CouponModel::whereDate('start_date', '>', now())
+            ->count();
+
+        $expiredCoupons = CouponModel::whereDate('end_date', '<', now())
+            ->count();
+
+        $averageCouponDiscount = CouponModel::avg('discount_value');
+
+        $highestCouponDiscount = CouponModel::max('discount_value');
+
+        $bestCoupon = CouponModel::orderByDesc('discount_value')
+            ->first();
+
+        $latestCoupon = CouponModel::latest()
+            ->first();
+
+        $couponEndingSoon = CouponModel::whereDate(
+            'end_date',
+            '>=',
+            today()
+        )
+            ->orderBy('end_date')
+            ->first();
+
+        $topCouponChart = CouponModel::select(
+            'code',
+            'discount_value'
+        )
+            ->orderByDesc('discount_value')
+            ->limit(10)
+            ->get();
+        $totalCouponUsage = CouponUsageModel::count();
+
+        $totalDiscountGiven = CouponUsageModel::sum('discount_amount');
+        $totalCouponDiscountGiven = CouponUsageModel::sum('discount_amount');
+
+        // $totalDiscountGiven = 0;
 
         /*
     |--------------------------------------------------------------------------
@@ -3237,6 +3340,23 @@ class ReportsController extends Controller
 
             'endingSoon',
             'topDiscountChart',
+            'couponTrend',
+            'couponStatusChart',
+            'couponTypeChart',
+
+            'bestCoupon',
+            'latestCoupon',
+            'couponEndingSoon',
+            'topCouponChart',
+            'totalCoupons',
+            'activeCoupons',
+            'scheduledCoupons',
+            'expiredCoupons',
+            'averageCouponDiscount',
+            'highestCouponDiscount',
+            'totalCouponUsage',
+            'totalDiscountGiven',
+            'totalCouponDiscountGiven'
 
         ));
     }

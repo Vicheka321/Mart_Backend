@@ -144,6 +144,12 @@ class ProductsSeeder extends Seeder
                 'brand' => 3,
                 'image' => 'https://m.media-amazon.com/images/I/51ZNB3skixL.*AC_UL480_FMwebp_QL65*.jpg'
             ],
+            [
+                'name' => 'Dettol Hand',
+                'category' => 10,
+                'brand' => 3,
+                'image' => 'https://m.media-amazon.com/images/I/51ZNB3skixL.*AC_UL480_FMwebp_QL65*.jpg'
+            ],
         ];
 
         foreach ($productData as $index => $item) {

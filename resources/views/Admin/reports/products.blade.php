@@ -285,20 +285,20 @@
                     'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
                     'pct' => 100,
                 ],
-                [
-                    'label' => 'Avg Sale Price',
-                    'value' => '$' . number_format($averagePrice, 2),
-                    'sub' => 'Across all products',
-                    'from' => 'from-purple-500',
-                    'to' => 'to-pink-600',
-                    'bg' => 'from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20',
-                    'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>',
-                    'pct' => 100,
-                ],
+                // [
+                //     'label' => 'Avg Sale Price',
+                //     'value' => '$' . number_format($averagePrice, 2),
+                //     'sub' => 'Across all products',
+                //     'from' => 'from-purple-500',
+                //     'to' => 'to-pink-600',
+                //     'bg' => 'from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20',
+                //     'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>',
+                //     'pct' => 100,
+                // ],
             ];
         @endphp
 
-        <div class="grid grid-cols-2 xl:grid-cols-6 gap-3">
+        <div class="grid grid-cols-2 xl:grid-cols-5 gap-3">
             @foreach($kpis as $kpi)
                 <div class="kpi-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
                                     border border-gray-100 dark:border-gray-700
@@ -562,7 +562,7 @@
                             <th class="px-6 py-3">Brand</th>
                             <th class="px-6 py-3 text-right">Cost</th>
                             <th class="px-6 py-3 text-right">Sale Price</th>
-                            <th class="px-6 py-3 text-right">Margin</th>
+                            {{-- <th class="px-6 py-3 text-right">Margin</th> --}}
                             <th class="px-6 py-3 text-center">Stock</th>
                             <th class="px-6 py-3 text-center">Status</th>
                             <th class="px-6 py-3 text-right">Action</th>
@@ -668,13 +668,13 @@
                                 </td>
 
                                 {{-- Margin --}}
-                                <td class="px-6 py-4 text-right">
+                                {{-- <td class="px-6 py-4 text-right">
                                     @php $margin = $product->margin ?? 0; @endphp
                                     <span
                                         class="text-sm font-semibold {{ $margin >= 30 ? 'text-emerald-600 dark:text-emerald-400' : ($margin >= 10 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400') }}">
                                         {{ $margin }}%
                                     </span>
-                                </td>
+                                </td> --}}
 
                                 {{-- Stock --}}
                                 <td class="px-6 py-4">
