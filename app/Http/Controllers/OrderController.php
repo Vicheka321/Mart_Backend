@@ -6,6 +6,8 @@ use App\Events\PaymentStatusChanged;
 use App\Models\OrderModel;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\DeviceToken;
+use App\Services\FirebaseNotificationService;
 
 class OrderController extends Controller
 {
@@ -143,9 +145,8 @@ class OrderController extends Controller
             ];
         }));
     }
-
-
-    public function changeStatus(Request $request, $id)
+    
+    public function changeStatus(Request $request, $id, FirebaseNotificationService $firebase)
     {
         $order = OrderModel::with('payment')
             ->findOrFail($id);
@@ -183,6 +184,17 @@ class OrderController extends Controller
 
         $order->refresh();
 
+        if (in_array($order->status, [
+            'processing',
+            'cancelled',
+            'completed'
+        ])) {
+            $this->sendOrderNotification(
+                $order,
+                $firebase
+            );
+        }
+        
         $order->load([
             'user',
             'payment',
@@ -236,6 +248,51 @@ class OrderController extends Controller
         ]);
     }
 
+    private function sendOrderNotification(
+        OrderModel $order,
+        FirebaseNotificationService $firebase
+    ) {
+        $tokens = DeviceToken::where('user_id', $order->user_id)
+            ->where('is_active', true)
+            ->pluck('fcm_token')
+            ->toArray();
+
+        if (empty($tokens)) {
+            return;
+        }
+
+        switch ($order->status) {
+
+            case 'processing':
+                $title = 'Order Accepted 🎉';
+                $body = "Your order #{$order->id} has been accepted.";
+                break;
+
+            case 'cancelled':
+                $title = 'Order Cancelled ❌';
+                $body = "Your order #{$order->id} has been cancelled.";
+                break;
+
+            case 'completed':
+                $title = 'Order Completed ✅';
+                $body = "Your order #{$order->id} has been completed.";
+                break;
+
+            default:
+                return;
+        }
+
+        $firebase->sendToTokens(
+            tokens: $tokens,
+            title: $title,
+            body: $body,
+            data: [
+                'type' => 'order',
+                'order_id' => (string) $order->id,
+                'status' => $order->status,
+            ]
+        );
+    }
     public function cancel($id)
     {
         $order = OrderModel::findOrFail($id);
