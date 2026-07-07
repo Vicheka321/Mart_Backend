@@ -423,4 +423,52 @@ class TelegramService
             unlink($filePath);
         }
     }
+
+    public function sendLowStockAlert($product)
+    {
+        $token = env('Token');
+        $chat_id = env('Chat_Id_stock_alert');
+
+        $message =
+            "⚠️ *LOW STOCK ALERT*
+
+        📦 Product: {$product->name}
+
+        📊 Remaining Stock: {$product->quantity}
+
+        ⏰ " . now()->format('d-m-Y H:i');
+
+        Http::post(
+            "https://api.telegram.org/bot{$token}/sendMessage",
+            [
+                'chat_id' => $chat_id,
+                'text' => $message,
+                'parse_mode' => 'Markdown',
+            ]
+        );
+    }
+
+    public function sendOutOfStockAlert($product)
+    {
+        $token = env('Token');
+        $chat_id = env('Chat_Id_stock_alert');
+
+        $message =
+            "🚨 *OUT OF STOCK*
+
+        📦 Product: {$product->name}
+
+        ❌ Remaining Stock: 0
+
+        ⚡ Please restock immediately.";
+
+        Http::post(
+            "https://api.telegram.org/bot{$token}/sendMessage",
+            [
+                'chat_id' => $chat_id,
+                'text' => $message,
+                'parse_mode' => 'Markdown',
+            ]
+        );
+    }
 }

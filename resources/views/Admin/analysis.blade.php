@@ -73,28 +73,72 @@
             <form method="GET" action="{{ route('analysis.index') }}"
                   class="flex flex-wrap items-center gap-2">
 
-                <div class="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-600
-                            bg-gray-50 dark:bg-gray-700 p-1 gap-1 flex-wrap">
-                    @foreach([
-                        'today'      => 'Today',
-                        '7d'         => '7D',
-                        '30d'        => '30D',
-                        'this_month' => 'This Month',
-                        'last_month' => 'Last Month',
-                        '3m'         => '3M',
-                        '6m'         => '6M',
-                        '12m'        => '12M',
-                        'custom'     => 'Custom',
-                    ] as $val => $lbl)
-                        <button type="submit" name="range" value="{{ $val }}"
-                            class="px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200
-                                   {{ $rangeKey === $val
-                                        ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }}">
-                            {{ $lbl }}
-                        </button>
-                    @endforeach
+            <div class="relative w-56">
+                <select
+                    name="range"
+                    onchange="this.form.submit()"
+                    class="w-full appearance-none rounded-xl border border-gray-200 dark:border-gray-700
+                        bg-white dark:bg-gray-800
+                        px-4 py-3 pr-11
+                        text-sm font-medium text-gray-700 dark:text-gray-200
+                        shadow-sm
+                        transition-all duration-200
+                        hover:border-indigo-400
+                        focus:border-indigo-500
+                        focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/30
+                        focus:outline-none">
+
+                    <option value="today" {{ $rangeKey=='today' ? 'selected' : '' }}>
+                        Today
+                    </option>
+
+                    <option value="7d" {{ $rangeKey=='7d' ? 'selected' : '' }}>
+                    Last 7 Days
+                    </option>
+
+                    <option value="30d" {{ $rangeKey=='30d' ? 'selected' : '' }}>
+                        Last 30 Days
+                    </option>
+
+                    <option value="this_month" {{ $rangeKey=='this_month' ? 'selected' : '' }}>
+                        This Month
+                    </option>
+
+                    <option value="last_month" {{ $rangeKey=='last_month' ? 'selected' : '' }}>
+                        Last Month
+                    </option>
+
+                    <option value="3m" {{ $rangeKey=='3m' ? 'selected' : '' }}>
+                        Last 3 Months
+                    </option>
+
+                    <option value="6m" {{ $rangeKey=='6m' ? 'selected' : '' }}>
+                        Last 6 Months
+                    </option>
+
+                    <option value="12m" {{ $rangeKey=='12m' ? 'selected' : '' }}>
+                        Last 12 Months
+                    </option>
+
+                    <option value="custom" {{ $rangeKey=='custom' ? 'selected' : '' }}>
+                        Custom Range
+                    </option>
+
+                </select>
+
+                <!-- Chevron -->
+                <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center">
+                    <svg class="h-5 w-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 9l-7 7-7-7"/>
+                    </svg>
                 </div>
+            </div>
 
                 {{-- Custom date fields --}}
                 <div id="customDateFields"

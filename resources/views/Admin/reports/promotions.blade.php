@@ -290,36 +290,36 @@
                     'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>',
                     'pct' => 100,
                 ],
-                [
-                    'label' => 'Active',
-                    'value' => number_format($activePromotions),
-                    'sub' => 'Running now',
-                    'from' => 'from-emerald-500',
-                    'to' => 'to-green-600',
-                    'bg' => 'from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/20',
-                    'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>',
-                    'pct' => $totalPromotions > 0 ? round(($activePromotions / $totalPromotions) * 100) : 0,
-                ],
-                [
-                    'label' => 'Scheduled',
-                    'value' => number_format($scheduledPromotions),
-                    'sub' => 'Upcoming campaigns',
-                    'from' => 'from-blue-500',
-                    'to' => 'to-indigo-600',
-                    'bg' => 'from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20',
-                    'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>',
-                    'pct' => $totalPromotions > 0 ? round(($scheduledPromotions / $totalPromotions) * 100) : 0,
-                ],
-                [
-                    'label' => 'Expired',
-                    'value' => number_format($expiredPromotions),
-                    'sub' => 'Finished campaigns',
-                    'from' => 'from-rose-500',
-                    'to' => 'to-red-600',
-                    'bg' => 'from-rose-50 to-red-100 dark:from-rose-900/20 dark:to-red-900/20',
-                    'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
-                    'pct' => $totalPromotions > 0 ? round(($expiredPromotions / $totalPromotions) * 100) : 0,
-                ],
+                // [
+                //     'label' => 'Active',
+                //     'value' => number_format($activePromotions),
+                //     'sub' => 'Running now',
+                //     'from' => 'from-emerald-500',
+                //     'to' => 'to-green-600',
+                //     'bg' => 'from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/20',
+                //     'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>',
+                //     'pct' => $totalPromotions > 0 ? round(($activePromotions / $totalPromotions) * 100) : 0,
+                // ],
+                // [
+                //     'label' => 'Scheduled',
+                //     'value' => number_format($scheduledPromotions),
+                //     'sub' => 'Upcoming campaigns',
+                //     'from' => 'from-blue-500',
+                //     'to' => 'to-indigo-600',
+                //     'bg' => 'from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20',
+                //     'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>',
+                //     'pct' => $totalPromotions > 0 ? round(($scheduledPromotions / $totalPromotions) * 100) : 0,
+                // ],
+                // [
+                //     'label' => 'Expired',
+                //     'value' => number_format($expiredPromotions),
+                //     'sub' => 'Finished campaigns',
+                //     'from' => 'from-rose-500',
+                //     'to' => 'to-red-600',
+                //     'bg' => 'from-rose-50 to-red-100 dark:from-rose-900/20 dark:to-red-900/20',
+                //     'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+                //     'pct' => $totalPromotions > 0 ? round(($expiredPromotions / $totalPromotions) * 100) : 0,
+                // ],
                 [
                     'label' => 'Products Included',
                     'value' => number_format($totalProducts),
@@ -385,7 +385,7 @@
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Promotion KPIs</h2>
             </div>
 
-            <div class="grid grid-cols-2 xl:grid-cols-9 gap-3">
+            <div class="grid grid-cols-2 xl:grid-cols-6 gap-3">
                 @foreach($kpis as $kpi)
                     <div class="kpi-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
                                             border border-gray-100 dark:border-gray-700
@@ -444,36 +444,36 @@
                     'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v3a2 2 0 01-2 2 2 2 0 012 2v3a2 2 0 002 2h2m6-14h2a2 2 0 012 2v3a2 2 0 002 2 2 2 0 00-2 2v3a2 2 0 01-2 2h-2"/>',
                     'pct' => 100,
                 ],
-                [
-                    'label' => 'Active',
-                    'value' => number_format($activeCoupons),
-                    'sub' => 'Redeemable now',
-                    'from' => 'from-emerald-500',
-                    'to' => 'to-green-600',
-                    'bg' => 'from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/20',
-                    'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>',
-                    'pct' => $totalCoupons > 0 ? round(($activeCoupons / $totalCoupons) * 100) : 0,
-                ],
-                [
-                    'label' => 'Scheduled',
-                    'value' => number_format($scheduledCoupons),
-                    'sub' => 'Upcoming codes',
-                    'from' => 'from-blue-500',
-                    'to' => 'to-indigo-600',
-                    'bg' => 'from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20',
-                    'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>',
-                    'pct' => $totalCoupons > 0 ? round(($scheduledCoupons / $totalCoupons) * 100) : 0,
-                ],
-                [
-                    'label' => 'Expired',
-                    'value' => number_format($expiredCoupons),
-                    'sub' => 'No longer valid',
-                    'from' => 'from-rose-500',
-                    'to' => 'to-red-600',
-                    'bg' => 'from-rose-50 to-red-100 dark:from-rose-900/20 dark:to-red-900/20',
-                    'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
-                    'pct' => $totalCoupons > 0 ? round(($expiredCoupons / $totalCoupons) * 100) : 0,
-                ],
+                // [
+                //     'label' => 'Active',
+                //     'value' => number_format($activeCoupons),
+                //     'sub' => 'Redeemable now',
+                //     'from' => 'from-emerald-500',
+                //     'to' => 'to-green-600',
+                //     'bg' => 'from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/20',
+                //     'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>',
+                //     'pct' => $totalCoupons > 0 ? round(($activeCoupons / $totalCoupons) * 100) : 0,
+                // ],
+                // [
+                //     'label' => 'Scheduled',
+                //     'value' => number_format($scheduledCoupons),
+                //     'sub' => 'Upcoming codes',
+                //     'from' => 'from-blue-500',
+                //     'to' => 'to-indigo-600',
+                //     'bg' => 'from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20',
+                //     'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>',
+                //     'pct' => $totalCoupons > 0 ? round(($scheduledCoupons / $totalCoupons) * 100) : 0,
+                // ],
+                // [
+                //     'label' => 'Expired',
+                //     'value' => number_format($expiredCoupons),
+                //     'sub' => 'No longer valid',
+                //     'from' => 'from-rose-500',
+                //     'to' => 'to-red-600',
+                //     'bg' => 'from-rose-50 to-red-100 dark:from-rose-900/20 dark:to-red-900/20',
+                //     'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+                //     'pct' => $totalCoupons > 0 ? round(($expiredCoupons / $totalCoupons) * 100) : 0,
+                // ],
                 [
                     'label' => 'Avg Discount',
                     'value' => number_format($averageCouponDiscount, 1) . '%',
@@ -529,7 +529,7 @@
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Coupon KPIs</h2>
             </div>
 
-            <div class="grid grid-cols-2 xl:grid-cols-8 gap-3">
+            <div class="grid grid-cols-2 xl:grid-cols-5 gap-3">
                 @foreach($couponKpis as $kpi)
                     <div class="kpi-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
                                             border border-gray-100 dark:border-gray-700

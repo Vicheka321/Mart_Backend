@@ -658,15 +658,42 @@ class PaymentController extends Controller
                             $cart->id
                         )->delete();
                     }
+                    // foreach ($order->orderItems as $item) {
+
+                    //     ProductsModel::where(
+                    //         'id',
+                    //         $item->product_id
+                    //     )->decrement(
+                    //         'quantity',
+                    //         $item->qty
+                    //     );
+                    // }
+
                     foreach ($order->orderItems as $item) {
 
-                        ProductsModel::where(
-                            'id',
-                            $item->product_id
-                        )->decrement(
-                            'quantity',
-                            $item->qty
-                        );
+                        $product = ProductsModel::find($item->product_id);
+
+                        if (!$product) {
+                            continue;
+                        }
+
+                        $product->decrement('quantity', $item->qty);
+
+                        $product->refresh();
+
+                        // Low Stock
+                        if ($product->quantity <= 20 && $product->quantity > 0) {
+
+                            app(TelegramService::class)
+                                ->sendLowStockAlert($product);
+                        }
+
+                        // Out of Stock
+                        if ($product->quantity <= 0) {
+
+                            app(TelegramService::class)
+                                ->sendOutOfStockAlert($product);
+                        }
                     }
                     $productsText = '';
 

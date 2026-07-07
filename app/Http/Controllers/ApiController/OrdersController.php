@@ -53,337 +53,7 @@ class OrdersController extends Controller
         ]);
     }
 
-    // public function placeOrder(Request $request)
-    // {
-    //     $request->validate([
-    //         'payment_method' => 'required|in:cash,khqr,aba',
-    //         'delivery_address' => 'required|string',
-    //         'lat' => 'required|numeric',
-    //         'lng' => 'required|numeric',
-    //         'code' => 'nullable|string',
-    //         'note' => 'nullable|string',
-    //     ]);
 
-    //     $user_id = Auth::id();
-
-    //     $existingOrder = OrderModel::with('payment')
-    //         ->where('user_id', $user_id)
-    //         ->where('status', 'pending')
-    //         ->whereHas('payment', function ($q) {
-    //             $q->where('payment_status', 'pending');
-    //         })
-    //         ->latest()
-    //         ->first();
-
-    //     if ($existingOrder) {
-
-    //         $existingOrder->update([
-    //             'status' => 'cancelled',
-    //         ]);
-
-    //         if ($existingOrder->payment) {
-    //             $existingOrder->payment->update([
-    //                 'payment_status' => 'cancelled',
-    //             ]);
-    //         }
-    //     }
-
-    //     DB::beginTransaction();
-
-    //     try {
-    //         $cart = CartModel::where('user_id', $user_id)->first();
-    //         if (!$cart) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'Cart not found'
-    //             ], 404);
-    //         }
-    //         $items = CartItemModel::where('cart_id', $cart->id)
-    //             ->get();
-    //         if ($items->isEmpty()) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'Cart is empty'
-    //             ], 400);
-    //         }
-    //         $total = 0;
-    //         $totalDiscount = 0;
-
-    //         foreach ($items as $item) {
-
-    //             $product = ProductsModel::lockForUpdate()
-    //                 ->findOrFail($item->product_id);
-    //             if ($product->quantity < $item->qty) {
-    //                 throw new \Exception(
-    //                     "Not enough stock for {$product->name}"
-    //                 );
-    //             }
-    //             $unitPrice = $item->price;
-    //             $lineTotal = $item->qty * $unitPrice;
-
-    //             $promotion = $product->promotions()
-    //                 ->where('status', true)
-    //                 ->where(function ($q) {
-    //                     $q->whereNull('start_date')
-    //                         ->orWhere('start_date', '<=', now());
-    //                 })
-    //                 ->where(function ($q) {
-    //                     $q->whereNull('end_date')
-    //                         ->orWhere('end_date', '>=', now()->toDateString());
-    //                 })
-    //                 ->orderByDesc('discount_value')
-    //                 ->first();
-
-    //             $promotionDiscount = 0;
-
-    //             if ($promotion) {
-    //                 if ($promotion->discount_type === 'percent') {
-    //                     $promotionDiscount =
-    //                         ($unitPrice * $promotion->discount_value / 100) * $item->qty;
-
-    //                     if (!is_null($promotion->max_discount)) {
-    //                         $promotionDiscount = min(
-    //                             $promotionDiscount,
-    //                             $promotion->max_discount
-    //                         );
-    //                     }
-    //                 } else {
-    //                     $promotionDiscount =
-    //                         $promotion->discount_value * $item->qty;
-    //                 }
-    //                 $promotionDiscount = min($promotionDiscount, $lineTotal);
-    //             }
-
-    //             $finalLineTotal = $lineTotal - $promotionDiscount;
-    //             $total += $finalLineTotal;
-    //             $totalDiscount += $promotionDiscount;
-    //         }
-
-    //         $coupon = null;
-    //         $couponDiscount = 0;
-
-    //         if ($request->filled('code')) {
-    //             $couponCode = trim($request->code);
-
-    //             $coupon = CouponModel::where('code', 'ILIKE', $couponCode)
-    //                 ->where('status', true)
-    //                 ->first();
-
-    //             if (!$coupon) {
-    //                 throw new \Exception('Invalid coupon code.');
-    //             }
-
-    //             if (
-    //                 ($coupon->start_date && now()->lt($coupon->start_date)) ||
-    //                 ($coupon->end_date && now()->gt($coupon->end_date->endOfDay()))
-    //             ) {
-    //                 throw new \Exception(
-    //                     $coupon->start_date && now()->lt($coupon->start_date)
-    //                         ? 'This coupon is not active yet.'
-    //                         : 'This coupon has expired.'
-    //                 );
-    //             }
-
-    //             // if ($total < $coupon->min_order_amount) {
-    //             //     throw new \Exception(
-    //             //         'Minimum order amount is $' .
-    //             //             number_format($coupon->min_order_amount, 2)
-    //             //     );
-    //             // }
-    //             if (
-    //                 !is_null($coupon->min_order_amount) &&
-    //                 $total < $coupon->min_order_amount
-    //             ) {
-    //                 throw new \Exception(
-    //                     'Minimum order amount is $' .
-    //                         number_format($coupon->min_order_amount, 2)
-    //                 );
-    //             }
-    //             // Check global usage limit
-    //             if (
-    //                 !is_null($coupon->usage_limit) &&
-    //                 $coupon->used_count >= $coupon->usage_limit
-    //             ) {
-    //                 throw new \Exception('This coupon has reached its usage limit.');
-    //             }
-
-    //             // Check per-user usage limit
-    //             $userUsageCount = CouponUsageModel::where('coupon_id', $coupon->id)
-    //                 ->where('user_id', $user_id)
-    //                 ->count();
-
-    //             if (
-    //                 !is_null($coupon->usage_limit_per_user) &&
-    //                 $userUsageCount >= $coupon->usage_limit_per_user
-    //             ) {
-    //                 throw new \Exception(
-    //                     'You have already used this coupon.'
-    //                 );
-    //             }
-
-    //             // Calculate coupon discount
-    //             if ($coupon->discount_type === 'percent') {
-    //                 $couponDiscount = ($total * $coupon->discount_value) / 100;
-
-    //                 // Apply maximum discount if configured
-    //                 if (!is_null($coupon->max_discount)) {
-    //                     $couponDiscount = min(
-    //                         $couponDiscount,
-    //                         $coupon->max_discount
-    //                     );
-    //                 }
-    //             } else {
-    //                 // Fixed discount
-    //                 $couponDiscount = $coupon->discount_value;
-    //             }
-
-    //             // Prevent discount from exceeding total
-    //             $couponDiscount = min($couponDiscount, $total);
-
-    //             // Apply coupon discount to final total
-    //             $total -= $couponDiscount;
-    //         }
-
-
-    //         $order = OrderModel::create([
-    //             'user_id' => $user_id,
-
-    //             'delivery_address' => $request->delivery_address,
-    //             'lat' => $request->lat,
-    //             'lng' => $request->lng,
-
-    //             'payment_method' => $request->payment_method,
-    //             'total_amount' => $total,
-    //             'status' => 'pending',
-    //             'note' => $request->note,
-    //         ]);
-
-    //         if ($coupon && $couponDiscount > 0) {
-    //             CouponUsageModel::create([
-    //                 'coupon_id'       => $coupon->id,
-    //                 'user_id'         => $user_id,
-    //                 'order_id'        => $order->id,
-    //                 'discount_amount' => round($couponDiscount, 2),
-    //             ]);
-
-    //             // Increment used count
-    //             $coupon->increment('used_count');
-    //         }
-    //         foreach ($items as $item) {
-    //             Order_itemModel::create([
-    //                 'order_id' => $order->id,
-    //                 'product_id' => $item->product_id,
-    //                 'qty' => $item->qty,
-    //                 'price' => $item->price
-    //             ]);
-    //             // ProductsModel::where('id', $item->product_id)
-    //             //     ->decrement('quantity', $item->qty);
-    //         }
-    //         $payment = PaymentModel::create([
-    //             'order_id' => $order->id,
-    //             'payment_method' => $request->payment_method,
-    //             'payment_status' => 'unpaid',
-    //             'amount' => $total
-    //         ]);
-    //         // CartItemModel::where('cart_id', $cart->id)
-    //         //     ->delete();
-    //         DB::commit();
-
-    //         $order->load([
-    //             'user',
-    //             'payment',
-    //             'orderItems.product.firstImage'
-    //         ]);
-    //         $productsText = '';
-    //         foreach ($order->orderItems as $item) {
-
-    //             $productsText .=
-    //                 "• {$item->product->name}\n" .
-    //                 "Qty: {$item->qty}\n" .
-    //                 "Price: $" . number_format($item->price, 2) . "\n\n";
-    //         }
-    //         $customerName = $order->user->full_name;
-    //         $phone = $order->user->phone;
-    //         $mapUrl =
-    //             "https://www.google.com/maps?q={$order->lat},{$order->lng}";
-    //         $message =
-    //             "🚀 *NEW ORDER*\n\n" .
-
-    //             "🆔 *Order:* #{$order->id}\n\n" .
-
-    //             "👤 *Customer:* {$customerName}\n" .
-    //             "📞 *Phone:* {$phone}\n\n" .
-
-    //             "📍 *Address:*\n" .
-    //             "{$order->delivery_address}\n\n" .
-
-    //             "🗺️ [Open Location]({$mapUrl})\n\n" .
-
-    //             "🛒 *Products*\n\n" .
-
-    //             $productsText .
-
-    //             "━━━━━━━━━━━━━━━\n" .
-
-    //             "💰 *Total:* $" .
-    //             number_format($order->total_amount, 2) .
-    //             "\n\n" .
-
-    //             "💳 *Payment:* " .
-    //             strtoupper($order->payment_method) .
-    //             "\n\n" .
-
-    //             "📦 *Status:* Pending";
-
-    //         if ($request->payment_method == 'cash') {
-
-    //             CartItemModel::where(
-    //                 'cart_id',
-    //                 $cart->id
-    //             )->delete();
-
-    //             broadcast(new NewOrderCreated($order));
-
-    //             $firstPending = OrderModel::where('status', 'pending')
-    //                 ->where('is_sent', false)
-    //                 ->orderBy('created_at')
-    //                 ->first();
-
-    //             if (
-    //                 $firstPending &&
-    //                 $firstPending->id == $order->id
-    //             ) {
-    //                 app(TelegramService::class)->send(
-    //                     $message,
-    //                     $order
-    //                 );
-    //             }
-    //         }
-
-    //         /// ✅ RESPONSE
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Order placed successfully',
-
-    //             'data' => [
-    //                 'order_id' => $order->id,
-    //                 'payment_id' => $payment->id,
-    //                 'payment_method' => $payment->payment_method,
-    //                 'payment_status' => $payment->payment_status,
-    //                 'amount' => number_format($total, 2, '.', ''),
-    //                 'status' => $order->status
-    //             ]
-    //         ]);
-    //     } catch (\Exception $e) {
-
-    //         DB::rollback();
-
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
 
 
 
@@ -677,8 +347,7 @@ class OrdersController extends Controller
                         round($discount, 2),
                     ]);
                 }
-                // ProductsModel::where('id', $item->product_id)
-                //     ->decrement('quantity', $item->qty);
+
             }
             $payment = PaymentModel::create([
                 'order_id' => $order->id,
@@ -686,8 +355,7 @@ class OrdersController extends Controller
                 'payment_status' => 'unpaid',
                 'amount' => $total
             ]);
-            // CartItemModel::where('cart_id', $cart->id)
-            //     ->delete();
+
             DB::commit();
 
             $order->load([
@@ -738,12 +406,51 @@ class OrdersController extends Controller
 
             if ($request->payment_method == 'cash') {
 
+                // CartItemModel::where(
+                //     'cart_id',
+                //     $cart->id
+                // )->delete();
+
+                // broadcast(new NewOrderCreated($order));
+
+                // Decrease stock
+                foreach ($order->orderItems as $item) {
+
+                    $product = ProductsModel::find($item->product_id);
+
+                    if (!$product) {
+                        continue;
+                    }
+
+                    $product->decrement('quantity', $item->qty);
+
+                    $product->refresh();
+
+                    $limit = 20;
+
+                    // Low stock alert
+                    if ($product->quantity <= $limit && $product->quantity > 0) {
+
+                        app(TelegramService::class)
+                            ->sendLowStockAlert($product);
+                    }
+
+                    // Out of stock alert
+                    if ($product->quantity <= 0) {
+
+                        app(TelegramService::class)
+                            ->sendOutOfStockAlert($product);
+                    }
+                }
+
+                // Clear cart
                 CartItemModel::where(
                     'cart_id',
                     $cart->id
                 )->delete();
 
                 broadcast(new NewOrderCreated($order));
+
 
                 $firstPending = OrderModel::where('status', 'pending')
                     ->where('is_sent', false)
@@ -754,10 +461,6 @@ class OrdersController extends Controller
                     $firstPending &&
                     $firstPending->id == $order->id
                 ) {
-                    // app(TelegramService::class)
-                    //     ->sendProductImages(
-                    //         $order
-                    //     );
 
                     app(TelegramService::class)->send(
                         $message,
@@ -1043,93 +746,6 @@ class OrdersController extends Controller
             'orders' => $orders
         ]);
     }
-
-    // public function orderDetail($id)
-    // {
-    //     $user_id = Auth::id();
-
-    //     $order = OrderModel::with([
-    //         'payment:id,order_id,payment_method,payment_status',
-    //         'orderItems:id,order_id,product_id,qty,price',
-    //         'orderItems.product:id,name,sale_price',
-    //         'orderItems.product.firstImage:id,product_id,image_url',
-    //     ])
-    //         ->where('user_id', $user_id)
-    //         ->find($id);
-
-    //     if (!$order) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Order not found'
-    //         ], 404);
-    //     }
-
-    //     return response()->json([
-    //         'success' => true,
-
-    //         'data' => [
-
-    //             'id' => $order->id,
-
-    //             // 'status' => $order->status,
-
-    //             'total' => number_format(
-    //                 $order->total_amount,
-    //                 2,
-    //                 '.',
-    //                 ''
-    //             ),
-
-    //             'payment_method' =>
-    //             $order->payment->payment_method ?? '',
-
-    //             'payment_status' =>
-    //             $order->payment->payment_status ?? '',
-
-    //             'phone' =>
-    //             $order->user->phone ?? '',
-
-    //             'address' =>
-    //             $order->delivery_address ?? '',
-
-    //             // 'note' =>
-    //             // $order->note ?? '',
-
-    //             'created_at' =>
-    //             $order->created_at->format('Y-m-d H:i'),
-
-    //             'items' => $order->orderItems->map(
-    //                 function ($item) {
-
-    //                     return [
-
-    //                         'product_id' =>
-    //                         $item->product_id,
-
-    //                         'name' =>
-    //                         $item->product->name ?? '',
-
-    //                         'qty' =>
-    //                         $item->qty,
-
-    //                         'price' =>
-    //                         number_format(
-    //                             $item->price,
-    //                             2,
-    //                             '.',
-    //                             ''
-    //                         ),
-
-    //                         'image' =>
-    //                         optional(
-    //                             $item->product->firstImage
-    //                         )->image_url,
-    //                     ];
-    //                 }
-    //             )->values()
-    //         ]
-    //     ]);
-    // }
 
     public function orderDetail($id)
     {
