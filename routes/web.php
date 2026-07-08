@@ -351,7 +351,7 @@ Route::prefix('admin')
 
 
 
-            
+
 
         Route::get('/reports/inventory', [ReportsController::class, 'inventory'])
             ->middleware('permission:view_reports')
@@ -411,25 +411,45 @@ Route::prefix('admin')
         | 
         |--------------------------------------------------------------------------
         */
-        Route::get('/notifitions', [PushNotificationController::class, 'index'])
+        // Route::get('/notifications', [PushNotificationController::class, 'index'])
+        //     ->middleware('permission:view_notifications')
+        //     ->name('notifitions.index');
+
+        // Route::post('/notifications', [PushNotificationController::class, 'store'])
+        //     ->middleware('permission:view_notifications')
+        //     ->name('notifications.store');
+
+        // Route::put('/{notification}', [PushNotificationController::class, 'update'])
+        //     ->middleware('permission:view_notifications')
+        //     ->name('notifications.update');
+
+        // Route::delete('/{notification}', [PushNotificationController::class, 'destroy'])
+        //     ->middleware('permission:view_notifications')
+        //     ->name('notifications.destroy');
+
+        // Route::post('/{notification}/resend', [PushNotificationController::class, 'resend'])
+        //     ->middleware('permission:view_notifications')
+        //     ->name('notifications.resend');
+
+        Route::get('/notifications', [PushNotificationController::class, 'index'])
             ->middleware('permission:view_notifications')
-            ->name('notifitions.index');
+            ->name('notifications.index'); // fixed typo
 
         Route::post('/notifications', [PushNotificationController::class, 'store'])
             ->middleware('permission:view_notifications')
             ->name('notifications.store');
 
-        Route::put('/{notification}', [PushNotificationController::class, 'update'])
+        Route::put('/notifications/{notification}', [PushNotificationController::class, 'update'])
             ->middleware('permission:view_notifications')
-            ->name('update');
+            ->name('notifications.update');
 
-        Route::delete('/{notification}', [PushNotificationController::class, 'destroy'])
+        Route::delete('/notifications/{notification}', [PushNotificationController::class, 'destroy'])
             ->middleware('permission:view_notifications')
-            ->name('destroy');
+            ->name('notifications.destroy');
 
-        Route::post('/{notification}/resend', [PushNotificationController::class, 'resend'])
+        Route::post('/notifications/{notification}/resend', [PushNotificationController::class, 'resend'])
             ->middleware('permission:view_notifications')
-            ->name('resend');
+            ->name('notifications.resend');
 
         /*
         |--------------------------------------------------------------------------

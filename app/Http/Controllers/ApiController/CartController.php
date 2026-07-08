@@ -10,18 +10,61 @@ use App\Models\ProductsModel;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\PromotionModel;
+
 class CartController extends Controller
 {
+    // public function addToCart(Request $request)
+    // {
+    //     $user_id = Auth::id();
+
+
+    //     $request->validate([
+    //         'product_id' => 'required|integer|exists:products,id',
+    //         'quantity'   => 'required|integer|min:1'
+    //     ]);
+
+
+    //     $product = ProductsModel::findOrFail($request->product_id);
+
+    //     $cart = CartModel::firstOrCreate([
+    //         'user_id' => $user_id
+    //     ]);
+
+    //     $cartItem = CartItemModel::where('cart_id', $cart->id)
+    //         ->where('product_id', $product->id)
+    //         ->first();
+
+
+    //     if ($cartItem) {
+
+    //         $cartItem->qty += $request->quantity;
+    //         $cartItem->save();
+    //     } else {
+
+    //         CartItemModel::create([
+    //             'cart_id'   => $cart->id,
+    //             'product_id' => $product->id,
+    //             'qty'       => $request->quantity,
+    //             'price'     => $product->sale_price
+    //         ]);
+    //     }
+
+    //     return response()->json([
+    //         'message' => 'Item added to cart successfully',
+    //         'cart_id' => $cart->id
+    //     ]);
+    // }
+
+
+
     public function addToCart(Request $request)
     {
         $user_id = Auth::id();
-
 
         $request->validate([
             'product_id' => 'required|integer|exists:products,id',
             'quantity'   => 'required|integer|min:1'
         ]);
-
 
         $product = ProductsModel::findOrFail($request->product_id);
 
@@ -33,130 +76,184 @@ class CartController extends Controller
             ->where('product_id', $product->id)
             ->first();
 
-
         if ($cartItem) {
 
-            $cartItem->qty += $request->quantity;
-            $cartItem->save();
+            $newQty = $cartItem->qty + $request->quantity;
+
+            if ($newQty > $product->quantity) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Only {$product->quantity} item(s) available in stock."
+                ], 422);
+            }
+
+            $cartItem->update([
+                'qty' => $newQty
+            ]);
         } else {
 
+            if ($request->quantity > $product->quantity) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Only {$product->quantity} item(s) available in stock."
+                ], 422);
+            }
+
             CartItemModel::create([
-                'cart_id'   => $cart->id,
+                'cart_id'    => $cart->id,
                 'product_id' => $product->id,
-                'qty'       => $request->quantity,
-                'price'     => $product->sale_price
+                'qty'        => $request->quantity,
+                'price'      => $product->sale_price
             ]);
         }
 
         return response()->json([
+            'success' => true,
             'message' => 'Item added to cart successfully',
             'cart_id' => $cart->id
         ]);
     }
+    public function getCart()
+    {
+        $today = Carbon::today();
 
-public function getCart()
-{
-    $today = Carbon::today();
+        $user_id = Auth::id();
+        $cart = CartModel::where('user_id', $user_id)->first();
 
-    $user_id = Auth::id();
-    $cart = CartModel::where('user_id', $user_id)->first();
-
-    if (!$cart) {
-        return response()->json(['message' => 'Cart not found'], 404);
-    }
-
-    $cartItems = CartItemModel::where('cart_id', $cart->id)->get();
-
-    $items = [];
-    $cartTotal = 0;
-
-    foreach ($cartItems as $item) {
-
-        $product = ProductsModel::with('image')->find($item->product_id);
-
-        // 🔥 DEFAULT PRICE
-        $final_price = $product->sale_price;
-        $discount = null;
-
-        // 🔥 CHECK PROMOTION
-        $promotion = PromotionModel::whereHas('products', function ($q) use ($product) {
-            $q->where('product_id', $product->id);
-        })
-            ->where('status', true)
-            ->whereDate('start_date', '<=', $today)
-            ->whereDate('end_date', '>=', $today)
-            ->first();
-
-        if ($promotion) {
-
-            if ($promotion->discount_type === 'percent') {
-
-                $final_price =
-                    $product->sale_price -
-                    ($product->sale_price * $promotion->discount_value / 100);
-
-                $discount = $promotion->discount_value . '%';
-
-            } else {
-
-                $final_price =
-                    $product->sale_price - $promotion->discount_value;
-
-                $discount = '$' . $promotion->discount_value;
-            }
+        if (!$cart) {
+            return response()->json(['message' => 'Cart not found'], 404);
         }
 
-        // 🔥 TOTAL PER ITEM
-        $totalPrice = $item->qty * $final_price;
+        $cartItems = CartItemModel::where('cart_id', $cart->id)->get();
 
-        $items[] = [
-            'product_id' => $item->product_id,
-            'name' => $product->name,
-            'qty' => $item->qty,
+        $items = [];
+        $cartTotal = 0;
 
-            // ✅ IMPORTANT FIX
-            'price' => $final_price,
-            'sale_price' => $product->sale_price,
-            'discount' => $discount,
+        foreach ($cartItems as $item) {
 
-            'total_price' => round($totalPrice, 2),
+            $product = ProductsModel::with('image')->find($item->product_id);
 
-            'images' => $product->image
-                ->pluck('image_url')
-                ->values(),
-        ];
+            // 🔥 DEFAULT PRICE
+            $final_price = $product->sale_price;
+            $discount = null;
 
-        $cartTotal += $totalPrice;
+            // 🔥 CHECK PROMOTION
+            $promotion = PromotionModel::whereHas('products', function ($q) use ($product) {
+                $q->where('product_id', $product->id);
+            })
+                ->where('status', true)
+                ->whereDate('start_date', '<=', $today)
+                ->whereDate('end_date', '>=', $today)
+                ->first();
+
+            if ($promotion) {
+
+                if ($promotion->discount_type === 'percent') {
+
+                    $final_price =
+                        $product->sale_price -
+                        ($product->sale_price * $promotion->discount_value / 100);
+
+                    $discount = $promotion->discount_value . '%';
+                } else {
+
+                    $final_price =
+                        $product->sale_price - $promotion->discount_value;
+
+                    $discount = '$' . $promotion->discount_value;
+                }
+            }
+
+            // 🔥 TOTAL PER ITEM
+            $totalPrice = $item->qty * $final_price;
+
+            $items[] = [
+                'product_id' => $item->product_id,
+                'name' => $product->name,
+                'qty' => $item->qty,
+
+                // ✅ IMPORTANT FIX
+                'price' => $final_price,
+                'sale_price' => $product->sale_price,
+                'discount' => $discount,
+
+                'total_price' => round($totalPrice, 2),
+
+                'images' => $product->image
+                    ->pluck('image_url')
+                    ->values(),
+            ];
+
+            $cartTotal += $totalPrice;
+        }
+
+        return response()->json([
+            'cart_id' => $cart->id,
+            'total_price' => round($cartTotal, 2),
+            'items' => $items
+        ]);
     }
 
-    return response()->json([
-        'cart_id' => $cart->id,
-        'total_price' => round($cartTotal, 2),
-        'items' => $items
-    ]);
-}
+    // public function updateCart(Request $request)
+    // {
+    //     $user_id = Auth::id();
+    //     $request->validate([
+    //         'product_id' => 'required|exists:products,id',
+    //         'quantity'   => 'required|integer|min:1'
+    //     ]);
+    //     $cart = CartModel::where('user_id', $user_id)->firstOrFail();
+    //     $cartItem = CartItemModel::where('cart_id', $cart->id)
+    //         ->where('product_id', $request->product_id)
+    //         ->firstOrFail();
+
+    //     $cartItem->update([
+    //         'qty' => $request->quantity
+    //     ]);
+    //     return response()->json([
+    //         'message' => 'Cart updated successfully',
+    //         'item' => $cartItem
+    //     ]);
+    // }
+
 
     public function updateCart(Request $request)
     {
         $user_id = Auth::id();
+
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity'   => 'required|integer|min:1'
         ]);
-        $cart = CartModel::where('user_id', $user_id)->firstOrFail();
+
+        $cart = CartModel::where('user_id', $user_id)
+            ->firstOrFail();
+
         $cartItem = CartItemModel::where('cart_id', $cart->id)
             ->where('product_id', $request->product_id)
             ->firstOrFail();
 
+        $product = ProductsModel::findOrFail($request->product_id);
+
+        // Check stock
+        if ($request->quantity > $product->quantity) {
+
+            return response()->json([
+                'success' => false,
+                'message' => "Only {$product->quantity} item(s) available in stock.",
+                'available_stock' => $product->quantity,
+            ], 422);
+        }
+
         $cartItem->update([
             'qty' => $request->quantity
         ]);
+
         return response()->json([
+            'success' => true,
             'message' => 'Cart updated successfully',
             'item' => $cartItem
         ]);
     }
-
     public function deleteCart($product_id)
     {
         $user_id = Auth::id();

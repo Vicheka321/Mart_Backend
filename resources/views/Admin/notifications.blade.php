@@ -205,7 +205,7 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('notifications.store') }}" method="POST" class="space-y-4 relative">
+                    <form action="{{ route('notifications.store') }}" method="POST" class="space-y-4 relative" id="composeForm">
                         @csrf
 
                         {{-- Target Audience --}}
@@ -269,7 +269,7 @@
                         </div>
 
                         {{-- Image URL --}}
-                        <div class="field-row">
+                        {{-- <div class="field-row">
                             <label class="block text-[10px] font-semibold uppercase tracking-widest
                                           text-gray-400 dark:text-gray-500 mb-2">
                                 Image URL <span class="normal-case font-normal">(optional)</span>
@@ -280,7 +280,7 @@
                                           border border-gray-100 dark:border-gray-700
                                           text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600
                                           focus:outline-none transition-all">
-                        </div>
+                        </div> --}}
 
                         {{-- Schedule --}}
                         <div class="field-row">
@@ -330,7 +330,7 @@
 
                         {{-- Actions --}}
                         <div class="field-row flex items-center gap-2 pt-1">
-                            <button type="submit"
+                            <button type="submit" id="composeSubmitBtn"
                                 class="send-btn action-btn flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
                                        bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500
                                        text-white text-sm font-semibold shadow-lg shadow-violet-500/25
@@ -835,7 +835,7 @@
                 </button>
             </div>
 
-            <form id="editForm" class="px-6 py-5 space-y-4">
+            <form id="editForm" class="px-6 py-5 space-y-4" onsubmit="return false;">
                 @csrf
                 <input type="hidden" id="editId">
 
@@ -957,6 +957,7 @@
     <script>
     /* ════════════════════════════════════════════════════════════════
        NOTIFICATION PAGE — JS
+       (single source of truth — no duplicate/dead code below)
     ════════════════════════════════════════════════════════════════ */
     const CSRF = '{{ csrf_token() }}';
 
@@ -1071,6 +1072,7 @@
     async function submitEdit() {
         const id  = document.getElementById('editId').value;
         const btn = document.querySelector('#editForm button[onclick="submitEdit()"]');
+        const originalBtnHtml = btn.innerHTML;
 
         const payload = {
             title:        document.getElementById('editTitle').value.trim(),
@@ -1078,7 +1080,6 @@
             target:       document.getElementById('editTarget').value,
             image_url:    document.getElementById('editImageUrl').value.trim() || null,
             scheduled_at: document.getElementById('editScheduledAt').value,
-            _method:      'PUT',
         };
 
         if (!payload.title || !payload.message || !payload.scheduled_at) {
@@ -1090,8 +1091,8 @@
         btn.innerHTML = '<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span> Saving…';
 
         try {
-            const res = await fetch(`/admin/notifitions/${id}`, {
-                method: 'POST',
+            const res = await fetch(`/admin/notifications/${id}`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
                 body: JSON.stringify(payload),
             });
@@ -1099,7 +1100,7 @@
 
             if (data.success) {
                 closeEditModal();
-                showToast('Notification updated successfully.', 'success');
+                showToast(data.message || 'Notification updated successfully.', 'success');
                 setTimeout(() => location.reload(), 1200);
             } else {
                 showToast(data.message || 'Update failed.', 'error');
@@ -1108,7 +1109,7 @@
             showToast('Something went wrong.', 'error');
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Save Changes';
+            btn.innerHTML = originalBtnHtml;
         }
     }
 
@@ -1124,20 +1125,20 @@
     async function submitDelete() {
         if (!_deleteId) return;
         const btn = document.querySelector('#deleteModal button[onclick="submitDelete()"]');
+        const originalBtnText = btn.textContent;
         btn.disabled = true;
         btn.textContent = 'Deleting…';
 
         try {
-            const res = await fetch(`/admin/notifitions/${_deleteId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
-                body: JSON.stringify({ _method: 'DELETE' }),
+            const res = await fetch(`/admin/notifications/${_deleteId}`, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': CSRF },
             });
             const data = await res.json();
 
             if (data.success) {
                 closeDeleteModal();
-                showToast('Notification deleted.', 'success');
+                showToast(data.message || 'Notification deleted.', 'success');
                 setTimeout(() => location.reload(), 1200);
             } else {
                 showToast(data.message || 'Delete failed.', 'error');
@@ -1146,7 +1147,7 @@
             showToast('Something went wrong.', 'error');
         } finally {
             btn.disabled = false;
-            btn.textContent = 'Yes, Delete';
+            btn.textContent = originalBtnText;
         }
     }
 
@@ -1155,17 +1156,51 @@
         if (!confirm('Resend this notification?')) return;
 
         try {
-            const res = await fetch(`/admin/notifitions/${id}/resend`, {
+            const res = await fetch(`/admin/notifications/${id}/resend`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
             });
             const data = await res.json();
-            showToast(data.success ? 'Notification resent!' : data.message, data.success ? 'success' : 'error');
+            showToast(data.success ? (data.message || 'Notification resent!') : data.message, data.success ? 'success' : 'error');
             if (data.success) setTimeout(() => location.reload(), 1200);
         } catch {
             showToast('Something went wrong.', 'error');
         }
     }
+
+    /* ── Compose: submit via fetch so we can show a toast on success ── */
+    document.getElementById('composeForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const form = this;
+        const btn  = document.getElementById('composeSubmitBtn');
+        const originalBtnHtml = btn.innerHTML;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span> Sending…';
+
+        try {
+            const res = await fetch(form.action, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+                body: new FormData(form),
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast(data.message || 'Notification sent successfully.', 'success');
+                setTimeout(() => location.reload(), 1200);
+            } else {
+                showToast(data.message || 'Failed to send notification.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalBtnHtml;
+            }
+        } catch {
+            showToast('Something went wrong.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = originalBtnHtml;
+        }
+    });
 
     /* ── Compose: schedule toggle ───────────────────────────────── */
     document.querySelectorAll('input[name="schedule"]').forEach(radio => {
@@ -1200,7 +1235,7 @@
         }
     });
 
-    document.querySelector('form')?.addEventListener('reset', () => {
+    document.getElementById('composeForm')?.addEventListener('reset', () => {
         setTimeout(() => {
             if (charCount) charCount.textContent = '0 / 200';
             const pTitle = document.getElementById('previewTitle');
