@@ -486,52 +486,131 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
+    // public function googleLogin(Request $request)
+    // {
+    //     try {
+    //         $idToken = $request->input('id_token');
+
+    //         if (!$idToken) {
+    //             return response()->json(['error' => 'No ID Token sent'], 400);
+    //         }
+    //         $client = new GoogleClient([
+    //             'client_id' => '105211609304-g4g9f9vfiq268lneii7231cjecq781hr.apps.googleusercontent.com'
+    //         ]);
+
+    //         $payload = $client->verifyIdToken($idToken);
+
+    //         if (!$payload) {
+    //             return response()->json(['error' => 'Invalid ID Token'], 401);
+    //         }
+    //         $name = $payload['name'] ?? 'No name';
+    //         $email = $payload['email'];
+    //         $picture = $payload['picture'] ?? null;
+
+    //         $user = User::firstOrCreate(
+    //             ['email' => $email],
+    //             [
+    //                 'name' => $name,
+    //                 'profile_image_url' => $picture,
+    //             ]
+    //         );
+    //         $token = $user->createToken('auth_token')->plainTextToken;
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'user' => $user,
+    //             'access_token' => $token,
+    //             'token_type' => 'Bearer',
+    //         ]);
+    //     } catch (\Exception $e) {
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $e->getMessage(),
+    //             "raw" => $request->all()
+    //         ], 500);
+    //     }
+    // }
+
+
+
     public function googleLogin(Request $request)
     {
-        try {
-            $idToken = $request->input('id_token');
+        $validator = Validator::make($request->all(), [
+            'id_token' => 'required|string',
+        ]);
 
-            if (!$idToken) {
-                return response()->json(['error' => 'No ID Token sent'], 400);
-            }
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        try {
+
             $client = new GoogleClient([
-                'client_id' => '105211609304-g4g9f9vfiq268lneii7231cjecq781hr.apps.googleusercontent.com'
+                'client_id' => env('GOOGLE_CLIENT_ID'),
             ]);
 
-            $payload = $client->verifyIdToken($idToken);
+            $payload = $client->verifyIdToken($request->id_token);
 
             if (!$payload) {
-                return response()->json(['error' => 'Invalid ID Token'], 401);
+                return response()->json([
+                    'message' => 'Invalid Google Token',
+                ], 401);
             }
-            $name = $payload['name'] ?? 'No name';
-            $email = $payload['email'];
-            $picture = $payload['picture'] ?? null;
 
-            $user = User::firstOrCreate(
-                ['email' => $email],
-                [
-                    'name' => $name,
-                    'profile_image_url' => $picture,
-                ]
-            );
+            $user = User::firstOrNew([
+                'email' => $payload['email'],
+            ]);
+
+            if (!$user->exists) {
+
+                $user->full_name = $payload['name'] ?? '';
+                $user->email = $payload['email'];
+                $user->avatar = $payload['picture'] ?? null;
+
+                // Password random because Google login
+                $user->password = bcrypt(\Illuminate\Support\Str::random(32));
+
+                $user->save();
+
+                // Customer Role
+                $user->assignRole('Customer');
+            }
+
+            // Only Customer login
+            if (!$user->hasRole('Customer')) {
+
+                return response()->json([
+                    'message' => 'Access denied',
+                ], 403);
+            }
+
+            // Delete old token
+            $user->tokens()->delete();
+
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
-                'status' => 'success',
-                'user' => $user,
-                'access_token' => $token,
+                'message' => 'Login successful',
+                'token' => $token,
                 'token_type' => 'Bearer',
+                'user' => $user,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
 
             return response()->json([
-                'status' => 'error',
                 'message' => $e->getMessage(),
-                "raw" => $request->all()
             ], 500);
         }
     }
     public function updateProfile(Request $request)
+
+
+
+
+
     {
         $user = Auth::user();
 

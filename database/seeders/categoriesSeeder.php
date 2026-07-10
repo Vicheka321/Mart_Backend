@@ -46,7 +46,7 @@ class categoriesSeeder extends Seeder
             ],
             [
                 'name' => 'Snacks',
-                'image' => 'https://png.pngtree.com/png-clipart/20250111/original/pngtree-household-cleaning-essentials-set-png-image_19048522.png',
+                'image' => 'https://img.magnific.com/premium-vector/circle-label-hygienic-supplies-cosmetics-department-grocery-store-personal-care-goods_172149-457.jpg?semt=ais_hybrid&w=740&q=80',
             ],
             [
                 'name' => 'Dairy Products',
@@ -66,7 +66,7 @@ class categoriesSeeder extends Seeder
             ],
             [
                 'name' => 'Frozen Foods',
-                'image' => 'https://png.pngtree.com/png-clipart/20231026/original/pngtree-frozen-food-edible-photo-png-image_13432796.png',
+                'image' => 'https://www.coca-cola.com/content/dam/onexp/us/en/brands/coca-cola-original/en_coca-cola-original-taste-20-oz_750x750_v1.jpg',
             ],
             [
                 'name' => 'Bakery',
