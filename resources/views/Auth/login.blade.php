@@ -54,6 +54,13 @@
                 <input type="password" name="password" required class="w-full mt-1 px-4 py-2.5 rounded-lg border border-gray-300 
                            focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
             </div>
+            
+            <div class="flex justify-end">
+                <a href="{{ route('password.request') }}"
+                    class="text-sm text-indigo-600 hover:text-indigo-700 hover:underline">
+                    Forgot Password?
+                </a>
+            </div>
 
             <!-- Button -->
             <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-lg 

@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
         // Admin
         // ==========================
         $admin = User::updateOrCreate(
-            ['email' => 'admin2@gmail.com'],
+            ['email' => 'longvicheka009@gmail.com'],
             [
                 'full_name' => 'Admin User',
                 'phone' => '012345679',
@@ -52,15 +52,16 @@ class UserSeeder extends Seeder
         // ==========================
         // Staff
         // ==========================
-        $staff = User::updateOrCreate(
-            ['email' => 'staff@gmail.com'],
-            [
-                'full_name' => 'Staff User',
-                'phone' => '012345681',
-                'password' => Hash::make('11112222'),
-            ]
-        );
-        $staff->syncRoles(['Staff']);
+        // $staff = User::updateOrCreate(
+        //     ['email' => 'staff@gmail.com'],
+        //     [
+        //         'full_name' => 'Staff User',
+        //         'phone' => '012345681',
+        //         'password' => Hash::make('11112222'),
+        //     ]
+        // );
+        // $staff->syncRoles(['Staff']);
+        
 
         // ==========================
         // Demo Customer

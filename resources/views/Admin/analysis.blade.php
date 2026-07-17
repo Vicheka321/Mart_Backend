@@ -76,7 +76,8 @@
             <div class="relative w-56">
                 <select
                     name="range"
-                    onchange="this.form.submit()"
+                    id="rangeSelect"
+                    
                     class="w-full appearance-none rounded-xl border border-gray-200 dark:border-gray-700
                         bg-white dark:bg-gray-800
                         px-4 py-3 pr-11
@@ -152,7 +153,7 @@
                         class="text-xs rounded-xl border border-gray-200 dark:border-gray-600
                                bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200
                                px-3 py-2 shadow-sm outline-none focus:ring-2 focus:ring-indigo-500">
-                    <input type="hidden" name="range" value="custom">
+                    {{-- <input type="hidden" name="range" value="custom"> --}}
                     <button type="submit"
                         class="action-btn px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700
                                text-white text-xs font-semibold shadow-sm shadow-indigo-500/20 transition-colors">
@@ -666,20 +667,36 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Custom date toggle
-        document.querySelectorAll('[name="range"]').forEach(btn => {
-            if (btn.tagName === 'BUTTON') {
-                btn.addEventListener('click', function () {
-                    const box = document.getElementById('customDateFields');
-                    if (this.value === 'custom') {
-                        box.classList.remove('hidden');
-                        box.classList.add('flex');
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const range = document.getElementById('rangeSelect');
+                const custom = document.getElementById('customDateFields');
+
+                function toggleCustom() {
+
+                    if (range.value === 'custom') {
+                        custom.classList.remove('hidden');
+                        custom.classList.add('flex');
                     } else {
-                        box.classList.add('hidden');
-                        box.classList.remove('flex');
+                        custom.classList.add('hidden');
+                        custom.classList.remove('flex');
                     }
+                }
+
+                // Show custom fields on page load
+                toggleCustom();
+
+                range.addEventListener('change', function () {
+
+                    if (this.value === 'custom') {
+                        toggleCustom();
+                        return;
+                    }
+
+                    this.form.submit();
                 });
-            }
-        });
+
+            });
 
         document.addEventListener('DOMContentLoaded', function () {
             const isDark   = document.documentElement.classList.contains('dark');

@@ -42,6 +42,18 @@ Route::get('/admin', [AdminController::class, 'index'])
     ->middleware('auth')
     ->name('admin.entry');
 
+Route::get('/forgot-password', [AdminController::class, 'showForgotPasswordForm'])
+    ->name('password.request');
+
+Route::post('/forgot-password', [AdminController::class, 'sendResetLink'])
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [AdminController::class, 'showResetPasswordForm'])
+    ->name('password.reset');
+
+Route::post('/reset-password', [AdminController::class, 'resetPassword'])
+    ->name('password.update');
+
 Route::prefix('admin')
     ->middleware(['auth', 'permission:access_admin_panel'])
     ->group(function () {

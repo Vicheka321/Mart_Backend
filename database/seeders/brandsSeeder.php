@@ -62,7 +62,7 @@ class brandsSeeder extends Seeder
         $brands = [
             [
                 'name' => 'Coca Cola',
-                'image' => 'https://www.coca-cola.com/content/dam/onexp/us/en/brands/coca-cola-original/en_coca-cola-original-taste-20-oz_750x750_v1.jpg',
+                'image' => 'https://m.media-amazon.com/images/I/51Bp30CR3IL.jpgj',
             ],
             [
                 'name' => 'Pepsi',

@@ -8,6 +8,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\DeviceToken;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Notifications\AdminResetPasswordNotification;
 
 class User extends Authenticatable
 {
@@ -76,5 +77,13 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(NotificationUser::class);
+    }
+
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(
+            new AdminResetPasswordNotification($token)
+        );
     }
 }

@@ -173,7 +173,7 @@ class AnalysisController extends Controller
             ->take(5)
             ->get();
 
-  
+
         /*
         |--------------------------------------------------------------------------
         | Payment Methods Breakdown
@@ -392,16 +392,16 @@ class AnalysisController extends Controller
                 break;
 
             case 'custom':
-                if ($request->filled('start_date') && $request->filled('end_date')) {
-                    $startDate = Carbon::parse($request->start_date)->startOfDay();
-                    $endDate = Carbon::parse($request->end_date)->endOfDay();
-                    $label = 'Custom Range';
-                } else {
-                    $startDate = now()->subDays(29)->startOfDay();
-                    $endDate = now()->endOfDay();
-                    $label = 'Last 30 Days';
-                    $range = '30d';
-                }
+
+                $request->validate([
+                    'start_date' => 'required|date',
+                    'end_date'   => 'required|date|after_or_equal:start_date',
+                ]);
+
+                $startDate = Carbon::parse($request->start_date)->startOfDay();
+                $endDate   = Carbon::parse($request->end_date)->endOfDay();
+                $label = 'Custom Range';
+
                 break;
 
             default:

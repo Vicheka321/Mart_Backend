@@ -590,7 +590,9 @@
             </div>
             <span class="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0 animate-pulse"></span>
         `;
-            div.onclick = () => (window.location.href = `/admin/orders/${order.id}`);
+            // div.onclick = () => (window.location.href = `/admin/orders/${order.id}`);
+            div.onclick = () => (window.location.href = `/admin/orders`);
+
             prepend ? list.prepend(div) : list.appendChild(div);
         };
 

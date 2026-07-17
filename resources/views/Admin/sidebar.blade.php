@@ -471,9 +471,9 @@
                     </p>
 
                     <div class="nav-item">
-                        <a href="{{ route('notifitions.index') }}"
+                        <a href="{{ route('notifications.index') }}"
                             class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                      {{ request()->routeIs('notifitions.*')
+                                      {{ request()->routeIs('notifications.*')
                 ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                             <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
