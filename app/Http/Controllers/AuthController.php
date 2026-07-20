@@ -182,6 +182,50 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
+    // public function forgotPassword(Request $request)
+    // {
+    //     $request->validate([
+    //         'login' => 'required'
+    //     ]);
+
+    //     $field = filter_var($request->login, FILTER_VALIDATE_EMAIL)
+    //         ? 'email'
+    //         : 'phone';
+
+    //     $user = User::where($field, $request->login)->first();
+
+    //     if (!$user) {
+    //         return response()->json([
+    //             'message' => 'User not found'
+    //         ], 404);
+    //     }
+
+    //     $otp = random_int(100000, 999999);
+
+    //     Otp::updateOrCreate(
+    //         [$field => $request->login],
+    //         [
+    //             'otp' => $otp,
+    //             'expires_at' => now()->addMinutes(5),
+    //         ]
+    //     );
+
+    //     if ($field === 'email') {
+    //         Mail::to($request->login)
+    //             ->queue(new SendOtpMail($otp));
+    //     } else {
+    //         // $this->sms->sendSms(
+    //         //     $request->login,
+    //         //     "Your reset OTP is {$otp}"
+    //         // );
+    //     }
+
+    //     return response()->json([
+    //         'message' => 'OTP sent successfully'
+    //     ]);
+    // }
+
+
     public function forgotPassword(Request $request)
     {
         $request->validate([
@@ -192,7 +236,18 @@ class AuthController extends Controller
             ? 'email'
             : 'phone';
 
-        $user = User::where($field, $request->login)->first();
+        $login = $request->login;
+
+        if ($field === 'phone') {
+
+            $login = preg_replace('/\D/', '', $login);
+
+            if (str_starts_with($login, '0')) {
+                $login = '855' . substr($login, 1);
+            }
+        }
+
+        $user = User::where($field, $login)->first();
 
         if (!$user) {
             return response()->json([
@@ -203,7 +258,7 @@ class AuthController extends Controller
         $otp = random_int(100000, 999999);
 
         Otp::updateOrCreate(
-            [$field => $request->login],
+            [$field => $login], 
             [
                 'otp' => $otp,
                 'expires_at' => now()->addMinutes(5),
@@ -211,13 +266,14 @@ class AuthController extends Controller
         );
 
         if ($field === 'email') {
-            Mail::to($request->login)
-                ->queue(new SendOtpMail($otp));
+
+            Mail::to($login)->queue(new SendOtpMail($otp));
         } else {
-            // $this->sms->sendSms(
-            //     $request->login,
-            //     "Your reset OTP is {$otp}"
-            // );
+
+            $this->sms->sendSms(
+                $login,
+                "Your reset OTP is {$otp}"
+            );
         }
 
         return response()->json([
@@ -225,18 +281,38 @@ class AuthController extends Controller
         ]);
     }
     public function verifyResetOtp(Request $request)
+
+
+
+
     {
         $request->validate([
             'login' => 'required',
             'otp' => 'required',
         ]);
 
+        // $field = filter_var($request->login, FILTER_VALIDATE_EMAIL)
+        //     ? 'email'
+        //     : 'phone';
+
+        // $verify = Otp::where($field, $request->login)
+        //     ->first();
         $field = filter_var($request->login, FILTER_VALIDATE_EMAIL)
             ? 'email'
             : 'phone';
 
-        $verify = Otp::where($field, $request->login)
-            ->first();
+        $login = $request->login;
+
+        if ($field === 'phone') {
+
+            $login = preg_replace('/\D/', '', $login);
+
+            if (str_starts_with($login, '0')) {
+                $login = '855' . substr($login, 1);
+            }
+        }
+
+        $verify = Otp::where($field, $login)->first();
 
         if (!$verify) {
             return response()->json([
@@ -435,11 +511,24 @@ class AuthController extends Controller
             'otp'   => 'required'
         ]);
 
+
         $field = filter_var($request->login, FILTER_VALIDATE_EMAIL)
             ? 'email'
             : 'phone';
 
-        $verify = Otp::where($field, $request->login)->first();
+        $login = $request->login;
+
+        if ($field === 'phone') {
+
+            $login = preg_replace('/\D/', '', $login);
+
+            if (str_starts_with($login, '0')) {
+                $login = '855' . substr($login, 1);
+            }
+        }
+
+        $verify = Otp::where($field, $login)->first();
+
 
         if (!$verify) {
             return response()->json([

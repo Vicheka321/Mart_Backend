@@ -42,7 +42,7 @@ class categoriesSeeder extends Seeder
         $categories = [
             [
                 'name' => 'Beverages',
-                'image' => 'https://png.pngtree.com/png-clipart/20250111/original/pngtree-household-cleaning-essentials-set-png-image_19048522.png',
+                'image' => 'https://thumbs.dreamstime.com/b/fresh-red-apple-fruit-isolated-white-background-130051566.jpg',
             ],
             [
                 'name' => 'Snacks',

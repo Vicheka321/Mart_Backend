@@ -18,7 +18,7 @@ use App\Http\Controllers\PushNotificationController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
-
+use App\Services\InfobipService;
 /*
 |--------------------------------------------------------------------------
 | Public / Auth
@@ -28,6 +28,7 @@ use App\Http\Controllers\UserRoleController;
 Route::get('/', function () {
     return view('Auth.login');
 });
+
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -513,4 +514,7 @@ Route::prefix('admin')
         Route::patch('/customers/{user}', [CustomersController::class, 'updateCustomer'])
             ->middleware('permission:view_customers')
             ->name('admin.updateCustomer');
+
+
+
     });
