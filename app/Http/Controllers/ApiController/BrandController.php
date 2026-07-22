@@ -10,29 +10,86 @@ use Carbon\Carbon;
 
 class BrandController extends Controller
 {
+
     // public function index()
     // {
-    //     return BrandModel::all();
+    //     $brands = BrandModel::with([
+    //         'products.firstImage'
+    //     ])->get();
+
+    //     return response()->json($brands);
     // }
 
     public function index()
     {
         $brands = BrandModel::with([
-            'products.firstImage'
+            'products.firstImage',
+            'products.promotions',
         ])->get();
+
+        $brands->each(function ($brand) {
+
+            $brand->products->transform(function ($product) {
+
+                $promotion = $product->promotions()
+                    ->where('status', true)
+                    ->where(function ($q) {
+                        $q->whereNull('start_date')
+                            ->orWhere('start_date', '<=', now());
+                    })
+                    ->where(function ($q) {
+                        $q->whereNull('end_date')
+                            ->orWhere('end_date', '>=', now()->toDateString());
+                    })
+                    ->orderByDesc('discount_value')
+                    ->first();
+
+                $salePrice = (float) $product->sale_price;
+                $finalPrice = $salePrice;
+                $discount = null;
+
+                if ($promotion) {
+
+                    if ($promotion->discount_type === 'percent') {
+
+                        $finalPrice = $salePrice -
+                            ($salePrice * $promotion->discount_value / 100);
+
+                        if (!is_null($promotion->max_discount)) {
+
+                            $discountAmount = min(
+                                $salePrice - $finalPrice,
+                                $promotion->max_discount
+                            );
+
+                            $finalPrice = $salePrice - $discountAmount;
+                        }
+                    } else {
+
+                        $finalPrice = $salePrice - $promotion->discount_value;
+                    }
+
+                    $finalPrice = max(0, $finalPrice);
+
+                    $discount = [
+                        'discount_type' => $promotion->discount_type,
+                        'discount_value' => $promotion->discount_value,
+                    ];
+                }
+
+                $product->sale_price = number_format($salePrice, 2, '.', '');
+                $product->final_price = number_format($finalPrice, 2, '.', '');
+                $product->discount = $discount;
+
+                unset($product->promotions);
+
+                return $product;
+            });
+        });
 
         return response()->json($brands);
     }
-    // public function getProductById($id)
-    // {
-    //     $brand = BrandModel::find($id);
-    //     $products = ProductsModel::where('brand_id', $brand->id)->get();
-    //     $brand -> products = $products;
-    //     if (!$brand) {
-    //         return response()->json(['message' => 'Brand not found'], 404);
-    //     }
-    //     return response()->json($brand);
-    // }
+
 
     public function getProductsByBrand($id)
     {

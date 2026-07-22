@@ -8,100 +8,51 @@ use Carbon\Carbon;
 
 class brandsSeeder extends Seeder
 {
-    // public function run(): void
-    // {
-    //     $data = [
-    //         [
-    //             'name' => 'Coca-Cola',
-    //             'country' => 'USA',
-    //             'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/brands/1.jpg'
-    //         ],
-    //         [
-    //             'name' => 'Pepsi',
-    //             'country' => 'USA',
-    //             'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/brands/2.jpg'
-    //         ],
-    //         [
-    //             'name' => 'Nestlé',
-    //             'country' => 'Switzerland',
-    //             'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/brands/3.jpg'
-    //         ],
-    //         [
-    //             'name' => 'Unilever',
-    //             'country' => 'United Kingdom',
-    //             'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/brands/4.jpg'
-    //         ],
-    //         [
-    //             'name' => 'Kellogg\'s',
-    //             'country' => 'USA',
-    //             'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/brands/5.avif'
-    //         ]
-    //     ];
-
-    //     foreach ($data as $item) {
-    //         BrandModel::create($item);
-    //     }
-    // }
     public function run(): void
     {
-        // Create 50 fake categories with random images
-        // for ($i = 1; $i <= 50; $i++) {
-        //     $createdAt = Carbon::now()->subDays(rand(1, 730));
-
-        //     BrandModel::create([
-        //         'name' => fake()->unique()->words(rand(1, 3), true),
-
-        //         // Fake image URL
-        //         'image' => 'https://picsum.photos/seed/brand' . $i . '/600/600',
-
-        //         'created_at' => $createdAt,
-        //         'updated_at' => $createdAt,
-        //     ]);
-        // }
-
         $brands = [
             [
                 'name' => 'Coca Cola',
-                'image' => 'https://m.media-amazon.com/images/I/51Bp30CR3IL.jpgj',
+                'image' => 'https://www.coca-cola.com/content/dam/onexp/kh/en/brands/coca-cola/coca-cola-original-taste.png/width1338.png',
             ],
             [
                 'name' => 'Pepsi',
-                'image' => 'https://digitalcontent.api.tesco.com/v2/media/ghs/ecc7a153-e6ab-4701-a6b2-5fbda041c452/593ca84c-7908-4948-8fb8-f00ee3c4c389_1163419905.jpeg?h=960&w=960',
+                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQG23HKqdTKzlJ_jbPvI9SVuloknfL4e76vJZfLBoFBuaFweIh1h0QtGElH&s=10',
             ],
             [
-                'name' => 'Nestle',
-                'image' => 'https://www.monpetitbresil.com/cdn/shop/collections/Nestle-logo_1.png?v=1661395847',
+                'name' => 'Eau Kulen',
+                'image' => 'https://www.fstwmart.com/upload/product/202210051327170.jpg',
             ],
             [
-                'name' => 'Oishi',
-                'image' => 'https://corinthiandistributors.com/wp-content/uploads/2023/01/GEM230117_23-scaled.jpg',
+                'name' => 'Buldak Noodle (Black)',
+                'image' => 'https://i5.walmartimages.com/seo/Buldak-Artifical-Spicy-Chicken-Flavour-Ramen-Noodles-700g_c4afcca3-9f77-4b18-837e-d2314e4bdf4f.c3ca58e24148ede077a2381258042229.jpeg',
             ],
             [
-                'name' => 'Milo',
-                'image' => 'https://bigpharmacy.com.my/cdn/shop/files/10017410EA_20260126112411.jpg?v=1770877809',
+                'name' => 'Buldak Noodle (Pink)',
+                'image' => 'https://i5.walmartimages.com/seo/Samyang-Spicy-Chicken-Noodle-Carbonara-Flavor-Ramen-4-58-oz-5-Pack_062ca712-fd56-43fc-af93-84b9f38fc873.0f0d66a110f8f69aed8255038bb82628.jpeg',
             ],
             [
-                'name' => 'Nescafe',
-                'image' => 'https://turcamart.com/cdn/shop/files/Nescafe_3_in_1_Original_17.5_G.jpg?v=1756378021',
+                'name' => 'Buldak Noodle (Red spicy x2)',
+                'image' => 'https://i5.walmartimages.com/seo/3-7-oz-PACK-OF-1-Samyang-Buldak-2X-Spicy-Hot-Chicken-Flavor-Instant-Ramen_31104ec4-00ed-4f71-afe0-3d19d1c97e9c.7c536707010b20e1c45d2946e1416429.jpeg',
             ],
             [
-                'name' => 'Red Bull',
-                'image' => 'https://m.media-amazon.com/images/I/51Bp30CR3IL.jpg',
+                'name' => 'Julies Cheese Sandwich',
+                'image' => 'https://daganghalal.blob.core.windows.net/19165/Product/julies-cheese-sandwich-168g-1723105111431.jpg',
             ],
             [
-                'name' => 'Tiger',
-                'image' => 'https://upload.wikimedia.org/wikipedia/en/6/60/Tiger_Beer_logo.png',
+                'name' => 'Koreno Noddle',
+                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSixnJJA-He5vQ9ihbGI8LIay8h5mfEj-7xoJqrtSZ8kIE3Xlq6KiF-jEX4&s=10',
             ],
             [
                 'name' => 'Ajinomoto',
-                'image' => 'https://www.thewasabicompany.co.uk/cdn/shop/files/ajinomoto-msg-seasoning-powder-1kg_1200x1200.webp?v=1743506642',
+                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTemtVFUn6-geEUIACVHkTF2K0b7CrC8uzH1lghKGu937tmA421dNjKSCs&s=10',
             ],
             [
-                'name' => 'Anchor',
-                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIHonOtqP3g0mNHg9DqvWSuqnqnj3RxxMikQ&s',
+                'name' => 'Mistine ACNE CLEAR Facial Foam',
+                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgtwPSsUa6UnBH78E2jhBdV8I3GdCOFUah44CedBu552kJstd-I0-8nl-M&s=10',
             ],
         ];
-
+        
         foreach ($brands as $brand) {
 
             $createdAt = Carbon::now()->subDays(rand(1, 730));

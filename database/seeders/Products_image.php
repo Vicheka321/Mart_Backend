@@ -26,13 +26,6 @@ class Products_image extends Seeder
             ['product_id'=>10,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/10.avif'],
             ['product_id'=>10,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/11.webp'],
             ['product_id'=>10,'image_url'=>'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/12.webp'],
-
-
-        
-            
-        
-
-
         ];
         
         foreach($data as $row){

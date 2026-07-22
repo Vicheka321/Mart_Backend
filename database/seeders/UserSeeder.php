@@ -61,7 +61,7 @@ class UserSeeder extends Seeder
         //     ]
         // );
         // $staff->syncRoles(['Staff']);
-        
+
 
         // ==========================
         // Demo Customer
@@ -171,6 +171,7 @@ class UserSeeder extends Seeder
                 'email' => 'customer' . $i . '@gmail.com',
                 'phone' => $phone,
                 'password' => Hash::make('11112222'),
+                'avatar' => 'https://i.pravatar.cc/300?img=' . rand(1, 70),
             ]);
 
             $user->syncRoles(['Customer']);

@@ -183,9 +183,17 @@ class TelegramService
             "📍 *Address:*\n" .
             "{$order->delivery_address}\n\n" .
 
-            "🗺️ [Open Location]({$mapUrl})\n\n" .
+            "🗺️ [Open Location]({$mapUrl})\n\n";
+        if (filled($order->note)) {
+            $text .=
+                "📝 *Order Note:*\n" .
+                "{$order->note}\n\n";
+        }
 
-            "━━━━━━━━━━━━━━━━━━\n\n";
+        $text .= "━━━━━━━━━━━━━━━━━━\n\n";
+
+
+        "━━━━━━━━━━━━━━━━━━\n\n";
 
         if ($order->promotion_discount > 0) {
 
@@ -271,7 +279,7 @@ class TelegramService
         $next = OrderModel::with([
             'user',
             'payment',
-            'orderItems.product'
+            'orderItems.product.firstImage'
         ])
             ->where('status', 'pending')
             ->where('is_sent', false)
@@ -324,9 +332,17 @@ class TelegramService
             "📍 *Delivery Address:*\n" .
             "{$next->delivery_address}\n\n" .
 
-            "🗺️ [Open Location]({$mapUrl})\n\n" .
+            "🗺️ [Open Location]({$mapUrl})\n\n";
 
-            "━━━━━━━━━━━━━━━\n\n";
+        if (filled($next->note)) {
+            $message .=
+                "📝 *Order Note:*\n" .
+                "{$next->note}\n\n";
+        }
+
+        $message .= "━━━━━━━━━━━━━━━\n\n";
+
+        "━━━━━━━━━━━━━━━\n\n";
 
         if ($next->promotion_discount > 0) {
 
@@ -371,6 +387,7 @@ class TelegramService
 
             "📦 *Status:* Pending";
 
+        $this->sendProductImages($next);
         $this->send(
             $message,
             $next

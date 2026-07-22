@@ -347,7 +347,6 @@ class OrdersController extends Controller
                         round($discount, 2),
                     ]);
                 }
-
             }
             $payment = PaymentModel::create([
                 'order_id' => $order->id,
@@ -386,24 +385,56 @@ class OrdersController extends Controller
                 "📍 *Address:*\n" .
                 "{$order->delivery_address}\n\n" .
 
-                "🗺️ [Open Location]({$mapUrl})\n\n" .
+                "🗺️ [Open Location]({$mapUrl})\n\n";
 
+            // Show order note if available
+            if (filled($order->note)) {
+                $message .=
+                    "📝 *Order Note:*\n" .
+                    "{$order->note}\n\n";
+            }
+
+            // Products
+            $message .=
                 "🛒 *Products*\n\n" .
 
                 $productsText .
 
-                "━━━━━━━━━━━━━━━\n" .
+                "━━━━━━━━━━━━━━━\n";
 
-                "💰 *Total:* $" .
-                number_format($order->total_amount, 2) .
-                "\n\n" .
+            // Promotion Discount
+            if ($order->promotion_discount > 0) {
+                $message .=
+                    "🎁 *Promotion Discount:* -$" .
+                    number_format($order->promotion_discount, 2) . "\n";
+            }
+
+            // Coupon Discount
+            if ($order->coupon_discount > 0) {
+
+                $message .= "🏷️ *Coupon";
+
+                if ($order->coupon_code) {
+                    $message .= " ({$order->coupon_code})";
+                }
+
+                $message .=
+                    ":* -$" .
+                    number_format($order->coupon_discount, 2) . "\n";
+            }
+
+            // Total, Payment & Status
+            $message .=
+                "\n💰 *Total:* $" .
+                number_format($order->total_amount, 2) . "\n\n" .
 
                 "💳 *Payment:* " .
-                strtoupper($order->payment_method) .
-                "\n\n" .
+                strtoupper(
+                    $order->payment->payment_method
+                        ?? $order->payment_method
+                ) . "\n\n" .
 
                 "📦 *Status:* Pending";
-
             if ($request->payment_method == 'cash') {
 
                 // CartItemModel::where(
@@ -461,7 +492,8 @@ class OrdersController extends Controller
                     $firstPending &&
                     $firstPending->id == $order->id
                 ) {
-
+                    $telegram = app(TelegramService::class);
+                    $telegram->sendProductImages($order);
                     app(TelegramService::class)->send(
                         $message,
                         $order
