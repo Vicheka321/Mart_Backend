@@ -254,6 +254,7 @@ class CartController extends Controller
             'item' => $cartItem
         ]);
     }
+    
     public function deleteCart($product_id)
     {
         $user_id = Auth::id();
