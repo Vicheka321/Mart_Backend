@@ -67,4 +67,9 @@ return [
         'api_key'  => env('INFOBIP_API_KEY'),
         'sender'   => env('INFOBIP_SENDER'),
     ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+    ],
 ];

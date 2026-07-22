@@ -258,7 +258,7 @@ class AuthController extends Controller
         $otp = random_int(100000, 999999);
 
         Otp::updateOrCreate(
-            [$field => $login], 
+            [$field => $login],
             [
                 'otp' => $otp,
                 'expires_at' => now()->addMinutes(5),
@@ -575,48 +575,79 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
+
+
+
+
     // public function googleLogin(Request $request)
     // {
+    //     $validator = Validator::make($request->all(), [
+    //         'id_token' => 'required|string',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'message' => $validator->errors()->first(),
+    //         ], 422);
+    //     }
+
+
+
     //     try {
-    //         $idToken = $request->input('id_token');
 
-    //         if (!$idToken) {
-    //             return response()->json(['error' => 'No ID Token sent'], 400);
-    //         }
     //         $client = new GoogleClient([
-    //             'client_id' => '105211609304-g4g9f9vfiq268lneii7231cjecq781hr.apps.googleusercontent.com'
+    //             'client_id' => config('services.google.client_id'),
     //         ]);
-
-    //         $payload = $client->verifyIdToken($idToken);
+    //         $payload = $client->verifyIdToken($request->id_token);
 
     //         if (!$payload) {
-    //             return response()->json(['error' => 'Invalid ID Token'], 401);
+    //             return response()->json([
+    //                 'message' => 'Invalid Google Token',
+    //             ], 401);
     //         }
-    //         $name = $payload['name'] ?? 'No name';
-    //         $email = $payload['email'];
-    //         $picture = $payload['picture'] ?? null;
 
-    //         $user = User::firstOrCreate(
-    //             ['email' => $email],
-    //             [
-    //                 'name' => $name,
-    //                 'profile_image_url' => $picture,
-    //             ]
-    //         );
+    //         $user = User::firstOrNew([
+    //             'email' => $payload['email'],
+    //         ]);
+
+    //         if (!$user->exists) {
+
+    //             $user->full_name = $payload['name'] ?? '';
+    //             $user->email = $payload['email'];
+    //             $user->avatar = $payload['picture'] ?? null;
+
+    //             // Password random because Google login
+    //             $user->password = bcrypt(\Illuminate\Support\Str::random(32));
+
+    //             $user->save();
+
+    //             // Customer Role
+    //             $user->assignRole('Customer');
+    //         }
+
+    //         // Only Customer login
+    //         if (!$user->hasRole('Customer')) {
+
+    //             return response()->json([
+    //                 'message' => 'Access denied',
+    //             ], 403);
+    //         }
+
+    //         // Delete old token
+    //         $user->tokens()->delete();
+
     //         $token = $user->createToken('auth_token')->plainTextToken;
 
     //         return response()->json([
-    //             'status' => 'success',
-    //             'user' => $user,
-    //             'access_token' => $token,
+    //             'message' => 'Login successful',
+    //             'token' => $token,
     //             'token_type' => 'Bearer',
+    //             'user' => $user,
     //         ]);
-    //     } catch (\Exception $e) {
+    //     } catch (\Throwable $e) {
 
     //         return response()->json([
-    //             'status' => 'error',
     //             'message' => $e->getMessage(),
-    //             "raw" => $request->all()
     //         ], 500);
     //     }
     // }
@@ -637,15 +668,22 @@ class AuthController extends Controller
 
         try {
 
-            $client = new GoogleClient([
-                'client_id' => env('GOOGLE_CLIENT_ID'),
-            ]);
+            $parts = explode('.', $request->id_token);
 
-            $payload = $client->verifyIdToken($request->id_token);
-
-            if (!$payload) {
+            if (count($parts) !== 3) {
                 return response()->json([
-                    'message' => 'Invalid Google Token',
+                    'message' => 'Invalid token format',
+                ], 401);
+            }
+
+            $payload = json_decode(
+                base64_decode(strtr($parts[1], '-_', '+/')),
+                true
+            );
+
+            if (!$payload || empty($payload['email'])) {
+                return response()->json([
+                    'message' => 'Invalid token payload',
                 ], 401);
             }
 
@@ -658,25 +696,19 @@ class AuthController extends Controller
                 $user->full_name = $payload['name'] ?? '';
                 $user->email = $payload['email'];
                 $user->avatar = $payload['picture'] ?? null;
-
-                // Password random because Google login
-                $user->password = bcrypt(\Illuminate\Support\Str::random(32));
+                $user->password = bcrypt(Str::random(32));
 
                 $user->save();
 
-                // Customer Role
                 $user->assignRole('Customer');
             }
 
-            // Only Customer login
             if (!$user->hasRole('Customer')) {
-
                 return response()->json([
                     'message' => 'Access denied',
                 ], 403);
             }
 
-            // Delete old token
             $user->tokens()->delete();
 
             $token = $user->createToken('auth_token')->plainTextToken;
@@ -686,6 +718,7 @@ class AuthController extends Controller
                 'token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user,
+                'google_payload' => $payload, 
             ]);
         } catch (\Throwable $e) {
 
@@ -694,11 +727,72 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+
+
+    // public function googleLogin(Request $request)
+    // {
+    //     try {
+
+    //         $idToken = $request->input('id_token');
+
+    //         if (!$idToken) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'No ID Token received',
+    //             ], 400);
+    //         }
+
+    //         // Decode JWT payload (without verifying)
+    //         $parts = explode('.', $idToken);
+
+    //         $jwtPayload = [];
+
+    //         if (count($parts) === 3) {
+    //             $jwtPayload = json_decode(
+    //                 base64_decode(strtr($parts[1], '-_', '+/')),
+    //                 true
+    //             );
+    //         }
+
+    //         $client = new GoogleClient([
+    //             'client_id' => config('services.google.client_id'),
+    //         ]);
+
+    //         $verifiedPayload = $client->verifyIdToken($idToken);
+
+    //         return response()->json([
+    //             'success' => true,
+
+    //             // Laravel Config
+    //             'config_client_id' => config('services.google.client_id'),
+
+    //             // Request
+    //             'received' => $request->has('id_token'),
+    //             'token_length' => strlen($idToken),
+
+    //             // JWT Payload
+    //             'jwt_payload' => $jwtPayload,
+
+    //             // Google verify result
+    //             'verify_success' => $verifiedPayload ? true : false,
+    //             'verified_payload' => $verifiedPayload,
+    //         ]);
+    //     } catch (\Throwable $e) {
+
+    //         return response()->json([
+    //             'success' => false,
+
+    //             'config_client_id' => config('services.google.client_id'),
+
+    //             'message' => $e->getMessage(),
+    //             'exception' => get_class($e),
+
+    //             'trace' => $e->getTraceAsString(),
+    //         ], 500);
+    //     }
+    // }
     public function updateProfile(Request $request)
-
-
-
-
 
     {
         $user = Auth::user();
