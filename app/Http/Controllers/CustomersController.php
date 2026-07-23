@@ -239,7 +239,7 @@ class CustomersController extends Controller
             ];
         });
 
-        return view('admin.customers', compact(
+        return view('Admin.customers', compact(
             'customers',
             'totalCustomers',
             'activeCustomers',
@@ -529,7 +529,7 @@ class CustomersController extends Controller
         $activeCustomers = $customers->filter(fn($c) => $c->orders_count > 0)->count();
         $vipMembers = $customers->filter(fn($c) => $c->total_spent > 1000)->count();
 
-        $pdf = Pdf::loadView('admin.PDF.customers_pdf', compact(
+        $pdf = Pdf::loadView('Admin.PDF.customers_pdf', compact(
             'customers',
             'totalCustomers',
             'activeCustomers',

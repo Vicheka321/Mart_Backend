@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\SendOtpMail;
 use App\Models\Otp;
-use App\Models\user;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Google\Client as GoogleClient;
 use Illuminate\Support\Facades\Auth;

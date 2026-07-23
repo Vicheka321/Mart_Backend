@@ -37,7 +37,7 @@ class CouponController extends Controller
         // - status = false (0)
         $inactiveCoupons = CouponModel::where('status', false)->count();
 
-        return view('admin.coupons', compact(
+        return view('Admin.coupons', compact(
             'coupons',
             'totalCoupons',
             'activeCoupons',

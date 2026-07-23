@@ -4,7 +4,7 @@ namespace App\Http\Controllers\ApiController;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\banners;
+use App\Models\Banners;
 
 class BannerController extends Controller
 {

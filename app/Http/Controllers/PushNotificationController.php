@@ -36,7 +36,7 @@ class PushNotificationController extends Controller
         $notifications = Notification::latest()->get();
 
         return view(
-            'admin.notifications',
+            'Admin.notifications',
             compact(
                 'users',
                 'stats',

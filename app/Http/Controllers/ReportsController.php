@@ -607,7 +607,7 @@ class ReportsController extends Controller
             'keyword'        => $request->input('keyword'),
         ];
 
-        $pdf = Pdf::loadView('admin.PDF.sales-pdf', [
+        $pdf = Pdf::loadView('Admin.PDF.sales-pdf', [
             'rows'      => $rows,
             'summary'   => $summary,
             'filters'   => $filters,
@@ -740,7 +740,7 @@ class ReportsController extends Controller
                 : 0),
         ];
 
-        return view('admin.reports.partials.sales-details-modal-body', compact('orders', 'summary', 'targetDate'));
+        return view('Admin.reports.partials.sales-details-modal-body', compact('orders', 'summary', 'targetDate'));
     }
     public function exportSalesDetailsPdf(Request $request, $date)
     {
@@ -845,7 +845,7 @@ class ReportsController extends Controller
         ];
 
         $pdf = Pdf::loadView(
-            'admin.PDF.sales-details-pdf',
+            'Admin.PDF.sales-details-pdf',
             [
 
                 'orders' => $orders,
@@ -911,7 +911,7 @@ class ReportsController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.reports.dashboard', compact(
+        return view('Admin.reports.dashboard', compact(
             'range',
             'startDate',
             'endDate',
@@ -1085,13 +1085,13 @@ class ReportsController extends Controller
         /* ── 9. AJAX → return partial only ─────────────────────────── */
         if ($request->ajax()) {
             return view(
-                'admin.reports.partials.sales-table',
+                'Admin.reports.partials.sales-table',
                 $viewData
             )->render();
         }
 
         /* ── 10. Full-page load ─────────────────────────────────────── */
-        return view('admin.reports.sales', $viewData);
+        return view('Admin.reports.sales', $viewData);
     }
 
 
@@ -1362,7 +1362,7 @@ class ReportsController extends Controller
             ->limit(10)
             ->get();
 
-        return view('admin.reports.orders', compact(
+        return view('Admin.reports.orders', compact(
 
             'orders',
 
@@ -1420,7 +1420,7 @@ class ReportsController extends Controller
         ]);
 
         return view(
-            'admin.reports.partials.order-details',
+            'Admin.reports.partials.order-details',
             compact('order')
         );
     }
@@ -1536,7 +1536,7 @@ class ReportsController extends Controller
             ->get();
 
         $pdf = Pdf::loadView(
-            'admin.PDF.orders_report_pdf',
+            'Admin.PDF.orders_report_pdf',
             compact('orders')
         )->setPaper('A4', 'landscape');
 
@@ -1798,7 +1798,7 @@ class ReportsController extends Controller
 
         $brands = BrandModel::orderBy('name')->get();
 
-        return view('admin.reports.products', compact(
+        return view('Admin.reports.products', compact(
 
             'products',
 
@@ -2009,7 +2009,7 @@ class ReportsController extends Controller
         }
 
         $pdf = Pdf::loadView(
-            'admin.PDF.products_reports_pdf',
+            'Admin.PDF.products_reports_pdf',
             compact('products')
         )->setPaper('A4', 'landscape');
 
@@ -2299,7 +2299,7 @@ class ReportsController extends Controller
     |--------------------------------------------------------------------------
     */
 
-        return view('admin.reports.inventory', compact(
+        return view('Admin.reports.inventory', compact(
 
             'products',
 
@@ -2645,7 +2645,7 @@ class ReportsController extends Controller
     |--------------------------------------------------------------------------
     */
 
-        return view('admin.reports.customers', compact(
+        return view('Admin.reports.customers', compact(
 
             'customers',
 
@@ -2926,7 +2926,7 @@ class ReportsController extends Controller
     |--------------------------------------------------------------------------
     */
 
-        return view('admin.reports.payments', compact(
+        return view('Admin.reports.payments', compact(
 
             'payments',
 
@@ -3308,7 +3308,7 @@ class ReportsController extends Controller
     |--------------------------------------------------------------------------
     */
 
-        return view('admin.reports.promotions', compact(
+        return view('Admin.reports.promotions', compact(
 
             'promotions',
 

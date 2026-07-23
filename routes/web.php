@@ -227,15 +227,7 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         | Customers
         |--------------------------------------------------------------------------
-        |
-        | បច្ចុប្បន្ន seeder permission list អ្នកមានតែ:
-        | - view_customers
-        | - delete_customers
-        |
-        | ដូច្នេះ store/update ខ្ញុំ map ទៅ view_customers សិន
-        | បើចង់ clean ជាងនេះ អ្នកគួរបន្ថែម:
-        | - create_customers
-        | - edit_customers
+
         |--------------------------------------------------------------------------
         */
         Route::get('/customers', [CustomersController::class, 'customers'])

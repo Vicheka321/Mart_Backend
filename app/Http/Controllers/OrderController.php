@@ -97,7 +97,7 @@ class OrderController extends Controller
             ->whereHas('payment', fn($q) => $q->whereIn('payment_status', ['paid', 'unpaid']))
             ->count();
 
-        return view('admin.orders', compact('orders', 'totalOrders', 'pendingOrders', 'processingOrders', 'completedOrders', 'cancelledOrders'));
+        return view('Admin.orders', compact('orders', 'totalOrders', 'pendingOrders', 'processingOrders', 'completedOrders', 'cancelledOrders'));
     }
     public function latest()
     {
@@ -474,7 +474,7 @@ class OrderController extends Controller
         ])->findOrFail($id);
 
         return view(
-            'admin.order.invoice',
+            'Admin.order.invoice',
             compact('order')
         );
     }
@@ -488,7 +488,7 @@ class OrderController extends Controller
         ])->findOrFail($id);
 
         $pdf = Pdf::loadView(
-            'admin.order.invoice',
+            'Admin.order.invoice',
             compact('order')
         );
 

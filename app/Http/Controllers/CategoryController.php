@@ -14,7 +14,7 @@ class CategoryController extends Controller
     {
         $categories = Category::orderBy('id')->paginate(10);
 
-        return view('admin.categories', compact('categories'));
+        return view('Admin.categories', compact('categories'));
     }
 
     public function store(Request $request)
@@ -178,7 +178,7 @@ class CategoryController extends Controller
     {
         $categories = Category::orderBy('id')->get();
 
-        $pdf = Pdf::loadView('admin.PDF.categories_pdf', compact('categories'))
+        $pdf = Pdf::loadView('Admin.PDF.categories_pdf', compact('categories'))
             ->setPaper('A4', 'portrait');
 
         return $pdf->download('categories_' . now()->format('Ymd_His') . '.pdf');

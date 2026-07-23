@@ -53,14 +53,13 @@ return [
         'cluster' => env('PUSHER_APP_CLUSTER'),
     ],
 
-    'unimtx' => [
-        'access_key' => env('UNIMTX_ACCESS_KEY'),
-        'base_url'   => env('UNIMTX_BASE_URL'),
-    ],
 
     'firebase' => [
         'credentials' => storage_path('app/firebase/firebase-service-account.json'),
     ],
+    // 'firebase' => [
+    //     'credentials' => env('FIREBASE_CREDENTIALS_JSON'),
+    // ],
 
     'infobip' => [
         'base_url' => env('INFOBIP_BASE_URL'),

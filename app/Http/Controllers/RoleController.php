@@ -111,7 +111,7 @@ class RoleController extends Controller
             ],
         ];
 
-        return view('admin.roles.index', compact(
+        return view('Admin.roles.index', compact(
             'roles',
             'permissions',
             'permissionGroups'

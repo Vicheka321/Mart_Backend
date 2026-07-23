@@ -124,7 +124,7 @@ class ProductController extends Controller
         $totalInactive = ProductsModel::where('status', 0)->count();
         $totalLowStock = ProductsModel::where('quantity', '<=', 20)->count();
 
-        return view('admin.products', compact(
+        return view('Admin.products', compact(
             'products',
             'categories',
             'brands',
