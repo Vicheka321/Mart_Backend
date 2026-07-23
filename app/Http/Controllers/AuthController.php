@@ -44,6 +44,7 @@ class AuthController extends Controller
                     ->symbols(),
             ],
         ]);
+        
 
         $login = $request->login;
 
@@ -82,14 +83,14 @@ class AuthController extends Controller
 
         if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
 
-            Otp::updateOrCreate(
-                ['email' => $login],
-                [
-                    'otp' => $otp,
-                    'payload' => json_encode($payload),
-                    'expires_at' => now()->addMinutes(5),
-                ]
-            );
+            // Otp::updateOrCreate(
+            //     ['email' => $login],
+            //     [
+            //         'otp' => $otp,
+            //         'payload' => json_encode($payload),
+            //         'expires_at' => now()->addMinutes(5),
+            //     ]
+            // );
 
             Mail::to($login)->queue(new SendOtpMail($otp));
         } else {
@@ -99,14 +100,14 @@ class AuthController extends Controller
                 $login = '855' . substr($login, 1);
             }
 
-            Otp::updateOrCreate(
-                ['phone' => $login],
-                [
-                    'otp' => $otp,
-                    'payload' => json_encode($payload),
-                    'expires_at' => now()->addMinutes(5),
-                ]
-            );
+            // Otp::updateOrCreate(
+            //     ['phone' => $login],
+            //     [
+            //         'otp' => $otp,
+            //         'payload' => json_encode($payload),
+            //         'expires_at' => now()->addMinutes(5),
+            //     ]
+            // );
 
             try {
 
