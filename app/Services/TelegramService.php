@@ -66,7 +66,7 @@ class TelegramService
         if ($order->status == 'pending') {
             $buttons[] = [
                 ['text' => '✅ Accept', 'callback_data' => "accept_{$order->id}"],
-                ['text' => '❌ Cancel', 'callback_data' => "cancel_{$order->id}"],
+                ['text' => '❌ Rejected', 'callback_data' => "cancel_{$order->id}"],
             ];
         }
 
@@ -256,6 +256,10 @@ class TelegramService
                 [
                     'text' => '✅ Successful',
                     'callback_data' => "complete_{$order->id}"
+                ],
+                [
+                    'text' => '❌ Cancel',
+                    'callback_data' => "cancel_{$order->id}"
                 ]
             ];
         }

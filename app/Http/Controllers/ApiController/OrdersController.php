@@ -526,6 +526,48 @@ class OrdersController extends Controller
         }
     }
 
+    // public function cancelOrder($id)
+    // {
+    //     DB::beginTransaction();
+
+    //     try {
+
+    //         $order = OrderModel::with('orderItems')->findOrFail($id);
+    //         // Remove coupon usage
+    //         $couponUsage = CouponUsageModel::where('order_id', $order->id)->first();
+    //         if ($couponUsage) {
+    //             $coupon = CouponModel::find($couponUsage->coupon_id);
+    //             if ($coupon && $coupon->used_count > 0) {
+    //                 $coupon->decrement('used_count');
+    //             }
+    //             $couponUsage->delete();
+    //         }
+    //         // Delete payment
+    //         PaymentModel::where('order_id', $order->id)->delete();
+
+    //         // Delete order items
+    //         Order_itemModel::where('order_id', $order->id)->delete();
+
+    //         // Delete order
+    //         $order->delete();
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Order cancelled and deleted successfully'
+    //         ]);
+    //     } catch (\Exception $e) {
+
+    //         DB::rollback();
+
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
     public function cancelOrder($id)
     {
         DB::beginTransaction();
@@ -534,12 +576,18 @@ class OrdersController extends Controller
 
             $order = OrderModel::with('orderItems')->findOrFail($id);
 
+         
+            foreach ($order->orderItems as $item) {
+                $product = ProductsModel::find($item->product_id);
+
+                if ($product) {
+                    $product->increment('quantity', $item->qty);
+                }
+            }
 
             // Remove coupon usage
             $couponUsage = CouponUsageModel::where('order_id', $order->id)->first();
-
             if ($couponUsage) {
-
                 $coupon = CouponModel::find($couponUsage->coupon_id);
 
                 if ($coupon && $coupon->used_count > 0) {
@@ -566,7 +614,7 @@ class OrdersController extends Controller
             ]);
         } catch (\Exception $e) {
 
-            DB::rollback();
+            DB::rollBack();
 
             return response()->json([
                 'success' => false,
@@ -575,6 +623,10 @@ class OrdersController extends Controller
         }
     }
     public function updateOrder(Request $request)
+
+
+
+
     {
         $validated = $request->validate([
             'order_id' => 'required|exists:orders,id'

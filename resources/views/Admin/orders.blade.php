@@ -533,6 +533,16 @@
                                                        text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all duration-200">
                                                 Successful
                                             </button>
+                                            <button
+                                                type="button"
+                                                onclick="confirmChange({{ $order['id'] }}, 'cancelled', this)"
+                                                class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
+                                                    border border-red-200 dark:border-red-500/30
+                                                    bg-red-50 dark:bg-red-500/10
+                                                    text-red-600 dark:text-red-400">
+                                                Cancel
+                                            </button>
+
                                         @endif
 
                                         @if($order['status'] === 'completed')
@@ -546,14 +556,36 @@
                                                     Print
                                             </button>
                                         @endif
-
+{{-- 
                                         @if(!in_array($order['status'], ['completed', 'processing', 'cancelled']))
                                             <button type="button" onclick="confirmChange({{ $order['id'] }}, 'cancelled', this)"
                                                 class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
                                                        border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
                                                        text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400
                                                        hover:border-red-200 dark:hover:border-red-500/30 transition-all duration-200">
-                                                Cancel
+                                                
+                                            </button>
+                                        @endif
+
+                                        @if($order['status'] === 'processing')
+                                            <button
+                                                onclick="confirmChange({{ $order['id'] }}, 'cancelled', this)"
+                                                class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
+                                                    border border-red-200 dark:border-red-500/30
+                                                    bg-red-50 dark:bg-red-500/10
+                                                    text-red-600 dark:text-red-400">
+                                                Rejected
+                                            </button>
+                                        @endif --}}
+                                        @if($order['status'] === 'pending')
+                                            <button
+                                                type="button"
+                                                onclick="confirmChange({{ $order['id'] }}, 'cancelled', this)"
+                                                class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
+                                                    border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                                                    text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400
+                                                    hover:border-red-200 dark:hover:border-red-500/30 transition-all duration-200">
+                                                Rejected
                                             </button>
                                         @endif
                                     </div>

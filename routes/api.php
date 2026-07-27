@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/aba-pay', [PaymentController::class, 'ABAPay']);
     Route::post('/check-aba-pay', [PaymentController::class, 'checkStatusMD5ABA']);
     Route::post('/order', [OrdersController::class, 'placeOrder']);
+    
     Route::post('/order/cancel/{id}', [OrdersController::class, 'cancelOrder']);
     Route::get('/orders', [OrdersController::class, 'myOrders']);
     Route::get('/orders/{id}', [OrdersController::class, 'orderDetail']);

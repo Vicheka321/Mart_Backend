@@ -5,13 +5,18 @@ namespace App\Http\Controllers\ApiController;
 use App\Events\OrderStatusChanged;
 use App\Events\PaymentStatusChanged;
 use App\Http\Controllers\Controller;
+use App\Models\CouponModel;
+use App\Models\CouponUsageModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\OrderModel;
 use App\Services\TelegramService;
 use Illuminate\Support\Facades\Log;
 use App\Models\DeviceToken;
+use App\Models\PaymentModel;
+use App\Models\ProductsModel;
 use App\Services\FirebaseNotificationService;
+use Illuminate\Support\Facades\DB;
 
 class TelegramController extends Controller
 {
@@ -125,22 +130,63 @@ class TelegramController extends Controller
                             $invoiceUrl
                     ]
                 );
-            } elseif ($action === 'cancel') {
+            }
+            // elseif ($action === 'cancel') {
 
-                if ($order->status !== 'pending') {
+            //     if ($order->status !== 'pending') {
+            //         return response()->json([
+            //             'error' => 'Only pending orders can cancel'
+            //         ]);
+            //     }
+
+            //     // $order->update([
+            //     //     'status' => 'cancelled'
+            //     // ]);
+
+            //     $order->load('orderItems');
+
+            //     $this->cancelOrderLogic($order);
+
+            //     $order->refresh();
+
+
+            //     $this->sendOrderNotification(
+            //         $order,
+            //         $firebase
+            //     );
+
+
+            //     app(TelegramService::class)->edit($order);
+
+            //     app(TelegramService::class)->sendNextPending();
+            // }
+            elseif ($action === 'cancel') {
+
+                if (!in_array($order->status, ['pending', 'processing'])) {
                     return response()->json([
-                        'error' => 'Only pending orders can cancel'
-                    ]);
+                        'error' => 'Only pending or processing orders can cancel'
+                    ], 400);
                 }
 
-                $order->update([
-                    'status' => 'cancelled'
-                ]);
+                $previousStatus = $order->status;
+
+                $order->load('orderItems');
+
+                $this->cancelOrderLogic($order);
 
                 $order->refresh();
+
+                broadcast(
+                    new OrderStatusChanged(
+                        $order->id,
+                        'cancelled'
+                    )
+                );
+
                 $this->sendOrderNotification(
                     $order,
-                    $firebase
+                    $firebase,
+                    $previousStatus
                 );
 
                 app(TelegramService::class)->edit($order);
@@ -152,9 +198,11 @@ class TelegramController extends Controller
         return response()->json(['ok' => true]);
     }
 
+
     private function sendOrderNotification(
         OrderModel $order,
-        FirebaseNotificationService $firebase
+        FirebaseNotificationService $firebase,
+        ?string $previousStatus = null
     ) {
 
         $tokens = DeviceToken::where('user_id', $order->user_id)
@@ -179,8 +227,15 @@ class TelegramController extends Controller
                 break;
 
             case 'cancelled':
-                $title = 'Order Cancelled ❌';
-                $body = "Your order #{$order->id} has been cancelled.";
+
+                if ($previousStatus === 'pending') {
+                    $title = 'Order Rejected ❌';
+                    $body = "Your order #{$order->id} has been rejected.";
+                } else {
+                    $title = 'Order Cancelled ❌';
+                    $body = "Your order #{$order->id} has been cancelled.";
+                }
+
                 break;
 
             default:
@@ -197,5 +252,38 @@ class TelegramController extends Controller
                 'status' => $order->status,
             ]
         );
+    }
+
+
+    private function cancelOrderLogic(OrderModel $order)
+    {
+        DB::transaction(function () use ($order) {
+
+            foreach ($order->orderItems as $item) {
+
+                $product = ProductsModel::find($item->product_id);
+
+                if ($product) {
+                    $product->increment('quantity', $item->qty);
+                }
+            }
+
+            $couponUsage = CouponUsageModel::where('order_id', $order->id)->first();
+
+            if ($couponUsage) {
+
+                $coupon = CouponModel::find($couponUsage->coupon_id);
+
+                if ($coupon && $coupon->used_count > 0) {
+                    $coupon->decrement('used_count');
+                }
+
+                $couponUsage->delete();
+            }
+
+            $order->update([
+                'status' => 'cancelled'
+            ]);
+        });
     }
 }

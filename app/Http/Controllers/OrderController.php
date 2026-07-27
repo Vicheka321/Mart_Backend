@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Events\PaymentStatusChanged;
+use App\Models\CouponModel;
+use App\Models\CouponUsageModel;
 use App\Models\OrderModel;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\DeviceToken;
+use App\Models\PaymentModel;
+use App\Models\ProductsModel;
 use App\Services\FirebaseNotificationService;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -145,7 +150,7 @@ class OrderController extends Controller
             ];
         }));
     }
-    
+
     public function changeStatus(Request $request, $id, FirebaseNotificationService $firebase)
     {
         $order = OrderModel::with('payment')
@@ -164,12 +169,27 @@ class OrderController extends Controller
             ], 400);
         }
 
+
+        // ====================
+        // $order->update([
+        //     'status' => 'cancelled'
+        // ]);
+
+        // if (
+        //     $request->status === 'cancelled' &&
+        //     $order->status !== 'pending'
+        // ) {
+
+        //     return response()->json([
+        //         'error' => 'Only pending orders can be cancelled'
+        //     ], 400);
+        // }
         if (
             $request->status === 'cancelled' &&
-            $order->status !== 'pending'
+            !in_array($order->status, ['pending', 'processing'])
         ) {
             return response()->json([
-                'error' => 'Only pending orders can be cancelled'
+                'error' => 'Only pending or processing orders can be cancelled'
             ], 400);
         }
 
@@ -178,9 +198,18 @@ class OrderController extends Controller
                 'error' => 'Already completed'
             ], 400);
         }
-        $order->update([
-            'status' => $request->status
-        ]);
+        
+        if ($request->status === 'cancelled') {
+
+            $order->load('orderItems');
+
+            $this->cancelOrder($order);
+        } else {
+
+            $order->update([
+                'status' => $request->status,
+            ]);
+        }
 
         $order->refresh();
 
@@ -194,7 +223,7 @@ class OrderController extends Controller
                 $firebase
             );
         }
-        
+
         $order->load([
             'user',
             'payment',
@@ -293,20 +322,122 @@ class OrderController extends Controller
             ]
         );
     }
+    // public function cancel($id)
+    // {
+    //     $order = OrderModel::findOrFail($id);
+
+
+    //     if ($order->status != 'pending') {
+    //         return redirect()->back()->with('error', 'Cannot cancel this order');
+    //     }
+
+    //     $order->update([
+    //         'status' => 'cancelled'
+    //     ]);
+
+    //     return redirect()->back()->with('success', 'Order cancelled successfully');
+    // }
+
     public function cancel($id)
     {
-        $order = OrderModel::findOrFail($id);
+        DB::beginTransaction();
 
+        try {
 
-        if ($order->status != 'pending') {
-            return redirect()->back()->with('error', 'Cannot cancel this order');
+            $order = OrderModel::with('orderItems')->findOrFail($id);
+
+            if ($order->status != 'pending') {
+                return redirect()->back()->with('error', 'Cannot cancel this order');
+            }
+
+            // Restore product stock
+            foreach ($order->orderItems as $item) {
+                $product = ProductsModel::find($item->product_id);
+
+                if ($product) {
+                    $product->increment('quantity', $item->qty);
+                }
+            }
+
+            // Remove coupon usage
+            $couponUsage = CouponUsageModel::where('order_id', $order->id)->first();
+
+            if ($couponUsage) {
+                $coupon = CouponModel::find($couponUsage->coupon_id);
+
+                if ($coupon && $coupon->used_count > 0) {
+                    $coupon->decrement('used_count');
+                }
+
+                $couponUsage->delete();
+            }
+
+            // Delete payment
+            PaymentModel::where('order_id', $order->id)->delete();
+
+            // Update order status
+            $order->update([
+                'status' => 'cancelled',
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with(
+                'success',
+                'Order cancelled successfully.'
+            );
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return redirect()->back()->with(
+                'error',
+                $e->getMessage()
+            );
         }
+    }
 
-        $order->update([
-            'status' => 'cancelled'
-        ]);
+    private function
+    cancelOrder(OrderModel $order)
+    {
+        DB::beginTransaction();
 
-        return redirect()->back()->with('success', 'Order cancelled successfully');
+        try {
+
+            foreach ($order->orderItems as $item) {
+
+                $product = ProductsModel::find($item->product_id);
+
+                if ($product) {
+                    $product->increment('quantity', $item->qty);
+                }
+            }
+
+            $couponUsage = CouponUsageModel::where('order_id', $order->id)->first();
+
+            if ($couponUsage) {
+                $coupon = CouponModel::find($couponUsage->coupon_id);
+
+                if ($coupon && $coupon->used_count > 0) {
+                    $coupon->decrement('used_count');
+                }
+
+                $couponUsage->delete();
+            }
+
+            $order->update([
+                'status' => 'cancelled'
+            ]);
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            throw $e;
+        }
     }
 
 

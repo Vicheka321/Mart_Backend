@@ -44,7 +44,7 @@ class AuthController extends Controller
                     ->symbols(),
             ],
         ]);
-        
+
 
         $login = $request->login;
 
@@ -485,9 +485,18 @@ class AuthController extends Controller
 
         abort(403, 'Access denied');
     }
-    public function logout()
+    // public function logout()
+    // {
+    //     Auth::logout();
+    //     return redirect('/login');
+    // }
+    public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect('/login');
     }
     public function sendOtp(Request $request)
@@ -719,7 +728,7 @@ class AuthController extends Controller
                 'token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user,
-                'google_payload' => $payload, 
+                'google_payload' => $payload,
             ]);
         } catch (\Throwable $e) {
 
