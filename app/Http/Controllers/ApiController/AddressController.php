@@ -50,6 +50,7 @@ class AddressController extends Controller
         $id
     ) {
         $request->validate([
+            'full_name' => 'required',
             'address' => 'required',
             'lat'     => 'required',
             'lng'     => 'required',
@@ -67,6 +68,7 @@ class AddressController extends Controller
         }
 
         $address->update([
+            'full_name' => $request->full_name,
             'address' => $request->address,
             'lat'     => $request->lat,
             'lng'     => $request->lng,

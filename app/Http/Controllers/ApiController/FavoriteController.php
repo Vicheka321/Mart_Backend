@@ -108,4 +108,24 @@ class FavoriteController extends Controller
             'is_favorite' => $exists
         ]);
     }
+    public function removeFavorite($productId)
+    {
+        $userId = Auth::id();
+
+        $favorite = FavoriteModel::where('user_id', $userId)
+            ->where('product_id', $productId)
+            ->first();
+
+        if (!$favorite) {
+            return response()->json([
+                'message' => 'Favorite not found'
+            ], 404);
+        }
+
+        $favorite->delete();
+
+        return response()->json([
+            'message' => 'Product removed from favorites'
+        ]);
+    }
 }

@@ -25,7 +25,7 @@ class ProductsSeeder extends Seeder
             [
                 'name' => 'Pepsi 330ml Can',
                 'category' => 1,
-                'brand' => 5,
+                'brand' => 2,
                 'image' => 'https://m.media-amazon.com/images/I/71EybBZ-jpL._AC_UL480_FMwebp_QL65_.jpg'
             ],
             [
