@@ -107,10 +107,15 @@ class TelegramController extends Controller
 
 
                 $order->refresh();
-                $this->sendOrderNotification(
-                    $order,
-                    $firebase
-                );
+                try {
+                    $this->sendOrderNotification(
+                        $order,
+                        $firebase,
+                        $previousStatus ?? null
+                    );
+                } catch (\Throwable $e) {
+                    Log::error('Notification Error: ' . $e->getMessage());
+                }
 
                 app(\App\Services\TelegramService::class)
                     ->edit($order);
@@ -130,37 +135,7 @@ class TelegramController extends Controller
                             $invoiceUrl
                     ]
                 );
-            }
-            // elseif ($action === 'cancel') {
-
-            //     if ($order->status !== 'pending') {
-            //         return response()->json([
-            //             'error' => 'Only pending orders can cancel'
-            //         ]);
-            //     }
-
-            //     // $order->update([
-            //     //     'status' => 'cancelled'
-            //     // ]);
-
-            //     $order->load('orderItems');
-
-            //     $this->cancelOrderLogic($order);
-
-            //     $order->refresh();
-
-
-            //     $this->sendOrderNotification(
-            //         $order,
-            //         $firebase
-            //     );
-
-
-            //     app(TelegramService::class)->edit($order);
-
-            //     app(TelegramService::class)->sendNextPending();
-            // }
-            elseif ($action === 'cancel') {
+            } elseif ($action === 'cancel') {
 
                 if (!in_array($order->status, ['pending', 'processing'])) {
                     return response()->json([
@@ -199,62 +174,137 @@ class TelegramController extends Controller
     }
 
 
+    // private function sendOrderNotification(
+    //     OrderModel $order,
+    //     FirebaseNotificationService $firebase,
+    //     ?string $previousStatus = null
+    // ) {
+
+    //     $tokens = DeviceToken::where('user_id', $order->user_id)
+    //         ->where('is_active', true)
+    //         ->pluck('fcm_token')
+    //         ->toArray();
+
+    //     if (empty($tokens)) {
+    //         return;
+    //     }
+
+    //     switch ($order->status) {
+
+    //         case 'processing':
+    //             $title = 'Order Accepted 🎉';
+    //             $body = "Your order #{$order->id} has been accepted.";
+    //             break;
+
+    //         case 'completed':
+    //             $title = 'Order Completed ✅';
+    //             $body = "Your order #{$order->id} has been completed.";
+    //             break;
+
+    //         case 'cancelled':
+
+    //             if ($previousStatus === 'pending') {
+    //                 $title = 'Order Rejected ❌';
+    //                 $body = "Your order #{$order->id} has been rejected.";
+    //             } else {
+    //                 $title = 'Order Cancelled ❌';
+    //                 $body = "Your order #{$order->id} has been cancelled.";
+    //             }
+
+    //             break;
+
+    //         default:
+    //             return;
+    //     }
+
+    //     $firebase->sendToTokens(
+    //         tokens: $tokens,
+    //         title: $title,
+    //         body: $body,
+    //         data: [
+    //             'type' => 'order',
+    //             'order_id' => (string) $order->id,
+    //             'status' => $order->status,
+    //         ]
+    //     );
+    // }
+
+
     private function sendOrderNotification(
         OrderModel $order,
         FirebaseNotificationService $firebase,
         ?string $previousStatus = null
     ) {
+        try {
 
-        $tokens = DeviceToken::where('user_id', $order->user_id)
-            ->where('is_active', true)
-            ->pluck('fcm_token')
-            ->toArray();
+            $tokens = DeviceToken::where('user_id', $order->user_id)
+                ->where('is_active', true)
+                ->pluck('fcm_token')
+                ->toArray();
 
-        if (empty($tokens)) {
-            return;
-        }
-
-        switch ($order->status) {
-
-            case 'processing':
-                $title = 'Order Accepted 🎉';
-                $body = "Your order #{$order->id} has been accepted.";
-                break;
-
-            case 'completed':
-                $title = 'Order Completed ✅';
-                $body = "Your order #{$order->id} has been completed.";
-                break;
-
-            case 'cancelled':
-
-                if ($previousStatus === 'pending') {
-                    $title = 'Order Rejected ❌';
-                    $body = "Your order #{$order->id} has been rejected.";
-                } else {
-                    $title = 'Order Cancelled ❌';
-                    $body = "Your order #{$order->id} has been cancelled.";
-                }
-
-                break;
-
-            default:
+            if (empty($tokens)) {
+                Log::info("No active FCM token for user {$order->user_id}");
                 return;
-        }
+            }
 
-        $firebase->sendToTokens(
-            tokens: $tokens,
-            title: $title,
-            body: $body,
-            data: [
-                'type' => 'order',
-                'order_id' => (string) $order->id,
+            switch ($order->status) {
+
+                case 'processing':
+                    $title = 'Order Accepted 🎉';
+                    $body = "Your order #{$order->id} has been accepted.";
+                    break;
+
+                case 'completed':
+                    $title = 'Order Completed ✅';
+                    $body = "Your order #{$order->id} has been completed.";
+                    break;
+
+                case 'cancelled':
+
+                    if ($previousStatus === 'pending') {
+                        $title = 'Order Rejected ❌';
+                        $body = "Your order #{$order->id} has been rejected.";
+                    } else {
+                        $title = 'Order Cancelled ❌';
+                        $body = "Your order #{$order->id} has been cancelled.";
+                    }
+
+                    break;
+
+                default:
+                    return;
+            }
+
+            $firebase->sendToTokens(
+                tokens: $tokens,
+                title: $title,
+                body: $body,
+                data: [
+                    'type' => 'order',
+                    'order_id' => (string) $order->id,
+                    'status' => $order->status,
+                ]
+            );
+
+            Log::info("FCM notification sent.", [
+                'order_id' => $order->id,
+                'user_id' => $order->user_id,
                 'status' => $order->status,
-            ]
-        );
+            ]);
+        } catch (\Throwable $e) {
+
+            Log::error('Failed to send FCM notification', [
+                'order_id' => $order->id,
+                'user_id' => $order->user_id,
+                'status' => $order->status,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Don't throw exception.
+            // Telegram workflow should continue.
+        }
     }
-
-
     private function cancelOrderLogic(OrderModel $order)
     {
         DB::transaction(function () use ($order) {

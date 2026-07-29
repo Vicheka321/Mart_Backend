@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('categories_id')->constrained('categories')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('brand_id')->constrained('brands')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('product_code')->nullable()->unique();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->string('unit')->nullable();
             $table->decimal('cost_price', 10, 2)->nullable();

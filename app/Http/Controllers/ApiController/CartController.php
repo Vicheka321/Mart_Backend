@@ -135,6 +135,7 @@ class CartController extends Controller
 
             // 🔥 DEFAULT PRICE
             $final_price = $product->sale_price;
+            $stock = $product->quantity;
             $discount = null;
 
             // 🔥 CHECK PROMOTION
@@ -171,6 +172,7 @@ class CartController extends Controller
                 'product_id' => $item->product_id,
                 'name' => $product->name,
                 'qty' => $item->qty,
+                'stock' =>$stock,
 
                 // ✅ IMPORTANT FIX
                 'price' => $final_price,

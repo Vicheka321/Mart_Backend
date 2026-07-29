@@ -5,7 +5,9 @@ namespace App\Services;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
-
+use App\Models\DeviceToken;
+use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Exception\MessagingException;
 class FirebaseNotificationService
 {
     protected $messaging;
@@ -23,6 +25,29 @@ class FirebaseNotificationService
     /**
      * Send notification to single device
      */
+    // public function sendToToken(
+    //     string $token,
+    //     string $title,
+    //     string $body,
+    //     array $data = [],
+    //     ?string $image = null,
+    // ) {
+    //     $notification = Notification::create(
+    //         $title,
+    //         $body,
+    //         $image
+    //     );
+
+    //     $message = CloudMessage::withTarget(
+    //         'token',
+    //         $token
+    //     )
+    //         ->withNotification($notification)
+    //         ->withData($data);
+
+    //     return $this->messaging->send($message);
+    // }
+
     public function sendToToken(
         string $token,
         string $title,
@@ -30,22 +55,65 @@ class FirebaseNotificationService
         array $data = [],
         ?string $image = null,
     ) {
-        $notification = Notification::create(
-            $title,
-            $body,
-            $image
-        );
+        try {
 
-        $message = CloudMessage::withTarget(
-            'token',
-            $token
-        )
-            ->withNotification($notification)
-            ->withData($data);
+            $notification = Notification::create(
+                $title,
+                $body,
+                $image
+            );
 
-        return $this->messaging->send($message);
+            $message = CloudMessage::withTarget(
+                'token',
+                $token
+            )
+                ->withNotification($notification)
+                ->withData($data);
+
+            return $this->messaging->send($message);
+        } catch (MessagingException $e) {
+
+            Log::warning('FCM Error', [
+                'token' => $token,
+                'message' => $e->getMessage(),
+            ]);
+
+            if (
+                str_contains($e->getMessage(), 'UNREGISTERED') ||
+                str_contains($e->getMessage(), 'Requested entity was not found')
+            ) {
+
+                DeviceToken::where('fcm_token', $token)->delete();
+
+                Log::info("Deleted invalid FCM token.");
+            }
+
+            return false;
+        } catch (\Throwable $e) {
+
+            Log::error($e->getMessage());
+
+            return false;
+        }
     }
+    // public function sendToTokens(
+    //     array $tokens,
+    //     string $title,
+    //     string $body,
+    //     array $data = [],
+    //     ?string $image = null,
+    // ) {
+    //     foreach ($tokens as $token) {
 
+    //         $this->sendToToken(
+    //             token: $token,
+    //             title: $title,
+    //             body: $body,
+    //             data: $data,
+    //             image: $image,
+    //         );
+    //     }
+    // }
     public function sendToTokens(
         array $tokens,
         string $title,
@@ -55,13 +123,21 @@ class FirebaseNotificationService
     ) {
         foreach ($tokens as $token) {
 
-            $this->sendToToken(
-                token: $token,
-                title: $title,
-                body: $body,
-                data: $data,
-                image: $image,
-            );
+            try {
+
+                $this->sendToToken(
+                    token: $token,
+                    title: $title,
+                    body: $body,
+                    data: $data,
+                    image: $image,
+                );
+            } catch (\Throwable $e) {
+
+                Log::error($e->getMessage());
+
+                continue;
+            }
         }
     }
     /**

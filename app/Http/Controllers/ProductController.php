@@ -77,6 +77,7 @@ class ProductController extends Controller
     {
         // Default filter = inactive
         $statusFilter = $request->input('status', 'all');
+        $productKeywordSearch = trim($request->input('search'));
 
         // Build optimized query
         $query = ProductsModel::query()
@@ -101,6 +102,37 @@ class ProductController extends Controller
                 break;
 
                 // case 'all' => no filter
+        }
+
+        if (!empty($productKeywordSearch)) {
+
+            $query->where(function ($productSearchQuery) use ($productKeywordSearch) {
+
+                $productSearchQuery
+                    ->where('name', 'LIKE', "%{$productKeywordSearch}%")
+
+                    ->orWhere('product_code', 'LIKE', "%{$productKeywordSearch}%")
+
+                    ->orWhere('description', 'LIKE', "%{$productKeywordSearch}%")
+
+                    ->orWhereHas('category', function ($categorySearchQuery) use ($productKeywordSearch) {
+
+                        $categorySearchQuery->where(
+                            'name',
+                            'LIKE',
+                            "%{$productKeywordSearch}%"
+                        );
+                    })
+
+                    ->orWhereHas('brand', function ($brandSearchQuery) use ($productKeywordSearch) {
+
+                        $brandSearchQuery->where(
+                            'name',
+                            'LIKE',
+                            "%{$productKeywordSearch}%"
+                        );
+                    });
+            });
         }
 
         // Products list

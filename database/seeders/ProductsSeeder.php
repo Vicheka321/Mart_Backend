@@ -929,9 +929,11 @@ class ProductsSeeder extends Seeder
                 'name'          => $item['name'],
                 'description'   => $item['name'],
                 'unit'          => 'piece',
-                'cost_price'    => rand(1, 100),
-                'sale_price'    => rand(1, 200),
+                // 'cost_price'    => rand(1, 100),
+                // 'sale_price'    => rand(1, 200),
                 // 'quantity'      => rand(10, 500),
+                'cost_price'    => 0.01,
+                'sale_price'    => 0.02,
                 'quantity'      => 10,
 
                 'status'        => true,

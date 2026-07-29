@@ -47,6 +47,7 @@ class DashboardController extends Controller
         $range = request('range', '30days');
 
         [$startDate, $endDate] = match ($range) {
+            
             'today' => [now()->startOfDay(), now()->endOfDay()],
             '7days' => [now()->subDays(6)->startOfDay(), now()->endOfDay()],
             '30days' => [now()->subDays(29)->startOfDay(), now()->endOfDay()],
