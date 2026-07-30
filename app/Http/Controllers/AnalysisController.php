@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category as ModelsCategory;
 use App\Models\CouponModel;
-use App\Models\khqr_payments;
+use App\Models\KhqrPayments;
 use App\Models\Order_itemModel as OrderItem;
 use App\Models\OrderModel as Order;
 use App\Models\PaymentModel as Payment;
@@ -239,7 +239,7 @@ class AnalysisController extends Controller
         | KHQR Stats
         |--------------------------------------------------------------------------
         */
-        $khqrStats = khqr_payments::whereBetween('created_at', [$startDate, $endDate])
+        $khqrStats = KhqrPayments::whereBetween('created_at', [$startDate, $endDate])
             ->select('status', DB::raw('COUNT(*) as count'))
             ->groupBy('status')
             ->get()
