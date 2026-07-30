@@ -330,16 +330,32 @@
                 </div>
 
                 <div class="flex-1 overflow-y-auto">
-                    <form action="{{ route('promotions.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+                    <form id="createPromotionForm"
+                        action="{{ route('promotions.store') }}"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        class="p-6 space-y-4">
                         @csrf
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Promotion Name</label>
-                                <input type="text" name="name" value="{{ old('name') }}" required placeholder="Summer Sale 2026"
+                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
+                                    Promotion Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="promotionName"
+                                    name="name"
+                                    value="{{ old('name') }}"
+                                    required
+                                    placeholder="Summer Sale 2026"
                                     class="w-full text-sm rounded-xl border border-gray-200 dark:border-gray-600
-                                           bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2.5
-                                           focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-400 transition-all">
+                                        bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2.5
+                                        focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-400 transition-all">
+
+                                <p id="promotionNameError"
+                                class="hidden mt-1 text-xs text-red-500"></p>
                             </div>
 
                             {{-- ── STATUS SELECT (replaces checkbox) ── --}}
@@ -418,9 +434,11 @@
                                        text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
                                 Cancel
                             </button>
-                            <button type="submit"
+                            <button
+                                type="submit"
+                                id="savePromotionBtn"
                                 class="action-btn px-5 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700
-                                       text-white rounded-xl shadow-md shadow-indigo-500/25 transition-all">
+                                    text-white rounded-xl shadow-md shadow-indigo-500/25 transition-all">
                                 Save Promotion
                             </button>
                         </div>
@@ -847,6 +865,94 @@
                     if (result.isConfirmed) document.getElementById(`delete-form-${id}`).submit();
                 });
             }
+
+
+            const nameInput = document.getElementById('promotionName');
+            const nameError = document.getElementById('promotionNameError');
+
+            nameError.classList.add('hidden');
+            nameError.textContent = '';
+
+            nameInput.classList.remove(
+                'border-red-500',
+                'focus:ring-red-500'
+            );
+
+            nameInput.classList.add(
+                'border-gray-200',
+                'focus:ring-indigo-500'
+            );
+
+            document.getElementById('createPromotionForm')
+            ?.addEventListener('submit', async function (e) {
+
+                e.preventDefault();
+
+                const form = this;
+                const btn = document.getElementById('savePromotionBtn');
+
+                btn.disabled = true;
+
+                btn.innerHTML = `
+                    <svg class="animate-spin inline w-4 h-4 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24">
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4">
+                        </circle>
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4A4 4 0 008 12H4z">
+                        </path>
+                    </svg>
+
+                `;
+
+                const formData = new FormData(form);
+
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector(
+                            'meta[name="csrf-token"]'
+                        ).content,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                console.log(response.status);
+
+                if (response.status === 422) {
+
+                    const data = await response.json();
+
+                    if (data.errors.name) {
+
+                        nameError.textContent = data.errors.name[0];
+                        nameError.classList.remove('hidden');
+
+                        nameInput.classList.remove(
+                            'border-gray-200',
+                            'focus:ring-indigo-500'
+                        );
+
+                        nameInput.classList.add(
+                            'border-red-500',
+                            'focus:ring-red-500'
+                        );
+                    }
+
+                    return;
+                }
+
+            });
             </script>
         @endpush
 

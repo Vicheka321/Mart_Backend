@@ -7,22 +7,14 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\PromotionModel;
 use App\Models\ProductsModel;
+use Illuminate\Support\Facades\Validator;
 
 class PromotionController extends Controller
 {
-    // public function index()
-    // {
-    //     $promotions = PromotionModel::withCount('products')
-    //         ->latest()
-    //         ->paginate(10);
-
-    //     return view('admin.promotions', compact('promotions'));
-    // }
-
     public function index()
     {
         $promotions = PromotionModel::withCount('products')
-            ->with('products:id')   // ← add this
+            ->with('products:id')
             ->latest()
             ->paginate(10);
 
@@ -41,25 +33,76 @@ class PromotionController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|unique:promotions,name',
-            'discount_type' => 'required|in:percent,fixed',
-            'discount_value' => 'required|numeric|min:0',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'status' => 'required|boolean',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required|string|max:255|unique:promotions,name',
+                'discount_type' => 'required|in:percent,fixed',
+                'discount_value' => 'required|numeric|min:0',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'status' => 'required|boolean',
+            ],
+            [
+                'name.unique' => 'Promotion name already exists.',
+            ]
+        );
+        $normalizedName = preg_replace(
+            '/\s+/',
+            '',
+            strtolower(trim($request->name))
+        );
+
+        $exists = PromotionModel::get()->first(function ($promotion) use ($normalizedName) {
+
+            return preg_replace(
+                '/\s+/',
+                '',
+                strtolower(trim($promotion->name))
+            ) === $normalizedName;
+        });
+
+        if ($exists) {
+
+            $validator->errors()->add(
+                'name',
+                'Promotion name already exists.'
+            );
+        }
+        if ($validator->fails()) {
+
+            if ($request->ajax() || $request->wantsJson()) {
+
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $validated = $validator->validated();
 
         $promotion = PromotionModel::create([
-            'name' => $request->name,
-            'discount_type' => $request->discount_type,
-            'discount_value' => $request->discount_value,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'status' => $request->status,
+            'name'            => $validated['name'],
+            'discount_type'   => $validated['discount_type'],
+            'discount_value'  => $validated['discount_value'],
+            'start_date'      => $validated['start_date'],
+            'end_date'        => $validated['end_date'],
+            'status'          => $validated['status'],
         ]);
 
-        // Redirect directly to add products page
+        if ($request->ajax() || $request->wantsJson()) {
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Promotion created successfully.',
+            ]);
+        }
+
         return redirect()
             ->route('promotions.index')
             ->with('success', 'Promotion created successfully. Now select products.');
@@ -67,7 +110,7 @@ class PromotionController extends Controller
 
     public function update(Request $request, PromotionModel $promotion)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name'            => 'required|string|max:255',
             'image'           => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'discount_type'   => 'required|in:percent,fixed',
@@ -76,6 +119,46 @@ class PromotionController extends Controller
             'end_date'        => 'required|date|after_or_equal:start_date',
             'status'          => 'nullable|boolean',
         ]);
+        $normalizedName = preg_replace(
+            '/\s+/',
+            '',
+            strtolower(trim($request->name))
+        );
+
+        $exists = PromotionModel::where('id', '!=', $promotion->id)
+            ->get()
+            ->first(function ($item) use ($normalizedName) {
+
+                return preg_replace(
+                    '/\s+/',
+                    '',
+                    strtolower(trim($item->name))
+                ) === $normalizedName;
+            });
+
+        if ($exists) {
+
+            $validator->errors()->add(
+                'name',
+                'Promotion name already exists.'
+            );
+        }
+        if ($validator->fails()) {
+
+            if ($request->ajax() || $request->wantsJson()) {
+
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $validated = $validator->validated();
 
         // Keep current image by default
         $imageUrl = $promotion->image_url;
@@ -104,6 +187,14 @@ class PromotionController extends Controller
             'status'          => $request->boolean('status'),
         ]);
 
+        if ($request->ajax() || $request->wantsJson()) {
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Promotion updated successfully.',
+            ]);
+        }
+
         return redirect()
             ->route('promotions.index')
             ->with('success', 'Promotion updated successfully.');
@@ -120,26 +211,7 @@ class PromotionController extends Controller
             ->route('promotions.index')
             ->with('success', 'Promotion deleted successfully.');
     }
-    // public function manageProducts(PromotionModel $promotion)
-    // {
-    //     $products = ProductsModel::with([
-    //         'category:id,name',
-    //         'brand:id,name',
-    //         'image'
-    //     ])
-    //         ->orderBy('name')
-    //         ->paginate(20);
 
-    //     $selectedProducts = $promotion->products()
-    //         ->pluck('products.id')
-    //         ->toArray();
-
-    //     return view('admin.promotion_products', compact(
-    //         'promotion',
-    //         'products',
-    //         'selectedProducts'
-    //     ));
-    // }
 
     public function attachProducts(Request $request, PromotionModel $promotion)
     {
@@ -152,15 +224,7 @@ class PromotionController extends Controller
         // If no products selected, use an empty array
         $productIds = $validated['product_ids'] ?? [];
 
-        /*
-    |--------------------------------------------------------------------------
-    | Sync Products to Promotion
-    |--------------------------------------------------------------------------
-    | This will:
-    | - Attach newly selected products
-    | - Remove unselected products
-    | - Keep existing selected products
-    */
+
         $promotion->products()->sync($productIds);
 
         // Redirect back with success message

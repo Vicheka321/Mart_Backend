@@ -48,6 +48,10 @@ class CouponController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'code' => preg_replace('/\s+/', ' ', trim($request->code))
+        ]);
+
         $validated = $request->validate([
             'code' => [
                 'required',
@@ -89,11 +93,20 @@ class CouponController extends Controller
 
         CouponModel::create($validated);
 
-        return redirect()->route('coupons.index')->with('success', 'Coupon created.');
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Coupon created successfully!',
+            ]);
+        }
+        return back()->with('success', 'Category created successfully!');
     }
 
     public function update(Request $request, CouponModel $coupon)
     {
+        $request->merge([
+            'code' => preg_replace('/\s+/', ' ', trim($request->code))
+        ]);
         $validated = $request->validate([
             'code' => [
                 'required',
@@ -135,7 +148,14 @@ class CouponController extends Controller
         $validated['status'] = (bool) $request->status;
         $coupon->update($validated);
 
-        return redirect()->route('coupons.index')->with('success', 'Coupon updated.');
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Coupon updated successfully.',
+            ]);
+        }
+
+        return redirect()->route('coupons.index')->with('success', 'Coupon updated successfully.');
     }
 
     public function destroy(CouponModel $coupon)

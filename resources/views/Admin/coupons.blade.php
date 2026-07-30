@@ -287,10 +287,15 @@
                                                     {{ $coupon->max_discount ?? "null" }},
                                                     {{ (int) ($coupon->status ? 1 : 0) }}
                                                 )'
-                                                    class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
-                                                           bg-indigo-50 text-indigo-600 hover:bg-indigo-100
-                                                           dark:bg-indigo-900/30 dark:text-indigo-400 transition-colors">
-                                                    Edit
+                                                    class="action-btn inline-flex items-center justify-center w-8 h-8 rounded-lg
+                                                    border border-gray-200 bg-white text-gray-600
+                                                    hover:text-gray-900 hover:border-gray-300 hover:shadow-sm transition-all duration-200
+                                                    dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700"
+                                                    title="Edit">
+                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                    </svg>
                                                 </button>
 
                                                 <form class="delete-form" action="{{ route('coupons.destroy', $coupon->id) }}" method="POST">
@@ -298,10 +303,14 @@
                                                     @method('DELETE')
                                                     <input type="hidden" data-name="{{ $coupon->code }}">
                                                     <button type="submit"
-                                                        class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
-                                                               bg-red-50 text-red-500 hover:bg-red-100
-                                                               dark:bg-red-900/20 dark:text-red-400 transition-colors">
-                                                        Delete
+                                                        class="action-btn inline-flex items-center justify-center w-8 h-8 rounded-lg
+                                                                border border-gray-200 bg-white text-gray-600
+                                                                hover:bg-gray-50 hover:text-red-500 transition-all duration-200
+                                                                dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-red-400"
+                                                        title="Delete">
+                                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"/>
+                                                        </svg>
                                                     </button>
                                                 </form>
                                             </div>
@@ -528,11 +537,20 @@
                                            focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
                             </div>
                         </div>
-
+{{-- 
                         <button type="submit"
                             class="action-btn w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium
                                    rounded-xl transition-all shadow-md shadow-indigo-500/25">
                             <span id="submitLabel">Create Coupon</span>
+                        </button> --}}
+                        <button
+                            type="submit"
+                            id="submitButton"
+                            class="action-btn w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium
+                                rounded-xl transition-all shadow-md shadow-indigo-500/25">
+
+                            <span id="submitLabel">Create Coupon</span>
+
                         </button>
                     </form>
                 </div>
@@ -591,7 +609,7 @@
                     document.getElementById('couponUsageLimitPerUser').value = '';
                     document.getElementById('couponMinOrder').value         = '';
                     document.getElementById('couponMaxDiscount').value      = '';
-
+                    clearFieldErrors();
                     updateValuePrefix();
                     showModal('couponModal');
                 }
@@ -618,7 +636,7 @@
                     document.getElementById('couponUsageLimitPerUser').value = usageLimitPerUser ?? '';
                     document.getElementById('couponMinOrder').value         = minOrder ?? '';
                     document.getElementById('couponMaxDiscount').value      = maxDiscount ?? '';
-
+                    clearFieldErrors();
                     updateValuePrefix();
                     showModal('couponModal');
                 }
@@ -745,6 +763,32 @@
                     e.preventDefault();
 
                     clearFieldErrors();
+                    const submitButton = document.getElementById('submitButton');
+                    const submitLabel = document.getElementById('submitLabel');
+
+                    submitButton.disabled = true;
+
+                    submitButton.innerHTML = `
+                        <svg class="animate-spin h-5 w-5 mx-auto"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24">
+                            <circle
+                                class="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4">
+                            </circle>
+
+                            <path
+                                class="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                            </path>
+                        </svg>
+                    `;
 
                     const form = e.target;
                     const formData = new FormData(form);
@@ -760,17 +804,27 @@
 
                     const data = await response.json();
 
-                    if (data.success) {
+                    if (response.ok) {
                         window.location.reload();
                         return;
                     }
 
-                    if (data.errors?.code) {
+                    if (response.status === 422) {
+
+                        submitButton.disabled = false;
+
+                        submitButton.innerHTML = `
+                            <span id="submitLabel">Create Coupon</span>
+                        `;
 
                         const input = document.getElementById('couponCode');
                         const error = document.getElementById('couponCodeError');
 
-                        input.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                        input.classList.add(
+                            'border-red-500',
+                            'ring-2',
+                            'ring-red-200'
+                        );
 
                         error.textContent = data.errors.code[0];
                         error.classList.remove('hidden');
@@ -782,11 +836,19 @@
                     const input = document.getElementById('couponCode');
                     const error = document.getElementById('couponCodeError');
 
-                    input.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+                    input.classList.remove(
+                        'border-red-500',
+                        'ring-2',
+                        'ring-red-200'
+                    );
 
                     error.textContent = '';
                     error.classList.add('hidden');
+                    
                 }
+                document.getElementById('couponCode').addEventListener('input', function () {
+                    clearFieldErrors();
+                });
             </script>
         @endpush
 

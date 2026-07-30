@@ -1536,7 +1536,6 @@
 
                 </svg>
 
-                <span>Saving...</span>
 
             </span>
         `;

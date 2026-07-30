@@ -1167,7 +1167,7 @@
                             <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.25)" stroke-width="3"/>
                             <path d="M22 12a10 10 0 0 0-10-10" stroke="white" stroke-width="3" stroke-linecap="round"/>
                         </svg>
-                        <span>Saving...</span>
+                        
                     </span>
                 `;
 
