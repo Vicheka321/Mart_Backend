@@ -13,65 +13,10 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
-
-    // public function index()
-    // {
-    //     $products = ProductsModel::with([
-    //         'category:id,name',
-    //         'brand:id,name',
-    //         'firstImage:id,product_id,image_url'
-    //     ])
-    //         ->latest()
-    //         ->paginate(10);
-
-    //     $categories = Category::select('id', 'name')->get();
-    //     $brands = BrandModel::select('id', 'name')->get();
-
-    //     return view('admin.products', compact('products', 'categories', 'brands'));
-    // }
-
-    // public function index(Request $request)
-    // {
-    //     $statusFilter = $request->input('status', 'all');
-
-    //     $products = ProductsModel::with([
-    //         'category:id,name',
-    //         'brand:id,name',
-    //         'image:id,product_id,image_url',
-    //     ])
-    //         ->when($statusFilter !== 'all', function ($q) use ($statusFilter) {
-    //             if ($statusFilter === 'active') {
-    //                 $q->where('status', 1);
-    //             } elseif ($statusFilter === 'inactive') {
-    //                 $q->where('status', 0);
-    //             } elseif ($statusFilter === 'low-stock') {
-    //                 $q->where('quantity', '<=', 10);
-    //             }
-    //         })
-    //         ->latest()
-    //         ->paginate(10);
-
-    //     $categories = Category::select('id', 'name')->get();
-    //     $brands     = BrandModel::select('id', 'name')->get();
-    //     $totalProducts = ProductsModel::count();
-    //     $totalActive = ProductsModel::where('status', 1)->count();
-    //     $totalLowStock = ProductsModel::where('quantity', '<=', 10)->count();
-
-
-    //     return view('admin.products', compact(
-    //         'products',
-    //         'categories',
-    //         'brands',
-    //         'statusFilter',
-    //         'totalProducts',
-    //         'totalActive',
-    //         'totalLowStock'
-
-    //     ));
-    // }
 
     public function index(Request $request)
     {
@@ -168,74 +113,170 @@ class ProductController extends Controller
         ));
     }
 
-    // public function store(Request $request)
+
+    // public function index(Request $request)
     // {
+    //     // Default filter
+    //     $statusFilter = $request->input('status', 'all');
+    //     $productKeywordSearch = trim($request->input('search'));
 
-    //     $request->validate([
-    //         'name' => 'required',
-    //         'products_id' => 'required',
-    //         'brand_id' => 'required',
-    //         'cost_price' => 'required|numeric',
-    //         'sale_price' => 'required|numeric',
-    //         'quantity' => 'required|integer',
-    //         'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-    //     ]);
-
-    //     $imageUrl = null;
-
-    //     if ($request->hasFile('image')) {
-
-    //         $file = $request->file('image');
-
-    //         $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
-
-    //         $path = 'products/' . $fileName;
-
-    //         Storage::disk('r2')->put(
-    //             $path,
-    //             file_get_contents($file),
-    //             'public'
-    //         );
-
-    //         $imageUrl = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $path;
-    //     }
-
-    //     $product = ProductsModel::create([
-    //         'products_id' => $request->products_id,
-    //         'brand_id' => $request->brand_id,
-    //         'product_code' => $request->product_code,
-    //         'name' => $request->name,
-    //         'description' => $request->description,
-    //         'unit' => $request->unit,
-    //         'cost_price' => $request->cost_price,
-    //         'sale_price' => $request->sale_price,
-    //         'quantity' => $request->quantity,
-    //         'status' => $request->status ?? 1,
-    //     ]);
-
-    //     if ($imageUrl) {
-    //         ProductsImageModel::create([
-    //             'product_id' => $product->id,
-    //             'image_url' => $imageUrl,
+    //     // Products Query
+    //     $query = ProductsModel::query()
+    //         ->with([
+    //             'category:id,name',
+    //             'brand:id,name',
+    //             'image:id,product_id,image_url',
     //         ]);
+
+    //     // Status Filter
+    //     switch ($statusFilter) {
+    //         case 'active':
+    //             $query->where('status', 1);
+    //             break;
+
+    //         case 'inactive':
+    //             $query->where('status', 0);
+    //             break;
+
+    //         case 'low-stock':
+    //             $query->where('quantity', '<=', 20);
+    //             break;
+
+    //         case 'all':
+    //         default:
+    //             break;
     //     }
 
-    //     return redirect()
-    //         ->route('products.index')
-    //         ->with('success', 'Product created successfully.');
+    //     // Search
+    //     if (!empty($productKeywordSearch)) {
+
+    //         $query->where(function ($q) use ($productKeywordSearch) {
+
+    //             $q->where('name', 'LIKE', "%{$productKeywordSearch}%")
+    //                 ->orWhere('product_code', 'LIKE', "%{$productKeywordSearch}%")
+    //                 ->orWhere('description', 'LIKE', "%{$productKeywordSearch}%")
+    //                 ->orWhereHas('category', function ($category) use ($productKeywordSearch) {
+
+    //                     $category->where(
+    //                         'name',
+    //                         'LIKE',
+    //                         "%{$productKeywordSearch}%"
+    //                     );
+    //                 })
+    //                 ->orWhereHas('brand', function ($brand) use ($productKeywordSearch) {
+
+    //                     $brand->where(
+    //                         'name',
+    //                         'LIKE',
+    //                         "%{$productKeywordSearch}%"
+    //                     );
+    //                 });
+    //         });
+    //     }
+
+    //     // Products
+    //     $products = $query
+    //         ->latest('id')
+    //         ->paginate(10)
+    //         ->withQueryString();
+
+    //     // Categories
+    //     $categories = Category::select('id', 'name')
+    //         ->orderBy('name')
+    //         ->get();
+
+    //     // Brands
+    //     $brands = BrandModel::select('id', 'name')
+    //         ->orderBy('name')
+    //         ->get();
+
+    //     // Dashboard Cards
+    //     $totalProducts = ProductsModel::count();
+
+    //     $totalActive = ProductsModel::where('status', 1)->count();
+
+    //     $totalInactive = ProductsModel::where('status', 0)->count();
+
+    //     $totalLowStock = ProductsModel::where('quantity', '<=', 20)->count();
+
+
+    //     if ($request->ajax()) {
+
+    //         $view = view('Admin.products', compact(
+    //             'products',
+    //             'categories',
+    //             'brands',
+    //             'statusFilter',
+    //             'totalProducts',
+    //             'totalActive',
+    //             'totalInactive',
+    //             'totalLowStock'
+    //         ));
+
+    //         $view = view('Admin.products', compact(...));
+    //         return response()->json(['html' => $view->render()]);
+    //     }
+
+
+    //     return view('Admin.products', compact(
+    //         'products',
+    //         'categories',
+    //         'brands',
+    //         'statusFilter',
+    //         'totalProducts',
+    //         'totalActive',
+    //         'totalInactive',
+    //         'totalLowStock'
+    //     ));
     // }
+
 
     public function store(Request $request)
     {
+        $request->merge([
+            'name' => preg_replace(
+                '/\s+/',
+                ' ',
+                trim($request->input('name'))
+            ),
+        ]);
+
         $request->validate([
-            'name'          => 'required',
+            'name' => [
+                'required',
+                'max:255',
+
+                function ($attribute, $value, $fail) {
+
+                    $normalized = strtolower(
+                        preg_replace('/\s+/', '', strtolower(trim($value)))
+                    );
+
+                    $exists = ProductsModel::get()->contains(function ($product) use ($normalized) {
+
+                        return strtolower(
+                            preg_replace('/\s+/', '', trim($product->name))
+                        ) === $normalized;
+                    });
+
+                    if ($exists) {
+                        $fail('Product name already exists.');
+                    }
+                },
+            ],
+
             'categories_id' => 'required|exists:categories,id',
             'brand_id'      => 'required|exists:brands,id',
             'cost_price'    => 'nullable|numeric',
-            'sale_price'    => 'required|numeric',
+            'sale_price'    => 'required|numeric|gte:cost_price',
             'quantity'      => 'required|integer',
-            'images'        => 'nullable|array|max:10',        // ✅ multiple
+            'images'        => 'required|array|min:1|max:10',
             'images.*'      => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+        ], [
+            'name.unique'      => 'Product name already exists.',
+            'sale_price.gte'   => 'Sale price cannot be less than cost price.',
+            'images.required'  => 'Please upload at least one product image.',
+            'images.min'       => 'Please upload at least one product image.',
         ]);
 
         // ✅ Create product
@@ -279,25 +320,84 @@ class ProductController extends Controller
         }
 
 
-        return redirect()->route('products.index')
+        // return redirect()->route('products.index')
+        //     ->with('success', 'Product created successfully.');
+        if ($request->ajax()) {
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product created successfully.',
+            ]);
+        }
+
+        return redirect()
+            ->route('products.index')
             ->with('success', 'Product created successfully.');
     }
 
     public function update(Request $request, $id)
     {
+        $request->merge([
+            'name' => preg_replace(
+                '/\s+/',
+                ' ',
+                trim($request->input('name'))
+            ),
+        ]);
         $request->validate([
-            'name'          => 'required',
+            'name' => [
+                'required',
+                'max:255',
+                function ($attribute, $value, $fail) use ($id) {
+
+                    $normalized = strtolower(
+                        preg_replace('/\s+/', '', strtolower(trim($value)))
+                    );
+
+                    $exists = ProductsModel::where('id', '!=', $id)
+                        ->get()
+                        ->contains(function ($product) use ($normalized) {
+
+                            return strtolower(
+                                preg_replace('/\s+/', '', trim($product->name))
+                            ) === $normalized;
+                        });
+
+                    if ($exists) {
+                        $fail('Product name already exists.');
+                    }
+                },
+            ],
+
             'categories_id' => 'required|exists:categories,id',
             'brand_id'      => 'required|exists:brands,id',
             'cost_price'    => 'nullable|numeric',
-            'sale_price'    => 'required|numeric',
+            'sale_price'    => 'required|numeric|gte:cost_price',
             'quantity'      => 'required|integer',
             'status'        => 'nullable|in:0,1',
 
-            // Multiple image upload
             'images'        => 'nullable|array|max:10',
             'images.*'      => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+        ], [
+            'name.unique'    => 'Product name already exists.',
+            'sale_price.gte' => 'Sale price cannot be less than cost price.',
         ]);
+        $product = ProductsModel::findOrFail($id);
+        $hasNewImages      = $request->hasFile('images') && count($request->file('images')) > 0;
+        $hasExistingImages = $product->image()->exists();
+
+        if (!$hasNewImages && !$hasExistingImages) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => ['images' => ['Please upload at least one product image.']],
+                ], 422);
+            }
+
+            return back()
+                ->withErrors(['images' => 'Please upload at least one product image.'])
+                ->withInput();
+        }
 
         DB::transaction(function () use ($request, $id) {
 
@@ -372,14 +472,35 @@ class ProductController extends Controller
             }
         });
 
+        // return redirect()
+        //     ->route('products.index', ['page' => request('page')])
+        //     ->with('success', 'Product updated successfully.');
+        if ($request->ajax()) {
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product updated successfully.',
+            ]);
+        }
         return redirect()
-            ->route('products.index', ['page' => request('page')])
+            ->route('products.index')
             ->with('success', 'Product updated successfully.');
     }
     public function destroy($id)
     {
         $product = ProductsModel::findOrFail($id);
         $product->delete();
+        // return redirect()
+        //     ->route('products.index')
+        //     ->with('success', 'Product deleted successfully.');
+        if (request()->ajax()) {
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product deleted successfully.'
+            ]);
+        }
+
         return redirect()
             ->route('products.index')
             ->with('success', 'Product deleted successfully.');

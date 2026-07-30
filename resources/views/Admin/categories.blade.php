@@ -42,6 +42,10 @@
             from { opacity: 1; }
             to   { opacity: 0; transform: translateX(48px); }
         }
+        @keyframes rowSlideIn {
+            from { opacity: 0; transform: translateX(-8px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
 
         /* Stat cards */
         .stat-card { animation: fadeSlideUp .5s ease both; }
@@ -68,6 +72,21 @@
         .category-card:nth-child(8)  { animation-delay: .65s; }
         .category-card:nth-child(9)  { animation-delay: .70s; }
         .category-card:nth-child(10) { animation-delay: .75s; }
+
+        /* List rows staggered */
+        .list-row { animation: rowSlideIn .3s ease both; transition: background-color .15s ease; }
+        .list-row:nth-child(1)  { animation-delay: .04s; }
+        .list-row:nth-child(2)  { animation-delay: .07s; }
+        .list-row:nth-child(3)  { animation-delay: .10s; }
+        .list-row:nth-child(4)  { animation-delay: .13s; }
+        .list-row:nth-child(5)  { animation-delay: .16s; }
+        .list-row:nth-child(6)  { animation-delay: .19s; }
+        .list-row:nth-child(7)  { animation-delay: .22s; }
+        .list-row:nth-child(8)  { animation-delay: .25s; }
+        .list-row:nth-child(9)  { animation-delay: .28s; }
+        .list-row:nth-child(10) { animation-delay: .31s; }
+        .list-row:hover { background-color: rgba(99,102,241,.04); }
+        .dark .list-row:hover { background-color: rgba(99,102,241,.08); }
 
         /* Progress bars animate from 0 */
         .progress-bar { animation: progressFill .9s .7s cubic-bezier(.4,0,.2,1) both; }
@@ -116,149 +135,32 @@
             background: rgba(0,0,0,.3) !important;
             display: flex !important;
         }
+
+        /* View toggle buttons */
+        .view-toggle-btn {
+            transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+            color: #9ca3af;
+        }
+        .view-toggle-btn.active {
+            background: white;
+            color: #4f46e5;
+            box-shadow: 0 1px 4px rgba(0,0,0,.1);
+        }
+        .dark .view-toggle-btn.active {
+            background: #4b5563;
+            color: #a5b4fc;
+        }
+        .view-toggle-btn:not(.active):hover {
+            color: #4b5563;
+        }
+        .dark .view-toggle-btn:not(.active):hover {
+            color: #e5e7eb;
+        }
     </style>
 
     <div class="toast-wrap" id="toastWrap"></div>
 
     <div class="space-y-4">
-
-        {{-- ==================== STAT CARDS ==================== --}}
-        {{-- <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
-      
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
-                        border border-gray-100 dark:border-gray-700
-                        shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-4 flex flex-col gap-2">
-                <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full
-                            bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-indigo-900/20 dark:to-purple-900/20"></div>
-
-                <div class="relative flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600
-                                    flex items-center justify-center shadow-md shadow-indigo-500/25">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="text-xs font-semibold text-gray-900 dark:text-white leading-tight">Total Categories</h4>
-                            <p class="text-[10px] text-gray-400 dark:text-gray-500 leading-tight">All categories</p>
-                        </div>
-                    </div>
-                    <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full
-                                 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400
-                                 ring-1 ring-indigo-200 dark:ring-indigo-800 text-[10px] font-semibold">
-                        {{ number_format($totalCount) }}
-                    </span>
-                </div>
-
-                <div class="relative pl-1">
-                    <h2 class="text-2xl font-bold tracking-tight leading-none
-                               bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
-                        data-count="{{ $totalCount }}">0</h2>
-                </div>
-
-                <div class="relative">
-                    <div class="h-1.5 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                        <div class="progress-bar h-full w-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-600"></div>
-                    </div>
-                    <div class="mt-1 flex items-center justify-between">
-                        <span class="text-[10px] text-gray-400 dark:text-gray-500">All registered</span>
-                        <span class="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400">100%</span>
-                    </div>
-                </div>
-            </div>
-
-          
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
-                        border border-gray-100 dark:border-gray-700
-                        shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-4 flex flex-col gap-2">
-                <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full
-                            bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/20"></div>
-
-                <div class="relative flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600
-                                    flex items-center justify-center shadow-md shadow-emerald-500/25">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="text-xs font-semibold text-gray-900 dark:text-white leading-tight">With Image</h4>
-                            <p class="text-[10px] text-gray-400 dark:text-gray-500 leading-tight">Have thumbnails</p>
-                        </div>
-                    </div>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full
-                                 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400
-                                 ring-1 ring-emerald-200 dark:ring-emerald-800 text-[10px] font-semibold">
-                        {{ $withPct }}%
-                    </span>
-                </div>
-
-                <div class="relative pl-1">
-                    <h2 class="text-2xl font-bold tracking-tight leading-none
-                               bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"
-                        data-count="{{ $withImage }}">0</h2>
-                </div>
-
-                <div class="relative">
-                    <div class="h-1.5 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                        <div class="progress-bar h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-600"
-                             style="width: {{ $withPct }}%"></div>
-                    </div>
-                    <div class="mt-1 flex items-center justify-between">
-                        <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ $withPct }}% of total</span>
-                        <span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">{{ number_format($totalCount) }} total</span>
-                    </div>
-                </div>
-            </div>
-
-       
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
-                        border border-gray-100 dark:border-gray-700
-                        shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-4 flex flex-col gap-2">
-                <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full
-                            bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20"></div>
-
-                <div class="relative flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600
-                                    flex items-center justify-center shadow-md shadow-amber-500/25">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="text-xs font-semibold text-gray-900 dark:text-white leading-tight">No Image</h4>
-                            <p class="text-[10px] text-gray-400 dark:text-gray-500 leading-tight">Missing thumbnails</p>
-                        </div>
-                    </div>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full
-                                 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400
-                                 ring-1 ring-amber-200 dark:ring-amber-800 text-[10px] font-semibold">
-                        {{ $noPct }}%
-                    </span>
-                </div>
-
-                <div class="relative pl-1">
-                    <h2 class="text-2xl font-bold tracking-tight leading-none
-                               bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent"
-                        data-count="{{ $noImage }}">0</h2>
-                </div>
-
-                <div class="relative">
-                    <div class="h-1.5 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                        <div class="progress-bar h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-600"
-                             style="width: {{ $noPct }}%"></div>
-                    </div>
-                    <div class="mt-1 flex items-center justify-between">
-                        <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ $noPct }}% of total</span>
-                        <span class="text-[10px] font-semibold text-amber-600 dark:text-amber-400">{{ number_format($totalCount) }} total</span>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
 
         {{-- ==================== TABLE CARD ==================== --}}
         <div class="table-card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
@@ -268,19 +170,48 @@
                         flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Category List</h2>
 
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-wrap">
 
                     {{-- SEARCH --}}
                     <div class="relative">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
                              fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                         </svg>
-                        <input type="text" id="categorySearch" placeholder="Search categories…"
-                               oninput="filterCategories()" autocomplete="off"
-                               class="w-full sm:w-56 pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
-                                      bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400
-                                      focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
+                        <form method="GET">
+                            <input
+                                type="text"
+                                name="search"
+                                value="{{ request('search') }}"
+                                placeholder="Search categories..."
+                                onchange="this.form.submit()"
+                                autocomplete="off"
+                                class="w-full sm:w-56 pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
+                                       bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400
+                                       focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
+                        </form>
+                    </div>
+
+                    {{-- VIEW TOGGLE: GRID / LIST --}}
+                    <div class="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-600
+                                bg-gray-50 dark:bg-gray-700 p-1 gap-1">
+                        <button type="button" id="gridViewBtn" onclick="setViewMode('grid')"
+                            title="Grid view"
+                            class="view-toggle-btn w-9 h-8 flex items-center justify-center rounded-lg">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                                <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                            </svg>
+                        </button>
+                        <button type="button" id="listViewBtn" onclick="setViewMode('list')"
+                            title="List view"
+                            class="view-toggle-btn w-9 h-8 flex items-center justify-center rounded-lg">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
                     </div>
 
                     {{-- EXPORT --}}
@@ -307,8 +238,8 @@
                 </div>
             </div>
 
-            {{-- CATEGORY GRID --}}
-            <div class="p-4 sm:p-5">
+            {{-- ==================== GRID VIEW ==================== --}}
+            <div id="gridViewWrap" class="p-4 sm:p-5">
                 <div id="categoriesTable"
                      class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
 
@@ -322,11 +253,6 @@
                                 <div class="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
                                     <img src="{{ $category->image }}" alt="{{ $category->name }}"
                                          class="cat-img w-full h-full object-cover">
-                                    {{-- <span class="absolute top-2 left-2 inline-flex items-center px-2 py-0.5 rounded-full
-                                                 text-[10px] font-semibold bg-emerald-100/90 text-emerald-700
-                                                 dark:bg-emerald-500/20 dark:text-emerald-400" style="backdrop-filter:blur(4px)">
-                                        ✓ Image
-                                    </span> --}}
                                 </div>
                             @else
                                 <div class="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200
@@ -412,6 +338,98 @@
                 <div id="searchEmpty" class="hidden py-12 text-center text-sm text-gray-400 dark:text-gray-500">
                     No categories match your search.
                 </div>
+            </div>
+
+            {{-- ==================== LIST (TABLE) VIEW ==================== --}}
+            <div id="listViewWrap" class="hidden overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30">
+                            <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Category</th>
+                            <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Image</th>
+                            <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Created</th>
+                            <th class="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        @forelse($categories as $category)
+                            <tr class="list-row" data-name="{{ strtolower($category->name) }}">
+
+                                <td class="px-5 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0
+                                                    {{ $category->image ? 'bg-gray-50 dark:bg-gray-700' : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600' }}
+                                                    flex items-center justify-center">
+                                            @if($category->image)
+                                                <img src="{{ $category->image }}" class="w-full h-full object-cover">
+                                            @else
+                                                <span class="text-sm font-bold text-gray-400 dark:text-gray-500">
+                                                    {{ strtoupper(substr($category->name, 0, 1)) }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $category->name }}</p>
+                                    </div>
+                                </td>
+
+                                <td class="px-5 py-3">
+                                    @if($category->image)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
+                                                     bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
+                                            Has image
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
+                                                     bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400">
+                                            No image
+                                        </span>
+                                    @endif
+                                </td>
+
+                                <td class="px-5 py-3 text-gray-600 dark:text-gray-300">
+                                    {{ $category->created_at->format('M d, Y') }}
+                                </td>
+
+                                <td class="px-5 py-3">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button"
+                                            onclick="editCategory({{ $category->id }}, '{{ addslashes($category->name) }}', '{{ $category->image }}')"
+                                            class="action-btn inline-flex items-center justify-center w-8 h-8 rounded-lg
+                                                    border border-gray-200 bg-white text-gray-600
+                                                    hover:text-gray-900 hover:border-gray-300 hover:shadow-sm transition-all duration-200
+                                                    dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700"
+                                            title="Edit">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                            </svg>
+                                        </button>
+
+                                        <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="delete-form">
+                                            @csrf @method('DELETE')
+                                            <button type="submit"
+                                                class="action-btn inline-flex items-center justify-center w-8 h-8 rounded-lg
+                                                        border border-gray-200 bg-white text-gray-600
+                                                        hover:bg-gray-50 hover:text-red-500 transition-all duration-200
+                                                        dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-red-400"
+                                                title="Delete">
+                                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="py-16 text-center text-sm text-gray-400 dark:text-gray-500">
+                                    No categories found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
             {{-- PAGINATION --}}
@@ -625,8 +643,9 @@
                     <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Category Name</label>
                     <input type="text" name="name" id="categoryName" placeholder="e.g. Beverages" required
                         class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
-                               bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400
-                               focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                            bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <p id="categoryNameError" class="hidden mt-1 text-xs text-red-500"></p>
                 </div>
 
                 {{-- Image Upload --}}
@@ -670,7 +689,9 @@
                     <input type="file" name="image" id="imageInput" accept="image/*" class="hidden">
                 </div>
 
-                <button type="submit"
+                <button
+                    id="saveCategoryBtn"
+                    type="submit"
                     class="action-btn w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium
                            rounded-xl transition-all shadow-md shadow-indigo-500/25">
                     Save Category
@@ -680,8 +701,32 @@
     </div>
 
 
-    @push('scripts')
+@push('scripts')
     <script>
+    // ══════════════════════════════════════════════════════
+    //  VIEW MODE: GRID / LIST
+    // ══════════════════════════════════════════════════════
+    function setViewMode(mode) {
+        const gridWrap = document.getElementById('gridViewWrap');
+        const listWrap = document.getElementById('listViewWrap');
+        const gridBtn  = document.getElementById('gridViewBtn');
+        const listBtn  = document.getElementById('listViewBtn');
+
+        if (mode === 'list') {
+            gridWrap.classList.add('hidden');
+            listWrap.classList.remove('hidden');
+            listBtn.classList.add('active');
+            gridBtn.classList.remove('active');
+        } else {
+            listWrap.classList.add('hidden');
+            gridWrap.classList.remove('hidden');
+            gridBtn.classList.add('active');
+            listBtn.classList.remove('active');
+        }
+
+        try { localStorage.setItem('categoriesViewMode', mode); } catch (e) {}
+    }
+
     // ══════════════════════════════════════════════════════
     //  ANIMATED NUMBER COUNTER
     // ══════════════════════════════════════════════════════
@@ -704,6 +749,11 @@
             document.querySelectorAll('[data-count]').forEach(animateCounter);
         }, 300);
 
+        // Restore saved view mode
+        let savedMode = 'grid';
+        try { savedMode = localStorage.getItem('categoriesViewMode') || 'grid'; } catch (e) {}
+        setViewMode(savedMode);
+
         // Delete confirm
         document.querySelectorAll('.delete-form').forEach(form => {
             form.addEventListener('submit', function(e) {
@@ -716,7 +766,29 @@
                     confirmButtonText: 'Yes, delete it',
                     confirmButtonColor: '#6366f1',
                     cancelButtonColor: '#ef4444',
-                }).then(result => { if (result.isConfirmed) form.submit(); });
+                }).then(async (result) => {
+                    if (!result.isConfirmed) return;
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            body: new FormData(form),
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            window.location.reload();
+                        }
+                    } catch (err) {
+                        console.log(err);
+                        form.submit(); // fallback to normal submit if fetch fails
+                    }
+                });
             });
         });
     });
@@ -736,11 +808,21 @@
     function closeModal()       { hideModal('categoryModal'); }
 
     function resetForm() {
-        document.getElementById('categoryForm').action    = "{{ route('categories.store') }}";
-        document.getElementById('formMethod').value       = 'POST';
-        document.getElementById('categoryName').value     = '';
-        document.getElementById('modalTitle').innerText   = 'Add Category';
+        document.getElementById('categoryForm').action  = "{{ route('categories.store') }}";
+        document.getElementById('formMethod').value      = 'POST';
+        document.getElementById('categoryName').value    = '';
+        document.getElementById('modalTitle').innerText  = 'Add Category';
+        clearFieldErrors();
         resetImagePreview();
+    }
+
+    function clearFieldErrors() {
+        const input = document.getElementById('categoryName');
+        const error = document.getElementById('categoryNameError');
+
+        input.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+        error.textContent = '';
+        error.classList.add('hidden');
     }
 
     // ══════════════════════════════════════════════════════
@@ -796,19 +878,65 @@
     }
 
     // ══════════════════════════════════════════════════════
-    //  SEARCH FILTER
+    //  SAVE (ADD / EDIT) — AJAX
     // ══════════════════════════════════════════════════════
-    function filterCategories() {
-        const q     = document.getElementById('categorySearch').value.toLowerCase().trim();
-        const cards = document.querySelectorAll('.category-card');
-        const empty = document.getElementById('searchEmpty');
-        let vis     = 0;
-        cards.forEach(card => {
-            const match = (card.dataset.name || '').includes(q);
-            card.style.display = match ? '' : 'none';
-            if (match) vis++;
-        });
-        empty.classList.toggle('hidden', !(q && vis === 0));
+    const categoryForm = document.getElementById('categoryForm');
+    categoryForm.addEventListener('submit', saveCategory);
+
+    async function saveCategory(e) {
+        e.preventDefault();
+
+        clearFieldErrors();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const btn = document.getElementById('saveCategoryBtn');
+
+        btn.disabled = true;
+        const originalLabel = btn.innerHTML;
+        btn.innerHTML = `
+            <span class="inline-flex items-center justify-center gap-2">
+                <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.25)" stroke-width="3"/>
+                    <path d="M22 12a10 10 0 0 0-10-10" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <span>Saving...</span>
+            </span>
+        `;
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST', // hidden _method field handles PUT for edit
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                window.location.reload();
+                return;
+            }
+
+            // Validation errors (Laravel's default 422 shape: { message, errors: { name: [...] } })
+            if (data.errors?.name) {
+                const input = document.getElementById('categoryName');
+                const error = document.getElementById('categoryNameError');
+
+                input.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                error.textContent = data.errors.name[0];
+                error.classList.remove('hidden');
+            }
+
+        } catch (err) {
+            console.log(err);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalLabel;
+        }
     }
     </script>
     @endpush

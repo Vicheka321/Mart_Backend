@@ -40,6 +40,10 @@
             from { transform: scale(1) translateY(0); }
             to   { transform: scale(1.04) translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,.18); }
         }
+        @keyframes rowSlideIn {
+            from { opacity: 0; transform: translateX(-8px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
 
         /* Stat cards staggered */
         .stat-card { animation: fadeSlideUp .5s ease both; }
@@ -67,6 +71,19 @@
         .product-row:nth-child(8)  { animation-delay: .67s; }
         .product-row:nth-child(9)  { animation-delay: .72s; }
         .product-row:nth-child(10) { animation-delay: .77s; }
+
+        /* List rows staggered */
+        .list-row { animation: rowSlideIn .3s ease both; transition: background-color .15s ease; }
+        .list-row:nth-child(1)  { animation-delay: .04s; }
+        .list-row:nth-child(2)  { animation-delay: .07s; }
+        .list-row:nth-child(3)  { animation-delay: .10s; }
+        .list-row:nth-child(4)  { animation-delay: .13s; }
+        .list-row:nth-child(5)  { animation-delay: .16s; }
+        .list-row:nth-child(6)  { animation-delay: .19s; }
+        .list-row:nth-child(7)  { animation-delay: .22s; }
+        .list-row:nth-child(8)  { animation-delay: .25s; }
+        .list-row:nth-child(9)  { animation-delay: .28s; }
+        .list-row:nth-child(10) { animation-delay: .31s; }
 
         /* Progress bars */
         .progress-bar { animation: progressFill .9s .7s cubic-bezier(.4,0,.2,1) both; }
@@ -123,6 +140,31 @@
         /* Filter pill */
         .filter-pill { transition: background .18s ease, color .18s ease, box-shadow .18s ease; }
         .filter-pill.active { box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+
+        /* View toggle buttons */
+        .view-toggle-btn {
+            transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+            color: #9ca3af;
+        }
+        .view-toggle-btn.active {
+            background: white;
+            color: #4f46e5;
+            box-shadow: 0 1px 4px rgba(0,0,0,.1);
+        }
+        .dark .view-toggle-btn.active {
+            background: #4b5563;
+            color: #a5b4fc;
+        }
+        .view-toggle-btn:not(.active):hover {
+            color: #4b5563;
+        }
+        .dark .view-toggle-btn:not(.active):hover {
+            color: #e5e7eb;
+        }
+
+        /* List table row hover */
+        .list-row:hover { background-color: rgba(99,102,241,.04); }
+        .dark .list-row:hover { background-color: rgba(99,102,241,.08); }
 
         /* Responsive */
         @media (max-width: 640px) {
@@ -416,54 +458,45 @@
 
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-wrap">
 
-                    {{-- STATUS FILTER --}}
-                    {{-- <div class="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-600
-                                bg-gray-50 dark:bg-gray-700 p-1 gap-1 flex-wrap">
-                        @foreach(['all' => 'All', 'active' => 'Active', 'inactive' => 'Inactive', 'low-stock' => 'Low Stock'] as $value => $label)
-                            <a href="{{ request()->fullUrlWithQuery(['status' => $value, 'page' => 1]) }}" 
-                               class="filter-pill px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200
-                                      {{ ($statusFilter ?? 'all') === $value
-                                          ? 'active bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                                          : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }}">
-                                {{ $label }}
-                            </a>
-                        @endforeach
-                    </div> --}}
                     <form method="GET" action="{{ url()->current() }}">
-   
                         @foreach(request()->except(['status', 'page']) as $key => $value)
                             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                         @endforeach
-{{-- 
-                        <select name="status"
-                                onchange="this.form.submit()"
-                                class="px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-600
-                                    bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200
-                                    focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
-                            @foreach([
-                                'all'        => 'All',
-                                'active'     => 'Active',
-                                'inactive'   => 'Inactive',
-                                'low-stock'  => 'Low Stock'
-                            ] as $value => $label)
-                                <option value="{{ $value }}"
-                                    {{ ($statusFilter ?? 'all') === $value ? 'selected' : '' }}>
-                                    {{ $label }}
-                                </option>
-                            @endforeach
-                        </select> --}}
                     </form>
+
                     {{-- SEARCH --}}
                     <div class="relative">
                         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
                              fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                         </svg>
-                        <input type="text" id="productSearch" placeholder="Search products…" oninput="filterProducts()"
+                        <input type="text" id="productSearch" placeholder="Search products…" oninput="handleSearchInput()"
                                autocomplete="off"
                                class="w-full sm:w-56 pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
                                       bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400
                                       focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
+                    </div>
+
+                    {{-- VIEW TOGGLE: GRID / LIST --}}
+                    <div class="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-600
+                                bg-gray-50 dark:bg-gray-700 p-1 gap-1">
+                        <button type="button" id="gridViewBtn" onclick="setViewMode('grid')"
+                            title="Grid view"
+                            class="view-toggle-btn w-9 h-8 flex items-center justify-center rounded-lg">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                                <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                            </svg>
+                        </button>
+                        <button type="button" id="listViewBtn" onclick="setViewMode('list')"
+                            title="List view"
+                            class="view-toggle-btn w-9 h-8 flex items-center justify-center rounded-lg">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
                     </div>
 
                     {{-- EXPORT --}}
@@ -503,8 +536,8 @@
                 </div>
             @endif
 
-            {{-- PRODUCT GRID --}}
-            <div class="p-4 sm:p-5">
+            {{-- ==================== GRID VIEW ==================== --}}
+            <div id="gridViewWrap" class="p-4 sm:p-5">
                 <div id="productsTable"
                      class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
 
@@ -652,6 +685,139 @@
                 <div id="searchEmpty" class="hidden py-12 text-center text-sm text-gray-400 dark:text-gray-500">
                     No products match your search.
                 </div>
+            </div>
+
+            {{-- ==================== LIST (TABLE) VIEW ==================== --}}
+            <div id="listViewWrap" class="hidden overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30">
+                            <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Product</th>
+                            <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Category</th>
+                            <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Brand</th>
+                            <th class="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Price</th>
+                            <th class="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Stock</th>
+                            <th class="px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Status</th>
+                            <th class="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        @forelse($products as $product)
+                            @php
+                                $img      = optional($product->image->first())->image_url;
+                                $isLow    = ($product->quantity ?? 0) < 10;
+                                $isActive = ($product->status ?? 1) == 1;
+                            @endphp
+
+                            <tr class="list-row"
+                                data-name="{{ strtolower($product->name) }}"
+                                data-category="{{ strtolower($product->category->name ?? '') }}"
+                                data-brand="{{ strtolower($product->brand->name ?? '') }}">
+
+                                <td class="px-5 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0
+                                                    {{ $img ? 'bg-gray-50 dark:bg-gray-700' : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600' }}
+                                                    flex items-center justify-center">
+                                            @if($img)
+                                                <img src="{{ $img }}" class="w-full h-full object-contain p-1">
+                                            @else
+                                                <span class="text-sm font-bold text-gray-400 dark:text-gray-500">
+                                                    {{ strtoupper(substr($product->name ?? 'P', 0, 1)) }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $product->name }}</p>
+                                            @if($product->cost_price)
+                                                <p class="text-[11px] text-gray-400 dark:text-gray-500">Cost ${{ number_format($product->cost_price, 2) }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-5 py-3 text-gray-600 dark:text-gray-300">{{ $product->category->name ?? '—' }}</td>
+                                <td class="px-5 py-3 text-gray-600 dark:text-gray-300">{{ $product->brand->name ?? '—' }}</td>
+
+                                <td class="px-5 py-3 text-right font-semibold text-gray-900 dark:text-white">
+                                    ${{ number_format($product->sale_price ?? 0, 2) }}
+                                </td>
+
+                                <td class="px-5 py-3 text-right">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium
+                                                 {{ $isLow
+                                                     ? 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400'
+                                                     : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300' }}">
+                                        {{ $product->quantity ?? 0 }}
+                                    </span>
+                                </td>
+
+                                <td class="px-5 py-3 text-center">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
+                                                 {{ $isActive
+                                                     ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
+                                                     : 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400' }}">
+                                        {{ $isActive ? 'Active' : 'Inactive' }}
+                                    </span>
+                                    @if($isLow)
+                                        <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
+                                                     bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400">
+                                            Low
+                                        </span>
+                                    @endif
+                                </td>
+
+                                <td class="px-5 py-3">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button"
+                                            onclick='editProduct(
+                                                {{ $product->id }},
+                                                @json($product->name),
+                                                @json($product->description),
+                                                {{ $product->categories_id }},
+                                                {{ $product->brand_id }},
+                                                {{ $product->cost_price ?? 0 }},
+                                                {{ $product->sale_price ?? 0 }},
+                                                {{ $product->quantity ?? 0 }},
+                                                {{ (int) $product->status }},
+                                                @json($product->image->map(fn($img) => ["image_url" => $img->image_url])->values())
+                                            )'
+                                            class="action-btn inline-flex items-center justify-center w-8 h-8 rounded-lg
+                                                    border border-gray-200 bg-white text-gray-600
+                                                    hover:text-gray-900 hover:border-gray-300 hover:shadow-sm transition-all duration-200
+                                                    dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700"
+                                            title="Edit">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                            </svg>
+                                        </button>
+
+                                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="delete-form">
+                                            @csrf @method('DELETE')
+                                            <button type="submit"
+                                                class="action-btn inline-flex items-center justify-center w-8 h-8 rounded-lg
+                                                        border border-gray-200 bg-white text-gray-600
+                                                        hover:bg-gray-50 hover:text-red-500 transition-all duration-200
+                                                        dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-red-400"
+                                                title="Delete">
+                                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="py-16 text-center text-sm text-gray-400 dark:text-gray-500">
+                                    No products found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
             {{-- PAGINATION --}}
@@ -870,11 +1036,23 @@
                             <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">General Info</p>
 
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Product Name</label>
-                                <input type="text" id="productName" name="name" placeholder="e.g. Pepsi" required
-                                    class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
-                                           bg-white dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400
-                                           focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
+                                    Product Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="productName"
+                                    name="name"
+                                    placeholder="e.g. Pepsi"
+                                    required
+                                    class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200
+                                        dark:border-gray-600 bg-white dark:bg-gray-700
+                                        text-gray-800 dark:text-white
+                                        focus:outline-none focus:ring-2 focus:ring-indigo-500">
+
+                                <p id="productNameError"
+                                class="hidden mt-1 text-xs text-red-500"></p>
                             </div>
 
                             <div>
@@ -918,17 +1096,18 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Cost Price</label>
-                                    <input type="number" step="0.01" name="cost_price" placeholder="0.50"
+                                    <input type="number" step="0.01" id="costPrice" name="cost_price" placeholder="0.50"
                                         class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
                                                bg-white dark:bg-gray-700 text-gray-800 dark:text-white
                                                focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Sale Price</label>
-                                    <input type="number" step="0.01" name="sale_price" placeholder="1.00" required
+                                    <input type="number" step="0.01" id="salePrice" name="sale_price" placeholder="1.00" required
                                         class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
                                                bg-white dark:bg-gray-700 text-gray-800 dark:text-white
                                                focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                                    <p id="salePriceError" class="hidden mt-1 text-xs text-red-500"></p>
                                 </div>
                             </div>
 
@@ -985,13 +1164,17 @@
 
                         <div id="thumbGrid" class="grid grid-cols-4 gap-2 mt-3"></div>
                         <p id="imgCount" class="hidden mt-1.5 text-xs text-gray-400"></p>
+                        <p id="imagesError" class="hidden mt-1.5 text-xs text-red-500"></p>
 
                         <div class="flex-1 min-h-4"></div>
 
-                        <button type="submit"
-                            class="action-btn w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium
-                                   py-2.5 rounded-xl transition-all shadow-md shadow-indigo-500/25">
-                            Save
+                        <button
+                            id="saveProductBtn"
+                            type="submit"
+                            class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white">
+
+                            Save Product
+
                         </button>
                     </div>
                 </div>
@@ -1002,6 +1185,30 @@
 
     @push('scripts')
     <script>
+    // ══════════════════════════════════════════════════════
+    //  VIEW MODE: GRID / LIST
+    // ══════════════════════════════════════════════════════
+    function setViewMode(mode) {
+        const gridWrap = document.getElementById('gridViewWrap');
+        const listWrap = document.getElementById('listViewWrap');
+        const gridBtn  = document.getElementById('gridViewBtn');
+        const listBtn  = document.getElementById('listViewBtn');
+
+        if (mode === 'list') {
+            gridWrap.classList.add('hidden');
+            listWrap.classList.remove('hidden');
+            listBtn.classList.add('active');
+            gridBtn.classList.remove('active');
+        } else {
+            listWrap.classList.add('hidden');
+            gridWrap.classList.remove('hidden');
+            gridBtn.classList.add('active');
+            listBtn.classList.remove('active');
+        }
+
+        try { localStorage.setItem('productsViewMode', mode); } catch (e) {}
+    }
+
     // ══════════════════════════════════════════════════════
     //  ANIMATED NUMBER COUNTER
     // ══════════════════════════════════════════════════════
@@ -1023,6 +1230,11 @@
         setTimeout(() => {
             document.querySelectorAll('[data-count]').forEach(animateCounter);
         }, 320);
+
+        // Restore saved view mode
+        let savedMode = 'grid';
+        try { savedMode = localStorage.getItem('productsViewMode') || 'grid'; } catch (e) {}
+        setViewMode(savedMode);
 
         // Delete confirm
         document.querySelectorAll('.delete-form').forEach(form => {
@@ -1060,7 +1272,36 @@
         document.getElementById('formMethod').value   = 'POST';
         document.getElementById('productName').value  = '';
         document.getElementById('modalTitle').innerText = 'Add Product';
+        clearFieldErrors();
         clearPreview();
+    }
+
+    // function clearFieldErrors() {
+    //     ['productNameError', 'salePriceError', 'imagesError'].forEach(id => {
+    //         const el = document.getElementById(id);
+    //         if (el) { el.classList.add('hidden'); el.textContent = ''; }
+    //     });
+    // }
+    function clearFieldErrors() {
+
+        document
+            .getElementById("productName")
+            .classList.remove("border-red-500","ring-2","ring-red-200");
+
+        document
+            .getElementById("salePrice")
+            .classList.remove("border-red-500","ring-2","ring-red-200");
+
+        ["productNameError","salePriceError","imagesError"].forEach(id=>{
+
+            const el=document.getElementById(id);
+
+            el.textContent="";
+
+            el.classList.add("hidden");
+
+        });
+
     }
 
     // ══════════════════════════════════════════════════════
@@ -1068,7 +1309,7 @@
     // ══════════════════════════════════════════════════════
     function filterProducts() {
         const q     = document.getElementById('productSearch').value.toLowerCase().trim();
-        const cards = document.querySelectorAll('.product-row');
+        const cards = document.querySelectorAll('.product-row, .list-row');
         const empty = document.getElementById('searchEmpty');
         let vis     = 0;
         cards.forEach(card => {
@@ -1077,6 +1318,32 @@
             if (match) vis++;
         });
         empty.classList.toggle('hidden', !(q && vis === 0));
+    }
+
+    let searchTimer;
+
+    function handleSearchInput() {
+
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(() => {
+
+            const keyword = document.getElementById('productSearch').value;
+
+            const url = new URL(window.location.href);
+
+            if (keyword.trim() !== '') {
+                url.searchParams.set('search', keyword);
+            } else {
+                url.searchParams.delete('search');
+            }
+
+            url.searchParams.set('page', 1);
+
+            window.location.href = url.toString();
+
+        }, 400);
+
     }
 
     // ══════════════════════════════════════════════════════
@@ -1209,6 +1476,141 @@
         }
         syncInput();
     }
+
+    const productForm = document.getElementById("productForm");
+
+    productForm.addEventListener("submit", saveProduct);
+
+    async function saveProduct(e) {
+
+        e.preventDefault();
+
+        clearFieldErrors();
+
+        // ── Client-side guard: sale price cannot be < cost price ──
+        const costPrice = parseFloat(document.getElementById('costPrice').value) || 0;
+        const salePrice = parseFloat(document.getElementById('salePrice').value) || 0;
+
+        if (salePrice < costPrice) {
+            const err = document.getElementById('salePriceError');
+            err.textContent = 'Sale price cannot be less than cost price.';
+            err.classList.remove('hidden');
+            document.getElementById('salePrice').classList.add('border-red-500', 'ring-2', 'ring-red-200');
+            return;
+        }
+
+        // ── Client-side guard: at least one image required ──
+        if (images.length === 0) {
+            const err = document.getElementById('imagesError');
+            err.textContent = 'Please upload at least one product image.';
+            err.classList.remove('hidden');
+            return;
+        }
+
+        const form = e.target;
+
+        const btn = document.getElementById("saveProductBtn");
+
+        btn.disabled = true;
+
+        btn.innerHTML = `
+            <span class="inline-flex items-center justify-center gap-2">
+
+                <svg
+                    class="w-5 h-5 animate-spin"
+                    viewBox="0 0 24 24"
+                    fill="none">
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="rgba(255,255,255,.25)"
+                        stroke-width="3"/>
+
+                    <path
+                        d="M22 12a10 10 0 0 0-10-10"
+                        stroke="white"
+                        stroke-width="3"
+                        stroke-linecap="round"/>
+
+                </svg>
+
+                <span>Saving...</span>
+
+            </span>
+        `;
+
+        const formData = new FormData(form);
+
+        try {
+
+            const response = await fetch(form.action, {
+
+                method: "POST",
+
+                body: formData,
+
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document.querySelector(
+                        'meta[name="csrf-token"]'
+                    ).content
+                }
+
+            });
+
+            const data = await response.json();
+
+            console.log(data);
+
+            if (data.errors?.name) {
+
+                const input = document.getElementById("productName");
+                const error = document.getElementById("productNameError");
+
+                input.classList.add("border-red-500","ring-2","ring-red-200");
+
+                error.textContent = data.errors.name[0];
+                error.classList.remove("hidden");
+            }
+
+            if (data.success === false && data.errors) {
+                if (data.errors.sale_price) {
+                    const err = document.getElementById('salePriceError');
+                    err.textContent = data.errors.sale_price[0];
+                    err.classList.remove('hidden');
+                }
+                if (data.errors.images) {
+                    const err = document.getElementById('imagesError');
+                    err.textContent = data.errors.images[0];
+                    err.classList.remove('hidden');
+                }
+            } else if (data.success) {
+                window.location.reload();
+            }
+
+        } catch (e) {
+
+            console.log(e);
+
+        } finally {
+
+            btn.disabled = false;
+
+            btn.classList.remove(
+                "opacity-80",
+                "cursor-not-allowed"
+            );
+
+            btn.innerHTML = `
+                Save Product
+            `;
+
+        }
+
+    }
+
     </script>
     @endpush
 
