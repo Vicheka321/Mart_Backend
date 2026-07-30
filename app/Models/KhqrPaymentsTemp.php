@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class khqr_payments extends Model
+class KhqrPayments extends Model
 {
     protected $table = 'khqr_payments';
 

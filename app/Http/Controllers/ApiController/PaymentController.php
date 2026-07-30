@@ -4,7 +4,7 @@ namespace App\Http\Controllers\ApiController;
 
 use App\Events\NewOrderCreated;
 use App\Http\Controllers\Controller;
-use App\Models\khqr_payments;
+use App\Models\KhqrPayments;
 use App\Services\KHQRService;
 
 use Illuminate\Http\Request;
@@ -184,7 +184,7 @@ class PaymentController extends Controller
             }
 
             /// ✅ SAVE TO khqr_payments
-            $khqrPayment = khqr_payments::create([
+            $khqrPayment = KhqrPayments::create([
 
                 'order_id' => $order->id,
 
@@ -552,7 +552,7 @@ class PaymentController extends Controller
         try {
 
             /// ✅ FIND KHQR PAYMENT
-            $payment = khqr_payments::where('md5', $validated['md5'])
+            $payment = KhqrPayments::where('md5', $validated['md5'])
                 ->first();
 
             if (!$payment) {
@@ -803,7 +803,7 @@ class PaymentController extends Controller
             'payment_id' => 'required|integer|exists:payments,id',
         ]);
 
-        $payment = khqr_payments::findOrFail($validated['payment_id']);
+        $payment = KhqrPayments::findOrFail($validated['payment_id']);
 
         return response()->json([
             'success' => true,
