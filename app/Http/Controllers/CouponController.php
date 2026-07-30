@@ -49,7 +49,28 @@ class CouponController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'code'                 => 'required|string|max:50|unique:coupons,code',
+            'code' => [
+                'required',
+                'string',
+                'max:50',
+                function ($attribute, $value, $fail) {
+
+                    $normalized = strtolower(
+                        preg_replace('/\s+/', '', trim($value))
+                    );
+
+                    $exists = CouponModel::get()->contains(function ($coupon) use ($normalized) {
+
+                        return strtolower(
+                            preg_replace('/\s+/', '', trim($coupon->code))
+                        ) === $normalized;
+                    });
+
+                    if ($exists) {
+                        $fail('Coupon code already exists.');
+                    }
+                }
+            ],
             'name'                 => 'nullable|string|max:255',
             'description'          => 'nullable|string|max:255',
             'discount_type'        => 'required|in:percent,fixed',
@@ -74,18 +95,41 @@ class CouponController extends Controller
     public function update(Request $request, CouponModel $coupon)
     {
         $validated = $request->validate([
-            'code'                 => 'required|string|max:50|unique:coupons,code,' . $coupon->id,
+            'code' => [
+                'required',
+                'string',
+                'max:50',
+                function ($attribute, $value, $fail) use ($coupon) {
+
+                    $normalized = strtolower(
+                        preg_replace('/\s+/', '', trim($value))
+                    );
+
+                    $exists = CouponModel::where('id', '!=', $coupon->id)
+                        ->get()
+                        ->contains(function ($item) use ($normalized) {
+
+                            return strtolower(
+                                preg_replace('/\s+/', '', trim($item->code))
+                            ) === $normalized;
+                        });
+
+                    if ($exists) {
+                        $fail('Coupon code already exists.');
+                    }
+                }
+            ],
             'name'                 => 'nullable|string|max:255',
             'description'          => 'nullable|string|max:255',
-            'discount_type'        => 'required|in:percent,fixed',  
-            'discount_value'       => 'required|numeric|min:0',     
+            'discount_type'        => 'required|in:percent,fixed',
+            'discount_value'       => 'required|numeric|min:0',
             'min_order_amount'     => 'nullable|numeric|min:0',
             'max_discount'         => 'nullable|numeric|min:0',
             'usage_limit'          => 'nullable|integer|min:1',
             'usage_limit_per_user' => 'nullable|integer|min:1',
             'start_date'           => 'nullable|date',
             'end_date'             => 'nullable|date|after_or_equal:start_date',
-            'status'               => 'required|in:0,1',          
+            'status'               => 'required|in:0,1',
         ]);
 
         $validated['status'] = (bool) $request->status;

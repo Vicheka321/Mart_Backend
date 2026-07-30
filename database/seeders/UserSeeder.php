@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
         // Super Admin
         // ==========================
         $superAdmin = User::updateOrCreate(
-            ['email' => 'admin@gmail.com'],
+            ['email' => 'longvicheka009@gmail.com'],
             [
                 'full_name' => 'Super Admin',
                 'phone' => '012345678',
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
         // Admin
         // ==========================
         $admin = User::updateOrCreate(
-            ['email' => 'longvicheka009@gmail.com'],
+            ['email' => 'longvicheka23@gmail.com'],
             [
                 'full_name' => 'Admin User',
                 'phone' => '012345679',
@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
         // Manager
         // ==========================
         $manager = User::updateOrCreate(
-            ['email' => 'manager@gmail.com'],
+            ['email' => 'semvicheka6@gmail.com'],
             [
                 'full_name' => 'Manager User',
                 'phone' => '012345680',

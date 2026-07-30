@@ -722,7 +722,12 @@
             });
 
             function openCreateModal() {
+                
                 updateStatusStyle('create_status', 'create_status_icon');
+                const today = new Date().toISOString().split('T')[0];
+
+                document.querySelector('#createPromotionModal input[name="start_date"]').min = today;
+                document.querySelector('#createPromotionModal input[name="end_date"]').min = today;
                 showModal('createPromotionModal');
             }
 
@@ -736,6 +741,9 @@
                 document.getElementById('edit_discount_value').value = discountValue;
                 document.getElementById('edit_start_date').value    = startDate;
                 document.getElementById('edit_end_date').value      = endDate;
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('edit_start_date').min = today;
+                document.getElementById('edit_end_date').min = today;
 
                 // Set the status select (1 = Active, 0 = Inactive)
                 const statusSel = document.getElementById('edit_status');

@@ -365,7 +365,7 @@
 
                         {{-- Code + Status --}}
                         <div class="grid grid-cols-2 gap-3">
-                            <div>
+                            {{-- <div>
                                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
                                     Coupon Code <span class="text-red-400">*</span>
                                 </label>
@@ -374,6 +374,24 @@
                                            border border-gray-200 dark:border-gray-600
                                            bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400
                                            focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                            </div> --}}
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
+                                    Coupon Code <span class="text-red-400">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="code"
+                                    id="couponCode"
+                                    placeholder="e.g. SAVE20"
+                                    required
+                                    class="w-full px-3 py-2 text-sm font-mono uppercase tracking-widest rounded-xl
+                                        border border-gray-200 dark:border-gray-600
+                                        bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white
+                                        focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+
+                                <p id="couponCodeError" class="hidden mt-1 text-xs text-red-500"></p>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Status</label>
@@ -566,6 +584,9 @@
                     document.getElementById('couponDescription').value      = '';
                     document.getElementById('couponStartDate').value        = '';
                     document.getElementById('couponEndDate').value          = '';
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('couponStartDate').min = today;
+                    document.getElementById('couponEndDate').min = today;
                     document.getElementById('couponUsageLimit').value       = '';
                     document.getElementById('couponUsageLimitPerUser').value = '';
                     document.getElementById('couponMinOrder').value         = '';
@@ -714,6 +735,58 @@
                         });
                     });
                 });
+
+                const couponForm = document.getElementById('couponForm');
+
+                couponForm.addEventListener('submit', saveCoupon);
+
+                async function saveCoupon(e) {
+
+                    e.preventDefault();
+
+                    clearFieldErrors();
+
+                    const form = e.target;
+                    const formData = new FormData(form);
+
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    if (data.errors?.code) {
+
+                        const input = document.getElementById('couponCode');
+                        const error = document.getElementById('couponCodeError');
+
+                        input.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+
+                        error.textContent = data.errors.code[0];
+                        error.classList.remove('hidden');
+                    }
+                }
+
+                function clearFieldErrors() {
+
+                    const input = document.getElementById('couponCode');
+                    const error = document.getElementById('couponCodeError');
+
+                    input.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+
+                    error.textContent = '';
+                    error.classList.add('hidden');
+                }
             </script>
         @endpush
 
