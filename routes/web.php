@@ -19,6 +19,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
 use App\Services\InfobipService;
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Public / Auth
@@ -26,7 +27,12 @@ use App\Services\InfobipService;
 */
 
 Route::get('/', function () {
-    return view('Auth.login');
+
+    if (Auth::check()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return redirect()->route('login');
 });
 
 
@@ -506,7 +512,4 @@ Route::prefix('admin')
         Route::patch('/customers/{user}', [CustomersController::class, 'updateCustomer'])
             ->middleware('permission:view_customers')
             ->name('admin.updateCustomer');
-
-
-
     });
