@@ -98,18 +98,24 @@
 
         /* Toast */
         .toast-wrap {
-            position: fixed; top: 1.25rem; right: 1.25rem;
+            position: fixed; top: 1rem; right: 1rem; left: 1rem;
             z-index: 9999; display: flex; flex-direction: column; gap: .5rem;
             pointer-events: none;
+        }
+        @media (min-width: 640px) {
+            .toast-wrap { top: 1.25rem; right: 1.25rem; left: auto; }
         }
         .toast {
             pointer-events: all;
             display: flex; align-items: center; gap: .625rem;
-            padding: .75rem 1rem; min-width: 240px;
+            padding: .75rem 1rem; min-width: 0; width: 100%;
             background: white; border-radius: 14px;
             box-shadow: 0 8px 30px rgba(0,0,0,.12);
             font-size: .8125rem; font-weight: 500; color: #111827;
             animation: toastSlide .3s cubic-bezier(.34,1.3,.64,1) both;
+        }
+        @media (min-width: 640px) {
+            .toast { min-width: 240px; width: auto; }
         }
         .dark .toast { background: #1f2937; color: #f3f4f6; }
         .toast.leaving { animation: toastOut .28s ease forwards; }
@@ -166,10 +172,31 @@
         .list-row:hover { background-color: rgba(99,102,241,.04); }
         .dark .list-row:hover { background-color: rgba(99,102,241,.08); }
 
-        /* Responsive */
+        /* ══════════════════════════════════════════════════════
+           RESPONSIVE: phone / tablet / laptop / desktop
+           ══════════════════════════════════════════════════════ */
+
+        /* Phones (<=640px) */
         @media (max-width: 640px) {
-            .stat-card { padding: .75rem; }
+            .stat-card { padding: .875rem; }
             .stat-number { font-size: 1.5rem !important; }
+            .product-row .action-btn { padding-top: .375rem; padding-bottom: .375rem; }
+            .modal-inner { max-height: calc(100vh - 2rem); }
+        }
+
+        /* Small tablets (641px – 768px) */
+        @media (min-width: 641px) and (max-width: 768px) {
+            .stat-number { font-size: 1.65rem !important; }
+        }
+
+        /* Tablets / small laptops (769px – 1024px) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .table-card { border-radius: 1.25rem; }
+        }
+
+        /* Large desktop (>=1536px) */
+        @media (min-width: 1536px) {
+            .stat-number { font-size: 2.25rem !important; }
         }
     </style>
 
@@ -179,7 +206,7 @@
     <div class="space-y-4">
 
         {{-- ==================== STAT CARDS ==================== --}}
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
 
             {{-- Total Products --}}
             <a href="{{ route('products.index', ['status' => 'all']) }}"
@@ -456,7 +483,7 @@
                         flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Product List</h2>
 
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-wrap">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-wrap w-full lg:w-auto">
 
                     <form method="GET" action="{{ url()->current() }}">
                         @foreach(request()->except(['status', 'page']) as $key => $value)
@@ -465,68 +492,70 @@
                     </form>
 
                     {{-- SEARCH --}}
-                    <div class="relative">
+                    <div class="relative w-full sm:w-auto">
                         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
                              fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                         </svg>
                         <input type="text" id="productSearch" placeholder="Search products…" oninput="handleSearchInput()"
                                autocomplete="off"
-                               class="w-full sm:w-56 pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
+                               class="w-full sm:w-56 md:w-64 pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
                                       bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400
                                       focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
                     </div>
 
-                    {{-- VIEW TOGGLE: GRID / LIST --}}
-                    <div class="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-600
-                                bg-gray-50 dark:bg-gray-700 p-1 gap-1">
-                        <button type="button" id="gridViewBtn" onclick="setViewMode('grid')"
-                            title="Grid view"
-                            class="view-toggle-btn w-9 h-8 flex items-center justify-center rounded-lg">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-                                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-                                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
-                                <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        {{-- VIEW TOGGLE: GRID / LIST --}}
+                        <div class="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-600
+                                    bg-gray-50 dark:bg-gray-700 p-1 gap-1">
+                            <button type="button" id="gridViewBtn" onclick="setViewMode('grid')"
+                                title="Grid view"
+                                class="view-toggle-btn w-9 h-8 flex items-center justify-center rounded-lg">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                                    <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                                    <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                                    <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                                </svg>
+                            </button>
+                            <button type="button" id="listViewBtn" onclick="setViewMode('list')"
+                                title="List view"
+                                class="view-toggle-btn w-9 h-8 flex items-center justify-center rounded-lg">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        {{-- EXPORT --}}
+                        <button type="button" onclick="openExportModal()"
+                            class="action-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-sm font-medium rounded-xl
+                                   border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700
+                                   text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/>
                             </svg>
+                            <span>Export</span>
                         </button>
-                        <button type="button" id="listViewBtn" onclick="setViewMode('list')"
-                            title="List view"
-                            class="view-toggle-btn w-9 h-8 flex items-center justify-center rounded-lg">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+
+                        {{-- ADD --}}
+                        <button type="button" onclick="openModal()"
+                            class="action-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-sm font-medium rounded-xl
+                                   bg-indigo-600 hover:bg-indigo-700 text-white transition-all duration-200
+                                   shadow-md shadow-indigo-500/25">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path d="M12 5v14M5 12h14"/>
                             </svg>
+                            <span>Add Product</span>
                         </button>
                     </div>
-
-                    {{-- EXPORT --}}
-                    <button type="button" onclick="openExportModal()"
-                        class="action-btn inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-xl
-                               border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700
-                               text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                            <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/>
-                        </svg>
-                        <span class="hidden sm:inline">Export</span>
-                    </button>
-
-                    {{-- ADD --}}
-                    <button type="button" onclick="openModal()"
-                        class="action-btn inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-xl
-                               bg-indigo-600 hover:bg-indigo-700 text-white transition-all duration-200
-                               shadow-md shadow-indigo-500/25">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                            <path d="M12 5v14M5 12h14"/>
-                        </svg>
-                        <span class="hidden sm:inline">Add Product</span>
-                    </button>
                 </div>
             </div>
 
             {{-- ACTIVE FILTER BADGE --}}
             @if(($statusFilter ?? 'all') !== 'all')
-                <div class="px-5 py-2.5 bg-indigo-50 dark:bg-indigo-500/10 border-b border-indigo-100 dark:border-indigo-500/20
-                            flex items-center justify-between">
+                <div class="px-4 sm:px-5 py-2.5 bg-indigo-50 dark:bg-indigo-500/10 border-b border-indigo-100 dark:border-indigo-500/20
+                            flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-0">
                     <p class="text-xs text-indigo-600 dark:text-indigo-400">
                         Filtering by: <span class="font-semibold capitalize">{{ $statusFilter }}</span>
                         &mdash; {{ number_format($products->total()) }} {{ Str::plural('result', $products->total()) }}
@@ -537,9 +566,9 @@
             @endif
 
             {{-- ==================== GRID VIEW ==================== --}}
-            <div id="gridViewWrap" class="p-4 sm:p-5">
+            <div id="gridViewWrap" class="p-3 sm:p-5">
                 <div id="productsTable"
-                     class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                     class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
 
                     @forelse($products as $product)
                         @php
@@ -585,7 +614,7 @@
                             </div>
 
                             {{-- Body --}}
-                            <div class="p-3 flex flex-col gap-2 flex-1">
+                            <div class="p-2.5 sm:p-3 flex flex-col gap-2 flex-1">
                                 <div>
                                     <p class="text-sm font-semibold text-gray-900 dark:text-white truncate leading-tight">
                                         {{ $product->name }}
@@ -629,7 +658,7 @@
                                             {{ (int) $product->status }},
                                             @json($product->image->map(fn($img) => ["image_url" => $img->image_url])->values())
                                         )'
-                                        class="action-btn flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium rounded-xl
+                                        class="action-btn flex-1 inline-flex items-center justify-center gap-1 px-2 sm:px-3 py-1.5 text-xs font-medium rounded-xl
                                                 border border-gray-200
                                                 bg-white
                                                 text-gray-600
@@ -646,14 +675,14 @@
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                         </svg>
-                                        Edit
+                                        <span class="hidden xs:inline sm:inline">Edit</span>
                                     </button>
 
                                     <form action="{{ route('products.destroy', $product->id) }}" method="POST"
                                           class="flex-1 delete-form">
                                         @csrf @method('DELETE')
                                         <button type="submit"
-                                            class="action-btn w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
+                                            class="action-btn w-full inline-flex items-center justify-center gap-1 px-2 sm:px-2.5 py-1.5 text-xs font-medium rounded-lg
                                                 border border-gray-200
                                                 bg-white
                                                 text-gray-600
@@ -668,7 +697,7 @@
                                             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"/>
                                             </svg>
-                                            Delete
+                                            <span class="hidden xs:inline sm:inline">Delete</span>
                                         </button>
                                     </form>
                                 </div>
@@ -692,13 +721,13 @@
                 <table class="min-w-full text-sm">
                     <thead>
                         <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30">
-                            <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Product</th>
-                            <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Category</th>
-                            <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Brand</th>
-                            <th class="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Price</th>
-                            <th class="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Stock</th>
-                            <th class="px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Status</th>
-                            <th class="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Actions</th>
+                            <th class="px-3 sm:px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Product</th>
+                            <th class="px-3 sm:px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 hidden md:table-cell">Category</th>
+                            <th class="px-3 sm:px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 hidden md:table-cell">Brand</th>
+                            <th class="px-3 sm:px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Price</th>
+                            <th class="px-3 sm:px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 hidden sm:table-cell">Stock</th>
+                            <th class="px-3 sm:px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 hidden sm:table-cell">Status</th>
+                            <th class="px-3 sm:px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -714,9 +743,9 @@
                                 data-category="{{ strtolower($product->category->name ?? '') }}"
                                 data-brand="{{ strtolower($product->brand->name ?? '') }}">
 
-                                <td class="px-5 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0
+                                <td class="px-3 sm:px-5 py-3">
+                                    <div class="flex items-center gap-2 sm:gap-3">
+                                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden flex-shrink-0
                                                     {{ $img ? 'bg-gray-50 dark:bg-gray-700' : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600' }}
                                                     flex items-center justify-center">
                                             @if($img)
@@ -729,21 +758,24 @@
                                         </div>
                                         <div class="min-w-0">
                                             <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $product->name }}</p>
+                                            <p class="text-[11px] text-gray-400 dark:text-gray-500 truncate md:hidden">
+                                                {{ $product->category->name ?? '—' }} · {{ $product->brand->name ?? '—' }}
+                                            </p>
                                             @if($product->cost_price)
-                                                <p class="text-[11px] text-gray-400 dark:text-gray-500">Cost ${{ number_format($product->cost_price, 2) }}</p>
+                                                <p class="hidden md:block text-[11px] text-gray-400 dark:text-gray-500">Cost ${{ number_format($product->cost_price, 2) }}</p>
                                             @endif
                                         </div>
                                     </div>
                                 </td>
 
-                                <td class="px-5 py-3 text-gray-600 dark:text-gray-300">{{ $product->category->name ?? '—' }}</td>
-                                <td class="px-5 py-3 text-gray-600 dark:text-gray-300">{{ $product->brand->name ?? '—' }}</td>
+                                <td class="px-3 sm:px-5 py-3 text-gray-600 dark:text-gray-300 hidden md:table-cell">{{ $product->category->name ?? '—' }}</td>
+                                <td class="px-3 sm:px-5 py-3 text-gray-600 dark:text-gray-300 hidden md:table-cell">{{ $product->brand->name ?? '—' }}</td>
 
-                                <td class="px-5 py-3 text-right font-semibold text-gray-900 dark:text-white">
+                                <td class="px-3 sm:px-5 py-3 text-right font-semibold text-gray-900 dark:text-white">
                                     ${{ number_format($product->sale_price ?? 0, 2) }}
                                 </td>
 
-                                <td class="px-5 py-3 text-right">
+                                <td class="px-3 sm:px-5 py-3 text-right hidden sm:table-cell">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium
                                                  {{ $isLow
                                                      ? 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400'
@@ -752,7 +784,7 @@
                                     </span>
                                 </td>
 
-                                <td class="px-5 py-3 text-center">
+                                <td class="px-3 sm:px-5 py-3 text-center hidden sm:table-cell">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
                                                  {{ $isActive
                                                      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
@@ -767,7 +799,7 @@
                                     @endif
                                 </td>
 
-                                <td class="px-5 py-3">
+                                <td class="px-3 sm:px-5 py-3">
                                     <div class="flex items-center justify-end gap-1.5">
                                         <button type="button"
                                             onclick='editProduct(
@@ -821,11 +853,11 @@
             </div>
 
             {{-- PAGINATION --}}
-<div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700
+<div class="px-4 sm:px-6 py-4 border-t border-gray-100 dark:border-gray-700
                         flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3
                         bg-gray-50/50 dark:bg-gray-800/30">
 
-                <p class="text-xs text-gray-400 dark:text-gray-500">
+                <p class="text-xs text-gray-400 dark:text-gray-500 text-center sm:text-left">
                     @if($products->total())
                         Showing
                         <span class="font-semibold text-gray-700 dark:text-gray-200">{{ $products->firstItem() }}–{{ $products->lastItem() }}</span>
@@ -845,7 +877,7 @@
                         $start   = max(1, $current - 2);
                         $end     = min($last, $current + 2);
                     @endphp
-                    <nav class="flex items-center gap-1">
+                    <nav class="flex items-center gap-1 flex-wrap justify-center sm:justify-end">
                         {{-- Previous --}}
                         @if($products->onFirstPage())
                             <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-600 cursor-not-allowed">
@@ -938,7 +970,7 @@
     <div id="exportModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[70] p-4">
         <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
                     rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
-            <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                         <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
@@ -953,7 +985,7 @@
                     </svg>
                 </button>
             </div>
-            <div class="p-6 space-y-3">
+            <div class="p-4 sm:p-6 space-y-3">
                 <p class="text-xs text-gray-400 dark:text-gray-500 mb-4">Choose your preferred export format:</p>
                 <a href="{{ route('products.export.csv') }}"
                    class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
@@ -996,7 +1028,7 @@
                     </svg>
                 </a>
             </div>
-            <div class="px-6 pb-6">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6">
                 <button onclick="closeExportModal()"
                     class="w-full py-2 text-sm font-medium rounded-xl border border-gray-200 dark:border-gray-600
                            text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
@@ -1009,11 +1041,11 @@
 
     {{-- ==================== ADD / EDIT PRODUCT MODAL ==================== --}}
     <div id="productModal"
-         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-start justify-center z-[70] px-4 py-8 overflow-y-auto">
+         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-start justify-center z-[70] px-2 sm:px-4 py-4 sm:py-8 overflow-y-auto">
         <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
                     rounded-2xl w-full max-w-3xl mx-auto shadow-2xl">
 
-            <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
                 <h2 id="modalTitle" class="text-base font-semibold text-gray-900 dark:text-white">Add Product</h2>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
@@ -1026,13 +1058,13 @@
                 @csrf
                 <input type="hidden" name="_method" id="formMethod" value="POST">
 
-                <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div class="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
 
                     {{-- LEFT: Fields --}}
                     <div class="space-y-4">
 
                         {{-- General Info --}}
-                        <div class="bg-gray-50 dark:bg-gray-700/40 rounded-2xl p-4 space-y-4">
+                        <div class="bg-gray-50 dark:bg-gray-700/40 rounded-2xl p-3 sm:p-4 space-y-4">
                             <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">General Info</p>
 
                             <div>
@@ -1063,7 +1095,7 @@
                                            focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none transition-all"></textarea>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Category</label>
                                     <select name="categories_id"
@@ -1090,7 +1122,7 @@
                         </div>
 
                         {{-- Pricing & Stock --}}
-                        <div class="bg-gray-50 dark:bg-gray-700/40 rounded-2xl p-4 space-y-4">
+                        <div class="bg-gray-50 dark:bg-gray-700/40 rounded-2xl p-3 sm:p-4 space-y-4">
                             <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Pricing & Stock</p>
 
                             <div class="grid grid-cols-2 gap-3">
@@ -1134,15 +1166,15 @@
                     </div>
 
                     {{-- RIGHT: Image Upload --}}
-                    <div class="flex flex-col bg-gray-50 dark:bg-gray-700/40 rounded-2xl p-4">
+                    <div class="flex flex-col bg-gray-50 dark:bg-gray-700/40 rounded-2xl p-3 sm:p-4">
                         <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3">Product Images</p>
 
                         <div id="uploadBox" onclick="handleMainClick()"
-                             class="relative w-full h-48 rounded-2xl bg-white dark:bg-gray-700
+                             class="relative w-full h-40 sm:h-48 rounded-2xl bg-white dark:bg-gray-700
                                     border-2 border-dashed border-gray-200 dark:border-gray-600
                                     flex items-center justify-center cursor-pointer overflow-hidden
                                     transition-colors hover:border-indigo-300 dark:hover:border-indigo-500 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <div id="uploadPlaceholder" class="flex flex-col items-center gap-2 pointer-events-none select-none">
+                            <div id="uploadPlaceholder" class="flex flex-col items-center gap-2 pointer-events-none select-none px-3 text-center">
                                 <div class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center">
                                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
@@ -1162,7 +1194,7 @@
                         <input type="file" id="imageInputNew" name="images[]" class="hidden" accept="image/*" multiple>
                         <input type="file" id="imageInputSwap" class="hidden" accept="image/*">
 
-                        <div id="thumbGrid" class="grid grid-cols-4 gap-2 mt-3"></div>
+                        <div id="thumbGrid" class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-3"></div>
                         <p id="imgCount" class="hidden mt-1.5 text-xs text-gray-400"></p>
                         <p id="imagesError" class="hidden mt-1.5 text-xs text-red-500"></p>
 
@@ -1171,7 +1203,7 @@
                         <button
                             id="saveProductBtn"
                             type="submit"
-                            class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white">
+                            class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white w-full">
 
                             Save Product
 

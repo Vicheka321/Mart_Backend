@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\banners;
+use App\Models\Banners;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
