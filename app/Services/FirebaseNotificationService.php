@@ -8,19 +8,41 @@ use Kreait\Firebase\Messaging\Notification;
 use App\Models\DeviceToken;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Exception\MessagingException;
+
 class FirebaseNotificationService
 {
     protected $messaging;
-
     public function __construct()
     {
+        $credentials = config('services.firebase.credentials');
+
+        // Railway: JSON stored in environment variable
+        if (is_string($credentials) && str_starts_with(trim($credentials), '{')) {
+
+            $credentials = json_decode($credentials, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \RuntimeException(
+                    'Invalid FIREBASE_CREDENTIALS_JSON'
+                );
+            }
+        }
+
         $factory = (new Factory)
-            ->withServiceAccount(
-                config('services.firebase.credentials')
-            );
+            ->withServiceAccount($credentials);
 
         $this->messaging = $factory->createMessaging();
     }
+
+    // public function __construct()
+    // {
+    //     $factory = (new Factory)
+    //         ->withServiceAccount(
+    //             config('services.firebase.credentials')
+    //         );
+
+    //     $this->messaging = $factory->createMessaging();
+    // }
 
     /**
      * Send notification to single device

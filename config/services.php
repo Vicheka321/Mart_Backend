@@ -54,8 +54,15 @@ return [
     ],
 
 
+    // 'firebase' => [
+    //     'credentials' => storage_path('app/firebase/firebase-service-account.json'),
+    // ],
+
     'firebase' => [
-        'credentials' => storage_path('app/firebase/firebase-service-account.json'),
+        'credentials' => env(
+            'FIREBASE_CREDENTIALS_JSON',
+            storage_path('app/firebase/firebase-service-account.json')
+        ),
     ],
     // 'firebase' => [
     //     'credentials' => env('FIREBASE_CREDENTIALS_JSON'),
