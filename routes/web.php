@@ -20,6 +20,8 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
 use App\Services\InfobipService;
 use Illuminate\Support\Facades\Auth;
+
+
 /*
 |--------------------------------------------------------------------------
 | Public / Auth
@@ -34,7 +36,6 @@ Route::get('/', function () {
 
     return redirect()->route('login');
 });
-
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

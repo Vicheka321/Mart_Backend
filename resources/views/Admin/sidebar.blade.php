@@ -648,6 +648,14 @@
                                     Assign User Roles
                                 </a>
                             @endcan
+
+                            @can('assign_roles')
+                                <a href="{{ route('roles.users') }}"
+                                    class="sub-link {{ request()->routeIs('roles.users') ? 'active' : '' }} block py-1.5 text-xs font-medium
+                                                  {{ request()->routeIs('roles.users') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                    Additional Permissions
+                                </a>
+                            @endcan
                         </div>
                     </div>
             @endcanany

@@ -59,19 +59,36 @@ class NewOrderCreated implements ShouldBroadcast
         return 'new-order';
     }
 
+    // public function broadcastWith()
+    // {
+    //     return [
+    //         'id' => $this->order->id,
+    //         'full_name' => $this->order->user->full_name,
+    //         'avatar' => $this->order->user->avatar,
+    //         'phone' => $this->order->user->phone,
+    //         'address' => $this->order->delivery_address,
+    //         'total' => $this->order->total_amount,
+    //         'payment_method' => $this->order->payment_method,
+    //         'payment_status' => $this->order->payment->payment_status,
+    //         'status' => $this->order->status,
+    //         'created_at' => $this->order->created_at->format('Y-m-d H:i'),
+    //     ];
+    // }
     public function broadcastWith()
     {
         return [
-            'id' => $this->order->id,
-            'full_name' => $this->order->user->full_name,
-            'avatar' => $this->order->user->avatar,
-            'phone' => $this->order->user->phone,
-            'address' => $this->order->delivery_address,
-            'total' => $this->order->total_amount,
-            'payment_method' => $this->order->payment_method,
-            'payment_status' => $this->order->payment->payment_status,
-            'status' => $this->order->status,
-            'created_at' => $this->order->created_at->format('Y-m-d H:i'),
+            'order' => [
+                'id' => $this->order->id,
+                'full_name' => $this->order->user->full_name,
+                'avatar' => $this->order->user->avatar,
+                'phone' => $this->order->user->phone,
+                'address' => $this->order->delivery_address,
+                'total' => $this->order->total_amount,
+                'payment_method' => $this->order->payment_method,
+                'payment_status' => $this->order->payment->payment_status,
+                'status' => $this->order->status,
+                'created_at' => $this->order->created_at,
+            ]
         ];
     }
 }
