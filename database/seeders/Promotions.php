@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\PromotionModel;
-use Carbon\Carbon;
 
 class Promotions extends Seeder
 {
@@ -20,9 +19,10 @@ class Promotions extends Seeder
             'status' => true,
         ]);
 
-        $productIds = collect(range(1, 10))
+        // Random 20 products from IDs 1-50
+        $productIds = collect(range(1, 50))
             ->shuffle()
-            ->take(8);
+            ->take(20);
 
         foreach ($productIds as $productId) {
             DB::table('promotion_products')->insert([

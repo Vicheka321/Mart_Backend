@@ -46,278 +46,276 @@ class ProductsSeeder extends Seeder
                 'brand' => 3,
                 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p5b3c1.png'
             ],
-
- 
-            // [
-            //     'name' => 'Red Bull Energy Drink 250ml',
-            //     'category' => 1,
-            //     'brand' => 2,
-            //     'image' => 'https://m.media-amazon.com/images/I/712n0g5ATPL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Mogu Mogu Mango 320ml',
-            //     'category' => 1,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/71EybBZ-jpL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Minute Maid Orange Juice 1L',
-            //     'category' => 1,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/41pP0bG4eQL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Tiger Beer 330ml',
-            //     'category' => 1,
-            //     'brand' => 5,
-            //     'image' => 'https://m.media-amazon.com/images/I/715rFhZpV0L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Anchor Beer 330ml',
-            //     'category' => 1,
-            //     'brand' => 2,
-            //     'image' => 'https://m.media-amazon.com/images/I/31dYojQ7nRL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Angkor Beer 330ml',
-            //     'category' => 1,
-            //     'brand' => 5,
-            //     'image' => 'https://m.media-amazon.com/images/I/61gq3kWYz3L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Cambodia Beer 330ml',
-            //     'category' => 1,
-            //     'brand' => 2,
-            //     'image' => 'https://m.media-amazon.com/images/I/61p+1+md+8L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Nestle Pure Life Water 500ml',
-            //     'category' => 1,
-            //     'brand' => 5,
-            //     'image' => 'https://m.media-amazon.com/images/I/51UYq7UwqrL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Aquafina Water 500ml',
-            //     'category' => 1,
-            //     'brand' => 1,
-            //     'image' => 'https://m.media-amazon.com/images/I/515Ivb5YCCL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Ice Mountain Mineral Water 1.5L',
-            //     'category' => 1,
-            //     'brand' => 1,
-            //     'image' => 'https://m.media-amazon.com/images/I/61K6cQhw4EL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Lays Classic Potato Chips 60g',
-            //     'category' => 2,
-            //     'brand' => 8,
-            //     'image' => 'https://m.media-amazon.com/images/I/71bzIktCpVL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Oishi Prawn Crackers 60g',
-            //     'category' => 2,
-            //     'brand' => 8,
-            //     'image' => 'https://m.media-amazon.com/images/I/612HeyYXOnL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Pringles Original 100g',
-            //     'category' => 2,
-            //     'brand' => 5,
-            //     'image' => 'https://m.media-amazon.com/images/I/712n0g5ATPL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Doritos Nacho Cheese 150g',
-            //     'category' => 2,
-            //     'brand' => 6,
-            //     'image' => 'https://m.media-amazon.com/images/I/515Ivb5YCCL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Ritz Crackers 200g',
-            //     'category' => 2,
-            //     'brand' => 6,
-            //     'image' => 'https://m.media-amazon.com/images/I/712n0g5ATPL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Oreo Original Cookies 137g',
-            //     'category' => 2,
-            //     'brand' => 8,
-            //     'image' => 'https://m.media-amazon.com/images/I/71bzIktCpVL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Chocopie 12pcs Box',
-            //     'category' => 2,
-            //     'brand' => 8,
-            //     'image' => 'https://m.media-amazon.com/images/I/41pP0bG4eQL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'KitKat Chocolate 4 Finger',
-            //     'category' => 2,
-            //     'brand' => 7,
-            //     'image' => 'https://m.media-amazon.com/images/I/710DwRCax+L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Snickers Chocolate Bar',
-            //     'category' => 2,
-            //     'brand' => 6,
-            //     'image' => 'https://m.media-amazon.com/images/I/71EybBZ-jpL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Twix Chocolate Bar',
-            //     'category' => 2,
-            //     'brand' => 8,
-            //     'image' => 'https://m.media-amazon.com/images/I/710DwRCax+L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Pocky Chocolate Sticks',
-            //     'category' => 2,
-            //     'brand' => 7,
-            //     'image' => 'https://m.media-amazon.com/images/I/51UYq7UwqrL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Tao Kae Noi Seaweed Snack',
-            //     'category' => 2,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/61gq3kWYz3L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Cheetos Cheese Puffs 90g',
-            //     'category' => 2,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/61K6cQhw4EL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Kokomo Coconut Biscuit',
-            //     'category' => 2,
-            //     'brand' => 7,
-            //     'image' => 'https://m.media-amazon.com/images/I/61K6cQhw4EL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Khmer Rice Crackers 100g',
-            //     'category' => 2,
-            //     'brand' => 8,
-            //     'image' => 'https://m.media-amazon.com/images/I/61p+1+md+8L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Anchor Full Cream Milk 1L',
-            //     'category' => 3,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/710DwRCax+L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Dutch Mill Yogurt Drink 180ml',
-            //     'category' => 3,
-            //     'brand' => 9,
-            //     'image' => 'https://m.media-amazon.com/images/I/712n0g5ATPL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Anlene Gold Milk Powder 800g',
-            //     'category' => 3,
-            //     'brand' => 9,
-            //     'image' => 'https://m.media-amazon.com/images/I/61Tbn-eDhVL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'President Butter 200g',
-            //     'category' => 3,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/515Ivb5YCCL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Cheddar Cheese Slices 200g',
-            //     'category' => 3,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/712n0g5ATPL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Yakult Probiotic Drink 5pk',
-            //     'category' => 3,
-            //     'brand' => 9,
-            //     'image' => 'https://m.media-amazon.com/images/I/81zI7nySasL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Meiji Fresh Milk 1L',
-            //     'category' => 3,
-            //     'brand' => 4,
-            //     'image' => 'https://m.media-amazon.com/images/I/71EybBZ-jpL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Dutch Lady UHT Milk 1L',
-            //     'category' => 3,
-            //     'brand' => 4,
-            //     'image' => 'https://m.media-amazon.com/images/I/81zI7nySasL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Nestle Cream 250ml',
-            //     'category' => 3,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/61gq3kWYz3L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Greek Style Yogurt 500g',
-            //     'category' => 3,
-            //     'brand' => 4,
-            //     'image' => 'https://m.media-amazon.com/images/I/61p+1+md+8L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Vinamilk Fresh Milk 1L',
-            //     'category' => 3,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/61p+1+md+8L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Colgate Toothpaste 150g',
-            //     'category' => 9,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/515Ivb5YCCL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Colgate Total Toothbrush',
-            //     'category' => 9,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/61crDE1AJjL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Sensodyne Toothpaste 100g',
-            //     'category' => 9,
-            //     'brand' => 10,
-            //     'image' => 'https://m.media-amazon.com/images/I/61crDE1AJjL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Head & Shoulders Shampoo 400ml',
-            //     'category' => 9,
-            //     'brand' => 3,
-            //     'image' => 'https://m.media-amazon.com/images/I/712n0g5ATPL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Pantene Shampoo 400ml',
-            //     'category' => 9,
-            //     'brand' => 7,
-            //     'image' => 'https://m.media-amazon.com/images/I/41pP0bG4eQL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Dove Body Wash 500ml',
-            //     'category' => 9,
-            //     'brand' => 5,
-            //     'image' => 'https://m.media-amazon.com/images/I/41pP0bG4eQL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Nivea Body Lotion 400ml',
-            //     'category' => 9,
-            //     'brand' => 3,
-            //     'image' => 'https://m.media-amazon.com/images/I/61K6cQhw4EL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Rexona Deodorant Spray',
-            //     'category' => 9,
-            //     'brand' => 3,
-            //     'image' => 'https://m.media-amazon.com/images/I/61crDE1AJjL._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
-            // [
-            //     'name' => 'Gillette Razor 3pk',
-            //     'category' => 9,
-            //     'brand' => 6,
-            //     'image' => 'https://m.media-amazon.com/images/I/710DwRCax+L._AC_UL480_FMwebp_QL65_.jpg'
-            // ],
+            [
+                'name' => 'Food Storage Container',
+                'category' => 2,
+                'brand' => 11,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p6.png'
+            ],
+            [
+                'name' => 'Kitchen Storage Box',
+                'category' => 2,
+                'brand' => 11,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p7.png'
+            ],
+            [
+                'name' => 'Plastic Food Wrap',
+                'category' => 2,
+                'brand' => 11,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p8.png'
+            ],
+            [
+                'name' => 'Food Storage Bag',
+                'category' => 2,
+                'brand' => 11,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p9.png'
+            ],
+            [
+                'name' => 'Lunch Box',
+                'category' => 2,
+                'brand' => 11,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p10.png'
+            ],
+            [
+                'name' => 'Nestlé Nescafé Classic',
+                'category' => 3,
+                'brand' => 10,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p11.png'
+            ],
+            [
+                'name' => 'Nestlé Nescafé 3 in 1',
+                'category' => 3,
+                'brand' => 10,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p12.png'
+            ],
+            [
+                'name' => 'Nestlé Milo',
+                'category' => 3,
+                'brand' => 10,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p13.png'
+            ],
+            [
+                'name' => 'Nestlé Nestea Lemon Tea',
+                'category' => 3,
+                'brand' => 10,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p14.png'
+            ],
+            [
+                'name' => 'Nestlé Coffee Mate',
+                'category' => 3,
+                'brand' => 10,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p15.png'
+            ],
+            [
+                'name' => 'Nestlé Sweet Corn',
+                'category' => 4,
+                'brand' => 10,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p16.png'
+            ],
+            [
+                'name' => 'Nestlé Baked Beans',
+                'category' => 4,
+                'brand' => 10,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p17.png'
+            ],
+            [
+                'name' => 'Nestlé Tuna',
+                'category' => 4,
+                'brand' => 10,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p18.png'
+            ],
+            [
+                'name' => 'Nestlé Sardines',
+                'category' => 4,
+                'brand' => 10,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p19.png'
+            ],
+            [
+                'name' => 'Nestlé Coconut Milk',
+                'category' => 4,
+                'brand' => 10,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p20.png'
+            ],
+            [
+                'name' => 'Buldak Original',
+                'category' => 5,
+                'brand' => 5,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p21.png'
+            ],
+            [
+                'name' => 'Buldak Carbonara',
+                'category' => 5,
+                'brand' => 5,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p22.png'
+            ],
+            [
+                'name' => 'Buldak Cheese',
+                'category' => 5,
+                'brand' => 5,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p23.png'
+            ],
+            [
+                'name' => 'Koreno Chicken',
+                'category' => 5,
+                'brand' => 6,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p24.png'
+            ],
+            [
+                'name' => 'Koreno Seafood',
+                'category' => 5,
+                'brand' => 6,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p25.png'
+            ],
+            [
+                'name' => 'Mistine Baby Powder',
+                'category' => 6,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p26.png'
+            ],
+            [
+                'name' => 'Mistine Baby Lotion',
+                'category' => 6,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p27.png'
+            ],
+            [
+                'name' => 'Mistine Baby Shampoo',
+                'category' => 6,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p28.png'
+            ],
+            [
+                'name' => 'Mistine Baby Soap',
+                'category' => 6,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p29.png'
+            ],
+            [
+                'name' => 'Mistine Baby Wipes',
+                'category' => 6,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p30.png'
+            ],
+            [
+                'name' => 'Mistine Facial Foam',
+                'category' => 7,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p31.png'
+            ],
+            [
+                'name' => 'Mistine Face Cream',
+                'category' => 7,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p32.png'
+            ],
+            [
+                'name' => 'Mistine Serum',
+                'category' => 7,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p33.png'
+            ],
+            [
+                'name' => 'Mistine Sunscreen',
+                'category' => 7,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p34.png'
+            ],
+            [
+                'name' => 'Mistine Toner',
+                'category' => 7,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p35.png'
+            ],
+            [
+                'name' => 'Julies Cheese Sandwich',
+                'category' => 8,
+                'brand' => 4,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p36.png'
+            ],
+            [
+                'name' => 'Julies Chocolate Sandwich',
+                'category' => 8,
+                'brand' => 4,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p37.png'
+            ],
+            [
+                'name' => 'Oishi Potato Chips',
+                'category' => 8,
+                'brand' => 9,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p38.png'
+            ],
+            [
+                'name' => 'Oishi Prawn Crackers',
+                'category' => 8,
+                'brand' => 9,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p39.png'
+            ],
+            [
+                'name' => 'Oishi Seaweed Snack',
+                'category' => 8,
+                'brand' => 9,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p40.png'
+            ],
+            [
+                'name' => 'Ajinomoto MSG 100g',
+                'category' => 9,
+                'brand' => 8,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p41.png'
+            ],
+            [
+                'name' => 'Ajinomoto MSG 250g',
+                'category' => 9,
+                'brand' => 8,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p42.png'
+            ],
+            [
+                'name' => 'Ajinomoto Chicken Powder',
+                'category' => 9,
+                'brand' => 8,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p43.png'
+            ],
+            [
+                'name' => 'Ajinomoto Soup Stock',
+                'category' => 9,
+                'brand' => 8,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p44.png'
+            ],
+            [
+                'name' => 'Ajinomoto Umami Seasoning',
+                'category' => 9,
+                'brand' => 8,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p45.png'
+            ],
+            [
+                'name' => 'Mistine Body Wash',
+                'category' => 10,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p46.png'
+            ],
+            [
+                'name' => 'Mistine Body Lotion',
+                'category' => 10,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p47.png'
+            ],
+            [
+                'name' => 'Mistine Shampoo',
+                'category' => 10,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p48.png'
+            ],
+            [
+                'name' => 'Mistine Conditioner',
+                'category' => 10,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p49.png'
+            ],
+            [
+                'name' => 'Mistine Hand Cream',
+                'category' => 10,
+                'brand' => 7,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p50.png'
+            ],
             // [
             //     'name' => 'Johnson\'s Baby Powder 200g',
             //     'category' => 9,

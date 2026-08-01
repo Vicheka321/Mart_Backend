@@ -51,8 +51,12 @@ class brandsSeeder extends Seeder
                 'name' => 'Nestlé',
                 'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/brands/b10.png',
             ],
+            [
+                'name' => 'No Brand',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/brands/b11.png',
+            ],
         ];
-        
+
         foreach ($brands as $brand) {
 
             $createdAt = Carbon::now()->subDays(rand(1, 730));

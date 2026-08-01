@@ -16,16 +16,23 @@ class bannerseeder extends Seeder
         $data = [
             [
                 'title' => 'Banner',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/photo_2026-06-14_01-08-24%20(2).jpg'
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/banner1.png'
             ],
             [
                 'title' => 'Banner',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/photo_2026-06-14_01-08-24.jpg'
-
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/banner2.png'
             ],
             [
                 'title' => 'Banner',
-                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/photo_2026-06-14_01-08-25.jpg'
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/banner3.png'
+            ],
+            [
+                'title' => 'Banner',
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/banner4.png'
+            ],
+            [
+                'title' => 'Banner',
+                'image_url' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/banners/banner5.png'
             ],
 
         ];
