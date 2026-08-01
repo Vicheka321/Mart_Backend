@@ -13,31 +13,32 @@
                             flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                     <h2 class="text-sm font-medium text-gray-900 dark:text-white">Coupon List</h2>
 
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-wrap">
+                    <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
 
-                        {{-- STATUS FILTER --}}
-                        <select id="statusFilter" onchange="filterTable()"
-                            class="px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-600
-                                   bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200
-                                   focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
-                            <option value="">All Statuses</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="expired">Expired</option>
-                        </select>
+                        {{-- STATUS + TYPE FILTERS (side by side on phone) --}}
+                        <div class="grid grid-cols-2 gap-2 sm:flex sm:gap-2">
+                            <select id="statusFilter" onchange="filterTable()"
+                                class="w-full sm:w-auto px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-600
+                                       bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200
+                                       focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
+                                <option value="">All Statuses</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="expired">Expired</option>
+                            </select>
 
-                        {{-- TYPE FILTER --}}
-                        <select id="typeFilter" onchange="filterTable()"
-                            class="px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-600
-                                   bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200
-                                   focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
-                            <option value="">All Types</option>
-                            <option value="percent">Percentage</option>
-                            <option value="fixed">Fixed</option>
-                        </select>
+                            <select id="typeFilter" onchange="filterTable()"
+                                class="w-full sm:w-auto px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-600
+                                       bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200
+                                       focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
+                                <option value="">All Types</option>
+                                <option value="percent">Percentage</option>
+                                <option value="fixed">Fixed</option>
+                            </select>
+                        </div>
 
                         {{-- SEARCH --}}
-                        <div class="relative">
+                        <div class="relative w-full sm:w-52">
                             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                                 <circle cx="11" cy="11" r="8" />
@@ -45,40 +46,41 @@
                             </svg>
                             <input type="text" id="couponSearch" placeholder="Search coupons…" oninput="filterTable()"
                                 autocomplete="off"
-                                class="w-full sm:w-52 pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
+                                class="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
                                        bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400
                                        focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200">
                         </div>
 
                         {{-- ADD BUTTON --}}
                         <button type="button" onclick="openCreate()"
-                            class="action-btn inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-xl
+                            class="action-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-xl
                                    bg-indigo-600 hover:bg-indigo-700 text-white transition-all duration-200
                                    shadow-md shadow-indigo-500/25">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                                 <path d="M12 5v14M5 12h14" />
                             </svg>
-                            <span class="hidden sm:inline">Add Coupon</span>
+                            <span>Add Coupon</span>
                         </button>
                     </div>
                 </div>
 
                 {{-- ACTIVE FILTER BADGE --}}
-                <div id="filterBadge" class="hidden px-5 py-2.5 bg-indigo-50 dark:bg-indigo-500/10 border-b border-indigo-100 dark:border-indigo-500/20
-                                              flex items-center justify-between">
+                <div id="filterBadge" class="hidden px-4 sm:px-5 py-2.5 bg-indigo-50 dark:bg-indigo-500/10 border-b border-indigo-100 dark:border-indigo-500/20
+                                              flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                     <p class="text-xs text-indigo-600 dark:text-indigo-400" id="filterBadgeText"></p>
-                    <button onclick="clearFilters()" class="text-xs text-indigo-500 dark:text-indigo-400 hover:underline">
+                    <button onclick="clearFilters()" class="text-xs text-indigo-500 dark:text-indigo-400 hover:underline self-start sm:self-auto">
                         Clear filters
                     </button>
                 </div>
 
-                {{-- TABLE --}}
-                <div class="overflow-x-auto">
-                    @if($coupons->isEmpty())
-                        <div class="py-16 text-center text-sm text-gray-400 dark:text-gray-500">
-                            No coupons found.
-                        </div>
-                    @else
+                @if($coupons->isEmpty())
+                    <div class="py-16 text-center text-sm text-gray-400 dark:text-gray-500">
+                        No coupons found.
+                    </div>
+                @else
+
+                    {{-- ==================== DESKTOP / TABLET TABLE (md and up) ==================== --}}
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="w-full text-sm" id="couponsTable">
                             <thead>
                                 <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50/60 dark:bg-gray-700/30">
@@ -88,7 +90,7 @@
                                             <svg class="w-3 h-3 sort-icon opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
                                         </span>
                                     </th>
-                                    <th class="px-5 py-3 text-left cursor-pointer select-none" onclick="sortTable('type', this)">
+                                    <th class="px-5 py-3 text-left cursor-pointer select-none hidden lg:table-cell" onclick="sortTable('type', this)">
                                         <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide inline-flex items-center gap-1">
                                             Type
                                             <svg class="w-3 h-3 sort-icon opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
@@ -100,7 +102,7 @@
                                             <svg class="w-3 h-3 sort-icon opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
                                         </span>
                                     </th>
-                                    <th class="px-5 py-3 text-left hidden md:table-cell">
+                                    <th class="px-5 py-3 text-left hidden xl:table-cell">
                                         <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Usage</span>
                                     </th>
                                     <th class="px-5 py-3 text-left hidden lg:table-cell cursor-pointer select-none" onclick="sortTable('expiry', this)">
@@ -130,7 +132,6 @@
                                             ? min(100, ($coupon->used_count / $coupon->usage_limit) * 100)
                                             : 0;
 
-                                        // Derive status label for JS filtering
                                         if ($isExpired)
                                             $statusLabel = 'expired';
                                         elseif ($isActive)
@@ -161,11 +162,27 @@
                                                         {{ $coupon->description }}
                                                     </span>
                                                 @endif
+                                                {{-- Type badge shown here on md/lg where the Type column is hidden --}}
+                                                <span class="lg:hidden mt-1">
+                                                    @if($coupon->discount_type === 'percent')
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium
+                                                                     bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400
+                                                                     border border-violet-100 dark:border-violet-800">
+                                                            Percentage
+                                                        </span>
+                                                    @else
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium
+                                                                     bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400
+                                                                     border border-amber-100 dark:border-amber-800">
+                                                            Fixed
+                                                        </span>
+                                                    @endif
+                                                </span>
                                             </div>
                                         </td>
 
-                                        {{-- TYPE --}}
-                                        <td class="px-5 py-3.5">
+                                        {{-- TYPE (lg and up only) --}}
+                                        <td class="px-5 py-3.5 hidden lg:table-cell">
                                             @if($coupon->discount_type === 'percent')
                                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium
                                                              bg-violet-50 dark:bg-violet-900/20
@@ -213,8 +230,8 @@
                                             @endif
                                         </td>
 
-                                        {{-- USAGE --}}
-                                        <td class="px-5 py-3.5 hidden md:table-cell">
+                                        {{-- USAGE (xl and up only) --}}
+                                        <td class="px-5 py-3.5 hidden xl:table-cell">
                                             <div class="w-28">
                                                 <div class="flex justify-between text-[11px] text-gray-400 dark:text-gray-500 mb-1">
                                                     <span class="font-medium text-gray-600 dark:text-gray-300">{{ $coupon->used_count }}</span>
@@ -319,15 +336,190 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
 
-                        <div id="searchEmpty" class="hidden py-12 text-center text-sm text-gray-400 dark:text-gray-500">
-                            No coupons match your filters.
-                        </div>
-                    @endif
-                </div>
+                    {{-- ==================== MOBILE CARD LIST (below md) ==================== --}}
+                    <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+                        @foreach($coupons as $coupon)
+                            @php
+                                $isExpired = $coupon->end_date && $coupon->end_date->isPast();
+                                $isActive = $coupon->status === true || $coupon->status === 1 || $coupon->status === '1' || $coupon->status === 'active';
+                                $pct = ($coupon->usage_limit && $coupon->usage_limit > 0)
+                                    ? min(100, ($coupon->used_count / $coupon->usage_limit) * 100)
+                                    : 0;
+
+                                if ($isExpired)
+                                    $statusLabel = 'expired';
+                                elseif ($isActive)
+                                    $statusLabel = 'active';
+                                else
+                                    $statusLabel = 'inactive';
+                            @endphp
+
+                            <div class="coupon-row p-4 flex flex-col gap-3"
+                                data-code="{{ strtolower($coupon->code) }}"
+                                data-type="{{ $coupon->discount_type }}"
+                                data-value="{{ $coupon->discount_value }}"
+                                data-status="{{ $statusLabel }}"
+                                data-expiry="{{ $coupon->end_date ? $coupon->end_date->format('Y-m-d') : '9999-12-31' }}">
+
+                                {{-- Top row: code + status --}}
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="flex flex-col gap-1 min-w-0">
+                                        <span class="code-badge inline-flex items-center gap-1.5 w-fit px-2.5 py-1 rounded-lg
+                                                     bg-indigo-50 dark:bg-indigo-900/30
+                                                     text-indigo-700 dark:text-indigo-300
+                                                     text-xs font-mono font-bold tracking-widest
+                                                     border border-indigo-100 dark:border-indigo-800">
+                                            {{ $coupon->code }}
+                                        </span>
+                                        @if($coupon->description)
+                                            <span class="text-[11px] text-gray-400 dark:text-gray-500 truncate max-w-[220px]">
+                                                {{ $coupon->description }}
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    @if($isExpired)
+                                        <span class="flex-shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+                                                     bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400
+                                                     border border-red-100 dark:border-red-800">
+                                            Expired
+                                        </span>
+                                    @elseif($isActive)
+                                        <span class="flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold
+                                                     bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400
+                                                     border border-emerald-100 dark:border-emerald-800">
+                                            <span class="pulse-dot w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+                                            Active
+                                        </span>
+                                    @else
+                                        <span class="flex-shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+                                                     bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400
+                                                     border border-gray-200 dark:border-gray-600">
+                                            Inactive
+                                        </span>
+                                    @endif
+                                </div>
+
+                                {{-- Type + Value --}}
+                                <div class="flex items-center justify-between">
+                                    @if($coupon->discount_type === 'percent')
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium
+                                                     bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400
+                                                     border border-violet-100 dark:border-violet-800">
+                                            Percentage
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium
+                                                     bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400
+                                                     border border-amber-100 dark:border-amber-800">
+                                            Fixed
+                                        </span>
+                                    @endif
+
+                                    <span class="font-bold text-sm text-gray-900 dark:text-white">
+                                        @if($coupon->discount_type === 'percent')
+                                            {{ rtrim(rtrim(number_format($coupon->discount_value, 2, '.', ''), '0'), '.') }}
+                                            <span class="text-xs font-normal text-gray-400">%</span>
+                                        @else
+                                            <span class="text-xs font-normal text-gray-400">$</span>{{ number_format($coupon->discount_value, 2) }}
+                                        @endif
+                                    </span>
+                                </div>
+
+                                @if($coupon->min_order_amount > 0 || $coupon->max_discount)
+                                    <div class="flex items-center gap-3 text-[11px] text-gray-400">
+                                        @if($coupon->min_order_amount > 0)
+                                            <span>Min ${{ number_format($coupon->min_order_amount, 2) }}</span>
+                                        @endif
+                                        @if($coupon->max_discount)
+                                            <span>Cap ${{ number_format($coupon->max_discount, 2) }}</span>
+                                        @endif
+                                    </div>
+                                @endif
+
+                                {{-- Usage --}}
+                                <div>
+                                    <div class="flex justify-between text-[11px] text-gray-400 dark:text-gray-500 mb-1">
+                                        <span class="font-medium text-gray-600 dark:text-gray-300">Used {{ $coupon->used_count }}</span>
+                                        <span>/ {{ $coupon->usage_limit ?? '∞' }}</span>
+                                    </div>
+                                    <div class="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                        <div class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                                            style="width: {{ $pct }}%"></div>
+                                    </div>
+                                    @if($coupon->usage_limit_per_user)
+                                        <div class="text-[11px] text-gray-400 mt-1">{{ $coupon->usage_limit_per_user }}x per user</div>
+                                    @endif
+                                </div>
+
+                                {{-- Validity --}}
+                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                    @if($coupon->end_date)
+                                        Valid until {{ $coupon->end_date->format('d M Y') }}
+                                        @if(!$isExpired)
+                                            <span class="text-gray-400">({{ $coupon->end_date->diffForHumans() }})</span>
+                                        @endif
+                                    @else
+                                        <span class="font-medium text-violet-500 dark:text-violet-400">No Expiry</span>
+                                    @endif
+                                </div>
+
+                                {{-- Actions --}}
+                                <div class="flex items-center gap-2 pt-1">
+                                    <button type="button" onclick='openEdit(
+                                        {{ $coupon->id }},
+                                        @json($coupon->code),
+                                        @json($coupon->discount_type),
+                                        {{ $coupon->discount_value }},
+                                        @json($coupon->description),
+                                        @json($coupon->start_date?->format("Y-m-d")),
+                                        @json($coupon->end_date?->format("Y-m-d")),
+                                        {{ $coupon->usage_limit ?? "null" }},
+                                        {{ $coupon->usage_limit_per_user ?? "null" }},
+                                        {{ $coupon->min_order_amount ??"null"}},
+                                        {{ $coupon->max_discount ?? "null" }},
+                                        {{ (int) ($coupon->status ? 1 : 0) }}
+                                    )'
+                                        class="action-btn flex-1 inline-flex items-center justify-center gap-1.5 h-9 rounded-lg text-xs font-medium
+                                        border border-gray-200 bg-white text-gray-600
+                                        hover:text-gray-900 hover:border-gray-300 transition-all duration-200
+                                        dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                        Edit
+                                    </button>
+
+                                    <form class="delete-form flex-1" action="{{ route('coupons.destroy', $coupon->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <input type="hidden" data-name="{{ $coupon->code }}">
+                                        <button type="submit"
+                                            class="action-btn w-full inline-flex items-center justify-center gap-1.5 h-9 rounded-lg text-xs font-medium
+                                                    border border-gray-200 bg-white text-gray-600
+                                                    hover:bg-gray-50 hover:text-red-500 transition-all duration-200
+                                                    dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-red-400">
+                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2h4a1 1 0 1 1 0 2h-1.069l-.867 12.142A2 2 0 0 1 17.069 22H6.93a2 2 0 0 1-1.995-1.858L4.07 8H3a1 1 0 0 1 0-2h4V4zm2 2h6V4H9v2zM6.074 8l.857 12H17.07l.857-12H6.074zM10 10a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1zm4 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1z"/>
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div id="searchEmpty" class="hidden py-12 text-center text-sm text-gray-400 dark:text-gray-500">
+                        No coupons match your filters.
+                    </div>
+                @endif
 
                 {{-- FOOTER / PAGINATION --}}
-                <div class="px-5 py-4 border-t border-gray-100 dark:border-gray-700
+                <div class="px-4 sm:px-5 py-4 border-t border-gray-100 dark:border-gray-700
                             flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <p class="text-xs text-gray-400 dark:text-gray-500" id="footerCount">
                         Showing <span id="visibleCount">{{ $coupons->count() }}</span>
@@ -342,7 +534,7 @@
                         @endif
                     </p>
                     @if(method_exists($coupons, 'links'))
-                        <div class="text-sm">{{ $coupons->links() }}</div>
+                        <div class="text-sm w-full sm:w-auto overflow-x-auto">{{ $coupons->links() }}</div>
                     @endif
                 </div>
             </div>
@@ -351,12 +543,12 @@
 
         {{-- ==================== CREATE / EDIT MODAL ==================== --}}
         <div id="couponModal"
-            class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-0 sm:p-4">
             <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-                        rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+                        w-full h-full sm:h-auto sm:max-w-lg sm:rounded-2xl shadow-2xl overflow-hidden sm:max-h-[90vh] flex flex-col">
 
                 {{-- MODAL HEADER --}}
-                <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700 shrink-0">
+                <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700 shrink-0">
                     <h2 id="modalTitle" class="text-base font-medium text-gray-900 dark:text-white">Add Coupon</h2>
                     <button onclick="closeModal()"
                         class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
@@ -368,22 +560,12 @@
 
                 {{-- MODAL BODY (scrollable) --}}
                 <div class="overflow-y-auto flex-1">
-                    <form id="couponForm" action="{{ route('coupons.store') }}" method="POST" class="p-6 space-y-4">
+                    <form id="couponForm" action="{{ route('coupons.store') }}" method="POST" class="p-4 sm:p-6 space-y-4">
                         @csrf
                         <input type="hidden" name="_method" id="formMethod" value="POST">
 
                         {{-- Code + Status --}}
-                        <div class="grid grid-cols-2 gap-3">
-                            {{-- <div>
-                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
-                                    Coupon Code <span class="text-red-400">*</span>
-                                </label>
-                                <input type="text" name="code" id="couponCode" placeholder="e.g. SAVE20" required
-                                    class="w-full px-3 py-2 text-sm font-mono uppercase tracking-widest rounded-xl
-                                           border border-gray-200 dark:border-gray-600
-                                           bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white placeholder-gray-400
-                                           focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                            </div> --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
                                     Coupon Code <span class="text-red-400">*</span>
@@ -427,7 +609,7 @@
                         </div>
 
                         {{-- Discount Type + Value --}}
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
                                     Discount Type <span class="text-red-400">*</span>
@@ -457,7 +639,7 @@
                         </div>
 
                         {{-- Min Order + Max Discount --}}
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
                                     Min Order Amount
@@ -494,7 +676,7 @@
                                 Validity Period
                                 <span class="font-normal text-gray-400">(leave blank for no expiry)</span>
                             </label>
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-[11px] text-gray-400 mb-1">Start Date</label>
                                     <input type="date" name="start_date" id="couponStartDate"
@@ -513,7 +695,7 @@
                         </div>
 
                         {{-- Usage Limit + Per User --}}
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
                                     Usage Limit
@@ -537,12 +719,7 @@
                                            focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
                             </div>
                         </div>
-{{-- 
-                        <button type="submit"
-                            class="action-btn w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium
-                                   rounded-xl transition-all shadow-md shadow-indigo-500/25">
-                            <span id="submitLabel">Create Coupon</span>
-                        </button> --}}
+
                         <button
                             type="submit"
                             id="submitButton"
@@ -643,13 +820,15 @@
 
                 // ══════════════════════════════════════════════════════
                 //  CLIENT-SIDE FILTER (search + type + status)
+                //  Applies to BOTH the desktop table rows and the mobile
+                //  cards, since both share the `.coupon-row` class + data-*.
                 // ══════════════════════════════════════════════════════
                 function filterTable() {
                     const q      = (document.getElementById('couponSearch')?.value ?? '').toLowerCase().trim();
                     const type   = (document.getElementById('typeFilter')?.value ?? '').toLowerCase();
                     const status = (document.getElementById('statusFilter')?.value ?? '').toLowerCase();
 
-                    const rows   = document.querySelectorAll('#couponsBody .coupon-row');
+                    const rows   = document.querySelectorAll('.coupon-row');
                     const empty  = document.getElementById('searchEmpty');
                     let vis = 0;
 
@@ -662,14 +841,16 @@
                         if (show) vis++;
                     });
 
+                    // vis currently counts both table row + card per coupon (they're duplicated
+                    // across two containers) — halve it for an accurate "visible coupons" count.
+                    const visibleCoupons = Math.round(vis / 2) || vis;
+
                     if (empty) empty.classList.toggle('hidden', vis > 0);
 
-                    // Update visible count in footer
                     const countEl = document.getElementById('visibleCount');
-                    if (countEl) countEl.textContent = vis;
+                    if (countEl) countEl.textContent = visibleCoupons;
 
-                    // Show/hide filter badge
-                    updateFilterBadge(q, type, status, vis);
+                    updateFilterBadge(q, type, status, visibleCoupons);
                 }
 
                 function updateFilterBadge(q, type, status, vis) {
@@ -699,7 +880,9 @@
                 }
 
                 // ══════════════════════════════════════════════════════
-                //  CLIENT-SIDE SORT
+                //  CLIENT-SIDE SORT (desktop table only — mobile view
+                //  uses cards without column headers, which is standard
+                //  mobile UX; the underlying data stays filterable there)
                 // ══════════════════════════════════════════════════════
                 let sortCol = null, sortDir = 1;
 

@@ -33,42 +33,45 @@ class PromotionController extends Controller
 
     public function store(Request $request)
     {
+        // Remove extra spaces
+        $request->merge([
+            'name' => preg_replace('/\s+/', ' ', trim($request->name))
+        ]);
+
         $validator = Validator::make(
             $request->all(),
             [
-                'name' => 'required|string|max:255|unique:promotions,name',
-                'discount_type' => 'required|in:percent,fixed',
+                'name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    function ($attribute, $value, $fail) {
+
+                        $normalized = strtolower(
+                            preg_replace('/\s+/', '', trim($value))
+                        );
+
+                        $exists = PromotionModel::get()->contains(function ($promotion) use ($normalized) {
+
+                            return strtolower(
+                                preg_replace('/\s+/', '', trim($promotion->name))
+                            ) === $normalized;
+                        });
+
+                        if ($exists) {
+                            $fail('Promotion name already exists.');
+                        }
+                    }
+                ],
+
+                'discount_type'  => 'required|in:percent,fixed',
                 'discount_value' => 'required|numeric|min:0',
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-                'status' => 'required|boolean',
-            ],
-            [
-                'name.unique' => 'Promotion name already exists.',
+                'start_date'     => 'required|date',
+                'end_date'       => 'required|date|after_or_equal:start_date',
+                'status'         => 'required|boolean',
             ]
         );
-        $normalizedName = preg_replace(
-            '/\s+/',
-            '',
-            strtolower(trim($request->name))
-        );
 
-        $exists = PromotionModel::get()->first(function ($promotion) use ($normalizedName) {
-
-            return preg_replace(
-                '/\s+/',
-                '',
-                strtolower(trim($promotion->name))
-            ) === $normalizedName;
-        });
-
-        if ($exists) {
-
-            $validator->errors()->add(
-                'name',
-                'Promotion name already exists.'
-            );
-        }
         if ($validator->fails()) {
 
             if ($request->ajax() || $request->wantsJson()) {
@@ -86,7 +89,7 @@ class PromotionController extends Controller
 
         $validated = $validator->validated();
 
-        $promotion = PromotionModel::create([
+        PromotionModel::create([
             'name'            => $validated['name'],
             'discount_type'   => $validated['discount_type'],
             'discount_value'  => $validated['discount_value'],
@@ -105,44 +108,53 @@ class PromotionController extends Controller
 
         return redirect()
             ->route('promotions.index')
-            ->with('success', 'Promotion created successfully. Now select products.');
+            ->with('success', 'Promotion created successfully.');
     }
 
     public function update(Request $request, PromotionModel $promotion)
     {
-        $validator = Validator::make($request->all(), [
-            'name'            => 'required|string|max:255',
-            'image'           => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'discount_type'   => 'required|in:percent,fixed',
-            'discount_value'  => 'required|numeric|min:0',
-            'start_date'      => 'required|date',
-            'end_date'        => 'required|date|after_or_equal:start_date',
-            'status'          => 'nullable|boolean',
+        // Remove extra spaces
+        $request->merge([
+            'name' => preg_replace('/\s+/', ' ', trim($request->name))
         ]);
-        $normalizedName = preg_replace(
-            '/\s+/',
-            '',
-            strtolower(trim($request->name))
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    function ($attribute, $value, $fail) use ($promotion) {
+
+                        $normalized = strtolower(
+                            preg_replace('/\s+/', '', trim($value))
+                        );
+
+                        $exists = PromotionModel::where('id', '!=', $promotion->id)
+                            ->get()
+                            ->contains(function ($item) use ($normalized) {
+
+                                return strtolower(
+                                    preg_replace('/\s+/', '', trim($item->name))
+                                ) === $normalized;
+                            });
+
+                        if ($exists) {
+                            $fail('Promotion name already exists.');
+                        }
+                    }
+                ],
+
+                'image'           => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+                'discount_type'   => 'required|in:percent,fixed',
+                'discount_value'  => 'required|numeric|min:0',
+                'start_date'      => 'required|date',
+                'end_date'        => 'required|date|after_or_equal:start_date',
+                'status'          => 'nullable|boolean',
+            ]
         );
 
-        $exists = PromotionModel::where('id', '!=', $promotion->id)
-            ->get()
-            ->first(function ($item) use ($normalizedName) {
-
-                return preg_replace(
-                    '/\s+/',
-                    '',
-                    strtolower(trim($item->name))
-                ) === $normalizedName;
-            });
-
-        if ($exists) {
-
-            $validator->errors()->add(
-                'name',
-                'Promotion name already exists.'
-            );
-        }
         if ($validator->fails()) {
 
             if ($request->ajax() || $request->wantsJson()) {
@@ -160,23 +172,21 @@ class PromotionController extends Controller
 
         $validated = $validator->validated();
 
-        // Keep current image by default
+        // Keep current image
         $imageUrl = $promotion->image_url;
 
-        // Replace image if a new one is uploaded
+        // Upload new image
         if ($request->hasFile('image')) {
-            // Delete old image if it exists
+
             if ($promotion->image_url) {
                 $oldPath = str_replace('/storage/', '', $promotion->image_url);
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
             }
 
-            // Upload new image
             $path = $request->file('image')->store('promotions', 'public');
             $imageUrl = \Illuminate\Support\Facades\Storage::url($path);
         }
 
-        // Update promotion
         $promotion->update([
             'name'            => $validated['name'],
             'image_url'       => $imageUrl,
