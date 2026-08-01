@@ -23,8 +23,8 @@ class DatabaseSeeder extends Seeder
             categoriesSeeder::class,
             brandsSeeder::class,
             ProductsSeeder::class,
-            Products_image::class,
-            Promotions::class,
+            // Products_image::class,
+            // Promotions::class,
             bannerseeder::class,
             OrderSeeder::class,
             CouponSeeder::class

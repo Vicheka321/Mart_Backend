@@ -17,65 +17,37 @@ class ProductsSeeder extends Seeder
     {
         $productData = [
             [
-                'name' => 'Coca Cola 330ml Can',
+                'name' => 'Coca Cola 330ml',
                 'category' => 1,
                 'brand' => 1,
-                'image' => 'https://m.media-amazon.com/images/I/715rFhZpV0L._AC_UL480_FMwebp_QL65_.jpg'
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p1b1c1.png'
             ],
             [
-                'name' => 'Pepsi 330ml Can',
+                'name' => 'Coca Cola Zero',
+                'category' => 1,
+                'brand' => 1,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p2b1c1.png'
+            ],
+            [
+                'name' => 'Pepsi 330ml',
                 'category' => 1,
                 'brand' => 2,
-                'image' => 'https://m.media-amazon.com/images/I/71EybBZ-jpL._AC_UL480_FMwebp_QL65_.jpg'
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p3b2c1.png'
             ],
             [
-                'name' => 'Sprite 330ml Can',
+                'name' => 'Pepsi Black',
                 'category' => 1,
                 'brand' => 2,
-                'image' => 'https://m.media-amazon.com/images/I/61crDE1AJjL._AC_UL480_FMwebp_QL65_.jpg'
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p4b2c1.png'
             ],
             [
-                'name' => 'Fanta Orange 330ml',
+                'name' => 'Eau Kulen 500ml',
                 'category' => 1,
-                'brand' => 1,
-                'image' => 'https://m.media-amazon.com/images/I/712n0g5ATPL._AC_UL480_FMwebp_QL65_.jpg'
+                'brand' => 3,
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p5b3c1.png'
             ],
-            [
-                'name' => '7Up Lemon Lime 330ml',
-                'category' => 1,
-                'brand' => 1,
-                'image' => 'https://m.media-amazon.com/images/I/41pP0bG4eQL._AC_UL480_FMwebp_QL65_.jpg'
-            ],
-            [
-                'name' => 'Mirinda Strawberry 330ml',
-                'category' => 1,
-                'brand' => 10,
-                'image' => 'https://m.media-amazon.com/images/I/612HeyYXOnL._AC_UL480_FMwebp_QL65_.jpg'
-            ],
-            [
-                'name' => 'Nescafe Classic 200g',
-                'category' => 1,
-                'brand' => 1,
-                'image' => 'https://m.media-amazon.com/images/I/710DwRCax+L._AC_UL480_FMwebp_QL65_.jpg'
-            ],
-            [
-                'name' => 'Nescafe 3in1 Coffee Mix',
-                'category' => 1,
-                'brand' => 2,
-                'image' => 'https://m.media-amazon.com/images/I/71EybBZ-jpL._AC_UL480_FMwebp_QL65_.jpg'
-            ],
-            [
-                'name' => 'Milo Chocolate Drink 400g',
-                'category' => 1,
-                'brand' => 10,
-                'image' => 'https://m.media-amazon.com/images/I/71bzIktCpVL._AC_UL480_FMwebp_QL65_.jpg'
-            ],
-            [
-                'name' => 'Ovaltine Malt Drink 400g',
-                'category' => 1,
-                'brand' => 1,
-                'image' => 'https://m.media-amazon.com/images/I/712n0g5ATPL._AC_UL480_FMwebp_QL65_.jpg'
-            ],
+
+ 
             // [
             //     'name' => 'Red Bull Energy Drink 250ml',
             //     'category' => 1,

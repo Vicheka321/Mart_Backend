@@ -13,43 +13,43 @@ class categoriesSeeder extends Seeder
         $categories = [
             [
                 'name' => 'Drinks',
-                'image' => 'https://www.pngitem.com/pimgs/m/3-37003_cool-drinks-images-png-transparent-png.png',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/c1.png',
             ],
             [
                 'name' => 'HouseHold',
-                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9qkAXcgnkEg5YAxLfm8lGPer_bv6xPmd_hlxJXm8tVWhqKpyFRcuJUn4&s=10',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/c2.png',
             ],
             [
                 'name' => 'Coffee & Tea',
-                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyilOuWKompb2Bb1M5SZOdH3RUErK-xqn8pK1X5yLgEIP8GYQRKXvwwZI&s=10',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/c3.png',
             ],
             [
                 'name' => 'Canned Food',
-                'image' => 'https://farelabs.com/wp-content/uploads/canned-food-768x432-1.webp',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/c4.png',
             ],
             [
                 'name' => 'Instant Food',
-                'image' => 'https://i5.walmartimages.com/seo/Samyang-Spicy-Chicken-Noodle-Carbonara-Flavor-Ramen-4-58-oz-5-Pack_062ca712-fd56-43fc-af93-84b9f38fc873.0f0d66a110f8f69aed8255038bb82628.jpeg',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/c5.png',
             ],
             [
                 'name' => 'Baby Care',
-                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYwzqOfaBPAj95r4rbtVmPRckCTCkRY7mWJfcPeX5YH-8iOcX_CMBRgGyg&s=10',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/c6.png',
             ],
             [
                 'name' => 'beauty',
-                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr1-y8NFnz3MG2_Grlh22_3QrwhPv-USLyxJX1nb0FLWsqEnT2tfCPvBv4&s=10',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/c7.png',
             ],
             [
                 'name' => 'Food',
-                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSixnJJA-He5vQ9ihbGI8LIay8h5mfEj-7xoJqrtSZ8kIE3Xlq6KiF-jEX4&s=10',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/c8.png',
             ],
             [
                 'name' => 'Seasioning',
-                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTemtVFUn6-geEUIACVHkTF2K0b7CrC8uzH1lghKGu937tmA421dNjKSCs&s=10',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/c9.png',
             ],
             [
                 'name' => 'Personal care',
-                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgtwPSsUa6UnBH78E2jhBdV8I3GdCOFUah44CedBu552kJstd-I0-8nl-M&s=10',
+                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/categories/c10.png',
             ],
         ];
 

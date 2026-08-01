@@ -250,20 +250,32 @@
 
                             {{-- Image / Initial --}}
                             @if($category->image)
-                                <div class="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
-                                    <img src="{{ $category->image }}" alt="{{ $category->name }}"
-                                         class="cat-img w-full h-full object-cover">
+                                <div class="relative aspect-[4/3] overflow-hidden bg-white dark:bg-gray-700">
+
+                                    <div class="p-4 h-full">
+                                        <img src="{{ $category->image }}"
+                                            alt="{{ $category->name }}"
+                                            class="cat-img w-full h-full object-contain">
+                                    </div>
+
                                 </div>
                             @else
-                                <div class="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200
+                                <div class="relative aspect-[4/3]
+                                            bg-gradient-to-br from-gray-100 to-gray-200
                                             dark:from-gray-700 dark:to-gray-600
-                                            flex items-center justify-center text-3xl font-bold text-gray-400 dark:text-gray-500">
-                                    {{ strtoupper(substr($category->name, 0, 1)) }}
-                                    <span class="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full
-                                                 text-[10px] font-semibold bg-amber-100/90 text-amber-700
-                                                 dark:bg-amber-500/20 dark:text-amber-400">
-                                        No img
+                                            flex items-center justify-center">
+
+                                    <span class="text-3xl font-bold text-gray-400 dark:text-gray-500">
+                                        {{ strtoupper(substr($category->name, 0, 1)) }}
                                     </span>
+
+                                    <span class="absolute top-2 right-2 inline-flex items-center
+                                                px-2 py-0.5 rounded-full text-[10px] font-semibold
+                                                bg-amber-100/90 text-amber-700
+                                                dark:bg-amber-500/20 dark:text-amber-400">
+                                        No image
+                                    </span>
+
                                 </div>
                             @endif
 
@@ -357,18 +369,35 @@
 
                                 <td class="px-5 py-3">
                                     <div class="flex items-center gap-3">
+
                                         <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0
-                                                    {{ $category->image ? 'bg-gray-50 dark:bg-gray-700' : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600' }}
-                                                    flex items-center justify-center">
+                                            {{ $category->image
+                                                ? 'bg-white dark:bg-gray-700'
+                                                : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600' }}
+                                            flex items-center justify-center">
+
                                             @if($category->image)
-                                                <img src="{{ $category->image }}" class="w-full h-full object-cover">
+
+                                                <div class="w-full h-full p-2">
+                                                    <img src="{{ $category->image }}"
+                                                        alt="{{ $category->name }}"
+                                                        class="w-full h-full object-contain">
+                                                </div>
+
                                             @else
+
                                                 <span class="text-sm font-bold text-gray-400 dark:text-gray-500">
                                                     {{ strtoupper(substr($category->name, 0, 1)) }}
                                                 </span>
+
                                             @endif
+
                                         </div>
-                                        <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $category->name }}</p>
+
+                                        <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                            {{ $category->name }}
+                                        </p>
+
                                     </div>
                                 </td>
 
