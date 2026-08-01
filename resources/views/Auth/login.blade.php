@@ -13,6 +13,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body { font-family: 'Inter', sans-serif; }
 
         @keyframes fadeSlideUp {
@@ -33,7 +38,7 @@
     </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 py-10 sm:py-12">
+<body class="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 py-6 overflow-hidden">
 
     <div class="w-full max-w-md">
 
