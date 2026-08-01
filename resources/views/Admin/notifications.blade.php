@@ -162,6 +162,118 @@
         @media (max-width: 640px) {
             .stat-mini h2 { font-size: 1.15rem; }
         }
+
+        /* ══════════════════════════════════════════
+           DATE-TIME PICKER (premium)
+        ══════════════════════════════════════════ */
+        @keyframes dtpPopIn {
+            from { opacity: 0; transform: translateY(-6px) scale(.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .dtp { position: relative; }
+        .dtp-trigger {
+            width: 100%; display: flex; align-items: center; gap: .625rem;
+            padding: .55rem .75rem; border-radius: 12px;
+            background: #f9fafb; border: 1px solid #f3f4f6;
+            cursor: pointer; text-align: left; transition: all .15s ease;
+        }
+        .dark .dtp-trigger { background: rgba(55,65,81,.5); border-color: #374151; }
+        .dtp-trigger:hover { border-color: #ddd6fe; }
+        .dark .dtp-trigger:hover { border-color: #6d28d9; }
+        .dtp-trigger.dtp-active { box-shadow: 0 0 0 3px rgba(139,92,246,.18); border-color: #c4b5fd; }
+        .dtp-trigger-icon {
+            width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+            background: linear-gradient(135deg,#8b5cf6,#d946ef);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 8px rgba(139,92,246,.35);
+        }
+        .dtp-trigger-text { flex: 1; font-size: .75rem; font-weight: 600; color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dark .dtp-trigger-text { color: #e5e7eb; }
+        .dtp-trigger-text.placeholder { color: #9ca3af; font-weight: 500; }
+        .dark .dtp-trigger-text.placeholder { color: #6b7280; }
+        .dtp-chevron { width: 14px; height: 14px; color: #9ca3af; transition: transform .2s ease; flex-shrink: 0; }
+        .dtp-chevron.rotate-180 { transform: rotate(180deg); }
+
+        .dtp-panel {
+            display: none;
+            position: relative;
+            margin-top: 10px;
+
+            width: 100%;
+            max-width: 420px;
+
+            background: #fff;
+            border: 1px solid #f3f4f6;
+            border-radius: 18px;
+            box-shadow: 0 20px 45px rgba(17,24,39,.14);
+            padding: 14px;
+        }
+        .dark .dtp-panel { background: #1f2937; border-color: #374151; box-shadow: 0 20px 45px rgba(0,0,0,.45); }
+        .dtp-panel.open { display: block; animation: dtpPopIn .18s cubic-bezier(.22,1,.36,1) both; }
+
+        .dtp-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .dtp-cal-header span { font-size: .75rem; font-weight: 700; color: #1f2937; }
+        .dark .dtp-cal-header span { color: #f3f4f6; }
+        .dtp-nav-btn {
+            width: 24px; height: 24px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            color: #6b7280; background: transparent; transition: all .15s ease; border: none; cursor: pointer;
+        }
+        .dtp-nav-btn:hover { background: #f5f3ff; color: #7c3aed; }
+        .dark .dtp-nav-btn:hover { background: rgba(139,92,246,.15); color: #c4b5fd; }
+
+        .dtp-weekdays { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 4px; }
+        .dtp-weekdays span { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9ca3af; text-align: center; display:block; }
+        .dark .dtp-weekdays span { color: #6b7280; }
+
+        .dtp-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+        .dtp-day {
+            width: 100%; aspect-ratio: 1; border: none; background: transparent; border-radius: 999px;
+            font-size: 11px; font-weight: 600; color: #374151; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all .12s ease;
+        }
+        .dark .dtp-day { color: #d1d5db; }
+        .dtp-day.empty { cursor: default; }
+        .dtp-day:not(.empty):not(.disabled):hover { background: #f5f3ff; color: #7c3aed; }
+        .dark .dtp-day:not(.empty):not(.disabled):hover { background: rgba(139,92,246,.15); color: #c4b5fd; }
+        .dtp-day.today { box-shadow: inset 0 0 0 1.5px #c4b5fd; color: #7c3aed; }
+        .dark .dtp-day.today { box-shadow: inset 0 0 0 1.5px #7c3aed; color: #c4b5fd; }
+        .dtp-day.selected {
+            background: linear-gradient(135deg,#8b5cf6,#d946ef); color: #fff !important;
+            box-shadow: 0 4px 10px rgba(139,92,246,.4);
+        }
+        .dtp-day.disabled { color: #d1d5db; cursor: not-allowed; }
+        .dark .dtp-day.disabled { color: #4b5563; }
+
+        .dtp-time { display: flex; align-items: center; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f3f4f6; }
+        .dark .dtp-time { border-color: #374151; }
+        .dtp-time select {
+            appearance: none; -webkit-appearance: none;
+            background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 8px;
+            font-size: 12px; font-weight: 600; color: #374151;
+            padding: .3rem .4rem; text-align: center; cursor: pointer; outline: none;
+        }
+        .dark .dtp-time select { background: rgba(55,65,81,.6); border-color: #374151; color: #e5e7eb; }
+        .dtp-time select:focus { box-shadow: 0 0 0 2px rgba(139,92,246,.25); }
+        .dtp-colon { font-weight: 700; color: #9ca3af; font-size: 12px; }
+        .dtp-ampm { display: flex; gap: 2px; background: #f3f4f6; border-radius: 8px; padding: 2px; margin-left: auto; }
+        .dark .dtp-ampm { background: #374151; }
+        .dtp-ampm button {
+            font-size: 10px; font-weight: 700; padding: .25rem .5rem; border-radius: 6px; border: none;
+            background: transparent; color: #9ca3af; cursor: pointer; transition: all .15s ease;
+        }
+        .dtp-ampm button.active { background: #fff; color: #7c3aed; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+        .dark .dtp-ampm button.active { background: #1f2937; color: #c4b5fd; }
+
+        .dtp-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f3f4f6; }
+        .dark .dtp-footer { border-color: #374151; }
+        .dtp-clear-btn { font-size: 11px; font-weight: 600; color: #9ca3af; background: none; border: none; cursor: pointer; }
+        .dtp-clear-btn:hover { color: #ef4444; }
+        .dtp-apply-btn {
+            font-size: 11px; font-weight: 700; color: #fff; padding: .4rem .875rem; border-radius: 9px; border: none;
+            background: linear-gradient(135deg,#8b5cf6,#d946ef); box-shadow: 0 4px 10px rgba(139,92,246,.3);
+            cursor: pointer; transition: transform .15s ease;
+        }
+        .dtp-apply-btn:hover { transform: translateY(-1px); }
     </style>
 
     {{-- Toast container --}}
@@ -176,14 +288,16 @@
             <div class="lg:col-span-2 flex flex-col gap-4">
 
                 {{-- ── Compose Card ── --}}
-                <div class="notif-compose relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
+                <div class="notif-compose relative rounded-2xl bg-white dark:bg-gray-800
                             border border-gray-100 dark:border-gray-700 shadow-sm p-5">
 
-                    <div class="absolute -top-8 -right-8 w-28 h-28 rounded-full pointer-events-none
-                                bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-100
-                                dark:from-violet-900/20 dark:via-purple-900/20 dark:to-fuchsia-900/20"></div>
-                    <div class="absolute -bottom-6 -left-6 w-20 h-20 rounded-full pointer-events-none
-                                bg-gradient-to-br from-indigo-50 to-violet-100 dark:from-indigo-900/10 dark:to-violet-900/10 opacity-60"></div>
+                    <div class="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                        <div class="absolute -top-8 -right-8 w-28 h-28 rounded-full
+                                    bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-100
+                                    dark:from-violet-900/20 dark:via-purple-900/20 dark:to-fuchsia-900/20"></div>
+                        <div class="absolute -bottom-6 -left-6 w-20 h-20 rounded-full
+                                    bg-gradient-to-br from-indigo-50 to-violet-100 dark:from-indigo-900/10 dark:to-violet-900/10 opacity-60"></div>
+                    </div>
 
                     <div class="relative flex items-center gap-2.5 mb-5">
                         <div class="icon-entry w-9 h-9 rounded-xl
@@ -319,12 +433,49 @@
                                 </label>
                             </div>
                             <div id="scheduleBox" class="hidden mt-2">
-                                <input type="datetime-local" name="scheduled_at"
-                                       class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
-                                              bg-gray-50 dark:bg-gray-700/50
-                                              border border-gray-100 dark:border-gray-700
-                                              text-gray-800 dark:text-gray-200
-                                              focus:outline-none transition-all">
+                                <div class="dtp" id="composeDtp">
+                                    <button type="button" class="dtp-trigger" data-dtp-trigger>
+                                        <div class="dtp-trigger-icon">
+                                            <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="dtp-trigger-text placeholder" data-dtp-text>Choose date &amp; time</span>
+                                        <svg class="dtp-chevron" data-dtp-chevron fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </button>
+                                    <input type="hidden" name="scheduled_at" id="composeScheduledAt" data-dtp-input>
+
+                                    <div class="dtp-panel" data-dtp-panel>
+                                        <div class="dtp-cal-header">
+                                            <button type="button" class="dtp-nav-btn" data-dtp-prev>
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                                            </button>
+                                            <span data-dtp-month-label>—</span>
+                                            <button type="button" class="dtp-nav-btn" data-dtp-next>
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                                            </button>
+                                        </div>
+                                        <div class="dtp-weekdays">
+                                            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                                        </div>
+                                        <div class="dtp-days" data-dtp-days></div>
+                                        <div class="dtp-time">
+                                            <select data-dtp-hour></select>
+                                            <span class="dtp-colon">:</span>
+                                            <select data-dtp-minute></select>
+                                            <div class="dtp-ampm" data-dtp-ampm>
+                                                <button type="button" data-val="AM">AM</button>
+                                                <button type="button" data-val="PM">PM</button>
+                                            </div>
+                                        </div>
+                                        <div class="dtp-footer">
+                                            <button type="button" class="dtp-clear-btn" data-dtp-clear>Clear</button>
+                                            <button type="button" class="dtp-apply-btn" data-dtp-apply>Apply</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -810,7 +961,7 @@
     <div id="editModal"
          class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[60] p-4">
         <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-                    w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+                    w-full max-w-md rounded-2xl shadow-2xl">
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700">
                 <div class="flex items-center gap-3">
@@ -884,10 +1035,49 @@
                 {{-- Scheduled At --}}
                 <div>
                     <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Scheduled At</label>
-                    <input type="datetime-local" id="editScheduledAt"
-                           class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
-                                  bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-700
-                                  text-gray-800 dark:text-gray-200 focus:outline-none transition-all" required>
+                    <div class="dtp" id="editDtp">
+                        <button type="button" class="dtp-trigger" data-dtp-trigger>
+                            <div class="dtp-trigger-icon">
+                                <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <span class="dtp-trigger-text placeholder" data-dtp-text>Choose date &amp; time</span>
+                            <svg class="dtp-chevron" data-dtp-chevron fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <input type="hidden" id="editScheduledAt" data-dtp-input required>
+
+                        <div class="dtp-panel" data-dtp-panel>
+                            <div class="dtp-cal-header">
+                                <button type="button" class="dtp-nav-btn" data-dtp-prev>
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                                </button>
+                                <span data-dtp-month-label>—</span>
+                                <button type="button" class="dtp-nav-btn" data-dtp-next>
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                                </button>
+                            </div>
+                            <div class="dtp-weekdays">
+                                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                            </div>
+                            <div class="dtp-days" data-dtp-days></div>
+                            <div class="dtp-time">
+                                <select data-dtp-hour></select>
+                                <span class="dtp-colon">:</span>
+                                <select data-dtp-minute></select>
+                                <div class="dtp-ampm" data-dtp-ampm>
+                                    <button type="button" data-val="AM">AM</button>
+                                    <button type="button" data-val="PM">PM</button>
+                                </div>
+                            </div>
+                            <div class="dtp-footer">
+                                <button type="button" class="dtp-clear-btn" data-dtp-clear>Clear</button>
+                                <button type="button" class="dtp-apply-btn" data-dtp-apply>Apply</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Buttons --}}
@@ -974,6 +1164,168 @@
         }, 3500);
     }
 
+    /* ── Premium Date-Time Picker ──────────────────────────────────
+       Custom calendar + time dropdown that replaces the native
+       <input type="datetime-local">. Writes an ISO-like
+       "YYYY-MM-DDTHH:mm" string into a hidden input so all existing
+       backend / read code keeps working unchanged.
+    ──────────────────────────────────────────────────────────────── */
+    class DateTimePicker {
+        constructor(rootId, opts = {}) {
+            this.root   = document.getElementById(rootId);
+            if (!this.root) return;
+            this.trigger    = this.root.querySelector('[data-dtp-trigger]');
+            this.text       = this.root.querySelector('[data-dtp-text]');
+            this.chevron    = this.root.querySelector('[data-dtp-chevron]');
+            this.input      = this.root.querySelector('[data-dtp-input]');
+            this.panel      = this.root.querySelector('[data-dtp-panel]');
+            this.daysEl     = this.root.querySelector('[data-dtp-days]');
+            this.monthLabel = this.root.querySelector('[data-dtp-month-label]');
+            this.hourSel    = this.root.querySelector('[data-dtp-hour]');
+            this.minSel     = this.root.querySelector('[data-dtp-minute]');
+            this.ampmWrap   = this.root.querySelector('[data-dtp-ampm]');
+            this.ampmBtns   = this.root.querySelectorAll('[data-dtp-ampm] button');
+            this.prevBtn    = this.root.querySelector('[data-dtp-prev]');
+            this.nextBtn    = this.root.querySelector('[data-dtp-next]');
+            this.applyBtn   = this.root.querySelector('[data-dtp-apply]');
+            this.clearBtn   = this.root.querySelector('[data-dtp-clear]');
+
+            this.minDate  = opts.minDate || new Date();
+            this.onChange = opts.onChange || (() => {});
+
+            const seed = new Date(this.minDate.getTime() + 30 * 60000);
+            this.viewDate     = new Date(seed.getFullYear(), seed.getMonth(), 1);
+            this.selected     = null;
+            this.pendingHour   = seed.getHours() % 12 || 12;
+            this.pendingMinute = Math.round(seed.getMinutes() / 5) * 5 % 60;
+            this.pendingAmpm   = seed.getHours() >= 12 ? 'PM' : 'AM';
+
+            this._buildTimeOptions();
+            this._bindEvents();
+            this._renderCalendar();
+            this._syncAmpmUI();
+        }
+
+        _buildTimeOptions() {
+            this.hourSel.innerHTML = Array.from({ length: 12 }, (_, i) => i + 1)
+                .map(h => `<option value="${h}">${String(h).padStart(2, '0')}</option>`).join('');
+            this.minSel.innerHTML = Array.from({ length: 12 }, (_, i) => i * 5)
+                .map(m => `<option value="${m}">${String(m).padStart(2, '0')}</option>`).join('');
+            this.hourSel.value = this.pendingHour;
+            this.minSel.value  = this.pendingMinute;
+        }
+
+        _bindEvents() {
+            this.trigger.addEventListener('click', (e) => { e.stopPropagation(); this.toggle(); });
+            this.prevBtn.addEventListener('click', () => { this.viewDate.setMonth(this.viewDate.getMonth() - 1); this._renderCalendar(); });
+            this.nextBtn.addEventListener('click', () => { this.viewDate.setMonth(this.viewDate.getMonth() + 1); this._renderCalendar(); });
+            this.applyBtn.addEventListener('click', () => this._apply());
+            this.clearBtn.addEventListener('click', () => this._clear());
+            this.ampmBtns.forEach(btn => btn.addEventListener('click', () => {
+                this.pendingAmpm = btn.dataset.val;
+                this._syncAmpmUI();
+            }));
+            this.panel.addEventListener('click', (e) => e.stopPropagation());
+            document.addEventListener('click', (e) => {
+                if (!this.root.contains(e.target)) this.close();
+            });
+        }
+
+        _syncAmpmUI() {
+            this.ampmBtns.forEach(b => b.classList.toggle('active', b.dataset.val === this.pendingAmpm));
+        }
+
+        toggle() { this.panel.classList.contains('open') ? this.close() : this.open(); }
+        open()  { this.panel.classList.add('open');  this.chevron.classList.add('rotate-180');  this.trigger.classList.add('dtp-active'); this._renderCalendar(); }
+        close() { this.panel.classList.remove('open'); this.chevron.classList.remove('rotate-180'); this.trigger.classList.remove('dtp-active'); }
+
+        _isSameDay(a, b) {
+            return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+        }
+
+        _renderCalendar() {
+            const y = this.viewDate.getFullYear(), m = this.viewDate.getMonth();
+            this.monthLabel.textContent = this.viewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay     = new Date(y, m, 1).getDay();
+            const daysInMonth  = new Date(y, m + 1, 0).getDate();
+            const today  = new Date(); today.setHours(0, 0, 0, 0);
+            const minDay = new Date(this.minDate); minDay.setHours(0, 0, 0, 0);
+
+            let html = '';
+            for (let i = 0; i < firstDay; i++) html += `<span class="dtp-day empty"></span>`;
+            for (let d = 1; d <= daysInMonth; d++) {
+                const date     = new Date(y, m, d);
+                const disabled = date < minDay;
+                const isToday    = this._isSameDay(date, today);
+                const isSelected = this.selected && this._isSameDay(date, this.selected);
+                html += `<button type="button" class="dtp-day ${disabled ? 'disabled' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" ${disabled ? 'disabled' : ''} data-date="${y}-${m}-${d}">${d}</button>`;
+            }
+            this.daysEl.innerHTML = html;
+            this.daysEl.querySelectorAll('.dtp-day:not(.empty):not(.disabled)').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const [yy, mm, dd] = btn.dataset.date.split('-').map(Number);
+                    this.selected = new Date(yy, mm, dd);
+                    this._renderCalendar();
+                });
+            });
+        }
+
+        _apply() {
+            if (!this.selected) this.selected = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), Math.max(1, new Date().getDate()));
+            let h = parseInt(this.hourSel.value, 10);
+            const min = parseInt(this.minSel.value, 10);
+            if (this.pendingAmpm === 'PM' && h !== 12) h += 12;
+            if (this.pendingAmpm === 'AM' && h === 12) h = 0;
+            const dt = new Date(this.selected.getFullYear(), this.selected.getMonth(), this.selected.getDate(), h, min);
+            this._commit(dt);
+            this.close();
+        }
+
+        _clear() {
+            this.selected = null;
+            this.input.value = '';
+            this.text.textContent = 'Choose date & time';
+            this.text.classList.add('placeholder');
+            this.close();
+            this.onChange(null);
+        }
+
+        _commit(dt) {
+            const pad = v => String(v).padStart(2, '0');
+            this.input.value = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+            const dateStr = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            let hr12 = dt.getHours() % 12; if (hr12 === 0) hr12 = 12;
+            const ampm = dt.getHours() >= 12 ? 'PM' : 'AM';
+            this.text.textContent = `${dateStr} · ${hr12}:${pad(dt.getMinutes())} ${ampm}`;
+            this.text.classList.remove('placeholder');
+            this.onChange(dt);
+        }
+
+        setValue(dt) {
+            if (!dt || isNaN(dt.getTime())) return this._clear();
+            this.selected  = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+            this.viewDate  = new Date(dt.getFullYear(), dt.getMonth(), 1);
+            let h12 = dt.getHours() % 12; if (h12 === 0) h12 = 12;
+            this.pendingHour   = h12;
+            this.pendingMinute = Math.round(dt.getMinutes() / 5) * 5 % 60;
+            this.pendingAmpm   = dt.getHours() >= 12 ? 'PM' : 'AM';
+            this.hourSel.value = this.pendingHour;
+            this.minSel.value  = this.pendingMinute;
+            this._syncAmpmUI();
+            this._renderCalendar();
+            this._commit(dt);
+        }
+
+        getValue() { return this.input.value; }
+    }
+
+    let composeDtp, editDtp;
+    document.addEventListener('DOMContentLoaded', () => {
+        composeDtp = new DateTimePicker('composeDtp', { minDate: new Date() });
+        editDtp    = new DateTimePicker('editDtp',    { minDate: new Date() });
+    });
+
     /* ── Modal helpers ──────────────────────────────────────────── */
     function showModal(id) {
         const m = document.getElementById(id);
@@ -989,6 +1341,7 @@
     function hideAllModals() {
         ['historyModal','detailModal','editModal','deleteModal'].forEach(hideModal);
         document.body.classList.remove('overflow-hidden');
+        if (editDtp) editDtp.close();
     }
 
     // Close on backdrop click
@@ -1057,17 +1410,15 @@
         document.getElementById('editTarget').value      = n.target;
         document.getElementById('editImageUrl').value    = n.image_url || '';
 
-        if (n.scheduled_at) {
-            // Convert to datetime-local format (YYYY-MM-DDTHH:mm)
-            const d = new Date(n.scheduled_at);
-            const pad = v => String(v).padStart(2, '0');
-            document.getElementById('editScheduledAt').value =
-                `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        if (n.scheduled_at && editDtp) {
+            editDtp.setValue(new Date(n.scheduled_at));
+        } else if (editDtp) {
+            editDtp._clear();
         }
 
         showModal('editModal');
     }
-    function closeEditModal() { hideModal('editModal'); document.body.classList.remove('overflow-hidden'); }
+    function closeEditModal() { hideModal('editModal'); document.body.classList.remove('overflow-hidden'); if (editDtp) editDtp.close(); }
 
     async function submitEdit() {
         const id  = document.getElementById('editId').value;
@@ -1098,11 +1449,24 @@
             });
             const data = await res.json();
 
-            if (data.success) {
-                closeEditModal();
-                showToast(data.message || 'Notification updated successfully.', 'success');
-                setTimeout(() => location.reload(), 1200);
-            } else {
+        if (data.success) {
+
+            showToast(data.message || 'Notification sent successfully.', 'success');
+
+            // Clear all fields
+            document.getElementById('composeForm').reset();
+            if (composeDtp) composeDtp._clear();
+
+            // Reset preview
+            document.getElementById('previewTitle').textContent = 'Notification Title';
+            document.getElementById('previewMessage').textContent = 'Your message will appear here...';
+            document.getElementById('charCount').textContent = '0 / 200';
+
+            // Hide schedule box
+            document.getElementById('scheduleBox').classList.add('hidden');
+
+        }
+        else {
                 showToast(data.message || 'Update failed.', 'error');
             }
         } catch {
@@ -1153,16 +1517,43 @@
 
     /* ── Resend ─────────────────────────────────────────────────── */
     async function resendNotification(id) {
-        if (!confirm('Resend this notification?')) return;
+
+        const result = await Swal.fire({
+            title: 'Resend Notification?',
+            text: 'This notification will be sent again to the selected users.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, resend',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#8b5cf6',
+            cancelButtonColor: '#6b7280',
+            reverseButtons: true,
+        });
+
+        if (!result.isConfirmed) return;
 
         try {
             const res = await fetch(`/admin/notifications/${id}/resend`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': CSRF,
+                },
             });
+
             const data = await res.json();
-            showToast(data.success ? (data.message || 'Notification resent!') : data.message, data.success ? 'success' : 'error');
-            if (data.success) setTimeout(() => location.reload(), 1200);
+
+            showToast(
+                data.success
+                    ? (data.message || 'Notification resent successfully.')
+                    : (data.message || 'Failed to resend notification.'),
+                data.success ? 'success' : 'error'
+            );
+
+            if (data.success) {
+                setTimeout(() => location.reload(), 1200);
+            }
+
         } catch {
             showToast('Something went wrong.', 'error');
         }
@@ -1176,6 +1567,13 @@
         const btn  = document.getElementById('composeSubmitBtn');
         const originalBtnHtml = btn.innerHTML;
 
+        const scheduleType = form.querySelector('input[name="schedule"]:checked')?.value;
+        if (scheduleType === 'later' && composeDtp && !composeDtp.getValue()) {
+            showToast('Please choose a schedule date & time.', 'warning');
+            if (composeDtp) composeDtp.open();
+            return;
+        }
+
         btn.disabled = true;
         btn.innerHTML = '<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span> Sending…';
 
@@ -1187,10 +1585,23 @@
             });
             const data = await res.json();
 
-            if (data.success) {
-                showToast(data.message || 'Notification sent successfully.', 'success');
-                setTimeout(() => location.reload(), 1200);
-            } else {
+        if (data.success) {
+
+            // Stop loading first
+            btn.disabled = false;
+            btn.innerHTML = originalBtnHtml;
+
+            // Close modal
+            closeEditModal();
+
+            // Clear edit form
+            document.getElementById('editForm').reset();
+
+            // Show success
+            showToast(data.message || 'Notification updated successfully.', 'success');
+
+            return;
+        }else {
                 showToast(data.message || 'Failed to send notification.', 'error');
                 btn.disabled = false;
                 btn.innerHTML = originalBtnHtml;
@@ -1209,8 +1620,10 @@
             if (this.value === 'later') {
                 box.classList.remove('hidden');
                 box.style.animation = 'fadeSlideUp .25s ease both';
+                if (composeDtp) composeDtp.open();
             } else {
                 box.classList.add('hidden');
+                if (composeDtp) composeDtp.close();
             }
         });
     });
@@ -1242,6 +1655,8 @@
             const pMsg   = document.getElementById('previewMessage');
             if (pTitle) pTitle.textContent = 'Notification Title';
             if (pMsg)   pMsg.textContent   = 'Your message will appear here...';
+            if (composeDtp) composeDtp._clear();
+            document.getElementById('scheduleBox')?.classList.add('hidden');
         }, 10);
     });
 
