@@ -20,12 +20,6 @@ class RolePermissionSeeder extends Seeder
             // dashboard
             'view_dashboard',
 
-            // banners
-            'view_banners',
-            'create_banners',
-            'edit_banners',
-            'delete_banners',
-
             // products
             'view_products',
             'create_products',
@@ -51,11 +45,29 @@ class RolePermissionSeeder extends Seeder
             'cancel_orders',
             'export_orders',
 
-            // customers
-            'view_customers',
-            'create_customers',
-            'edit_customers',
-            'delete_customers',
+            // delivery fees
+            'view_delivery_fees',
+            'create_delivery_fees',
+            'edit_delivery_fees',
+            'delete_delivery_fees',
+
+            // branches
+            'view_branches',
+            'create_branches',
+            'edit_branches',
+            'delete_branches',
+
+            // coupons
+            'view_coupons',
+            'create_coupons',
+            'edit_coupons',
+            'delete_coupons',
+
+            // banners
+            'view_banners',
+            'create_banners',
+            'edit_banners',
+            'delete_banners',
 
             // promotions
             'view_promotions',
@@ -63,11 +75,14 @@ class RolePermissionSeeder extends Seeder
             'edit_promotions',
             'delete_promotions',
 
-            // coupons
-            'view_coupons',
-            'create_coupons',
-            'edit_coupons',
-            'delete_coupons',
+            // customers
+            'view_customers',
+            'create_customers',
+            'edit_customers',
+            'delete_customers',
+
+            // notifications
+            'view_notifications',
 
             // reports
             'view_reports',
@@ -78,12 +93,13 @@ class RolePermissionSeeder extends Seeder
             // analysis
             'view_analysis',
 
-            // notifications
-            'view_notifications',
-
             // settings
             'view_settings',
             'edit_settings',
+
+            // audit logs
+            'view_audit_logs',
+            'delete_audit_logs',
 
             // roles / users
             'view_roles',
@@ -125,50 +141,101 @@ class RolePermissionSeeder extends Seeder
         // Admin => almost everything except super-sensitive things if you want
         $admin->syncPermissions([
             'access_admin_panel',
+
             'view_dashboard',
 
-            'view_banners', 'create_banners', 'edit_banners', 'delete_banners',
+            'view_products',
+            'create_products',
+            'edit_products',
+            'delete_products',
+            'export_products',
 
-            'view_products', 'create_products', 'edit_products', 'delete_products', 'export_products',
+            'view_categories',
+            'create_categories',
+            'edit_categories',
+            'delete_categories',
 
-            'view_categories', 'create_categories', 'edit_categories', 'delete_categories',
-            'view_brands', 'create_brands', 'edit_brands', 'delete_brands',
+            'view_brands',
+            'create_brands',
+            'edit_brands',
+            'delete_brands',
 
-            'view_orders', 'update_orders', 'cancel_orders', 'export_orders',
 
-            'view_customers', 'create_customers', 'edit_customers', 'delete_customers',
+            'view_orders',
+            'update_orders',
+            'cancel_orders',
+            'export_orders',
 
-            'view_promotions', 'create_promotions', 'edit_promotions', 'delete_promotions',
-            'view_coupons', 'create_coupons', 'edit_coupons', 'delete_coupons',
+            'view_delivery_fees',
+            'create_delivery_fees',
+            'edit_delivery_fees',
+            'delete_delivery_fees',
 
-            'view_reports', 'view_sales_report', 'view_orders_report', 'view_customers_report',
-            'view_analysis',
+            'view_branches',
+            'create_branches',
+            'edit_branches',
+            'delete_branches',
+
+            'view_customers',
+            'create_customers',
+            'edit_customers',
+            'delete_customers',
+
+            'view_coupons',
+            'create_coupons',
+            'edit_coupons',
+            'delete_coupons',
+
+            'view_banners',
+            'create_banners',
+            'edit_banners',
+            'delete_banners',
+
+            'view_promotions',
+            'create_promotions',
+            'edit_promotions',
+            'delete_promotions',
+
             'view_notifications',
 
-            'view_settings', 'edit_settings',
+            'view_reports',
+            'view_sales_report',
+            'view_orders_report',
+            'view_customers_report',
 
-            'view_roles', 'create_roles', 'edit_roles', 'assign_roles',
-            'view_users', 'edit_users',
+            'view_analysis',
+
+            'view_roles',
+            'create_roles',
+            'edit_roles',
+            'assign_roles',
+            'view_users',
+            'edit_users',
+
+            'view_settings',
+            'edit_settings',
+
         ]);
+
 
         // Manager => operations + reports
         $manager->syncPermissions([
             'access_admin_panel',
             'view_dashboard',
 
-            // 'view_products', 'edit_products',
-            // 'view_categories',
-            // 'view_brands',
+            'view_products', 'edit_products',
+            'view_categories',
+            'view_brands',
 
-            // 'view_orders', 'update_orders', 'cancel_orders',
-            // 'view_customers',
+            'view_orders', 'update_orders', 'cancel_orders',
+            'view_customers',
 
-            // 'view_promotions',
-            // 'view_coupons',
+            'view_promotions',
+            'view_coupons',
 
-            // 'view_reports', 'view_sales_report', 'view_orders_report', 'view_customers_report',
-            // 'view_analysis',
-            // 'view_notifications',
+            'view_reports', 'view_sales_report', 'view_orders_report', 'view_customers_report',
+            'view_analysis',
+            'view_notifications',
         ]);
 
         // Staff => daily operation
@@ -176,7 +243,8 @@ class RolePermissionSeeder extends Seeder
             'access_admin_panel',
             'view_dashboard',
             'view_products',
-            'view_orders', 'update_orders',
+            'view_orders',
+            'update_orders',
             'view_customers',
             'view_notifications',
         ]);

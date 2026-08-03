@@ -18,6 +18,7 @@ use App\Http\Controllers\ApiController\BannerController;
 use App\Http\Controllers\ApiController\CouponsController;
 use App\Http\Controllers\ApiController\PaymentController;
 use App\Http\Controllers\Api\DeviceTokenController;
+use App\Http\Controllers\ApiController\DeliveryController;
 use App\Http\Controllers\ApiController\NotificationController;
 
 
@@ -77,7 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/aba-pay', [PaymentController::class, 'ABAPay']);
     Route::post('/check-aba-pay', [PaymentController::class, 'checkStatusMD5ABA']);
     Route::post('/order', [OrdersController::class, 'placeOrder']);
-    
+
     Route::post('/order/cancel/{id}', [OrdersController::class, 'cancelOrder']);
     Route::get('/orders', [OrdersController::class, 'myOrders']);
     Route::get('/orders/{id}', [OrdersController::class, 'orderDetail']);
@@ -88,8 +89,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-profile', [ProfileController::class, 'myProfile']);
     Route::post('/my-profile/update', [ProfileController::class, 'updateProfile']);
     Route::get('/my-addresses', [AddressController::class, 'myAddress']);
-    Route::get('/notifications',[NotificationController::class, 'index']);
-    Route::post('/notifications/{notification}/read',[NotificationController::class, 'read']);
-    Route::post('/notifications/read-all',[NotificationController::class, 'readAll']);
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'read']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);
 
+
+    Route::post('/delivery/quote', [DeliveryController::class, 'quote']);
 });

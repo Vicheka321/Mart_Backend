@@ -18,9 +18,19 @@ use App\Events\NewOrderCreated;
 use App\Models\CouponModel;
 use App\Models\CouponUsageModel;
 use App\Models\PromotionUsagesModel;
+use App\Models\Branch;
+use App\Models\DeliveryFee;
+use App\Services\GoogleRouteService;
 
 class OrdersController extends Controller
 {
+
+    protected GoogleRouteService $google;
+
+    public function __construct(GoogleRouteService $google)
+    {
+        $this->google = $google;
+    }
     public function checkout()
     {
         $user_id = Auth::id();
@@ -69,7 +79,66 @@ class OrdersController extends Controller
         ]);
 
         $user_id = Auth::id();
+        $branch = Branch::selectRaw("
+        *,
+        (
+        6371 * acos(
+        cos(radians(?))
+        * cos(radians(lat))
+        * cos(radians(lng)-radians(?))
+        + sin(radians(?))
+        * sin(radians(lat))
+        )
+        ) as air_distance
+        ", [
+            $request->lat,
+            $request->lng,
+            $request->lat
+        ])
+            ->where('status', true)
+            ->orderBy('air_distance')
+            ->first();
 
+        if (!$branch) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No active branch.'
+            ], 404);
+        }
+
+        $distanceKm = $this->google->getDrivingDistance(
+
+            $branch->lat,
+            $branch->lng,
+
+            $request->lat,
+            $request->lng
+
+        );
+        $delivery = DeliveryFee::where('status', true)
+
+            ->where('min_km', '<=', $distanceKm)
+
+            ->where(function ($q) use ($distanceKm) {
+
+                $q->where('max_km', '>=', $distanceKm)
+                    ->orWhereNull('max_km');
+            })
+
+            ->first();
+
+        if (!$delivery) {
+
+            return response()->json([
+
+                'success' => false,
+
+                'message' => 'Delivery area is not supported.'
+
+            ], 422);
+        }
+
+        $deliveryFee = $delivery->fee;
         $existingOrder = OrderModel::with('payment')
             ->where('user_id', $user_id)
             ->where('status', 'pending')
@@ -188,12 +257,6 @@ class OrdersController extends Controller
                     );
                 }
 
-                // if ($total < $coupon->min_order_amount) {
-                //     throw new \Exception(
-                //         'Minimum order amount is $' .
-                //             number_format($coupon->min_order_amount, 2)
-                //     );
-                // }
                 if (
                     !is_null($coupon->min_order_amount) &&
                     $total < $coupon->min_order_amount
@@ -247,11 +310,17 @@ class OrdersController extends Controller
                 // Apply coupon discount to final total
                 $total -= $couponDiscount;
             }
+            $total += $deliveryFee;
 
 
             $order = OrderModel::create([
 
                 'user_id' => $user_id,
+                'branch_id' => $branch->id,
+
+                'distance_km' => round($distanceKm, 2),
+
+                'delivery_fee' => round($deliveryFee, 2),
 
                 'delivery_address' => $request->delivery_address,
                 'lat' => $request->lat,
@@ -387,6 +456,8 @@ class OrdersController extends Controller
 
                 "🗺️ [Open Location]({$mapUrl})\n\n";
 
+
+
             // Show order note if available
             if (filled($order->note)) {
                 $message .=
@@ -422,6 +493,13 @@ class OrdersController extends Controller
                     ":* -$" .
                     number_format($order->coupon_discount, 2) . "\n";
             }
+            $message .=
+
+                "🏪 *Branch:* {$branch->name}\n" .
+
+                "📏 *Distance:* " . number_format($distanceKm, 2) . " km\n" .
+
+                "🚚 *Delivery Fee:* $" . number_format($deliveryFee, 2) . "\n\n";
 
             // Total, Payment & Status
             $message .=
@@ -437,12 +515,6 @@ class OrdersController extends Controller
                 "📦 *Status:* Pending";
             if ($request->payment_method == 'cash') {
 
-                // CartItemModel::where(
-                //     'cart_id',
-                //     $cart->id
-                // )->delete();
-
-                // broadcast(new NewOrderCreated($order));
 
                 // Decrease stock
                 foreach ($order->orderItems as $item) {
@@ -506,13 +578,50 @@ class OrdersController extends Controller
                 'success' => true,
                 'message' => 'Order placed successfully',
 
+                // 'data' => [
+                //     'order_id' => $order->id,
+                //     'payment_id' => $payment->id,
+                //     'payment_method' => $payment->payment_method,
+                //     'payment_status' => $payment->payment_status,
+                //     'amount' => number_format($total, 2, '.', ''),
+                //     'status' => $order->status
+                // ]
+
                 'data' => [
+
                     'order_id' => $order->id,
+
                     'payment_id' => $payment->id,
+
                     'payment_method' => $payment->payment_method,
+
                     'payment_status' => $payment->payment_status,
-                    'amount' => number_format($total, 2, '.', ''),
-                    'status' => $order->status
+
+                    'branch' => [
+
+                        'id' => $branch->id,
+
+                        'name' => $branch->name,
+
+                    ],
+
+                    'distance_km' => round($distanceKm, 2),
+
+                    'delivery_fee' => round($deliveryFee, 2),
+
+                    'subtotal' => round(
+                        $total - $deliveryFee,
+                        2
+                    ),
+
+                    'amount' => number_format(
+                        $total,
+                        2,
+                        '.',
+                        ''
+                    ),
+
+                    'status' => $order->status,
                 ]
             ]);
         } catch (\Exception $e) {
@@ -536,7 +645,7 @@ class OrdersController extends Controller
 
             $order = OrderModel::with('orderItems')->findOrFail($id);
 
-         
+
             foreach ($order->orderItems as $item) {
                 $product = ProductsModel::find($item->product_id);
 

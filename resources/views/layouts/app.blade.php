@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark" style="height:100%; overflow:hidden;">
 
 <head>
     <meta charset="UTF-8">
@@ -52,28 +52,52 @@
 
     {{-- Toast animation --}}
     <style>
+        html,
+        body {
+            height: 100%;
+        }
+
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to   { transform: translateX(0);    opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         @keyframes slideOut {
-            from { transform: translateX(0);    opacity: 1; }
-            to   { transform: translateX(100%); opacity: 0; }
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
         }
 
-        .toast-enter { animation: slideIn 0.3s ease forwards; }
-        .toast-exit  { animation: slideOut 0.3s ease forwards; }
+        .toast-enter {
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        .toast-exit {
+            animation: slideOut 0.3s ease forwards;
+        }
     </style>
 </head>
 
 <body
     class="h-screen overflow-hidden bg-gray-100 dark:bg-gray-900 dark:text-white font-[Inter] transition-colors duration-300">
 
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col h-screen overflow-hidden">
 
         {{-- Navbar — rendered ONCE, never reloaded, no @persist needed
-             because our router only ever replaces #main-content below --}}
+        because our router only ever replaces #main-content below --}}
         <nav class="flex-shrink-0">
             @auth
                 @can('access_admin_panel')
@@ -88,7 +112,7 @@
         <div class="flex flex-1 min-h-0">
 
             {{-- Sidebar — rendered ONCE, never reloaded --}}
-            <aside class="w-72 overflow-y-auto">
+            <aside class="w-72 shrink-0 overflow-y-auto">
                 @auth
                     @can('access_admin_panel')
                         @include('Admin.sidebar')
@@ -97,11 +121,10 @@
             </aside>
 
             {{-- Main content — THE ONLY THING THE SPA ROUTER EVER TOUCHES --}}
-            <main class="flex-1 min-h-0 flex flex-col bg-white dark:bg-gray-800">
-                <div class="flex-1 overflow-y-auto pl-0 pt-3 pr-2 pb-0">
-                    <div id="main-content"
-                         data-page-url="{{ url()->current() }}"
-                         class="max-w-7xl mx-auto bg-gray-100 dark:bg-slate-700 rounded-3xl pl-6 pr-6 py-6 overflow-visible">
+            <main class="flex-1 min-w-0 min-h-0 flex flex-col bg-white dark:bg-gray-800 overflow-hidden">
+                <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pl-0 pt-3 pr-2 pb-0">
+                    <div id="main-content" data-page-url="{{ url()->current() }}"
+                        class="w-full bg-gray-100 dark:bg-slate-700 rounded-3xl pl-6 pr-6 py-6 overflow-visible">
                         @yield('content')
                     </div>
                 </div>
@@ -111,19 +134,19 @@
     </div>
 
     {{-- Page-specific scripts (still works — pushed scripts render on
-         first load; on subsequent SPA navigations we re-execute them
-         manually, handled in Step 2) --}}
+    first load; on subsequent SPA navigations we re-execute them
+    manually, handled in Step 2) --}}
     @stack('scripts')
 
     {{-- Notification sound — plain include, no @persist needed since
-         the whole layout (including this tag) is only ever rendered once --}}
+    the whole layout (including this tag) is only ever rendered once --}}
     <audio id="orderSound" src="/sounds/notify.wav" preload="auto"></audio>
 
     {{-- ============================================================
-         SPA ROUTER CORE
-         This is the ONLY script that manages navigation between pages.
-         It never needs to change when you add new pages later — every
-         future page hooks into it via the 'spa:loaded' event.
+    SPA ROUTER CORE
+    This is the ONLY script that manages navigation between pages.
+    It never needs to change when you add new pages later — every
+    future page hooks into it via the 'spa:loaded' event.
     ============================================================ --}}
     <script>
         window.SPA = (function () {
@@ -166,6 +189,29 @@
                     // 5. Swap ONLY the main content
                     mainContent.innerHTML = data.html;
                     mainContent.dataset.pageUrl = url;
+
+                    // 5b. innerHTML does NOT execute embedded <script> tags — browsers
+                    //     block that for security. Manually re-create each one so its
+                    //     code actually runs. This is required for every page that uses
+                    //     @push('scripts') with Alpine components, map init, etc.
+
+                    // mainContent.innerHTML = data.html;
+
+                    // Array.from(mainContent.querySelectorAll('script')).forEach(oldScript => {
+                    //     const newScript = document.createElement('script');
+
+                    //     Array.from(oldScript.attributes).forEach(attr => {
+                    //         newScript.setAttribute(attr.name, attr.value);
+                    //     });
+
+                    //     newScript.textContent = oldScript.textContent;
+
+                    //     oldScript.replaceWith(newScript);
+                    // });
+
+                    // if (window.Alpine) {
+                    //     Alpine.initTree(mainContent);
+                    // }
 
                     // 6. Update the browser tab title
                     if (data.title) document.title = data.title;

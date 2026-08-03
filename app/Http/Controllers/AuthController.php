@@ -92,7 +92,8 @@ class AuthController extends Controller
                 ]
             );
 
-            Mail::to($login)->queue(new SendOtpMail($otp));
+            // Mail::to($login)->queue(new SendOtpMail($otp));
+            Mail::to($login)->send(new SendOtpMail($otp));
         } else {
             $login = preg_replace('/\D/', '', $login);
 
@@ -111,10 +112,12 @@ class AuthController extends Controller
 
             try {
 
-                $this->sms->sendSms(
+                $result = $this->sms->sendSms(
                     $login,
-                    "Your OTP is {$otp}"
+                    "Your reset OTP is {$otp}"
                 );
+
+                dd($result);
 
                 return response()->json([
                     'success' => true,
@@ -183,48 +186,6 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
-    // public function forgotPassword(Request $request)
-    // {
-    //     $request->validate([
-    //         'login' => 'required'
-    //     ]);
-
-    //     $field = filter_var($request->login, FILTER_VALIDATE_EMAIL)
-    //         ? 'email'
-    //         : 'phone';
-
-    //     $user = User::where($field, $request->login)->first();
-
-    //     if (!$user) {
-    //         return response()->json([
-    //             'message' => 'User not found'
-    //         ], 404);
-    //     }
-
-    //     $otp = random_int(100000, 999999);
-
-    //     Otp::updateOrCreate(
-    //         [$field => $request->login],
-    //         [
-    //             'otp' => $otp,
-    //             'expires_at' => now()->addMinutes(5),
-    //         ]
-    //     );
-
-    //     if ($field === 'email') {
-    //         Mail::to($request->login)
-    //             ->queue(new SendOtpMail($otp));
-    //     } else {
-    //         // $this->sms->sendSms(
-    //         //     $request->login,
-    //         //     "Your reset OTP is {$otp}"
-    //         // );
-    //     }
-
-    //     return response()->json([
-    //         'message' => 'OTP sent successfully'
-    //     ]);
-    // }
 
 
     public function forgotPassword(Request $request)
@@ -268,7 +229,8 @@ class AuthController extends Controller
 
         if ($field === 'email') {
 
-            Mail::to($login)->queue(new SendOtpMail($otp));
+            // Mail::to($login)->queue(new SendOtpMail($otp));
+            Mail::to($login)->send(new SendOtpMail($otp));
         } else {
 
             $this->sms->sendSms(
@@ -282,10 +244,6 @@ class AuthController extends Controller
         ]);
     }
     public function verifyResetOtp(Request $request)
-
-
-
-
     {
         $request->validate([
             'login' => 'required',
@@ -435,7 +393,7 @@ class AuthController extends Controller
 
         if ($field === 'email') {
             Mail::to($request->login)
-                ->queue(new SendOtpMail($otp));
+                ->send(new SendOtpMail($otp));
         } else {
             // $this->sms->sms(
             //     $request->login,

@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->decimal('promotion_discount', 10, 2)->default(0);
             $table->string('coupon_code')->nullable();
-            $table->enum('coupon_type',['percent', 'fixed'])->nullable();
+            $table->enum('coupon_type', ['percent', 'fixed'])->nullable();
 
             $table->decimal('coupon_value', 10, 2)->default(0);
             $table->decimal('coupon_discount', 10, 2)->default(0);
@@ -31,6 +31,14 @@ return new class extends Migration
             $table->string('telegram_chat_id')->nullable();
             $table->boolean('is_sent')->default(false);
             $table->string('note')->nullable();
+            $table->foreignId('branch_id')
+                ->nullable()
+                ->constrained('branches')
+                ->nullOnDelete();
+
+            $table->decimal('distance_km', 8, 2)->default(0);
+
+            $table->decimal('delivery_fee', 8, 2)->default(0);
             $table->timestamps();
         });
     }

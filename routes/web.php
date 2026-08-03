@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnalysisController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
@@ -14,6 +16,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\DeliveryFeeController;
 use App\Http\Controllers\PushNotificationController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\RoleController;
@@ -230,6 +233,50 @@ Route::prefix('admin')
             ->middleware('permission:view_orders')
             ->name('admin.orders.invoice.pdf');
 
+        /*
+        |--------------------------------------------------------------------------
+        | Delivery Fees
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/delivery-fees', [DeliveryFeeController::class, 'index'])
+            ->middleware('permission:view_delivery_fees')
+            ->name('delivery-fees.index');
+
+        Route::post('/delivery-fees', [DeliveryFeeController::class, 'store'])
+            ->middleware('permission:create_delivery_fees')
+            ->name('delivery-fees.store');
+
+        Route::put('/delivery-fees/{deliveryFee}', [DeliveryFeeController::class, 'update'])
+            ->middleware('permission:edit_delivery_fees')
+            ->name('delivery-fees.update');
+
+        Route::delete('/delivery-fees/{deliveryFee}', [DeliveryFeeController::class, 'destroy'])
+            ->middleware('permission:delete_delivery_fees')
+            ->name('delivery-fees.destroy');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Branches
+        |--------------------------------------------------------------------------
+        */
+
+
+        Route::get('/branches', [BranchController::class, 'index'])
+            ->middleware('permission:view_branches')
+            ->name('branches.index');
+
+        Route::post('/branches', [BranchController::class, 'store'])
+            ->middleware('permission:create_branches')
+            ->name('branches.store');
+
+        Route::put('/branches/{branch}', [BranchController::class, 'update'])
+            ->middleware('permission:edit_branches')
+            ->name('branches.update');
+
+        Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])
+            ->middleware('permission:delete_branches')
+            ->name('branches.destroy');
         /*
         |--------------------------------------------------------------------------
         | Customers
@@ -475,6 +522,28 @@ Route::prefix('admin')
         Route::post('/settings', [SettingController::class, 'update'])
             ->middleware('permission:edit_settings')
             ->name('settings.update');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Audit Logs
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/audit-logs', [AuditLogController::class, 'index'])
+            ->middleware('permission:view_audit_logs')
+            ->name('audit-logs.index');
+
+        Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show'])
+            ->middleware('permission:view_audit_logs')
+            ->name('audit-logs.show');
+
+        Route::delete('/audit-logs/{auditLog}', [AuditLogController::class, 'destroy'])
+            ->middleware('permission:delete_audit_logs')
+            ->name('audit-logs.destroy');
+
+        Route::delete('/audit-logs', [AuditLogController::class, 'bulkDelete'])
+            ->middleware('permission:delete_audit_logs')
+            ->name('audit-logs.bulk-delete');
 
         /*
         |--------------------------------------------------------------------------

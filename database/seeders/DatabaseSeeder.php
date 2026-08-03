@@ -26,8 +26,10 @@ class DatabaseSeeder extends Seeder
             // Products_image::class,
             Promotions::class,
             bannerseeder::class,
-            OrderSeeder::class,
-            CouponSeeder::class
+            // OrderSeeder::class,
+            CouponSeeder::class,
+            BranchSeeder::class,
+            DeliveryFeeSeeder::class,
             
 
         ]);
