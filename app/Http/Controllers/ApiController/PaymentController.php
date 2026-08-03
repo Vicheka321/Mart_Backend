@@ -27,7 +27,7 @@ class PaymentController extends Controller
         $this->khqrService = $khqrService;
     }
 
-  
+
     public function generateQR(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -272,9 +272,16 @@ class PaymentController extends Controller
                 $payment->markAsSuccess($result, $transactionId);
 
                 /// ✅ FIND ORDER
+                // $order = OrderModel::with([
+                //     'payment',
+                //     'user',
+                //     'orderItems.product.firstImage'
+                // ])->find($payment->order_id);
+
                 $order = OrderModel::with([
                     'payment',
                     'user',
+                    'branch',
                     'orderItems.product.firstImage'
                 ])->find($payment->order_id);
 
@@ -366,11 +373,52 @@ class PaymentController extends Controller
 
                         "🛒 *Products*\n\n" .
 
+
                         $productsText .
 
-                        "━━━━━━━━━━━━━━━\n" .
+                        "━━━━━━━━━━━━━━━\n";
 
-                        "💰 *Total:* $" .
+                    if ($order->promotion_discount > 0) {
+
+                        $message .=
+                            "🎁 *Promotion Discount:* -$" .
+                            number_format($order->promotion_discount, 2) . "\n";
+                    }
+
+                    if ($order->coupon_discount > 0) {
+
+                        $message .= "🏷️ *Coupon";
+
+                        if ($order->coupon_code) {
+                            $message .= " ({$order->coupon_code})";
+                        }
+
+                        $message .=
+                            ":* -$" .
+                            number_format($order->coupon_discount, 2) .
+                            "\n";
+                    }
+
+                    $message .=
+                        "🏪 *Branch:* {$order->branch->name}\n" .
+
+                        "📏 *Distance:* " .
+                        number_format($order->distance_km, 2) .
+                        " km\n";
+
+                    if (($order->delivery_fee ?? 0) <= 0) {
+
+                        $message .=
+                            "🚚 *Delivery Fee:* Free\n\n";
+                    } else {
+
+                        $message .=
+                            "🚚 *Delivery Fee:* $" .
+                            number_format($order->delivery_fee, 2) .
+                            "\n\n";
+                    }
+
+                    "💰 *Total:* $" .
                         number_format($order->total_amount, 2) .
                         "\n\n" .
 

@@ -40,9 +40,9 @@ class UserSeeder extends Seeder
         $admin = User::updateOrCreate(
             ['email' => 'pheaptheary3@gmail.com'],
             [
-                'full_name' => 'Admin User',
-                'phone' => '012345679',
-                'password' => Hash::make('Pitipiwpiwwiwwiw'),
+                'full_name' => 'Theary',
+                'phone' => '012345670',
+                'password' => Hash::make('Pitipiwpiwwiwwiw168hengheng'),
             ]
         );
         $admin->syncRoles(['Admin']);
@@ -50,9 +50,9 @@ class UserSeeder extends Seeder
         $admin = User::updateOrCreate(
             ['email' => 'thynahoul@gmail.com'],
             [
-                'full_name' => 'Admin User',
-                'phone' => '012345679',
-                'password' => Hash::make('Pitipiwpiwwiwwiw'),
+                'full_name' => 'Thyna',
+                'phone' => '012345673',
+                'password' => Hash::make('Pitipiwpiwwiwwiw168hengheng'),
             ]
         );
         $admin->syncRoles(['Admin']);

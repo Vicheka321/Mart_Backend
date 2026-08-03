@@ -221,6 +221,19 @@ class TelegramService
                 ) . "\n";
         }
 
+        if (($order->delivery_fee ?? 0) <= 0) {
+
+            $text .= "🚚 *Delivery Fee:* Free\n";
+        } else {
+
+            $text .=
+                "🚚 *Delivery Fee:* $" .
+                number_format(
+                    $order->delivery_fee,
+                    2
+                ) . "\n";
+        }
+
         $text .=
             "\n💰 *Total:* $" .
             number_format(
@@ -371,6 +384,18 @@ class TelegramService
                 ":* -$" .
                 number_format(
                     $next->coupon_discount,
+                    2
+                ) . "\n";
+        }
+        if (($next->delivery_fee ?? 0) <= 0) {
+
+            $message .= "🚚 *Delivery Fee:* Free\n";
+        } else {
+
+            $message .=
+                "🚚 *Delivery Fee:* $" .
+                number_format(
+                    $next->delivery_fee,
                     2
                 ) . "\n";
         }

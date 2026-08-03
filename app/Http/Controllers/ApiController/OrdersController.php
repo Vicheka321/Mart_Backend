@@ -494,12 +494,23 @@ class OrdersController extends Controller
                     number_format($order->coupon_discount, 2) . "\n";
             }
             $message .=
-
                 "🏪 *Branch:* {$branch->name}\n" .
 
-                "📏 *Distance:* " . number_format($distanceKm, 2) . " km\n" .
+                "📏 *Distance:* " .
+                number_format($distanceKm, 2) .
+                " km\n";
 
-                "🚚 *Delivery Fee:* $" . number_format($deliveryFee, 2) . "\n\n";
+            if ($deliveryFee <= 0) {
+
+                $message .=
+                    "🚚 *Delivery Fee:* Free\n\n";
+            } else {
+
+                $message .=
+                    "🚚 *Delivery Fee:* $" .
+                    number_format($deliveryFee, 2) .
+                    "\n\n";
+            }
 
             // Total, Payment & Status
             $message .=
@@ -955,6 +966,13 @@ class OrdersController extends Controller
 
                 'coupon_discount' => number_format(
                     $order->coupon_discount ?? 0,
+                    2,
+                    '.',
+                    ''
+                ),
+
+                'delivery_fee' => number_format(
+                    $order->delivery_fee ?? 0,
                     2,
                     '.',
                     ''

@@ -545,13 +545,17 @@
         <table class="no-break">
             <tr>
                 <td>Subtotal</td>
-                <td class="right">${{ number_format($subtotal, 2) }}</td>
+                <td class="right">
+                    ${{ number_format($subtotal, 2) }}
+                </td>
             </tr>
 
             @if($order->promotion_discount > 0)
                 <tr>
                     <td>Promotion</td>
-                    <td class="right">-${{ number_format($order->promotion_discount, 2) }}</td>
+                    <td class="right">
+                        -${{ number_format($order->promotion_discount, 2) }}
+                    </td>
                 </tr>
             @endif
 
@@ -563,9 +567,23 @@
                             ({{ $order->coupon_code }})
                         @endif
                     </td>
-                    <td class="right">-${{ number_format($order->coupon_discount, 2) }}</td>
+                    <td class="right">
+                        -${{ number_format($order->coupon_discount, 2) }}
+                    </td>
                 </tr>
             @endif
+
+            <tr>
+                <td>Delivery Fee</td>
+                <td class="right">
+                    @if(($order->delivery_fee ?? 0) <= 0)
+                        Free
+                    @else
+                        ${{ number_format($order->delivery_fee, 2) }}
+                    @endif
+                </td>
+            </tr>
+
         </table>
 
         <div class="double-divider"></div>
