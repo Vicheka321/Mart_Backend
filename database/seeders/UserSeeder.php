@@ -52,7 +52,7 @@ class UserSeeder extends Seeder
             [
                 'full_name' => 'Thyna',
                 'phone' => '012345673',
-                'password' => Hash::make('Pitipiwpiwwiwwiw168hengheng'),
+                'password' => Hash::make('Pitipiwpiwwiwwiw169hengheng'),
             ]
         );
         $admin->syncRoles(['Admin']);
