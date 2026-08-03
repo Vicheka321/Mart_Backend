@@ -36,6 +36,26 @@ class UserSeeder extends Seeder
         );
         $admin->syncRoles(['Admin']);
 
+
+        $admin = User::updateOrCreate(
+            ['email' => 'pheaptheary3@gmail.com'],
+            [
+                'full_name' => 'Admin User',
+                'phone' => '012345679',
+                'password' => Hash::make('Pitipiwpiwwiwwiw'),
+            ]
+        );
+        $admin->syncRoles(['Admin']);
+
+        $admin = User::updateOrCreate(
+            ['email' => 'thynahoul@gmail.com'],
+            [
+                'full_name' => 'Admin User',
+                'phone' => '012345679',
+                'password' => Hash::make('Pitipiwpiwwiwwiw'),
+            ]
+        );
+        $admin->syncRoles(['Admin']);
         // ==========================
         // Manager
         // ==========================
