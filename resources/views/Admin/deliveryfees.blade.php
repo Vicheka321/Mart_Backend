@@ -259,8 +259,8 @@
     <div class="space-y-4" x-data="deliveryFeesPage()">
 
         {{-- ==================== PAGE HEADER ==================== --}}
-        {{-- <div class="flex flex-col gap-2">
-            <nav class="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1.5">
+        <div class="flex flex-col gap-2">
+            {{-- <nav class="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1.5">
                 <a href="{{ route('admin.dashboard') }}"
                     class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard</a>
                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -271,7 +271,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
                 <span class="text-gray-600 dark:text-gray-300 font-medium">Delivery Fees</span>
-            </nav>
+            </nav> --}}
 
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
@@ -281,93 +281,10 @@
                         distance.</p>
                 </div>
             </div>
-        </div> --}}
+        </div>
 
         {{-- ==================== STATISTIC CARDS ==================== --}}
-        {{-- <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" x-show="!loadingSkeleton" x-cloak>
 
- 
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700
-                            shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-4">
-                <div
-                    class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br from-indigo-50 to-violet-100 dark:from-indigo-900/20 dark:to-violet-900/20">
-                </div>
-                <div class="relative flex items-center justify-between mb-3">
-                    <div
-                        class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-500/25">
-                        <svg class="w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                        </svg>
-                    </div>
-                </div>
-                <p class="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">Total Zones</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">{{ number_format($totalZones) }}</p>
-            </div>
-
-    
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700
-                            shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-4">
-                <div
-                    class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/20">
-                </div>
-                <div class="relative flex items-center justify-between mb-3">
-                    <div
-                        class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-md shadow-emerald-500/25">
-                        <svg class="w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                </div>
-                <p class="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">Active Zones</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">{{ number_format($activeZones) }}</p>
-            </div>
-
-        
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700
-                            shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-4">
-                <div
-                    class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br from-gray-50 to-slate-100 dark:from-gray-700/40 dark:to-slate-700/40">
-                </div>
-                <div class="relative flex items-center justify-between mb-3">
-                    <div
-                        class="w-9 h-9 rounded-xl bg-gradient-to-br from-gray-400 to-slate-500 flex items-center justify-center shadow-md shadow-gray-400/25">
-                        <svg class="w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                        </svg>
-                    </div>
-                </div>
-                <p class="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">Inactive Zones
-                </p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">{{ number_format($inactiveZones) }}</p>
-            </div>
-
-        
-            <div class="stat-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700
-                            shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-4">
-                <div
-                    class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20">
-                </div>
-                <div class="relative flex items-center justify-between mb-3">
-                    <div
-                        class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-md shadow-amber-500/25">
-                        <svg class="w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 10v2" />
-                            <circle cx="12" cy="12" r="9" />
-                        </svg>
-                    </div>
-                </div>
-                <p class="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">Highest Delivery
-                    Fee</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">${{ number_format($highestFee, 2) }}</p>
-            </div>
-        </div> --}}
 
         {{-- Stat card skeletons --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" x-show="loadingSkeleton" x-cloak>

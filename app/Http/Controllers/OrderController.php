@@ -414,13 +414,7 @@ class OrderController extends Controller
             ], 400);
         }
 
-        // ─────────────────────────────────────────────────────────
-        // FIFO ENFORCEMENT
-        // Only the oldest pending order (by created_at) may transition
-        // to Processing or Cancelled. Protects against bypassing the
-        // disabled UI buttons via devtools, direct API calls, or a race
-        // between two admins acting at the same time.
-        // ─────────────────────────────────────────────────────────
+  
         if (
             $order->status === 'pending' &&
             in_array($request->status, ['processing', 'cancelled'])

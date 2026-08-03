@@ -411,7 +411,7 @@ class TelegramService
         ]);
 
         $pdf = Pdf::loadView(
-            'admin.order.invoice',
+            'Admin.order.invoice',
             compact('order')
         );
 
