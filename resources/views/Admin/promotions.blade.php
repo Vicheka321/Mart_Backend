@@ -594,7 +594,7 @@
                                 id="savePromotionBtn"
                                 class="action-btn w-full sm:w-auto px-5 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700
                                     text-white rounded-xl shadow-md shadow-indigo-500/25 transition-all">
-                                Save Promotion
+                                Save
                             </button>
                         </div>
                     </form>

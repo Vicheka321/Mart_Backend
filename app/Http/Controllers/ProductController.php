@@ -82,7 +82,7 @@ class ProductController extends Controller
 
         // Products list
         $products = $query
-            ->latest('id')   // faster than latest()
+            ->latest('id') 
             ->paginate(10)
             ->withQueryString();
 
@@ -114,121 +114,7 @@ class ProductController extends Controller
     }
 
 
-    // public function index(Request $request)
-    // {
-    //     // Default filter
-    //     $statusFilter = $request->input('status', 'all');
-    //     $productKeywordSearch = trim($request->input('search'));
-
-    //     // Products Query
-    //     $query = ProductsModel::query()
-    //         ->with([
-    //             'category:id,name',
-    //             'brand:id,name',
-    //             'image:id,product_id,image_url',
-    //         ]);
-
-    //     // Status Filter
-    //     switch ($statusFilter) {
-    //         case 'active':
-    //             $query->where('status', 1);
-    //             break;
-
-    //         case 'inactive':
-    //             $query->where('status', 0);
-    //             break;
-
-    //         case 'low-stock':
-    //             $query->where('quantity', '<=', 20);
-    //             break;
-
-    //         case 'all':
-    //         default:
-    //             break;
-    //     }
-
-    //     // Search
-    //     if (!empty($productKeywordSearch)) {
-
-    //         $query->where(function ($q) use ($productKeywordSearch) {
-
-    //             $q->where('name', 'LIKE', "%{$productKeywordSearch}%")
-    //                 ->orWhere('product_code', 'LIKE', "%{$productKeywordSearch}%")
-    //                 ->orWhere('description', 'LIKE', "%{$productKeywordSearch}%")
-    //                 ->orWhereHas('category', function ($category) use ($productKeywordSearch) {
-
-    //                     $category->where(
-    //                         'name',
-    //                         'LIKE',
-    //                         "%{$productKeywordSearch}%"
-    //                     );
-    //                 })
-    //                 ->orWhereHas('brand', function ($brand) use ($productKeywordSearch) {
-
-    //                     $brand->where(
-    //                         'name',
-    //                         'LIKE',
-    //                         "%{$productKeywordSearch}%"
-    //                     );
-    //                 });
-    //         });
-    //     }
-
-    //     // Products
-    //     $products = $query
-    //         ->latest('id')
-    //         ->paginate(10)
-    //         ->withQueryString();
-
-    //     // Categories
-    //     $categories = Category::select('id', 'name')
-    //         ->orderBy('name')
-    //         ->get();
-
-    //     // Brands
-    //     $brands = BrandModel::select('id', 'name')
-    //         ->orderBy('name')
-    //         ->get();
-
-    //     // Dashboard Cards
-    //     $totalProducts = ProductsModel::count();
-
-    //     $totalActive = ProductsModel::where('status', 1)->count();
-
-    //     $totalInactive = ProductsModel::where('status', 0)->count();
-
-    //     $totalLowStock = ProductsModel::where('quantity', '<=', 20)->count();
-
-
-    //     if ($request->ajax()) {
-
-    //         $view = view('Admin.products', compact(
-    //             'products',
-    //             'categories',
-    //             'brands',
-    //             'statusFilter',
-    //             'totalProducts',
-    //             'totalActive',
-    //             'totalInactive',
-    //             'totalLowStock'
-    //         ));
-
-    //         $view = view('Admin.products', compact(...));
-    //         return response()->json(['html' => $view->render()]);
-    //     }
-
-
-    //     return view('Admin.products', compact(
-    //         'products',
-    //         'categories',
-    //         'brands',
-    //         'statusFilter',
-    //         'totalProducts',
-    //         'totalActive',
-    //         'totalInactive',
-    //         'totalLowStock'
-    //     ));
-    // }
+ 
 
 
     public function store(Request $request)

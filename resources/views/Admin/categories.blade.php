@@ -723,7 +723,7 @@
                     type="submit"
                     class="action-btn w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium
                            rounded-xl transition-all shadow-md shadow-indigo-500/25">
-                    Save Category
+                    Save
                 </button>
             </form>
         </div>

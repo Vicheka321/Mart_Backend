@@ -904,7 +904,7 @@ class ProductsSeeder extends Seeder
                 // 'quantity'      => rand(10, 500),
                 'cost_price'    => 0.01,
                 'sale_price'    => 0.02,
-                'quantity'      => 10,
+                'quantity'      => 100,
 
                 'status'        => true,
                 'created_at'    => $createdAt,
