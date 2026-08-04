@@ -228,70 +228,7 @@
 
     <div class="space-y-4" x-data="deliveryFeesPage()">
 
-        {{-- ==================== PAGE HEADER ==================== --}}
-        <div class="flex flex-col gap-2">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Delivery Fees
-                    </h1>
-                    <p class="text-sm text-gray-400 dark:text-gray-500 mt-0.5">Manage delivery fee zones by driving
-                        distance.</p>
-                </div>
-            </div>
-        </div>
 
-        {{-- ==================== STATISTIC CARDS ==================== --}}
-
-        {{-- Stat card skeletons --}}
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3" x-show="loadingSkeleton" x-cloak>
-            @for ($i = 0; $i < 3; $i++)
-                <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4">
-                    <div class="w-9 h-9 rounded-xl skeleton mb-4"></div>
-                    <div class="h-2.5 w-20 rounded skeleton mb-2"></div>
-                    <div class="h-6 w-14 rounded skeleton"></div>
-                </div>
-            @endfor
-        </div>
-
-        {{-- Stat cards --}}
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3" x-show="!loadingSkeleton" x-cloak>
-            <div class="stat-card rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4">
-                <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center mb-4">
-                    <svg class="w-4.5 h-4.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                    </svg>
-                </div>
-                <p class="text-xs text-gray-400 dark:text-gray-500 font-medium">Total Zones</p>
-                <p class="text-xl font-bold text-gray-900 dark:text-white mt-1">{{ number_format($totalZones) }}</p>
-            </div>
-
-            <div class="stat-card rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4">
-                <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center mb-4">
-                    <svg class="w-4.5 h-4.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 12v-2m0-8v8" />
-                        <circle cx="12" cy="12" r="9" />
-                    </svg>
-                </div>
-                <p class="text-xs text-gray-400 dark:text-gray-500 font-medium">Average Fee</p>
-                <p class="text-xl font-bold text-gray-900 dark:text-white mt-1">${{ number_format($averageFee, 2) }}</p>
-            </div>
-
-            <div class="stat-card rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4">
-                <div class="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center mb-4">
-                    <svg class="w-4.5 h-4.5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
-                    </svg>
-                </div>
-                <p class="text-xs text-gray-400 dark:text-gray-500 font-medium">Highest Fee</p>
-                <p class="text-xl font-bold text-gray-900 dark:text-white mt-1">${{ number_format($highestFee, 2) }}</p>
-            </div>
-        </div>
 
         {{-- ==================== TABLE CARD ==================== --}}
         <div
