@@ -308,6 +308,9 @@
                 bg-white dark:bg-gray-800
                 border-b border-gray-100 dark:border-gray-700/60
                 transition-colors duration-300">
+        @php
+            $user = Auth::user();
+        @endphp
 
         {{-- ── LEFT: Logo ── --}}
         <div class="flex items-center gap-5">
@@ -420,17 +423,22 @@
 
                     {{-- User info header --}}
                     <div class="flex items-center gap-3 px-3 py-2 mb-1">
-                        <img src="{{ asset('images/icons/profile3.jpg') }}"
-                            class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700">
+                        <img src="{{ $user->avatar ?: asset('images/icons/profile3.jpg') }}"
+                            class="w-9 h-9 rounded-full cursor-pointer border-2 border-gray-200 dark:border-gray-600 object-cover"
+                            alt="{{ $user->full_name }}">
                         <div class="min-w-0">
-                            <p class="text-xs font-semibold text-gray-900 dark:text-white truncate">Admin</p>
-                            <p class="text-[10px] text-gray-400 truncate">admin@daritamart.com</p>
+                            <p class="text-xs font-semibold text-gray-900 dark:text-white truncate">
+                                {{ $user->full_name }}
+                            </p>
+                            <p class="text-[10px] text-gray-400 truncate">
+                                {{ $user->email }}
+                            </p>
                         </div>
                     </div>
 
                     <div class="border-t border-gray-100 dark:border-gray-700/60 mb-1"></div>
 
-                    <a href="#" class="profile-link flex items-center gap-3 px-3 py-2 rounded-xl
+                    <a href="{{ route('account.index') }}" class="profile-link flex items-center gap-3 px-3 py-2 rounded-xl
                                       text-gray-600 dark:text-gray-300
                                       hover:bg-indigo-50 dark:hover:bg-gray-800
                                       hover:text-indigo-600 dark:hover:text-indigo-400">
@@ -442,7 +450,7 @@
                         <span class="text-sm">My Profile</span>
                     </a>
 
-                    <a href="#" class="profile-link flex items-center gap-3 px-3 py-2 rounded-xl
+                    {{-- <a href="#" class="profile-link flex items-center gap-3 px-3 py-2 rounded-xl
                                       text-gray-600 dark:text-gray-300
                                       hover:bg-indigo-50 dark:hover:bg-gray-800
                                       hover:text-indigo-600 dark:hover:text-indigo-400">
@@ -453,9 +461,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         <span class="text-sm">My Account</span>
-                    </a>
+                    </a> --}}
 
-                    <a href="#" class="profile-link flex items-center gap-3 px-3 py-2 rounded-xl
+                    {{-- <a href="#" class="profile-link flex items-center gap-3 px-3 py-2 rounded-xl
                                       text-gray-600 dark:text-gray-300
                                       hover:bg-indigo-50 dark:hover:bg-gray-800
                                       hover:text-indigo-600 dark:hover:text-indigo-400">
@@ -465,7 +473,7 @@
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                         </svg>
                         <span class="text-sm">My Tasks</span>
-                    </a>
+                    </a> --}}
 
                     <div class="border-t border-gray-100 dark:border-gray-700/60 pt-1">
                         <form id="logout-form" action="{{ route('logout') }}" method="POST">

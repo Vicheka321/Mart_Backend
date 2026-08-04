@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
@@ -522,6 +523,21 @@ Route::prefix('admin')
         Route::post('/settings', [SettingController::class, 'update'])
             ->middleware('permission:edit_settings')
             ->name('settings.update');
+
+        /*
+        |--------------------------------------------------------------------------
+        | My Account
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/account', [AccountController::class, 'index'])
+            ->name('account.index');
+
+        Route::put('/account/profile', [AccountController::class, 'updateProfile'])
+            ->name('account.profile');
+
+        Route::put('/account/password', [AccountController::class, 'updatePassword'])
+            ->name('account.password');
 
         /*
         |--------------------------------------------------------------------------

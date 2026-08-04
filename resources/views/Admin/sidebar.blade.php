@@ -244,7 +244,7 @@
                     <div class="nav-item">
                         <a href="{{ route('admin.dashboard') }}"
                             class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                                      {{ request()->routeIs('admin.dashboard')
+                                                              {{ request()->routeIs('admin.dashboard')
                 ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                             <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
@@ -273,7 +273,7 @@
             {{-- ─── Catalog ─── --}}
             @canany(['view_products', 'view_categories', 'view_brands'])
                     <p class="nav-section-label px-3 pt-2 pb-1.5 text-[10px] font-bold
-                                                   text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
+                                                           text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
                         Catalog
                     </p>
 
@@ -282,7 +282,7 @@
 
                         <button @click="open = !open" :aria-expanded="open.toString()"
                             class="nav-link group w-full relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                                           {{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('brands.*')
+                                                                   {{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('brands.*')
                 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                             <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
@@ -309,7 +309,7 @@
                             @can('view_products')
                                 <a href="{{ route('products.index') }}"
                                     class="sub-link {{ request()->routeIs('products.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('products.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('products.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     All Products
                                 </a>
                             @endcan
@@ -317,7 +317,7 @@
                             @can('view_categories')
                                 <a href="{{ route('categories.index') }}"
                                     class="sub-link {{ request()->routeIs('categories.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('categories.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('categories.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Categories
                                 </a>
                             @endcan
@@ -325,7 +325,7 @@
                             @can('view_brands')
                                 <a href="{{ route('brands.index') }}"
                                     class="sub-link {{ request()->routeIs('brands.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('brands.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('brands.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Brands
                                 </a>
                             @endcan
@@ -338,7 +338,7 @@
             {{-- ─── Commerce ─── --}}
             @canany(['view_orders', 'view_customers'])
                 <p class="nav-section-label px-3 pt-2 pb-1.5 text-[10px] font-bold
-                                       text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
+                                           text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
                     Commerce
                 </p>
 
@@ -346,7 +346,7 @@
                     <div class="nav-item">
                         <a href="{{ route('orders.index') }}"
                             class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                                          {{ request()->routeIs('orders.*')
+                                                                  {{ request()->routeIs('orders.*')
                     ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                             <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
@@ -370,7 +370,7 @@
                     <div class="nav-item">
                         <a href="{{ route('delivery-fees.index') }}"
                             class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                            {{ request()->routeIs('delivery-fees.*')
+                                                    {{ request()->routeIs('delivery-fees.*')
                     ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
 
@@ -406,7 +406,7 @@
                     <div class="nav-item">
                         <a href="{{ route('branches.index') }}"
                             class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                            {{ request()->routeIs('branches.*')
+                                    {{ request()->routeIs('branches.*')
                     ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
 
@@ -444,9 +444,9 @@
                 <div class="nav-item">
                     <a href="{{ route('customers.index') }}"
                         class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                                  {{ request()->routeIs('customers.*')
-                            ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
-                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                      {{ request()->routeIs('customers.*')
+                                ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+                                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                         <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
                             <svg class="w-4 h-4" viewBox="0 0 32 32" fill="currentColor">
                                 <path
@@ -472,7 +472,7 @@
             {{-- ─── Marketing ─── --}}
             @canany(['view_coupons', 'view_banners', 'view_promotions'])
                     <p class="nav-section-label px-3 pt-2 pb-1.5 text-[10px] font-bold
-                                                   text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
+                                                           text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
                         Marketing
                     </p>
 
@@ -481,7 +481,7 @@
 
                         <button @click="open = !open" :aria-expanded="open.toString()"
                             class="nav-link group w-full relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                                           {{ request()->routeIs('coupons.*') || request()->routeIs('banners.*') || request()->routeIs('promotions.*')
+                                                                   {{ request()->routeIs('coupons.*') || request()->routeIs('banners.*') || request()->routeIs('promotions.*')
                 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                             <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
@@ -511,7 +511,7 @@
                             @can('view_coupons')
                                 <a href="{{ route('coupons.index') }}"
                                     class="sub-link {{ request()->routeIs('coupons.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('coupons.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('coupons.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Coupons
                                 </a>
                             @endcan
@@ -519,7 +519,7 @@
                             @can('view_banners')
                                 <a href="{{ route('banners.index') }}"
                                     class="sub-link {{ request()->routeIs('banners.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('banners.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('banners.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Banners
                                 </a>
                             @endcan
@@ -527,7 +527,7 @@
                             @can('view_promotions')
                                 <a href="{{ route('promotions.index') }}"
                                     class="sub-link {{ request()->routeIs('promotions.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('promotions.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('promotions.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Promotions
                                 </a>
                             @endcan
@@ -540,14 +540,14 @@
             {{-- ─── App ─── --}}
             @can('view_notifications')
                     <p class="nav-section-label px-3 pt-2 pb-1.5 text-[10px] font-bold
-                                                   text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
+                                                           text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
                         App
                     </p>
 
                     <div class="nav-item">
                         <a href="{{ route('notifications.index') }}"
                             class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                                      {{ request()->routeIs('notifications.*')
+                                                              {{ request()->routeIs('notifications.*')
                 ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                             <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
@@ -567,7 +567,7 @@
             {{-- ─── System ─── --}}
             @canany(['view_reports', 'view_sales_report', 'view_customers_report', 'view_analysis', 'view_roles', 'assign_roles', 'view_settings'])
                 <p class="nav-section-label px-3 pt-2 pb-1.5 text-[10px] font-bold
-                                       text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
+                                           text-gray-400 dark:text-gray-500 uppercase tracking-[.12em]">
                     System
                 </p>
             @endcanany
@@ -578,7 +578,7 @@
 
                         <button @click="open = !open" :aria-expanded="open.toString()"
                             class="nav-link group w-full relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                                           {{ request()->routeIs('reports.*')
+                                                                   {{ request()->routeIs('reports.*')
                 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                             <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
@@ -600,7 +600,7 @@
                             @can('view_sales_report')
                                 <a href="{{ route('reports.sales') }}"
                                     class="sub-link block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('reports.sales') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('reports.sales') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Sales Report
                                 </a>
                             @endcan
@@ -608,19 +608,19 @@
                             @can('view_reports')
                                 <a href="{{ route('reports.orders') }}"
                                     class="sub-link block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('reports.orders') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('reports.orders') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Order Report
                                 </a>
 
                                 <a href="{{ route('reports.products') }}"
                                     class="sub-link block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('reports.products') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('reports.products') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Product Report
                                 </a>
 
                                 <a href="{{ route('reports.inventory') }}"
                                     class="sub-link block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('reports.inventory') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('reports.inventory') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Inventory Report
                                 </a>
                             @endcan
@@ -628,7 +628,7 @@
                             @can('view_customers_report')
                                 <a href="{{ route('reports.customers') }}"
                                     class="sub-link block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('reports.customers') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('reports.customers') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Customer Report
                                 </a>
                             @endcan
@@ -636,13 +636,13 @@
                             @can('view_reports')
                                 <a href="{{ route('reports.payments') }}"
                                     class="sub-link block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('reports.payments') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('reports.payments') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Payment Report
                                 </a>
 
                                 <a href="{{ route('reports.promotions') }}"
                                     class="sub-link block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('reports.promotions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('reports.promotions') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Promotion Report
                                 </a>
                             @endcan
@@ -655,7 +655,7 @@
                     <div class="nav-item">
                         <a href="{{ route('analysis.index') }}"
                             class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                                      {{ request()->routeIs('analysis.*')
+                                                              {{ request()->routeIs('analysis.*')
                 ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                             <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
@@ -676,7 +676,7 @@
 
                         <button @click="open = !open" :aria-expanded="open.toString()"
                             class="nav-link group w-full relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                                           {{ request()->routeIs('roles.*')
+                                                                   {{ request()->routeIs('roles.*')
                 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                             <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
@@ -710,7 +710,7 @@
                             @can('view_roles')
                                 <a href="{{ route('roles.index') }}"
                                     class="sub-link {{ request()->routeIs('roles.index') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('roles.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('roles.index') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Roles & Permissions
                                 </a>
                             @endcan
@@ -718,7 +718,7 @@
                             @can('assign_roles')
                                 <a href="{{ route('roles.users') }}"
                                     class="sub-link {{ request()->routeIs('roles.users') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('roles.users') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('roles.users') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Assign User Roles
                                 </a>
                             @endcan
@@ -726,7 +726,7 @@
                             @can('assign_roles')
                                 <a href="{{ route('roles.users') }}"
                                     class="sub-link {{ request()->routeIs('roles.users') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                          {{ request()->routeIs('roles.users') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                                                                      {{ request()->routeIs('roles.users') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Additional Permissions
                                 </a>
                             @endcan
@@ -739,7 +739,7 @@
                     <div class="nav-item">
                         <a href="{{ route('settings.index') }}"
                             class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                                                      {{ request()->routeIs('settings.*')
+                                                              {{ request()->routeIs('settings.*')
                 ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                             <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
@@ -753,11 +753,29 @@
                     </div>
             @endcan
 
+            <div class="nav-item">
+                <a href="{{ route('account.index') }}"
+                    class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
+                        {{ request()->routeIs('account.*')
+                    ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+
+                    <span class="icon-wrap w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-4.418 0-8 1.79-8 4v2h16v-2c0-2.21-3.582-4-8-4z" />
+                        </svg>
+                    </span>
+
+                    <span>My Account</span>
+                </a>
+            </div>
+
             @can('view_audit_logs')
                     <div class="nav-item">
                         <a href="{{ route('audit-logs.index') }}"
                             class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
-                    {{ request()->routeIs('audit-logs.*')
+                            {{ request()->routeIs('audit-logs.*')
                 ? 'nav-link-active bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
 

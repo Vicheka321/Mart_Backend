@@ -9,9 +9,9 @@
             : collect($deliveryFees);
 
         $totalZones = method_exists($deliveryFees, 'total') ? $deliveryFees->total() : $zonesCollection->count();
-        $activeZones = $zonesCollection->where('status', 1)->count();
-        $inactiveZones = $zonesCollection->where('status', 0)->count();
         $highestFee = $zonesCollection->max('fee') ?? 0;
+        $averageFee = $zonesCollection->count() ? $zonesCollection->avg('fee') : 0;
+        $zonesOnPage = $zonesCollection->count();
     @endphp
 
     <style>
@@ -105,20 +105,6 @@
             }
         }
 
-        @keyframes pulseDot {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.5);
-                opacity: .5;
-            }
-        }
-
         .stat-card {
             animation: fadeSlideUp .45s ease both;
         }
@@ -133,10 +119,6 @@
 
         .stat-card:nth-child(3) {
             animation-delay: .17s;
-        }
-
-        .stat-card:nth-child(4) {
-            animation-delay: .23s;
         }
 
         .table-card {
@@ -199,14 +181,6 @@
             transform: translateY(0);
         }
 
-        .filter-pill {
-            transition: background .18s ease, color .18s ease, box-shadow .18s ease;
-        }
-
-        .filter-pill.active {
-            box-shadow: 0 1px 4px rgba(0, 0, 0, .1);
-        }
-
         .sort-th {
             cursor: pointer;
             user-select: none;
@@ -214,10 +188,6 @@
 
         .sort-th:hover .sort-icon {
             opacity: .8;
-        }
-
-        .status-dot {
-            animation: pulseDot 2.2s ease-in-out infinite;
         }
 
         .skeleton {
@@ -260,19 +230,6 @@
 
         {{-- ==================== PAGE HEADER ==================== --}}
         <div class="flex flex-col gap-2">
-            {{-- <nav class="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1.5">
-                <a href="{{ route('admin.dashboard') }}"
-                    class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard</a>
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-                <span>Commerce</span>
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-                <span class="text-gray-600 dark:text-gray-300 font-medium">Delivery Fees</span>
-            </nav> --}}
-
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                     <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Delivery Fees
@@ -285,10 +242,9 @@
 
         {{-- ==================== STATISTIC CARDS ==================== --}}
 
-
         {{-- Stat card skeletons --}}
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" x-show="loadingSkeleton" x-cloak>
-            @for ($i = 0; $i < 4; $i++)
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3" x-show="loadingSkeleton" x-cloak>
+            @for ($i = 0; $i < 3; $i++)
                 <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4">
                     <div class="w-9 h-9 rounded-xl skeleton mb-4"></div>
                     <div class="h-2.5 w-20 rounded skeleton mb-2"></div>
@@ -297,36 +253,56 @@
             @endfor
         </div>
 
+        {{-- Stat cards --}}
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3" x-show="!loadingSkeleton" x-cloak>
+            <div class="stat-card rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4">
+                <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center mb-4">
+                    <svg class="w-4.5 h-4.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                </div>
+                <p class="text-xs text-gray-400 dark:text-gray-500 font-medium">Total Zones</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-white mt-1">{{ number_format($totalZones) }}</p>
+            </div>
+
+            <div class="stat-card rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4">
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center mb-4">
+                    <svg class="w-4.5 h-4.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 12v-2m0-8v8" />
+                        <circle cx="12" cy="12" r="9" />
+                    </svg>
+                </div>
+                <p class="text-xs text-gray-400 dark:text-gray-500 font-medium">Average Fee</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-white mt-1">${{ number_format($averageFee, 2) }}</p>
+            </div>
+
+            <div class="stat-card rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4">
+                <div class="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center mb-4">
+                    <svg class="w-4.5 h-4.5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
+                    </svg>
+                </div>
+                <p class="text-xs text-gray-400 dark:text-gray-500 font-medium">Highest Fee</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-white mt-1">${{ number_format($highestFee, 2) }}</p>
+            </div>
+        </div>
+
         {{-- ==================== TABLE CARD ==================== --}}
         <div
             class="table-card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
 
             {{-- TOOLBAR --}}
             <div class="p-4 sm:p-5 border-b border-gray-100 dark:border-gray-700
-                            flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                            flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Delivery Zones</h2>
 
-                <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-
-                    {{-- STATUS FILTER PILLS --}}
-                    <div class="inline-flex items-center rounded-xl border border-gray-200 dark:border-gray-600
-                                    bg-gray-50 dark:bg-gray-700 p-1 gap-1 w-full sm:w-auto">
-                        <button type="button" @click="statusFilter = 'all'; filterTable()"
-                            :class="statusFilter === 'all' ? 'active bg-white dark:bg-gray-600 text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'"
-                            class="filter-pill flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-lg">
-                            All
-                        </button>
-                        <button type="button" @click="statusFilter = 'active'; filterTable()"
-                            :class="statusFilter === 'active' ? 'active bg-white dark:bg-gray-600 text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'"
-                            class="filter-pill flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-lg">
-                            Active
-                        </button>
-                        <button type="button" @click="statusFilter = 'inactive'; filterTable()"
-                            :class="statusFilter === 'inactive' ? 'active bg-white dark:bg-gray-600 text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'"
-                            class="filter-pill flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-lg">
-                            Inactive
-                        </button>
-                    </div>
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
 
                     {{-- SEARCH --}}
                     <div class="relative w-full sm:w-56">
@@ -363,7 +339,6 @@
                         <div class="h-4 w-6 rounded skeleton"></div>
                         <div class="h-4 flex-1 max-w-[140px] rounded skeleton"></div>
                         <div class="h-4 w-16 rounded skeleton"></div>
-                        <div class="h-6 w-16 rounded-full skeleton"></div>
                         <div class="h-4 w-24 rounded skeleton hidden sm:block"></div>
                         <div class="h-8 w-24 rounded-lg skeleton ml-auto"></div>
                     </div>
@@ -429,16 +404,6 @@
                                             </svg>
                                         </span>
                                     </th>
-                                    <th class="px-5 py-3 text-left sort-th" onclick="sortTable('status', this)">
-                                        <span
-                                            class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide inline-flex items-center gap-1">
-                                            Status
-                                            <svg class="w-3 h-3 sort-icon opacity-40" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
-                                            </svg>
-                                        </span>
-                                    </th>
                                     <th class="px-5 py-3 text-left hidden lg:table-cell sort-th"
                                         onclick="sortTable('updated', this)">
                                         <span
@@ -460,7 +425,6 @@
                             <tbody class="divide-y divide-gray-100 dark:divide-gray-700" id="feesBody">
                                 @foreach($zonesCollection as $index => $zone)
                                     @php
-                                        $isActive = (bool) $zone->status;
                                         $distanceLabel = $zone->max_km
                                             ? number_format($zone->min_km, 2) . ' - ' . number_format($zone->max_km, 2) . ' KM'
                                             : number_format($zone->min_km, 2) . '+ KM';
@@ -468,7 +432,7 @@
 
                                     <tr class="fee-row hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors"
                                         data-distance="{{ strtolower($distanceLabel) }}" data-min="{{ $zone->min_km }}"
-                                        data-fee="{{ $zone->fee }}" data-status="{{ $isActive ? 'active' : 'inactive' }}"
+                                        data-fee="{{ $zone->fee }}"
                                         data-updated="{{ $zone->updated_at?->timestamp }}">
 
                                         <td class="px-5 py-3.5 text-gray-400 dark:text-gray-500 text-xs font-medium">
@@ -493,24 +457,6 @@
                                             </span>
                                         </td>
 
-                                        <td class="px-5 py-3.5">
-                                            @if($isActive)
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold
-                                                                             bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400
-                                                                             border border-emerald-100 dark:border-emerald-800">
-                                                    <span
-                                                        class="status-dot w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
-                                                    Active
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
-                                                                             bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400
-                                                                             border border-gray-200 dark:border-gray-600">
-                                                    Inactive
-                                                </span>
-                                            @endif
-                                        </td>
-
                                         <td class="px-5 py-3.5 text-xs text-gray-400 dark:text-gray-500 hidden lg:table-cell">
                                             {{ $zone->updated_at?->format('d M Y, h:i A') ?? '—' }}
                                         </td>
@@ -518,7 +464,7 @@
                                         <td class="px-5 py-3.5">
                                             <div class="flex items-center justify-end gap-1.5">
                                                 <button type="button"
-                                                    @click="openView({{ $zone->id }}, {{ $zone->min_km }}, {{ $zone->max_km ?? 'null' }}, {{ $zone->fee }}, {{ $isActive ? 'true' : 'false' }}, @js($zone->updated_at?->format('d M Y, h:i A')))"
+                                                    @click="openView({{ $zone->id }}, {{ $zone->min_km }}, {{ $zone->max_km ?? 'null' }}, {{ $zone->fee }}, @js($zone->updated_at?->format('d M Y, h:i A')))"
                                                     class="action-icon-btn inline-flex items-center justify-center w-8 h-8 rounded-lg
                                                                 border border-gray-200 bg-white text-gray-500
                                                                 hover:text-indigo-600 hover:border-indigo-200 hover:shadow-sm
@@ -534,7 +480,7 @@
 
                                                 @can('edit_delivery_fees')
                                                     <button type="button"
-                                                        @click="openEdit({{ $zone->id }}, {{ $zone->min_km }}, {{ $zone->max_km ?? 'null' }}, {{ $zone->fee }}, {{ $isActive ? 'true' : 'false' }})"
+                                                        @click="openEdit({{ $zone->id }}, {{ $zone->min_km }}, {{ $zone->max_km ?? 'null' }}, {{ $zone->fee }})"
                                                         class="action-icon-btn inline-flex items-center justify-center w-8 h-8 rounded-lg
                                                                         border border-gray-200 bg-white text-gray-500
                                                                         hover:text-blue-600 hover:border-blue-200 hover:shadow-sm
@@ -577,14 +523,12 @@
                     <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700" id="feesBodyMobile">
                         @foreach($zonesCollection as $zone)
                             @php
-                                $isActiveM = (bool) $zone->status;
                                 $distanceLabelM = $zone->max_km
                                     ? number_format($zone->min_km, 2) . ' - ' . number_format($zone->max_km, 2) . ' KM'
                                     : number_format($zone->min_km, 2) . '+ KM';
                             @endphp
 
-                            <div class="fee-row p-4 flex flex-col gap-3" data-distance="{{ strtolower($distanceLabelM) }}"
-                                data-status="{{ $isActiveM ? 'active' : 'inactive' }}">
+                            <div class="fee-row p-4 flex flex-col gap-3" data-distance="{{ strtolower($distanceLabelM) }}">
 
                                 <div class="flex items-start justify-between gap-2">
                                     <div>
@@ -600,27 +544,13 @@
                                             {{ $zone->updated_at?->format('d M Y, h:i A') ?? '—' }}
                                         </p>
                                     </div>
-                                    @if($isActiveM)
-                                        <span class="flex-shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold
-                                                                     bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400
-                                                                     border border-emerald-100 dark:border-emerald-800">
-                                            <span class="status-dot w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
-                                            Active
-                                        </span>
-                                    @else
-                                        <span class="flex-shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
-                                                                     bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400
-                                                                     border border-gray-200 dark:border-gray-600">
-                                            Inactive
-                                        </span>
-                                    @endif
                                 </div>
 
                                 <p class="text-xl font-bold text-gray-900 dark:text-white">${{ number_format($zone->fee, 2) }}</p>
 
                                 <div class="flex items-center gap-2 pt-1">
                                     <button type="button"
-                                        @click="openView({{ $zone->id }}, {{ $zone->min_km }}, {{ $zone->max_km ?? 'null' }}, {{ $zone->fee }}, {{ $isActiveM ? 'true' : 'false' }}, @js($zone->updated_at?->format('d M Y, h:i A')))"
+                                        @click="openView({{ $zone->id }}, {{ $zone->min_km }}, {{ $zone->max_km ?? 'null' }}, {{ $zone->fee }}, @js($zone->updated_at?->format('d M Y, h:i A')))"
                                         class="action-icon-btn flex-1 inline-flex items-center justify-center gap-1.5 h-9 rounded-lg text-xs font-medium
                                                     border border-gray-200 bg-white text-gray-600
                                                     dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300">
@@ -635,7 +565,7 @@
 
                                     @can('edit_delivery_fees')
                                         <button type="button"
-                                            @click="openEdit({{ $zone->id }}, {{ $zone->min_km }}, {{ $zone->max_km ?? 'null' }}, {{ $zone->fee }}, {{ $isActiveM ? 'true' : 'false' }})"
+                                            @click="openEdit({{ $zone->id }}, {{ $zone->min_km }}, {{ $zone->max_km ?? 'null' }}, {{ $zone->fee }})"
                                             class="action-icon-btn flex-1 inline-flex items-center justify-center gap-1.5 h-9 rounded-lg text-xs font-medium
                                                             border border-blue-200 bg-blue-50 text-blue-600
                                                             dark:bg-blue-500/10 dark:border-blue-500/30 dark:text-blue-400">
@@ -760,16 +690,6 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Status</label>
-                        <select x-model="form.status" class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600
-                                       bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white
-                                       focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
-                        </select>
-                    </div>
-
                     <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-2">
                         <button type="button" @click="closeModal('form')"
                             class="w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-xl border border-gray-200 dark:border-gray-600
@@ -817,13 +737,6 @@
                         </div>
                         <div>
                             <p class="text-lg font-bold text-gray-900 dark:text-white" x-text="viewData.distance"></p>
-                            <span
-                                class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold mt-1"
-                                :class="viewData.active ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600'">
-                                <span x-show="viewData.active"
-                                    class="status-dot w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
-                                <span x-text="viewData.active ? 'Active' : 'Inactive'"></span>
-                            </span>
                         </div>
                     </div>
 
@@ -892,12 +805,11 @@
             function deliveryFeesPage() {
                 return {
                     loadingSkeleton: true,
-                    statusFilter: 'all',
                     saving: false,
                     errors: [],
                     modals: { form: false, view: false, delete: false },
-                    form: { id: null, min_km: '', max_km: '', fee: '', status: '1' },
-                    viewData: { distance: '', fee: '', active: true, updated: '' },
+                    form: { id: null, min_km: '', max_km: '', fee: '' },
+                    viewData: { distance: '', fee: '', updated: '' },
                     deleteData: { id: null, distance: '' },
 
                     init() {
@@ -909,30 +821,28 @@
 
                     openCreate() {
                         this.errors = [];
-                        this.form = { id: null, min_km: '', max_km: '', fee: '', status: '1' };
+                        this.form = { id: null, min_km: '', max_km: '', fee: '' };
                         this.modals.form = true;
                     },
 
-                    openEdit(id, minKm, maxKm, fee, isActive) {
+                    openEdit(id, minKm, maxKm, fee) {
                         this.errors = [];
                         this.form = {
                             id,
                             min_km: minKm,
                             max_km: maxKm ?? '',
                             fee,
-                            status: isActive ? '1' : '0',
                         };
                         this.modals.form = true;
                     },
 
-                    openView(id, minKm, maxKm, fee, isActive, updated) {
+                    openView(id, minKm, maxKm, fee, updated) {
                         const distance = maxKm
                             ? `${Number(minKm).toFixed(2)} - ${Number(maxKm).toFixed(2)} KM`
                             : `${Number(minKm).toFixed(2)}+ KM`;
                         this.viewData = {
                             distance,
                             fee: Number(fee).toFixed(2),
-                            active: !!isActive,
                             updated: updated ?? '—',
                         };
                         this.modals.view = true;
@@ -969,7 +879,6 @@
                                     min_km: this.form.min_km,
                                     max_km: this.form.max_km || null,
                                     fee: this.form.fee,
-                                    status: this.form.status,
                                 }),
                             });
 
@@ -1035,28 +944,23 @@
             }
 
             // ══════════════════════════════════════════════════════
-            //  SEARCH + STATUS FILTER (applies to table rows AND mobile cards)
+            //  SEARCH (applies to table rows AND mobile cards)
             // ══════════════════════════════════════════════════════
             function filterTable() {
                 const q = (document.getElementById('feeSearch')?.value ?? '').toLowerCase().trim();
-                const statusFilter = document.querySelector('[x-data]')?.__x?.$data?.statusFilter ?? 'all';
 
                 const desktopRows = document.querySelectorAll('#feesBody .fee-row');
                 const mobileRows = document.querySelectorAll('#feesBodyMobile .fee-row');
                 let visibleDesktop = 0, visibleMobile = 0;
 
                 desktopRows.forEach(row => {
-                    const matchQ = !q || (row.dataset.distance ?? '').includes(q);
-                    const matchStatus = statusFilter === 'all' || row.dataset.status === statusFilter;
-                    const show = matchQ && matchStatus;
+                    const show = !q || (row.dataset.distance ?? '').includes(q);
                     row.style.display = show ? '' : 'none';
                     if (show) visibleDesktop++;
                 });
 
                 mobileRows.forEach(row => {
-                    const matchQ = !q || (row.dataset.distance ?? '').includes(q);
-                    const matchStatus = statusFilter === 'all' || row.dataset.status === statusFilter;
-                    const show = matchQ && matchStatus;
+                    const show = !q || (row.dataset.distance ?? '').includes(q);
                     row.style.display = show ? '' : 'none';
                     if (show) visibleMobile++;
                 });
@@ -1081,13 +985,10 @@
                 document.querySelectorAll('#feesTable th').forEach(t => t.classList.remove('sorted-asc', 'sorted-desc'));
                 thEl.classList.add(sortDir === 1 ? 'sorted-desc' : 'sorted-asc');
 
-                const keyMap = { distance: 'min', fee: 'fee', status: 'status', updated: 'updated' };
+                const keyMap = { distance: 'min', fee: 'fee', updated: 'updated' };
                 const key = keyMap[col] ?? col;
 
                 rows.sort((a, b) => {
-                    if (key === 'status') {
-                        return (a.dataset.status ?? '').localeCompare(b.dataset.status ?? '') * sortDir;
-                    }
                     const av = parseFloat(a.dataset[key] ?? 0);
                     const bv = parseFloat(b.dataset[key] ?? 0);
                     return (av - bv) * sortDir;
