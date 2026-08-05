@@ -409,8 +409,8 @@
 
             {{-- Avatar / profile dropdown --}}
             <div class="nav-item-3 nav-avatar relative" x-data="{ open: false }">
-                <img @click="open = !open" src="{{ asset('images/icons/profile3.jpg') }}"
-                    class="w-9 h-9 rounded-full cursor-pointer border-2 border-gray-200 dark:border-gray-600"
+                <img @click="open = !open" src="{{ $user->avatar ?: asset('images/icons/profile3.jpg') }}"
+                    class="w-9 h-9 rounded-full object-cover cursor-pointer border-2 border-gray-200 dark:border-gray-600"
                     alt="Profile">
 
                 <div x-cloak x-show="open" @click.outside="open = false"
