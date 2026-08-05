@@ -17,8 +17,12 @@ return new class extends Migration
             $table->string('facebook_id')->nullable();
             $table->string('avatar')->nullable();
             $table->string('password')->nullable();
+            $table->enum('account_type', [
+                'customer',
+                'employee',
+            ])->default('customer');
             $table->text('fcm_token')->nullable();
-            // $table->enum('role', ['admin', 'customer', 'staff'])->default('customer');
+
             $table->rememberToken()->nullable();
             $table->timestamps();
         });

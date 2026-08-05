@@ -516,6 +516,14 @@
                                 </a>
                             @endcan
 
+                            @can('view_promotions')
+                                <a href="{{ route('promotions.index') }}"
+                                    class="sub-link {{ request()->routeIs('promotions.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
+                                                                                      {{ request()->routeIs('promotions.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
+                                    Promotions
+                                </a>
+                            @endcan
+
                             @can('view_banners')
                                 <a href="{{ route('banners.index') }}"
                                     class="sub-link {{ request()->routeIs('banners.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
@@ -524,13 +532,7 @@
                                 </a>
                             @endcan
 
-                            @can('view_promotions')
-                                <a href="{{ route('promotions.index') }}"
-                                    class="sub-link {{ request()->routeIs('promotions.*') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                                      {{ request()->routeIs('promotions.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
-                                    Promotions
-                                </a>
-                            @endcan
+
                         </div>
                     </div>
 
@@ -720,14 +722,6 @@
                                     class="sub-link {{ request()->routeIs('roles.users') ? 'active' : '' }} block py-1.5 text-xs font-medium
                                                                                       {{ request()->routeIs('roles.users') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
                                     Assign User Roles
-                                </a>
-                            @endcan
-
-                            @can('assign_roles')
-                                <a href="{{ route('roles.users') }}"
-                                    class="sub-link {{ request()->routeIs('roles.users') ? 'active' : '' }} block py-1.5 text-xs font-medium
-                                                                                      {{ request()->routeIs('roles.users') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400' }}">
-                                    Additional Permissions
                                 </a>
                             @endcan
                         </div>

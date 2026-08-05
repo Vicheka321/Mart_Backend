@@ -380,7 +380,7 @@
                     </div>
 
                     {{-- EXPORT --}}
-                    <button type="button" onclick="openExportModal()"
+                    {{-- <button type="button" onclick="openExportModal()"
                         class="action-btn inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-xl
                                border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700
                                text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200">
@@ -388,7 +388,7 @@
                             <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/>
                         </svg>
                         <span class="hidden sm:inline">Export</span>
-                    </button>
+                    </button> --}}
                 </div>
             </div>
 

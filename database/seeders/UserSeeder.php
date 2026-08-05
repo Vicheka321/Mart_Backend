@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
                 'full_name' => 'Super Admin',
                 'phone' => '012345678',
                 'password' => Hash::make('11112222'),
+                'account_type'  => 'employee',
             ]
         );
         $superAdmin->syncRoles(['Super Admin']);
@@ -32,6 +33,7 @@ class UserSeeder extends Seeder
                 'full_name' => 'Admin User',
                 'phone' => '012345679',
                 'password' => Hash::make('11112222'),
+                'account_type'  => 'employee',
             ]
         );
         $admin->syncRoles(['Admin']);
@@ -43,6 +45,7 @@ class UserSeeder extends Seeder
                 'full_name' => 'Theary',
                 'phone' => '012345670',
                 'password' => Hash::make('Pitipiwpiwwiwwiw168hengheng'),
+                'account_type'  => 'employee',
             ]
         );
         $admin->syncRoles(['Admin']);
@@ -53,6 +56,19 @@ class UserSeeder extends Seeder
                 'full_name' => 'Thyna',
                 'phone' => '012345673',
                 'password' => Hash::make('Pitipiwpiwwiwwiw169hengheng'),
+                'account_type'  => 'employee',
+            ]
+        );
+        $admin->syncRoles(['Admin']);
+
+
+        $admin = User::updateOrCreate(
+            ['email' => 'brosanst@gmail.com'],
+            [
+                'full_name' => 'Sann',
+                'phone' => '0123456787',
+                'password' => Hash::make('Pitipiwpiwwiwwiw170hengheng'),
+                'account_type'  => 'employee',
             ]
         );
         $admin->syncRoles(['Admin']);
@@ -65,6 +81,7 @@ class UserSeeder extends Seeder
                 'full_name' => 'Manager User',
                 'phone' => '012345680',
                 'password' => Hash::make('11112222'),
+                'account_type'  => 'employee',
             ]
         );
         $manager->syncRoles(['Manager']);

@@ -168,14 +168,26 @@ class RoleController extends Controller
         return back()->with('success', 'Role deleted successfully.');
     }
 
+    // public function users()
+    // {
+    //     $users = User::with('roles')->latest()->paginate(10);
+    //     $roles = Role::orderBy('name')->get();
+
+    //     return view('Admin.roles.assign-users', compact('users', 'roles'));
+    // }
+
     public function users()
     {
-        $users = User::with('roles')->latest()->paginate(10);
+        $users = User::where('account_type', 'employee')
+            ->with('roles')
+            ->latest()
+            ->paginate(10);
+
         $roles = Role::orderBy('name')->get();
+   
 
         return view('Admin.roles.assign-users', compact('users', 'roles'));
     }
-
     public function assignUserRole(Request $request, User $user)
     {
         $request->validate([

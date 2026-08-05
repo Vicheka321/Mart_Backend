@@ -9,6 +9,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
+use Illuminate\Support\Facades\DB;
+
 class CustomersController extends Controller
 {
     // public function customers(Request $request)
@@ -256,138 +258,96 @@ class CustomersController extends Controller
         ));
     }
 
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'full_name' => ['nullable', 'string', 'max:100'],
+    //         'email'     => ['required', 'email', 'unique:users,email'],
+    //         'phone'     => ['nullable', 'string', 'unique:users,phone'],
+    //         'password'  => ['required', 'string', 'min:8', 'confirmed'],
+    //         'role'      => ['required', 'string', 'exists:roles,name'],
+    //     ], [
+    //         'email.unique'    => 'This email address is already registered.',
+    //         'phone.unique'    => 'This phone number is already in use.',
+    //         'password.min'    => 'Password must be at least 8 characters.',
+    //         'password.confirmed' => 'Passwords do not match.',
+    //         'role.exists'     => 'The selected role is invalid.',
+    //     ]);
+
+    //     // Double-check email uniqueness explicitly (race-condition safety)
+    //     if (User::where('email', $request->email)->exists()) {
+    //         return back()
+    //             ->withInput()
+    //             ->withErrors(['email' => 'This email address is already registered.']);
+    //     }
+
+    //     // Double-check phone uniqueness
+    //     if ($request->filled('phone') && User::where('phone', $request->phone)->exists()) {
+    //         return back()
+    //             ->withInput()
+    //             ->withErrors(['phone' => 'This phone number is already in use.']);
+    //     }
+
+    //     $user = User::create([
+    //         'full_name' => $request->full_name,
+    //         'email'     => $request->email,
+    //         'phone'     => $request->phone,
+    //         'password'  => Hash::make($request->password),
+    //     ]);
+
+    //     // Role is managed by Spatie — NOT stored in users table
+    //     $user->assignRole($request->role);
+
+    //     return back()->with('success', 'User "' . ($user->full_name ?? $user->email) . '" created successfully.');
+    // }
+
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'full_name' => ['nullable', 'string', 'max:100'],
-            'email'     => ['required', 'email', 'unique:users,email'],
-            'phone'     => ['nullable', 'string', 'unique:users,phone'],
+            'email'     => ['required', 'email', 'max:255', 'unique:users,email'],
+            'phone'     => ['nullable', 'string', 'max:30', 'unique:users,phone'],
             'password'  => ['required', 'string', 'min:8', 'confirmed'],
-            'role'      => ['required', 'string', 'exists:roles,name'],
+            'role'      => ['required', 'exists:roles,name'],
         ], [
-            'email.unique'    => 'This email address is already registered.',
-            'phone.unique'    => 'This phone number is already in use.',
-            'password.min'    => 'Password must be at least 8 characters.',
-            'password.confirmed' => 'Passwords do not match.',
-            'role.exists'     => 'The selected role is invalid.',
+            'email.unique'         => 'This email address is already registered.',
+            'phone.unique'         => 'This phone number is already in use.',
+            'password.min'         => 'Password must be at least 8 characters.',
+            'password.confirmed'   => 'Passwords do not match.',
+            'role.exists'          => 'The selected role is invalid.',
         ]);
 
-        // Double-check email uniqueness explicitly (race-condition safety)
-        if (User::where('email', $request->email)->exists()) {
+        // Prevent creating Customer from Admin Panel
+        if ($validated['role'] === 'Customer') {
             return back()
                 ->withInput()
-                ->withErrors(['email' => 'This email address is already registered.']);
+                ->withErrors([
+                    'role' => 'Customer accounts must register through the mobile application.'
+                ]);
         }
 
-        // Double-check phone uniqueness
-        if ($request->filled('phone') && User::where('phone', $request->phone)->exists()) {
-            return back()
-                ->withInput()
-                ->withErrors(['phone' => 'This phone number is already in use.']);
-        }
+        $user = DB::transaction(function () use ($validated) {
 
-        $user = User::create([
-            'full_name' => $request->full_name,
-            'email'     => $request->email,
-            'phone'     => $request->phone,
-            'password'  => Hash::make($request->password),
-        ]);
+            $user = User::create([
+                'full_name'    => $validated['full_name'] ?? null,
+                'email'        => $validated['email'],
+                'phone'        => $validated['phone'] ?? null,
+                'password'     => Hash::make($validated['password']),
+                'account_type' => 'employee',
+            ]);
 
-        // Role is managed by Spatie — NOT stored in users table
-        $user->assignRole($request->role);
+            // Assign Spatie Role
+            $user->assignRole($validated['role']);
 
-        return back()->with('success', 'User "' . ($user->full_name ?? $user->email) . '" created successfully.');
+            return $user;
+        });
+
+        return back()->with(
+            'success',
+            'User "' . ($user->full_name ?: $user->email) . '" created successfully.'
+        );
     }
 
-    // public function updateCustomer(Request $request, User $user)
-    // {
-    //     $validated = $request->validate([
-    //         'first_name' => ['required', 'string', 'max:100'],
-    //         'last_name'  => ['nullable', 'string', 'max:100'],
-    //         'email'      => [
-    //             'required',
-    //             'email',
-    //             'max:255',
-    //             Rule::unique('users', 'email')->ignore($user->id),
-    //         ],
-    //         'phone'      => [
-    //             'nullable',
-    //             'string',
-    //             'max:30',
-    //             Rule::unique('users', 'phone')->ignore($user->id),
-    //         ],
-    //         'role'       => ['required', 'in:customer,staff,admin'],
-    //         'password'   => ['nullable', 'string', 'min:8', 'confirmed'],
-    //     ]);
-
-    //     // Prepare data for update
-    //     $data = [
-    //         'first_name' => $validated['first_name'],
-    //         'last_name'  => $validated['last_name'] ?? null,
-    //         'email'      => $validated['email'],
-    //         'phone'      => $validated['phone'] ?? null,
-    //         'role'       => $validated['role'],
-    //     ];
-
-    //     // Update password only if provided
-    //     if (!empty($validated['password'])) {
-    //         $data['password'] = Hash::make($validated['password']);
-    //     }
-
-    //     // Save changes
-    //     $user->update($data);
-
-    //     return redirect()
-    //         ->back()
-    //         ->with('success', 'Customer updated successfully.');
-    // }
-
-    // public function updateCustomer(Request $request, User $user)
-    // {
-    //     $passwordRules = ['string', 'min:8', 'confirmed'];
-
-    //     if (in_array($request->role, ['staff', 'admin']) && empty($user->password)) {
-    //         $passwordRules = ['required', 'string', 'min:8', 'confirmed'];
-    //     }
-
-    //     $validated = $request->validate([
-    //         'full_name' => ['required', 'string', 'max:100'],
-    //         'email'      => [
-    //             'required',
-    //             'email',
-    //             'max:255',
-    //             Rule::unique('users', 'email')->ignore($user->id),
-    //         ],
-    //         'phone'      => [
-    //             'nullable',
-    //             'string',
-    //             'max:30',
-    //             Rule::unique('users', 'phone')->ignore($user->id),
-    //         ],
-    //         'role'       => ['required', 'in:staff,admin'],
-    //         'password'   => $passwordRules,
-    //     ]);
-
-    //     // Prepare data for update
-    //     $data = [
-    //         'full_name' => $validated['full_name'],
-    //         'email'      => $validated['email'],
-    //         'phone'      => $validated['phone'] ?? null,
-    //         'role'       => $validated['role'],
-    //     ];
-
-    //     // Update password only if provided
-    //     if (!empty($validated['password'])) {
-    //         $data['password'] = Hash::make($validated['password']);
-    //     }
-
-    //     // Save changes
-    //     $user->update($data);
-
-    //     return redirect()
-    //         ->back()
-    //         ->with('success', 'Customer updated successfully.');
-    // }
 
     public function updateCustomer(Request $request, User $user)
     {

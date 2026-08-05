@@ -4,195 +4,571 @@
 
     <style>
         /* ══════════════════════════════════════════
-           KEYFRAMES
-        ══════════════════════════════════════════ */
+               KEYFRAMES
+            ══════════════════════════════════════════ */
         @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         @keyframes fadeSlideLeft {
-            from { opacity: 0; transform: translateX(20px); }
-            to   { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
+
         @keyframes cardPop {
-            from { opacity: 0; transform: scale(0.94) translateY(12px); }
-            to   { opacity: 1; transform: scale(1) translateY(0); }
+            from {
+                opacity: 0;
+                transform: scale(0.94) translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
+
         @keyframes progressFill {
-            from { width: 0 !important; }
+            from {
+                width: 0 !important;
+            }
         }
+
         @keyframes pulseDot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50%       { opacity: .4; transform: scale(1.7); }
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .4;
+                transform: scale(1.7);
+            }
         }
+
         @keyframes phoneFloat {
-            0%, 100% { transform: translateY(0px); }
-            50%       { transform: translateY(-5px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
         }
+
         @keyframes notifBounce {
-            0%   { opacity: 0; transform: translateY(-12px) scale(.9); }
-            60%  { opacity: 1; transform: translateY(3px) scale(1.02); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+            0% {
+                opacity: 0;
+                transform: translateY(-12px) scale(.9);
+            }
+
+            60% {
+                opacity: 1;
+                transform: translateY(3px) scale(1.02);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
+
         @keyframes rowSlideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to   { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
+
         @keyframes statNumPop {
-            0%   { opacity: 0; transform: scale(.7); }
-            70%  { transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
+            0% {
+                opacity: 0;
+                transform: scale(.7);
+            }
+
+            70% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
+
         @keyframes sendPulse {
-            0%   { box-shadow: 0 0 0 0 rgba(139,92,246,.55); }
-            70%  { box-shadow: 0 0 0 10px rgba(139,92,246,0); }
-            100% { box-shadow: 0 0 0 0 rgba(139,92,246,0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, .55);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+            }
         }
+
         @keyframes barFill {
-            from { width: 0 !important; }
+            from {
+                width: 0 !important;
+            }
         }
+
         @keyframes iconSpin {
-            from { transform: rotate(-15deg) scale(.8); opacity:0; }
-            to   { transform: rotate(0deg)  scale(1);  opacity:1; }
+            from {
+                transform: rotate(-15deg) scale(.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: rotate(0deg) scale(1);
+                opacity: 1;
+            }
         }
+
         @keyframes overlayIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
+
         @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.92) translateY(20px); }
-            to   { opacity: 1; transform: scale(1) translateY(0); }
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
+
         @keyframes toastSlide {
-            from { opacity: 0; transform: translateX(40px); }
-            to   { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
+
         @keyframes toastOut {
-            from { opacity: 1; transform: translateX(0); }
-            to   { opacity: 0; transform: translateX(40px); }
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(40px);
+            }
         }
 
         /* ── Page sections ── */
-        .notif-header   { animation: fadeSlideUp .45s .05s cubic-bezier(.22,1,.36,1) both; }
-        .notif-compose  { animation: cardPop .55s .08s cubic-bezier(.22,1,.36,1) both; }
-        .notif-recent   { animation: fadeSlideUp .5s .22s cubic-bezier(.22,1,.36,1) both; }
-        .notif-preview  { animation: fadeSlideLeft .5s .14s cubic-bezier(.22,1,.36,1) both; }
-        .notif-stats    { animation: fadeSlideLeft .5s .24s cubic-bezier(.22,1,.36,1) both; }
-        .notif-delivery { animation: fadeSlideLeft .5s .34s cubic-bezier(.22,1,.36,1) both; }
+        .notif-header {
+            animation: fadeSlideUp .45s .05s cubic-bezier(.22, 1, .36, 1) both;
+        }
 
-        .stat-mini { animation: cardPop .45s ease both; }
-        .stat-mini:nth-child(1) { animation-delay: .26s; }
-        .stat-mini:nth-child(2) { animation-delay: .32s; }
-        .stat-mini:nth-child(3) { animation-delay: .38s; }
-        .stat-mini:nth-child(4) { animation-delay: .44s; }
-        .stat-mini h2 { animation: statNumPop .4s cubic-bezier(.34,1.56,.64,1) both; }
-        .stat-mini:nth-child(1) h2 { animation-delay: .55s; }
-        .stat-mini:nth-child(2) h2 { animation-delay: .61s; }
-        .stat-mini:nth-child(3) h2 { animation-delay: .67s; }
-        .stat-mini:nth-child(4) h2 { animation-delay: .73s; }
+        .notif-compose {
+            animation: cardPop .55s .08s cubic-bezier(.22, 1, .36, 1) both;
+        }
 
-        .recent-row { animation: rowSlideIn .32s ease both; }
-        .recent-row:nth-child(1) { animation-delay: .28s; }
-        .recent-row:nth-child(2) { animation-delay: .34s; }
-        .recent-row:nth-child(3) { animation-delay: .40s; }
-        .recent-row:nth-child(4) { animation-delay: .46s; }
+        .notif-recent {
+            animation: fadeSlideUp .5s .22s cubic-bezier(.22, 1, .36, 1) both;
+        }
 
-        .phone-frame   { animation: phoneFloat 4s 1s ease-in-out infinite; }
-        .preview-toast { animation: notifBounce .5s .9s cubic-bezier(.34,1.3,.64,1) both; }
+        .notif-preview {
+            animation: fadeSlideLeft .5s .14s cubic-bezier(.22, 1, .36, 1) both;
+        }
 
-        .bar-anim  { animation: barFill .9s .8s cubic-bezier(.4,0,.2,1) both; }
-        .pulse-dot { animation: pulseDot 2.2s ease-in-out infinite; }
+        .notif-stats {
+            animation: fadeSlideLeft .5s .24s cubic-bezier(.22, 1, .36, 1) both;
+        }
 
-        .send-btn:hover { animation: sendPulse .8s ease; }
-        .vfocus:focus   { box-shadow: 0 0 0 3px rgba(139,92,246,.18); }
+        .notif-delivery {
+            animation: fadeSlideLeft .5s .34s cubic-bezier(.22, 1, .36, 1) both;
+        }
 
-        .hover-lift { transition: transform .2s ease, box-shadow .2s ease; }
-        .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+        .stat-mini {
+            animation: cardPop .45s ease both;
+        }
 
-        .action-btn { transition: transform .14s ease; }
-        .action-btn:hover  { transform: translateY(-1px); }
-        .action-btn:active { transform: scale(.96); }
+        .stat-mini:nth-child(1) {
+            animation-delay: .26s;
+        }
 
-        .icon-entry { animation: iconSpin .4s cubic-bezier(.34,1.56,.64,1) both; }
+        .stat-mini:nth-child(2) {
+            animation-delay: .32s;
+        }
 
-        .field-row { animation: fadeSlideUp .35s ease both; }
-        .field-row:nth-child(1) { animation-delay: .18s; }
-        .field-row:nth-child(2) { animation-delay: .24s; }
-        .field-row:nth-child(3) { animation-delay: .30s; }
-        .field-row:nth-child(4) { animation-delay: .36s; }
-        .field-row:nth-child(5) { animation-delay: .42s; }
-        .field-row:nth-child(6) { animation-delay: .48s; }
-        .field-row:nth-child(7) { animation-delay: .54s; }
+        .stat-mini:nth-child(3) {
+            animation-delay: .38s;
+        }
 
-        .delivery-row { animation: rowSlideIn .35s ease both; }
-        .delivery-row:nth-child(1) { animation-delay: .40s; }
-        .delivery-row:nth-child(2) { animation-delay: .50s; }
-        .delivery-row:nth-child(3) { animation-delay: .60s; }
+        .stat-mini:nth-child(4) {
+            animation-delay: .44s;
+        }
+
+        .stat-mini h2 {
+            animation: statNumPop .4s cubic-bezier(.34, 1.56, .64, 1) both;
+        }
+
+        .stat-mini:nth-child(1) h2 {
+            animation-delay: .55s;
+        }
+
+        .stat-mini:nth-child(2) h2 {
+            animation-delay: .61s;
+        }
+
+        .stat-mini:nth-child(3) h2 {
+            animation-delay: .67s;
+        }
+
+        .stat-mini:nth-child(4) h2 {
+            animation-delay: .73s;
+        }
+
+        .recent-row {
+            animation: rowSlideIn .32s ease both;
+        }
+
+        .recent-row:nth-child(1) {
+            animation-delay: .28s;
+        }
+
+        .recent-row:nth-child(2) {
+            animation-delay: .34s;
+        }
+
+        .recent-row:nth-child(3) {
+            animation-delay: .40s;
+        }
+
+        .recent-row:nth-child(4) {
+            animation-delay: .46s;
+        }
+
+        .phone-frame {
+            animation: phoneFloat 4s 1s ease-in-out infinite;
+        }
+
+        .preview-toast {
+            animation: notifBounce .5s .9s cubic-bezier(.34, 1.3, .64, 1) both;
+        }
+
+        .bar-anim {
+            animation: barFill .9s .8s cubic-bezier(.4, 0, .2, 1) both;
+        }
+
+        .pulse-dot {
+            animation: pulseDot 2.2s ease-in-out infinite;
+        }
+
+        .send-btn:hover {
+            animation: sendPulse .8s ease;
+        }
+
+        .vfocus:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, .18);
+        }
+
+        .hover-lift {
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+        }
+
+        .action-btn {
+            transition: transform .14s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .action-btn:active {
+            transform: scale(.96);
+        }
+
+        .icon-entry {
+            animation: iconSpin .4s cubic-bezier(.34, 1.56, .64, 1) both;
+        }
+
+        .field-row {
+            animation: fadeSlideUp .35s ease both;
+        }
+
+        .field-row:nth-child(1) {
+            animation-delay: .18s;
+        }
+
+        .field-row:nth-child(2) {
+            animation-delay: .24s;
+        }
+
+        .field-row:nth-child(3) {
+            animation-delay: .30s;
+        }
+
+        .field-row:nth-child(4) {
+            animation-delay: .36s;
+        }
+
+        .field-row:nth-child(5) {
+            animation-delay: .42s;
+        }
+
+        .field-row:nth-child(6) {
+            animation-delay: .48s;
+        }
+
+        .field-row:nth-child(7) {
+            animation-delay: .54s;
+        }
+
+        .delivery-row {
+            animation: rowSlideIn .35s ease both;
+        }
+
+        .delivery-row:nth-child(1) {
+            animation-delay: .40s;
+        }
+
+        .delivery-row:nth-child(2) {
+            animation-delay: .50s;
+        }
+
+        .delivery-row:nth-child(3) {
+            animation-delay: .60s;
+        }
 
         /* ── Modals ── */
-        #historyModal.flex  { animation: overlayIn .2s ease; }
-        #detailModal.flex   { animation: overlayIn .2s ease; }
-        #editModal.flex     { animation: overlayIn .2s ease; }
-        #deleteModal.flex   { animation: overlayIn .2s ease; }
-        .modal-inner        { animation: modalIn .25s cubic-bezier(.34,1.56,.64,1) both; }
+        #historyModal.flex {
+            animation: overlayIn .2s ease;
+        }
+
+        #detailModal.flex {
+            animation: overlayIn .2s ease;
+        }
+
+        #editModal.flex {
+            animation: overlayIn .2s ease;
+        }
+
+        #deleteModal.flex {
+            animation: overlayIn .2s ease;
+        }
+
+        .modal-inner {
+            animation: modalIn .25s cubic-bezier(.34, 1.56, .64, 1) both;
+        }
 
         /* ── Toast ── */
-        .toast-container { position: fixed; top: 1.25rem; right: 1.25rem; z-index: 9999; display: flex; flex-direction: column; gap: .5rem; }
+        .toast-container {
+            position: fixed;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+
         .toast {
-            display: flex; align-items: center; gap: .625rem;
+            display: flex;
+            align-items: center;
+            gap: .625rem;
             padding: .75rem 1rem;
-            background: white; border-radius: 14px;
-            box-shadow: 0 8px 30px rgba(0,0,0,.12);
-            font-size: .8125rem; font-weight: 500;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .12);
+            font-size: .8125rem;
+            font-weight: 500;
             animation: toastSlide .3s ease;
             min-width: 240px;
         }
-        .dark .toast { background: #1f2937; color: #f3f4f6; }
-        .toast.leaving { animation: toastOut .3s ease forwards; }
-        .toast-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+        .dark .toast {
+            background: #1f2937;
+            color: #f3f4f6;
+        }
+
+        .toast.leaving {
+            animation: toastOut .3s ease forwards;
+        }
+
+        .toast-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
 
         /* ── History table rows ── */
-        #historyTableBody tr { animation: rowSlideIn .3s ease both; }
-        #historyTableBody tr:nth-child(1) { animation-delay: .05s; }
-        #historyTableBody tr:nth-child(2) { animation-delay: .10s; }
-        #historyTableBody tr:nth-child(3) { animation-delay: .15s; }
-        #historyTableBody tr:nth-child(4) { animation-delay: .20s; }
-        #historyTableBody tr:nth-child(5) { animation-delay: .25s; }
+        #historyTableBody tr {
+            animation: rowSlideIn .3s ease both;
+        }
+
+        #historyTableBody tr:nth-child(1) {
+            animation-delay: .05s;
+        }
+
+        #historyTableBody tr:nth-child(2) {
+            animation-delay: .10s;
+        }
+
+        #historyTableBody tr:nth-child(3) {
+            animation-delay: .15s;
+        }
+
+        #historyTableBody tr:nth-child(4) {
+            animation-delay: .20s;
+        }
+
+        #historyTableBody tr:nth-child(5) {
+            animation-delay: .25s;
+        }
 
         @media (max-width: 640px) {
-            .stat-mini h2 { font-size: 1.15rem; }
+            .stat-mini h2 {
+                font-size: 1.15rem;
+            }
         }
 
         /* ══════════════════════════════════════════
-           DATE-TIME PICKER (premium)
-        ══════════════════════════════════════════ */
+               DATE-TIME PICKER (premium)
+            ══════════════════════════════════════════ */
         @keyframes dtpPopIn {
-            from { opacity: 0; transform: translateY(-6px) scale(.97); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(-6px) scale(.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
-        .dtp { position: relative; }
+
+        .dtp {
+            position: relative;
+        }
+
         .dtp-trigger {
-            width: 100%; display: flex; align-items: center; gap: .625rem;
-            padding: .55rem .75rem; border-radius: 12px;
-            background: #f9fafb; border: 1px solid #f3f4f6;
-            cursor: pointer; text-align: left; transition: all .15s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: .625rem;
+            padding: .55rem .75rem;
+            border-radius: 12px;
+            background: #f9fafb;
+            border: 1px solid #f3f4f6;
+            cursor: pointer;
+            text-align: left;
+            transition: all .15s ease;
         }
-        .dark .dtp-trigger { background: rgba(55,65,81,.5); border-color: #374151; }
-        .dtp-trigger:hover { border-color: #ddd6fe; }
-        .dark .dtp-trigger:hover { border-color: #6d28d9; }
-        .dtp-trigger.dtp-active { box-shadow: 0 0 0 3px rgba(139,92,246,.18); border-color: #c4b5fd; }
+
+        .dark .dtp-trigger {
+            background: rgba(55, 65, 81, .5);
+            border-color: #374151;
+        }
+
+        .dtp-trigger:hover {
+            border-color: #c7d2fe;
+        }
+
+        .dark .dtp-trigger:hover {
+            border-color: #4338ca;
+        }
+
+        .dtp-trigger.dtp-active {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, .18);
+            border-color: #a5b4fc;
+        }
+
         .dtp-trigger-icon {
-            width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
-            background: linear-gradient(135deg,#8b5cf6,#d946ef);
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 8px rgba(139,92,246,.35);
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, .35);
         }
-        .dtp-trigger-text { flex: 1; font-size: .75rem; font-weight: 600; color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .dark .dtp-trigger-text { color: #e5e7eb; }
-        .dtp-trigger-text.placeholder { color: #9ca3af; font-weight: 500; }
-        .dark .dtp-trigger-text.placeholder { color: #6b7280; }
-        .dtp-chevron { width: 14px; height: 14px; color: #9ca3af; transition: transform .2s ease; flex-shrink: 0; }
-        .dtp-chevron.rotate-180 { transform: rotate(180deg); }
+
+        .dtp-trigger-text {
+            flex: 1;
+            font-size: .75rem;
+            font-weight: 600;
+            color: #374151;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dark .dtp-trigger-text {
+            color: #e5e7eb;
+        }
+
+        .dtp-trigger-text.placeholder {
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .dark .dtp-trigger-text.placeholder {
+            color: #6b7280;
+        }
+
+        .dtp-chevron {
+            width: 14px;
+            height: 14px;
+            color: #9ca3af;
+            transition: transform .2s ease;
+            flex-shrink: 0;
+        }
+
+        .dtp-chevron.rotate-180 {
+            transform: rotate(180deg);
+        }
 
         .dtp-panel {
             display: none;
@@ -205,75 +581,270 @@
             background: #fff;
             border: 1px solid #f3f4f6;
             border-radius: 18px;
-            box-shadow: 0 20px 45px rgba(17,24,39,.14);
+            box-shadow: 0 20px 45px rgba(17, 24, 39, .14);
             padding: 14px;
         }
-        .dark .dtp-panel { background: #1f2937; border-color: #374151; box-shadow: 0 20px 45px rgba(0,0,0,.45); }
-        .dtp-panel.open { display: block; animation: dtpPopIn .18s cubic-bezier(.22,1,.36,1) both; }
 
-        .dtp-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .dtp-cal-header span { font-size: .75rem; font-weight: 700; color: #1f2937; }
-        .dark .dtp-cal-header span { color: #f3f4f6; }
+        .dark .dtp-panel {
+            background: #1f2937;
+            border-color: #374151;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, .45);
+        }
+
+        .dtp-panel.open {
+            display: block;
+            animation: dtpPopIn .18s cubic-bezier(.22, 1, .36, 1) both;
+        }
+
+        .dtp-cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .dtp-cal-header span {
+            font-size: .75rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .dark .dtp-cal-header span {
+            color: #f3f4f6;
+        }
+
         .dtp-nav-btn {
-            width: 24px; height: 24px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
-            color: #6b7280; background: transparent; transition: all .15s ease; border: none; cursor: pointer;
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            background: transparent;
+            transition: all .15s ease;
+            border: none;
+            cursor: pointer;
         }
-        .dtp-nav-btn:hover { background: #f5f3ff; color: #7c3aed; }
-        .dark .dtp-nav-btn:hover { background: rgba(139,92,246,.15); color: #c4b5fd; }
 
-        .dtp-weekdays { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 4px; }
-        .dtp-weekdays span { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #9ca3af; text-align: center; display:block; }
-        .dark .dtp-weekdays span { color: #6b7280; }
+        .dtp-nav-btn:hover {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
 
-        .dtp-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+        .dark .dtp-nav-btn:hover {
+            background: rgba(79, 70, 229, .15);
+            color: #a5b4fc;
+        }
+
+        .dtp-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            margin-bottom: 4px;
+        }
+
+        .dtp-weekdays span {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #9ca3af;
+            text-align: center;
+            display: block;
+        }
+
+        .dark .dtp-weekdays span {
+            color: #6b7280;
+        }
+
+        .dtp-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+
         .dtp-day {
-            width: 100%; aspect-ratio: 1; border: none; background: transparent; border-radius: 999px;
-            font-size: 11px; font-weight: 600; color: #374151; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; transition: all .12s ease;
+            width: 100%;
+            aspect-ratio: 1;
+            border: none;
+            background: transparent;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .12s ease;
         }
-        .dark .dtp-day { color: #d1d5db; }
-        .dtp-day.empty { cursor: default; }
-        .dtp-day:not(.empty):not(.disabled):hover { background: #f5f3ff; color: #7c3aed; }
-        .dark .dtp-day:not(.empty):not(.disabled):hover { background: rgba(139,92,246,.15); color: #c4b5fd; }
-        .dtp-day.today { box-shadow: inset 0 0 0 1.5px #c4b5fd; color: #7c3aed; }
-        .dark .dtp-day.today { box-shadow: inset 0 0 0 1.5px #7c3aed; color: #c4b5fd; }
+
+        .dark .dtp-day {
+            color: #d1d5db;
+        }
+
+        .dtp-day.empty {
+            cursor: default;
+        }
+
+        .dtp-day:not(.empty):not(.disabled):hover {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+        .dark .dtp-day:not(.empty):not(.disabled):hover {
+            background: rgba(79, 70, 229, .15);
+            color: #a5b4fc;
+        }
+
+        .dtp-day.today {
+            box-shadow: inset 0 0 0 1.5px #a5b4fc;
+            color: #4f46e5;
+        }
+
+        .dark .dtp-day.today {
+            box-shadow: inset 0 0 0 1.5px #4f46e5;
+            color: #a5b4fc;
+        }
+
         .dtp-day.selected {
-            background: linear-gradient(135deg,#8b5cf6,#d946ef); color: #fff !important;
-            box-shadow: 0 4px 10px rgba(139,92,246,.4);
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: #fff !important;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, .4);
         }
-        .dtp-day.disabled { color: #d1d5db; cursor: not-allowed; }
-        .dark .dtp-day.disabled { color: #4b5563; }
 
-        .dtp-time { display: flex; align-items: center; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f3f4f6; }
-        .dark .dtp-time { border-color: #374151; }
+        .dtp-day.disabled {
+            color: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .dark .dtp-day.disabled {
+            color: #4b5563;
+        }
+
+        .dtp-time {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .dark .dtp-time {
+            border-color: #374151;
+        }
+
         .dtp-time select {
-            appearance: none; -webkit-appearance: none;
-            background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 8px;
-            font-size: 12px; font-weight: 600; color: #374151;
-            padding: .3rem .4rem; text-align: center; cursor: pointer; outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            background: #f9fafb;
+            border: 1px solid #f3f4f6;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+            padding: .3rem .4rem;
+            text-align: center;
+            cursor: pointer;
+            outline: none;
         }
-        .dark .dtp-time select { background: rgba(55,65,81,.6); border-color: #374151; color: #e5e7eb; }
-        .dtp-time select:focus { box-shadow: 0 0 0 2px rgba(139,92,246,.25); }
-        .dtp-colon { font-weight: 700; color: #9ca3af; font-size: 12px; }
-        .dtp-ampm { display: flex; gap: 2px; background: #f3f4f6; border-radius: 8px; padding: 2px; margin-left: auto; }
-        .dark .dtp-ampm { background: #374151; }
-        .dtp-ampm button {
-            font-size: 10px; font-weight: 700; padding: .25rem .5rem; border-radius: 6px; border: none;
-            background: transparent; color: #9ca3af; cursor: pointer; transition: all .15s ease;
-        }
-        .dtp-ampm button.active { background: #fff; color: #7c3aed; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
-        .dark .dtp-ampm button.active { background: #1f2937; color: #c4b5fd; }
 
-        .dtp-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f3f4f6; }
-        .dark .dtp-footer { border-color: #374151; }
-        .dtp-clear-btn { font-size: 11px; font-weight: 600; color: #9ca3af; background: none; border: none; cursor: pointer; }
-        .dtp-clear-btn:hover { color: #ef4444; }
-        .dtp-apply-btn {
-            font-size: 11px; font-weight: 700; color: #fff; padding: .4rem .875rem; border-radius: 9px; border: none;
-            background: linear-gradient(135deg,#8b5cf6,#d946ef); box-shadow: 0 4px 10px rgba(139,92,246,.3);
-            cursor: pointer; transition: transform .15s ease;
+        .dark .dtp-time select {
+            background: rgba(55, 65, 81, .6);
+            border-color: #374151;
+            color: #e5e7eb;
         }
-        .dtp-apply-btn:hover { transform: translateY(-1px); }
+
+        .dtp-time select:focus {
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, .25);
+        }
+
+        .dtp-colon {
+            font-weight: 700;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .dtp-ampm {
+            display: flex;
+            gap: 2px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 2px;
+            margin-left: auto;
+        }
+
+        .dark .dtp-ampm {
+            background: #374151;
+        }
+
+        .dtp-ampm button {
+            font-size: 10px;
+            font-weight: 700;
+            padding: .25rem .5rem;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all .15s ease;
+        }
+
+        .dtp-ampm button.active {
+            background: #fff;
+            color: #4f46e5;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+        }
+
+        .dark .dtp-ampm button.active {
+            background: #1f2937;
+            color: #a5b4fc;
+        }
+
+        .dtp-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .dark .dtp-footer {
+            border-color: #374151;
+        }
+
+        .dtp-clear-btn {
+            font-size: 11px;
+            font-weight: 600;
+            color: #9ca3af;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dtp-clear-btn:hover {
+            color: #ef4444;
+        }
+
+        .dtp-apply-btn {
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            padding: .4rem .875rem;
+            border-radius: 9px;
+            border: none;
+            background: #4f46e5;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, .3);
+            cursor: pointer;
+            transition: background .15s ease, transform .15s ease;
+        }
+
+        .dtp-apply-btn:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
     </style>
 
     {{-- Toast container --}}
@@ -289,65 +860,74 @@
 
                 {{-- ── Compose Card ── --}}
                 <div class="notif-compose relative rounded-2xl bg-white dark:bg-gray-800
-                            border border-gray-100 dark:border-gray-700 shadow-sm p-5">
+                                border border-gray-200 dark:border-gray-700 shadow-sm p-5">
 
                     <div class="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
                         <div class="absolute -top-8 -right-8 w-28 h-28 rounded-full
-                                    bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-100
-                                    dark:from-violet-900/20 dark:via-purple-900/20 dark:to-fuchsia-900/20"></div>
-                        <div class="absolute -bottom-6 -left-6 w-20 h-20 rounded-full
-                                    bg-gradient-to-br from-indigo-50 to-violet-100 dark:from-indigo-900/10 dark:to-violet-900/10 opacity-60"></div>
+                                        bg-gradient-to-br from-indigo-50 to-gray-100
+                                        dark:from-indigo-900/10 dark:to-gray-700/20"></div>
+                        <div
+                            class="absolute -bottom-6 -left-6 w-20 h-20 rounded-full
+                                        bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/10 dark:to-indigo-900/10 opacity-60">
+                        </div>
                     </div>
 
                     <div class="relative flex items-center gap-2.5 mb-5">
                         <div class="icon-entry w-9 h-9 rounded-xl
-                                    bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500
-                                    flex items-center justify-center shadow-md shadow-violet-500/30 shrink-0">
-                            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        bg-indigo-600
+                                        flex items-center justify-center shadow-md shadow-indigo-500/30 shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white leading-tight">Compose Notification</h3>
+                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white leading-tight">Compose
+                                Notification</h3>
                             <p class="text-[10px] text-gray-400 dark:text-gray-500">Send to your app users</p>
                         </div>
-                        <div class="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-xl
-                                    bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/50">
+                        <div
+                            class="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-xl
+                                        bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/50">
                             <span class="pulse-dot w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
-                            <span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 hidden sm:inline">FCM Live</span>
+                            <span
+                                class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 hidden sm:inline">FCM
+                                Live</span>
                         </div>
                     </div>
 
-                    <form action="{{ route('notifications.store') }}" method="POST" class="space-y-4 relative" id="composeForm">
+                    <form action="{{ route('notifications.store') }}" method="POST" class="space-y-4 relative"
+                        id="composeForm">
                         @csrf
 
                         {{-- Target Audience --}}
                         <div class="field-row">
                             <label class="block text-[10px] font-semibold uppercase tracking-widest
-                                          text-gray-400 dark:text-gray-500 mb-2">Target Audience</label>
+                                              text-gray-400 dark:text-gray-500 mb-2">Target Audience</label>
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                 @foreach([
-                                    ['all', 'All Users', 'from-violet-500 to-fuchsia-500', 'M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m4-4a4 4 0 100-8 4 4 0 000 8z'],
-                                    ['customers', 'Customers', 'from-blue-500 to-indigo-500', 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'],
-                                ] as [$val, $label, $grad, $path])
+                                        ['all', 'All Users', 'bg-indigo-600', 'M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m4-4a4 4 0 100-8 4 4 0 000 8z'],
+                                        ['customers', 'Customers', 'bg-blue-600', 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'],
+                                    ] as [$val, $label, $grad, $path])
                                     <label class="relative cursor-pointer group">
-                                        <input type="radio" name="target" value="{{ $val }}" class="peer sr-only"
-                                               {{ $val === 'all' ? 'checked' : '' }}>
+                                        <input type="radio" name="target" value="{{ $val }}" class="peer sr-only" {{ $val === 'all' ? 'checked' : '' }}>
                                         <div class="flex items-center gap-2 p-2.5 rounded-xl
-                                                    border border-gray-100 dark:border-gray-700
-                                                    bg-gray-50 dark:bg-gray-700/50
-                                                    peer-checked:border-violet-300 dark:peer-checked:border-violet-600
-                                                    peer-checked:bg-violet-50 dark:peer-checked:bg-violet-900/20
-                                                    group-hover:border-violet-200 dark:group-hover:border-violet-700
-                                                    transition-all duration-150">
-                                            <div class="w-6 h-6 rounded-lg bg-gradient-to-br {{ $grad }}
-                                                        flex items-center justify-center shrink-0 shadow-sm">
-                                                <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $path }}"/>
+                                                            border border-gray-200 dark:border-gray-700
+                                                            bg-gray-50 dark:bg-gray-700/50
+                                                            peer-checked:border-indigo-300 dark:peer-checked:border-indigo-600
+                                                            peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/20
+                                                            group-hover:border-indigo-200 dark:group-hover:border-indigo-700
+                                                            transition-all duration-150">
+                                            <div class="w-6 h-6 rounded-lg {{ $grad }}
+                                                                flex items-center justify-center shrink-0 shadow-sm">
+                                                <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $path }}" />
                                                 </svg>
                                             </div>
-                                            <span class="text-[10px] font-semibold text-gray-600 dark:text-gray-300 leading-tight">
+                                            <span
+                                                class="text-[10px] font-semibold text-gray-600 dark:text-gray-300 leading-tight">
                                                 {{ $label }}
                                             </span>
                                         </div>
@@ -359,76 +939,68 @@
                         {{-- Title --}}
                         <div class="field-row">
                             <label class="block text-[10px] font-semibold uppercase tracking-widest
-                                          text-gray-400 dark:text-gray-500 mb-2">Title</label>
-                            <input type="text" name="title" id="notifTitle" placeholder="Notification title…"
-                                   class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
-                                          bg-gray-50 dark:bg-gray-700/50
-                                          border border-gray-100 dark:border-gray-700
-                                          text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600
-                                          focus:outline-none transition-all" required>
+                                              text-gray-400 dark:text-gray-500 mb-2">Title</label>
+                            <input type="text" name="title" id="notifTitle" placeholder="Notification title…" class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
+                                              bg-gray-50 dark:bg-gray-700/50
+                                              border border-gray-200 dark:border-gray-700
+                                              text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600
+                                              focus:outline-none transition-all" required>
                         </div>
 
                         {{-- Message --}}
                         <div class="field-row">
                             <label class="block text-[10px] font-semibold uppercase tracking-widest
-                                          text-gray-400 dark:text-gray-500 mb-2">Message</label>
+                                              text-gray-400 dark:text-gray-500 mb-2">Message</label>
                             <textarea name="message" id="notifMessage" rows="3"
-                                      placeholder="Write your notification message…"
-                                      class="vfocus w-full px-3 py-2.5 rounded-xl text-sm resize-none
-                                             bg-gray-50 dark:bg-gray-700/50
-                                             border border-gray-100 dark:border-gray-700
-                                             text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600
-                                             focus:outline-none transition-all" required></textarea>
-                            <p class="mt-1 text-[10px] text-gray-300 dark:text-gray-600 text-right" id="charCount">0 / 200</p>
+                                placeholder="Write your notification message…" class="vfocus w-full px-3 py-2.5 rounded-xl text-sm resize-none
+                                                 bg-gray-50 dark:bg-gray-700/50
+                                                 border border-gray-200 dark:border-gray-700
+                                                 text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600
+                                                 focus:outline-none transition-all" required></textarea>
+                            <p class="mt-1 text-[10px] text-gray-300 dark:text-gray-600 text-right" id="charCount">0 / 200
+                            </p>
                         </div>
-
-                        {{-- Image URL --}}
-                        {{-- <div class="field-row">
-                            <label class="block text-[10px] font-semibold uppercase tracking-widest
-                                          text-gray-400 dark:text-gray-500 mb-2">
-                                Image URL <span class="normal-case font-normal">(optional)</span>
-                            </label>
-                            <input type="url" name="image_url" placeholder="https://…"
-                                   class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
-                                          bg-gray-50 dark:bg-gray-700/50
-                                          border border-gray-100 dark:border-gray-700
-                                          text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600
-                                          focus:outline-none transition-all">
-                        </div> --}}
 
                         {{-- Schedule --}}
                         <div class="field-row">
                             <label class="block text-[10px] font-semibold uppercase tracking-widest
-                                          text-gray-400 dark:text-gray-500 mb-2">Schedule</label>
+                                              text-gray-400 dark:text-gray-500 mb-2">Schedule</label>
                             <div class="flex gap-2">
                                 <label class="relative cursor-pointer flex-1 group">
                                     <input type="radio" name="schedule" value="now" class="peer sr-only" checked>
                                     <div class="flex items-center justify-center gap-1.5 p-2.5 rounded-xl
-                                                border border-gray-100 dark:border-gray-700
-                                                bg-gray-50 dark:bg-gray-700/50
-                                                peer-checked:border-violet-300 dark:peer-checked:border-violet-600
-                                                peer-checked:bg-violet-50 dark:peer-checked:bg-violet-900/20
-                                                group-hover:border-violet-200 dark:group-hover:border-violet-700
-                                                transition-all duration-150">
-                                        <svg class="w-3 h-3 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                                    border border-gray-200 dark:border-gray-700
+                                                    bg-gray-50 dark:bg-gray-700/50
+                                                    peer-checked:border-indigo-300 dark:peer-checked:border-indigo-600
+                                                    peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/20
+                                                    group-hover:border-indigo-200 dark:group-hover:border-indigo-700
+                                                    transition-all duration-150">
+                                        <svg class="w-3 h-3 text-indigo-500" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M13 10V3L4 14h7v7l9-11h-7z" />
                                         </svg>
-                                        <span class="text-[10px] font-semibold text-gray-600 dark:text-gray-300">Send Now</span>
+                                        <span class="text-[10px] font-semibold text-gray-600 dark:text-gray-300">Send
+                                            Now</span>
                                     </div>
                                 </label>
                                 <label class="relative cursor-pointer flex-1 group">
-                                    <input type="radio" name="schedule" value="later" class="peer sr-only" id="scheduleLater">
+                                    <input type="radio" name="schedule" value="later" class="peer sr-only"
+                                        id="scheduleLater">
                                     <div class="flex items-center justify-center gap-1.5 p-2.5 rounded-xl
-                                                border border-gray-100 dark:border-gray-700
-                                                bg-gray-50 dark:bg-gray-700/50
-                                                peer-checked:border-violet-300 dark:peer-checked:border-violet-600
-                                                peer-checked:bg-violet-50 dark:peer-checked:bg-violet-900/20
-                                                group-hover:border-violet-200 dark:group-hover:border-violet-700
-                                                transition-all duration-150">
-                                        <svg class="w-3 h-3 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    border border-gray-200 dark:border-gray-700
+                                                    bg-gray-50 dark:bg-gray-700/50
+                                                    peer-checked:border-indigo-300 dark:peer-checked:border-indigo-600
+                                                    peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/20
+                                                    group-hover:border-indigo-200 dark:group-hover:border-indigo-700
+                                                    transition-all duration-150">
+                                        <svg class="w-3 h-3 text-indigo-500" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
-                                        <span class="text-[10px] font-semibold text-gray-600 dark:text-gray-300">Schedule</span>
+                                        <span
+                                            class="text-[10px] font-semibold text-gray-600 dark:text-gray-300">Schedule</span>
                                     </div>
                                 </label>
                             </div>
@@ -436,13 +1008,17 @@
                                 <div class="dtp" id="composeDtp">
                                     <button type="button" class="dtp-trigger" data-dtp-trigger>
                                         <div class="dtp-trigger-icon">
-                                            <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
                                         </div>
-                                        <span class="dtp-trigger-text placeholder" data-dtp-text>Choose date &amp; time</span>
-                                        <svg class="dtp-chevron" data-dtp-chevron fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                                        <span class="dtp-trigger-text placeholder" data-dtp-text>Choose date &amp;
+                                            time</span>
+                                        <svg class="dtp-chevron" data-dtp-chevron fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                                         </svg>
                                     </button>
                                     <input type="hidden" name="scheduled_at" id="composeScheduledAt" data-dtp-input>
@@ -450,11 +1026,18 @@
                                     <div class="dtp-panel" data-dtp-panel>
                                         <div class="dtp-cal-header">
                                             <button type="button" class="dtp-nav-btn" data-dtp-prev>
-                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M15 19l-7-7 7-7" />
+                                                </svg>
                                             </button>
                                             <span data-dtp-month-label>—</span>
                                             <button type="button" class="dtp-nav-btn" data-dtp-next>
-                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                                </svg>
                                             </button>
                                         </div>
                                         <div class="dtp-weekdays">
@@ -483,19 +1066,19 @@
                         <div class="field-row flex items-center gap-2 pt-1">
                             <button type="submit" id="composeSubmitBtn"
                                 class="send-btn action-btn flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-                                       bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500
-                                       text-white text-sm font-semibold shadow-lg shadow-violet-500/25
-                                       hover:shadow-xl hover:shadow-violet-500/35 hover:-translate-y-0.5 transition-all duration-200">
+                                           bg-indigo-600 hover:bg-indigo-700
+                                           text-white text-sm font-semibold shadow-md shadow-indigo-500/25
+                                           hover:shadow-lg hover:shadow-indigo-500/35 hover:-translate-y-0.5 transition-all duration-200">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                 </svg>
                                 Send Notification
                             </button>
-                            <button type="reset"
-                                class="action-btn px-4 py-2.5 rounded-xl text-sm font-semibold
-                                       bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-700
-                                       text-gray-500 dark:text-gray-400
-                                       hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
+                            <button type="reset" class="action-btn px-4 py-2.5 rounded-xl text-sm font-semibold
+                                           bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700
+                                           text-gray-500 dark:text-gray-400
+                                           hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
                                 Clear
                             </button>
                         </div>
@@ -504,14 +1087,14 @@
 
                 {{-- ── Recently Sent ── --}}
                 <div class="notif-recent relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
-                            border border-gray-100 dark:border-gray-700 shadow-sm p-4">
+                                border border-gray-200 dark:border-gray-700 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-4">
                         <div>
                             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Recently Sent</h3>
                             <p class="text-[10px] text-gray-400 dark:text-gray-500">Last notifications dispatched</p>
                         </div>
                         <button onclick="openHistoryModal()"
-                                class="text-[10px] font-semibold text-violet-600 dark:text-violet-400 hover:underline">
+                            class="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
                             View all →
                         </button>
                     </div>
@@ -520,19 +1103,31 @@
                         @foreach($recentNotifications as $notification)
                             @php
                                 switch ($notification->target) {
-                                    case 'customers': $emoji = '👤'; $grad = 'from-blue-500 to-indigo-500'; break;
-                                    case 'active':    $emoji = '✅'; $grad = 'from-emerald-500 to-teal-500'; break;
-                                    case 'inactive':  $emoji = '⚠️'; $grad = 'from-red-500 to-rose-500'; break;
-                                    default:          $emoji = '📢'; $grad = 'from-violet-500 to-fuchsia-500'; break;
+                                    case 'customers':
+                                        $emoji = '👤';
+                                        $grad = 'bg-blue-600';
+                                        break;
+                                    case 'active':
+                                        $emoji = '✅';
+                                        $grad = 'bg-emerald-600';
+                                        break;
+                                    case 'inactive':
+                                        $emoji = '⚠️';
+                                        $grad = 'bg-red-600';
+                                        break;
+                                    default:
+                                        $emoji = '📢';
+                                        $grad = 'bg-indigo-600';
+                                        break;
                                 }
                             @endphp
                             <div class="recent-row hover-lift flex items-center gap-3 p-2.5 rounded-xl
-                                        bg-gray-50 dark:bg-gray-700/50
-                                        hover:bg-gray-100 dark:hover:bg-gray-700/80
-                                        border border-transparent hover:border-gray-100 dark:hover:border-gray-700
-                                        transition-all duration-150 cursor-default">
-                                <div class="w-9 h-9 rounded-xl bg-gradient-to-br {{ $grad }}
-                                            flex items-center justify-center text-base shrink-0 shadow-sm">
+                                                bg-gray-50 dark:bg-gray-700/50
+                                                hover:bg-gray-100 dark:hover:bg-gray-700/80
+                                                border border-transparent hover:border-gray-200 dark:hover:border-gray-700
+                                                transition-all duration-150 cursor-default">
+                                <div class="w-9 h-9 rounded-xl {{ $grad }}
+                                                    flex items-center justify-center text-base shrink-0 shadow-sm">
                                     {{ $emoji }}
                                 </div>
                                 <div class="flex-1 min-w-0">
@@ -567,14 +1162,18 @@
 
                 {{-- ── Phone Preview ── --}}
                 <div class="notif-preview hover-lift relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
-                            border border-gray-100 dark:border-gray-700 shadow-sm p-4">
-                    <div class="absolute -top-6 -right-6 w-20 h-20 rounded-full pointer-events-none
-                                bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-700/30 dark:to-gray-600/20 opacity-70"></div>
+                                border border-gray-200 dark:border-gray-700 shadow-sm p-4">
+                    <div
+                        class="absolute -top-6 -right-6 w-20 h-20 rounded-full pointer-events-none
+                                    bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700/30 dark:to-gray-600/20 opacity-70">
+                    </div>
                     <div class="relative flex items-center gap-2 mb-4">
-                        <div class="icon-entry w-8 h-8 rounded-xl bg-gradient-to-br from-slate-500 to-gray-600
-                                    flex items-center justify-center shadow-md shadow-slate-500/25">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        <div class="icon-entry w-8 h-8 rounded-xl bg-gray-600
+                                        flex items-center justify-center shadow-md shadow-gray-500/25">
+                            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>
                         </div>
                         <div>
@@ -593,15 +1192,18 @@
                                 </div>
                             </div>
                             <div class="bg-gray-50 dark:bg-gray-700 p-2 min-h-28">
-                                <div class="preview-toast bg-white dark:bg-gray-800 rounded-xl p-2.5 shadow-md border border-gray-100 dark:border-gray-700">
+                                <div
+                                    class="preview-toast bg-white dark:bg-gray-800 rounded-xl p-2.5 shadow-md border border-gray-200 dark:border-gray-700">
                                     <div class="flex items-start gap-2">
-                                        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500
-                                                    flex items-center justify-center shrink-0 text-sm">🔔</div>
+                                        <div class="w-7 h-7 rounded-lg bg-indigo-600
+                                                        flex items-center justify-center shrink-0 text-sm">🔔</div>
                                         <div class="flex-1 min-w-0">
-                                            <p class="text-[9px] font-bold text-gray-900 dark:text-white truncate" id="previewTitle">
+                                            <p class="text-[9px] font-bold text-gray-900 dark:text-white truncate"
+                                                id="previewTitle">
                                                 Notification Title
                                             </p>
-                                            <p class="text-[8px] text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2" id="previewMessage">
+                                            <p class="text-[8px] text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2"
+                                                id="previewMessage">
                                                 Your message will appear here...
                                             </p>
                                         </div>
@@ -609,8 +1211,10 @@
                                     <div class="mt-2 flex items-center justify-between">
                                         <span class="text-[7px] text-gray-300 dark:text-gray-600">now · Your App</span>
                                         <div class="flex gap-1">
-                                            <span class="text-[7px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-400 font-medium">Dismiss</span>
-                                            <span class="text-[7px] px-1.5 py-0.5 rounded bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 font-medium">Open</span>
+                                            <span
+                                                class="text-[7px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-400 font-medium">Dismiss</span>
+                                            <span
+                                                class="text-[7px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 font-medium">Open</span>
                                         </div>
                                     </div>
                                 </div>
@@ -622,22 +1226,23 @@
                 {{-- ── Stat Mini Cards ── --}}
                 <div class="notif-stats grid grid-cols-2 gap-3">
                     @foreach([
-                        [$stats['total'],         'Total',        'from-violet-500 to-fuchsia-500', 'from-violet-600 to-fuchsia-600', 'from-violet-50 to-purple-100',   'from-violet-900/20 to-purple-900/20',  'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'],
-                        [$stats['sent'],           'Sent',         'from-emerald-500 to-teal-500',   'from-emerald-600 to-teal-600',   'from-emerald-50 to-green-100',   'from-emerald-900/20 to-green-900/20',  'M5 13l4 4L19 7'],
-                        [$stats['delivery_rate'].'%','Rate',       'from-blue-500 to-indigo-500',    'from-blue-600 to-indigo-600',    'from-blue-50 to-indigo-100',     'from-blue-900/20 to-indigo-900/20',    'M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'],
-                        [$stats['scheduled'],      'Scheduled',   'from-amber-500 to-orange-500',   'from-amber-600 to-orange-600',   'from-amber-50 to-orange-100',    'from-amber-900/20 to-orange-900/20',   'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-                    ] as [$val, $label, $iconGrad, $textGrad, $blobLight, $blobDark, $path])
+                            [$stats['total'], 'Total', 'bg-indigo-600', 'text-indigo-600 dark:text-indigo-400', 'from-indigo-50 to-indigo-100', 'from-indigo-900/20 to-indigo-900/20', 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'],
+                            [$stats['sent'], 'Sent', 'bg-emerald-600', 'text-emerald-600 dark:text-emerald-400', 'from-emerald-50 to-emerald-100', 'from-emerald-900/20 to-emerald-900/20', 'M5 13l4 4L19 7'],
+                            [$stats['delivery_rate'] . '%', 'Rate', 'bg-blue-600', 'text-blue-600 dark:text-blue-400', 'from-blue-50 to-blue-100', 'from-blue-900/20 to-blue-900/20', 'M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'],
+                            [$stats['scheduled'], 'Scheduled', 'bg-amber-600', 'text-amber-600 dark:text-amber-400', 'from-amber-50 to-amber-100', 'from-amber-900/20 to-amber-900/20', 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
+                        ] as [$val, $label, $iconGrad, $textColor, $blobLight, $blobDark, $path])
                         <div class="stat-mini hover-lift relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
-                                    border border-gray-100 dark:border-gray-700 shadow-sm p-3 flex flex-col gap-1.5">
+                                            border border-gray-200 dark:border-gray-700 shadow-sm p-3 flex flex-col gap-1.5">
                             <div class="absolute -top-4 -right-4 w-14 h-14 rounded-full pointer-events-none
-                                        bg-gradient-to-br {{ $blobLight }} dark:{{ $blobDark }} opacity-60"></div>
-                            <div class="w-7 h-7 rounded-xl bg-gradient-to-br {{ $iconGrad }}
-                                        flex items-center justify-center shadow-md shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $path }}"/>
+                                                bg-gradient-to-br {{ $blobLight }} dark:{{ $blobDark }} opacity-60"></div>
+                            <div class="w-7 h-7 rounded-xl {{ $iconGrad }}
+                                                flex items-center justify-center shadow-md shrink-0">
+                                <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $path }}" />
                                 </svg>
                             </div>
-                            <h2 class="text-xl font-bold bg-gradient-to-r {{ $textGrad }} bg-clip-text text-transparent leading-none">
+                            <h2 class="text-xl font-bold {{ $textColor }} leading-none">
                                 {{ $val }}
                             </h2>
                             <p class="text-[10px] text-gray-400 dark:text-gray-500 leading-tight">{{ $label }}</p>
@@ -647,29 +1252,28 @@
 
                 {{-- ── Delivery Rate ── --}}
                 <div class="notif-delivery hover-lift relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
-                            border border-gray-100 dark:border-gray-700 shadow-sm p-4 flex flex-col gap-3">
+                                border border-gray-200 dark:border-gray-700 shadow-sm p-4 flex flex-col gap-3">
                     <div>
                         <h3 class="text-xs font-semibold text-gray-900 dark:text-white">Delivery Rate</h3>
                         <p class="text-[10px] text-gray-400 dark:text-gray-500">Performance overview</p>
                     </div>
                     @php
-                        $delivery  = $stats['delivery_rate'];
-                        $failed    = $stats['total'] > 0 ? round(($stats['failed']    / $stats['total']) * 100) : 0;
+                        $delivery = $stats['delivery_rate'];
+                        $failed = $stats['total'] > 0 ? round(($stats['failed'] / $stats['total']) * 100) : 0;
                         $scheduled = $stats['total'] > 0 ? round(($stats['scheduled'] / $stats['total']) * 100) : 0;
                     @endphp
                     @foreach([
-                        ['Delivered', $delivery,  'from-emerald-500 to-teal-500',   'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400'],
-                        ['Scheduled', $scheduled, 'from-blue-500 to-indigo-500',    'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'],
-                        ['Failed',    $failed,    'from-red-400 to-rose-500',       'bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400'],
-                    ] as [$label, $pct, $grad, $badge])
+                            ['Delivered', $delivery, 'bg-emerald-500', 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400'],
+                            ['Scheduled', $scheduled, 'bg-blue-500', 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'],
+                            ['Failed', $failed, 'bg-red-500', 'bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400'],
+                        ] as [$label, $pct, $barColor, $badge])
                         <div class="delivery-row flex flex-col gap-1.5">
                             <div class="flex items-center justify-between">
                                 <span class="text-[11px] font-medium text-gray-500 dark:text-gray-400">{{ $label }}</span>
                                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full {{ $badge }}">{{ $pct }}%</span>
                             </div>
                             <div class="h-1.5 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                                <div class="bar-anim h-full rounded-full bg-gradient-to-r {{ $grad }}"
-                                     style="width: {{ $pct }}%"></div>
+                                <div class="bar-anim h-full rounded-full {{ $barColor }}" style="width: {{ $pct }}%"></div>
                             </div>
                         </div>
                     @endforeach
@@ -680,21 +1284,23 @@
 
 
     {{-- ══════════════════════════════════════════
-         HISTORY MODAL
+    HISTORY MODAL
     ══════════════════════════════════════════ --}}
-    <div id="historyModal"
-         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div id="historyModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
 
         <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-                    w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+                        w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
 
             {{-- Header --}}
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex-shrink-0">
+            <div
+                class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex-shrink-0">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500
-                                flex items-center justify-center shadow-md shadow-violet-500/25">
-                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    <div class="w-8 h-8 rounded-xl bg-indigo-600
+                                    flex items-center justify-center shadow-md shadow-indigo-500/25">
+                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
                     </div>
                     <div>
@@ -702,12 +1308,11 @@
                         <p class="text-xs text-gray-400 dark:text-gray-500">All sent, scheduled and failed notifications</p>
                     </div>
                 </div>
-                <button onclick="closeHistoryModal()"
-                        class="w-8 h-8 flex items-center justify-center rounded-full
-                               bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600
-                               text-gray-500 dark:text-gray-300 transition-colors">
+                <button onclick="closeHistoryModal()" class="w-8 h-8 flex items-center justify-center rounded-full
+                                   bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600
+                                   text-gray-500 dark:text-gray-300 transition-colors">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -716,16 +1321,16 @@
             <div class="px-6 py-3 border-b border-gray-100 dark:border-gray-700 flex-shrink-0">
                 <div class="relative">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none"
-                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
                     </svg>
-                    <input type="text" id="historySearch" placeholder="Search by title or message…"
-                           class="w-full pl-9 pr-4 py-2 rounded-xl text-sm
-                                  bg-gray-50 dark:bg-gray-700/50
-                                  border border-gray-100 dark:border-gray-700
-                                  text-gray-700 dark:text-gray-200
-                                  placeholder-gray-400 dark:placeholder-gray-500
-                                  focus:outline-none focus:ring-2 focus:ring-violet-400 transition">
+                    <input type="text" id="historySearch" placeholder="Search by title or message…" class="w-full pl-9 pr-4 py-2 rounded-xl text-sm
+                                      bg-gray-50 dark:bg-gray-700/50
+                                      border border-gray-200 dark:border-gray-700
+                                      text-gray-700 dark:text-gray-200
+                                      placeholder-gray-400 dark:placeholder-gray-500
+                                      focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
                 </div>
             </div>
 
@@ -733,7 +1338,8 @@
             <div class="flex-1 overflow-y-auto">
                 <table class="min-w-full text-sm">
                     <thead class="bg-gray-50 dark:bg-gray-700/40 sticky top-0 z-10">
-                        <tr class="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                        <tr
+                            class="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
                             <th class="px-6 py-3">Notification</th>
                             <th class="px-6 py-3">Target</th>
                             <th class="px-6 py-3">Status</th>
@@ -744,135 +1350,149 @@
                     </thead>
                     <tbody id="historyTableBody" class="divide-y divide-gray-100 dark:divide-gray-700">
                         @foreach($notifications as $notification)
-                            @php
-                                $badge = match($notification->status) {
-                                    'sent'      => 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
-                                    'scheduled' => 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400',
-                                    'failed'    => 'bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400',
-                                    default     => 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300',
-                                };
-                                switch ($notification->target) {
-                                    case 'customers': $tGrad = 'from-blue-500 to-indigo-500'; $tEmoji = '👤'; break;
-                                    default:          $tGrad = 'from-violet-500 to-fuchsia-500'; $tEmoji = '📢'; break;
-                                }
-                            @endphp
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors duration-150"
-                                data-title="{{ strtolower($notification->title) }}"
-                                data-message="{{ strtolower($notification->message) }}">
+                                        @php
+                                            $badge = match ($notification->status) {
+                                                'sent' => 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
+                                                'scheduled' => 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400',
+                                                'failed' => 'bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400',
+                                                default => 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300',
+                                            };
+                                            switch ($notification->target) {
+                                                case 'customers':
+                                                    $tGrad = 'bg-blue-600';
+                                                    $tEmoji = '👤';
+                                                    break;
+                                                default:
+                                                    $tGrad = 'bg-indigo-600';
+                                                    $tEmoji = '📢';
+                                                    break;
+                                            }
+                                        @endphp
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors duration-150"
+                                            data-title="{{ strtolower($notification->title) }}"
+                                            data-message="{{ strtolower($notification->message) }}">
 
-                                {{-- Notification --}}
-                                <td class="px-6 py-3.5">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br {{ $tGrad }}
-                                                    flex items-center justify-center text-base shrink-0 shadow-sm">
-                                            {{ $tEmoji }}
-                                        </div>
-                                        <div class="min-w-0">
-                                            <p class="text-xs font-semibold text-gray-900 dark:text-white truncate max-w-[180px]">
-                                                {{ $notification->title }}
-                                            </p>
-                                            <p class="text-[10px] text-gray-400 dark:text-gray-500 truncate max-w-[180px]">
-                                                {{ Str::limit($notification->message, 55) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </td>
+                                            {{-- Notification --}}
+                                            <td class="px-6 py-3.5">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-9 h-9 rounded-xl {{ $tGrad }}
+                                                                        flex items-center justify-center text-base shrink-0 shadow-sm">
+                                                        {{ $tEmoji }}
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <p
+                                                            class="text-xs font-semibold text-gray-900 dark:text-white truncate max-w-[180px]">
+                                                            {{ $notification->title }}
+                                                        </p>
+                                                        <p class="text-[10px] text-gray-400 dark:text-gray-500 truncate max-w-[180px]">
+                                                            {{ Str::limit($notification->message, 55) }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </td>
 
-                                {{-- Target --}}
-                                <td class="px-6 py-3.5">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold
-                                                 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-                                        {{ ucfirst($notification->target) }}
-                                    </span>
-                                </td>
+                                            {{-- Target --}}
+                                            <td class="px-6 py-3.5">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold
+                                                                     bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                                                    {{ ucfirst($notification->target) }}
+                                                </span>
+                                            </td>
 
-                                {{-- Status --}}
-                                <td class="px-6 py-3.5">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold {{ $badge }}">
-                                        {{ ucfirst($notification->status) }}
-                                    </span>
-                                </td>
+                                            {{-- Status --}}
+                                            <td class="px-6 py-3.5">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold {{ $badge }}">
+                                                    {{ ucfirst($notification->status) }}
+                                                </span>
+                                            </td>
 
-                                {{-- Scheduled --}}
-                                <td class="px-6 py-3.5 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                                    {{ $notification->scheduled_at
-                                        ? \Carbon\Carbon::parse($notification->scheduled_at)->format('d M Y H:i')
-                                        : '—' }}
-                                </td>
+                                            {{-- Scheduled --}}
+                                            <td class="px-6 py-3.5 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                                                {{ $notification->scheduled_at
+                            ? \Carbon\Carbon::parse($notification->scheduled_at)->format('d M Y H:i')
+                            : '—' }}
+                                            </td>
 
-                                {{-- Sent --}}
-                                <td class="px-6 py-3.5 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                                    {{ $notification->created_at->diffForHumans() }}
-                                </td>
+                                            {{-- Sent --}}
+                                            <td class="px-6 py-3.5 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                                                {{ $notification->created_at->diffForHumans() }}
+                                            </td>
 
-                                {{-- Actions --}}
-                                <td class="px-6 py-3.5">
-                                    <div class="flex items-center justify-end gap-1.5">
+                                            {{-- Actions --}}
+                                            <td class="px-6 py-3.5">
+                                                <div class="flex items-center justify-end gap-1.5">
 
-                                        {{-- View --}}
-                                        <button type="button"
-                                                onclick='openDetailModal(@json($notification))'
-                                                class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
-                                                       border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
-                                                       text-gray-600 dark:text-gray-300
-                                                       hover:bg-indigo-50 dark:hover:bg-indigo-500/10
-                                                       hover:text-indigo-600 dark:hover:text-indigo-400
-                                                       hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all">
-                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12Z"/>
-                                                <circle cx="12" cy="12" r="3"/>
-                                            </svg>
-                                            View
-                                        </button>
+                                                    {{-- View --}}
+                                                    <button type="button" onclick='openDetailModal(@json($notification))'
+                                                        class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
+                                                                           border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                                                                           text-gray-600 dark:text-gray-300
+                                                                           hover:bg-indigo-50 dark:hover:bg-indigo-500/10
+                                                                           hover:text-indigo-600 dark:hover:text-indigo-400
+                                                                           hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-all">
+                                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                            stroke-width="1.8">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12Z" />
+                                                            <circle cx="12" cy="12" r="3" />
+                                                        </svg>
+                                                        View
+                                                    </button>
 
-                                        {{-- Edit (scheduled only) --}}
-                                        @if($notification->status === 'scheduled')
-                                            <button type="button"
-                                                    onclick='openEditModal(@json($notification))'
-                                                    class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
-                                                           border border-amber-200 dark:border-amber-500/30
-                                                           bg-amber-50 dark:bg-amber-500/10
-                                                           text-amber-600 dark:text-amber-400
-                                                           hover:bg-amber-100 dark:hover:bg-amber-500/20 transition-all">
-                                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                                </svg>
-                                                Edit
-                                            </button>
-                                        @endif
+                                                    {{-- Edit (scheduled only) --}}
+                                                    @if($notification->status === 'scheduled')
+                                                        <button type="button" onclick='openEditModal(@json($notification))'
+                                                            class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
+                                                                                   border border-amber-200 dark:border-amber-500/30
+                                                                                   bg-amber-50 dark:bg-amber-500/10
+                                                                                   text-amber-600 dark:text-amber-400
+                                                                                   hover:bg-amber-100 dark:hover:bg-amber-500/20 transition-all">
+                                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                                stroke-width="1.8">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                            </svg>
+                                                            Edit
+                                                        </button>
+                                                    @endif
 
-                                        {{-- Resend (sent/failed) --}}
-                                        @if(in_array($notification->status, ['sent','failed']))
-                                            <button type="button"
-                                                    onclick="resendNotification({{ $notification->id }})"
-                                                    class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
-                                                           border border-violet-200 dark:border-violet-500/30
-                                                           bg-violet-50 dark:bg-violet-500/10
-                                                           text-violet-600 dark:text-violet-400
-                                                           hover:bg-violet-100 dark:hover:bg-violet-500/20 transition-all">
-                                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                                </svg>
-                                                Resend
-                                            </button>
-                                        @endif
+                                                    {{-- Resend (sent/failed) --}}
+                                                    @if(in_array($notification->status, ['sent', 'failed']))
+                                                        <button type="button" onclick="resendNotification({{ $notification->id }})"
+                                                            class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
+                                                                                   border border-indigo-200 dark:border-indigo-500/30
+                                                                                   bg-indigo-50 dark:bg-indigo-500/10
+                                                                                   text-indigo-600 dark:text-indigo-400
+                                                                                   hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all">
+                                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                                stroke-width="1.8">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                                            </svg>
+                                                            Resend
+                                                        </button>
+                                                    @endif
 
-                                        {{-- Delete --}}
-                                        <button type="button"
-                                                onclick="openDeleteModal({{ $notification->id }}, '{{ addslashes($notification->title) }}')"
-                                                class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
-                                                       border border-red-200 dark:border-red-500/30
-                                                       bg-red-50 dark:bg-red-500/10
-                                                       text-red-600 dark:text-red-400
-                                                       hover:bg-red-100 dark:hover:bg-red-500/20 transition-all">
-                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                            Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                                                    {{-- Delete --}}
+                                                    <button type="button"
+                                                        onclick="openDeleteModal({{ $notification->id }}, '{{ addslashes($notification->title) }}')"
+                                                        class="action-btn inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg
+                                                                           border border-red-200 dark:border-red-500/30
+                                                                           bg-red-50 dark:bg-red-500/10
+                                                                           text-red-600 dark:text-red-400
+                                                                           hover:bg-red-100 dark:hover:bg-red-500/20 transition-all">
+                                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                            stroke-width="1.8">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -880,7 +1500,7 @@
 
             {{-- Footer --}}
             <div class="px-6 py-3.5 border-t border-gray-100 dark:border-gray-700 flex-shrink-0
-                        bg-gray-50/50 dark:bg-gray-800/30 flex items-center justify-between">
+                            bg-gray-50/50 dark:bg-gray-800/30 flex items-center justify-between">
                 <p class="text-xs text-gray-400 dark:text-gray-500">
                     {{ $notifications->count() }} {{ Str::plural('notification', $notifications->count()) }}
                 </p>
@@ -890,24 +1510,24 @@
 
 
     {{-- ══════════════════════════════════════════
-         DETAIL MODAL
+    DETAIL MODAL
     ══════════════════════════════════════════ --}}
-    <div id="detailModal"
-         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[60] p-4">
+    <div id="detailModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[60] p-4">
         <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-                    w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+                        w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
 
-            {{-- Gradient header --}}
-            <div class="bg-gradient-to-br from-violet-600 to-fuchsia-600 px-6 pt-6 pb-10 relative">
+            {{-- Header --}}
+            <div class="bg-indigo-600 px-6 pt-6 pb-10 relative">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-[11px] font-medium tracking-widest text-violet-200 uppercase mb-1" id="detailTarget">—</p>
+                        <p class="text-[11px] font-medium tracking-widest text-indigo-200 uppercase mb-1" id="detailTarget">
+                            —</p>
                         <h3 class="text-xl font-semibold text-white leading-snug" id="detailTitle">—</h3>
                     </div>
                     <button onclick="closeDetailModal()"
-                            class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0">
+                        class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition flex-shrink-0">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path d="M18 6 6 18M6 6l12 12"/>
+                            <path d="M18 6 6 18M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
@@ -915,39 +1535,42 @@
 
             {{-- Status dot --}}
             <div class="flex justify-center -mt-5 mb-1 relative z-10">
-                <span id="detailStatusBadge"
-                      class="px-4 py-1.5 rounded-full text-xs font-semibold shadow-md"></span>
+                <span id="detailStatusBadge" class="px-4 py-1.5 rounded-full text-xs font-semibold shadow-md"></span>
             </div>
 
             {{-- Content --}}
             <div class="px-6 pb-6 pt-4 space-y-4">
-                <div class="bg-gray-50 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-700 rounded-xl p-4">
-                    <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5">Message</p>
+                <div class="bg-gray-50 dark:bg-gray-700/40 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+                    <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5">
+                        Message</p>
                     <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed" id="detailMessage">—</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-gray-50 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-700 rounded-xl p-3">
-                        <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Scheduled</p>
+                    <div class="bg-gray-50 dark:bg-gray-700/40 border border-gray-200 dark:border-gray-700 rounded-xl p-3">
+                        <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">
+                            Scheduled</p>
                         <p class="text-xs font-medium text-gray-900 dark:text-white" id="detailScheduled">—</p>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-700 rounded-xl p-3">
-                        <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Created</p>
+                    <div class="bg-gray-50 dark:bg-gray-700/40 border border-gray-200 dark:border-gray-700 rounded-xl p-3">
+                        <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">
+                            Created</p>
                         <p class="text-xs font-medium text-gray-900 dark:text-white" id="detailCreated">—</p>
                     </div>
                 </div>
 
-                <div id="detailImageWrap" class="hidden bg-gray-50 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-700 rounded-xl p-3">
-                    <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">Image</p>
+                <div id="detailImageWrap"
+                    class="hidden bg-gray-50 dark:bg-gray-700/40 border border-gray-200 dark:border-gray-700 rounded-xl p-3">
+                    <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
+                        Image</p>
                     <img id="detailImage" src="" alt="Notification image"
-                         class="w-full h-28 object-cover rounded-lg border border-gray-100 dark:border-gray-700">
+                        class="w-full h-28 object-cover rounded-lg border border-gray-200 dark:border-gray-700">
                 </div>
 
-                <button onclick="closeDetailModal()"
-                        class="w-full py-2 text-sm font-medium rounded-xl
-                               border border-gray-200 dark:border-gray-600
-                               text-gray-500 dark:text-gray-400
-                               hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                <button onclick="closeDetailModal()" class="w-full py-2 text-sm font-medium rounded-xl
+                                   border border-gray-200 dark:border-gray-600
+                                   text-gray-500 dark:text-gray-400
+                                   hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                     Close
                 </button>
             </div>
@@ -956,32 +1579,33 @@
 
 
     {{-- ══════════════════════════════════════════
-         EDIT MODAL (scheduled only)
+    EDIT MODAL (scheduled only)
     ══════════════════════════════════════════ --}}
-    <div id="editModal"
-         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[60] p-4">
+    <div id="editModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[60] p-4">
         <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-                    w-full max-w-md rounded-2xl shadow-2xl">
+                        w-full max-w-md rounded-2xl shadow-2xl">
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500
-                                flex items-center justify-center shadow-md shadow-amber-500/25">
-                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    <div class="w-8 h-8 rounded-xl bg-amber-500
+                                    flex items-center justify-center shadow-md shadow-amber-500/25">
+                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                     </div>
                     <div>
                         <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Edit Notification</h3>
-                        <p class="text-[10px] text-gray-400 dark:text-gray-500">Only scheduled notifications can be edited</p>
+                        <p class="text-[10px] text-gray-400 dark:text-gray-500">Only scheduled notifications can be edited
+                        </p>
                     </div>
                 </div>
-                <button onclick="closeEditModal()"
-                        class="w-8 h-8 flex items-center justify-center rounded-full
-                               bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600
-                               text-gray-500 dark:text-gray-300 transition-colors">
+                <button onclick="closeEditModal()" class="w-8 h-8 flex items-center justify-center rounded-full
+                                   bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600
+                                   text-gray-500 dark:text-gray-300 transition-colors">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6 6 18M6 6l12 12"/>
+                        <path d="M18 6 6 18M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -992,29 +1616,30 @@
 
                 {{-- Title --}}
                 <div>
-                    <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Title</label>
-                    <input type="text" id="editTitle"
-                           class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
-                                  bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-700
-                                  text-gray-800 dark:text-gray-200 focus:outline-none transition-all" required>
+                    <label
+                        class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Title</label>
+                    <input type="text" id="editTitle" class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
+                                      bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700
+                                      text-gray-800 dark:text-gray-200 focus:outline-none transition-all" required>
                 </div>
 
                 {{-- Message --}}
                 <div>
-                    <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Message</label>
-                    <textarea id="editMessage" rows="3"
-                              class="vfocus w-full px-3 py-2.5 rounded-xl text-sm resize-none
-                                     bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-700
-                                     text-gray-800 dark:text-gray-200 focus:outline-none transition-all" required></textarea>
+                    <label
+                        class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Message</label>
+                    <textarea id="editMessage" rows="3" class="vfocus w-full px-3 py-2.5 rounded-xl text-sm resize-none
+                                         bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700
+                                         text-gray-800 dark:text-gray-200 focus:outline-none transition-all"
+                        required></textarea>
                 </div>
 
                 {{-- Target --}}
                 <div>
-                    <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Target</label>
-                    <select id="editTarget"
-                            class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
-                                   bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-700
-                                   text-gray-800 dark:text-gray-200 focus:outline-none transition-all">
+                    <label
+                        class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Target</label>
+                    <select id="editTarget" class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
+                                       bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700
+                                       text-gray-800 dark:text-gray-200 focus:outline-none transition-all">
                         <option value="all">All Users</option>
                         <option value="customers">Customers</option>
                     </select>
@@ -1022,29 +1647,34 @@
 
                 {{-- Image URL --}}
                 <div>
-                    <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                    <label
+                        class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
                         Image URL <span class="normal-case font-normal">(optional)</span>
                     </label>
-                    <input type="url" id="editImageUrl"
-                           class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
-                                  bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-700
-                                  text-gray-800 dark:text-gray-200 focus:outline-none transition-all"
-                           placeholder="https://…">
+                    <input type="url" id="editImageUrl" class="vfocus w-full px-3 py-2.5 rounded-xl text-sm
+                                      bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700
+                                      text-gray-800 dark:text-gray-200 focus:outline-none transition-all"
+                        placeholder="https://…">
                 </div>
 
                 {{-- Scheduled At --}}
                 <div>
-                    <label class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Scheduled At</label>
+                    <label
+                        class="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">Scheduled
+                        At</label>
                     <div class="dtp" id="editDtp">
                         <button type="button" class="dtp-trigger" data-dtp-trigger>
                             <div class="dtp-trigger-icon">
-                                <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </div>
                             <span class="dtp-trigger-text placeholder" data-dtp-text>Choose date &amp; time</span>
-                            <svg class="dtp-chevron" data-dtp-chevron fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                            <svg class="dtp-chevron" data-dtp-chevron fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
                         <input type="hidden" id="editScheduledAt" data-dtp-input required>
@@ -1052,11 +1682,17 @@
                         <div class="dtp-panel" data-dtp-panel>
                             <div class="dtp-cal-header">
                                 <button type="button" class="dtp-nav-btn" data-dtp-prev>
-                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                    </svg>
                                 </button>
                                 <span data-dtp-month-label>—</span>
                                 <button type="button" class="dtp-nav-btn" data-dtp-next>
-                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
                                 </button>
                             </div>
                             <div class="dtp-weekdays">
@@ -1082,20 +1718,18 @@
 
                 {{-- Buttons --}}
                 <div class="flex gap-2 pt-1">
-                    <button type="button" onclick="submitEdit()"
-                            class="action-btn flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-                                   bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold
-                                   shadow-md shadow-amber-500/25 hover:-translate-y-0.5 transition-all">
+                    <button type="button" onclick="submitEdit()" class="action-btn flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+                                       bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold
+                                       shadow-md shadow-amber-500/25 hover:-translate-y-0.5 transition-all">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                         Save Changes
                     </button>
-                    <button type="button" onclick="closeEditModal()"
-                            class="action-btn px-4 py-2.5 rounded-xl text-sm font-medium
-                                   border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
-                                   text-gray-500 dark:text-gray-400
-                                   hover:bg-gray-50 dark:hover:bg-gray-600 transition-all">
+                    <button type="button" onclick="closeEditModal()" class="action-btn px-4 py-2.5 rounded-xl text-sm font-medium
+                                       border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                                       text-gray-500 dark:text-gray-400
+                                       hover:bg-gray-50 dark:hover:bg-gray-600 transition-all">
                         Cancel
                     </button>
                 </div>
@@ -1105,17 +1739,19 @@
 
 
     {{-- ══════════════════════════════════════════
-         DELETE CONFIRM MODAL
+    DELETE CONFIRM MODAL
     ══════════════════════════════════════════ --}}
-    <div id="deleteModal"
-         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[60] p-4">
+    <div id="deleteModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[60] p-4">
         <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-                    w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden">
+                        w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden">
 
             <div class="p-6 text-center">
-                <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                <div
+                    class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                 </div>
                 <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">Delete Notification</h3>
@@ -1125,17 +1761,15 @@
                 <p class="text-sm font-semibold text-gray-900 dark:text-white mb-5" id="deleteTitle">"—"</p>
 
                 <div class="flex gap-2">
-                    <button type="button" onclick="submitDelete()"
-                            class="action-btn flex-1 py-2.5 rounded-xl text-sm font-semibold
-                                   bg-gradient-to-r from-red-500 to-rose-600 text-white
-                                   shadow-md shadow-red-500/25 hover:-translate-y-0.5 transition-all">
+                    <button type="button" onclick="submitDelete()" class="action-btn flex-1 py-2.5 rounded-xl text-sm font-semibold
+                                       bg-red-600 hover:bg-red-700 text-white
+                                       shadow-md shadow-red-500/25 hover:-translate-y-0.5 transition-all">
                         Yes, Delete
                     </button>
-                    <button type="button" onclick="closeDeleteModal()"
-                            class="action-btn flex-1 py-2.5 rounded-xl text-sm font-medium
-                                   border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
-                                   text-gray-500 dark:text-gray-400
-                                   hover:bg-gray-50 dark:hover:bg-gray-600 transition-all">
+                    <button type="button" onclick="closeDeleteModal()" class="action-btn flex-1 py-2.5 rounded-xl text-sm font-medium
+                                       border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                                       text-gray-500 dark:text-gray-400
+                                       hover:bg-gray-50 dark:hover:bg-gray-600 transition-all">
                         Cancel
                     </button>
                 </div>
@@ -1145,536 +1779,536 @@
 
 
     <script>
-    /* ════════════════════════════════════════════════════════════════
-       NOTIFICATION PAGE — JS
-       (single source of truth — no duplicate/dead code below)
-    ════════════════════════════════════════════════════════════════ */
-    const CSRF = '{{ csrf_token() }}';
+        /* ════════════════════════════════════════════════════════════════
+           NOTIFICATION PAGE — JS
+           (single source of truth — no duplicate/dead code below)
+        ════════════════════════════════════════════════════════════════ */
+        const CSRF = '{{ csrf_token() }}';
 
-    /* ── Toast ──────────────────────────────────────────────────── */
-    const colors = { success:'#10b981', error:'#ef4444', info:'#8b5cf6', warning:'#f59e0b' };
-    function showToast(msg, type = 'success') {
-        const t = document.createElement('div');
-        t.className = 'toast';
-        t.innerHTML = `<span class="toast-dot" style="background:${colors[type]||colors.info}"></span><span>${msg}</span>`;
-        document.getElementById('toastContainer').appendChild(t);
-        setTimeout(() => {
-            t.classList.add('leaving');
-            t.addEventListener('animationend', () => t.remove(), { once: true });
-        }, 3500);
-    }
-
-    /* ── Premium Date-Time Picker ──────────────────────────────────
-       Custom calendar + time dropdown that replaces the native
-       <input type="datetime-local">. Writes an ISO-like
-       "YYYY-MM-DDTHH:mm" string into a hidden input so all existing
-       backend / read code keeps working unchanged.
-    ──────────────────────────────────────────────────────────────── */
-    class DateTimePicker {
-        constructor(rootId, opts = {}) {
-            this.root   = document.getElementById(rootId);
-            if (!this.root) return;
-            this.trigger    = this.root.querySelector('[data-dtp-trigger]');
-            this.text       = this.root.querySelector('[data-dtp-text]');
-            this.chevron    = this.root.querySelector('[data-dtp-chevron]');
-            this.input      = this.root.querySelector('[data-dtp-input]');
-            this.panel      = this.root.querySelector('[data-dtp-panel]');
-            this.daysEl     = this.root.querySelector('[data-dtp-days]');
-            this.monthLabel = this.root.querySelector('[data-dtp-month-label]');
-            this.hourSel    = this.root.querySelector('[data-dtp-hour]');
-            this.minSel     = this.root.querySelector('[data-dtp-minute]');
-            this.ampmWrap   = this.root.querySelector('[data-dtp-ampm]');
-            this.ampmBtns   = this.root.querySelectorAll('[data-dtp-ampm] button');
-            this.prevBtn    = this.root.querySelector('[data-dtp-prev]');
-            this.nextBtn    = this.root.querySelector('[data-dtp-next]');
-            this.applyBtn   = this.root.querySelector('[data-dtp-apply]');
-            this.clearBtn   = this.root.querySelector('[data-dtp-clear]');
-
-            this.minDate  = opts.minDate || new Date();
-            this.onChange = opts.onChange || (() => {});
-
-            const seed = new Date(this.minDate.getTime() + 30 * 60000);
-            this.viewDate     = new Date(seed.getFullYear(), seed.getMonth(), 1);
-            this.selected     = null;
-            this.pendingHour   = seed.getHours() % 12 || 12;
-            this.pendingMinute = Math.round(seed.getMinutes() / 5) * 5 % 60;
-            this.pendingAmpm   = seed.getHours() >= 12 ? 'PM' : 'AM';
-
-            this._buildTimeOptions();
-            this._bindEvents();
-            this._renderCalendar();
-            this._syncAmpmUI();
+        /* ── Toast ──────────────────────────────────────────────────── */
+        const colors = { success: '#10b981', error: '#ef4444', info: '#4f46e5', warning: '#f59e0b' };
+        function showToast(msg, type = 'success') {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.innerHTML = `<span class="toast-dot" style="background:${colors[type] || colors.info}"></span><span>${msg}</span>`;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(() => {
+                t.classList.add('leaving');
+                t.addEventListener('animationend', () => t.remove(), { once: true });
+            }, 3500);
         }
 
-        _buildTimeOptions() {
-            this.hourSel.innerHTML = Array.from({ length: 12 }, (_, i) => i + 1)
-                .map(h => `<option value="${h}">${String(h).padStart(2, '0')}</option>`).join('');
-            this.minSel.innerHTML = Array.from({ length: 12 }, (_, i) => i * 5)
-                .map(m => `<option value="${m}">${String(m).padStart(2, '0')}</option>`).join('');
-            this.hourSel.value = this.pendingHour;
-            this.minSel.value  = this.pendingMinute;
-        }
+        /* ── Premium Date-Time Picker ──────────────────────────────────
+           Custom calendar + time dropdown that replaces the native
+           <input type="datetime-local">. Writes an ISO-like
+           "YYYY-MM-DDTHH:mm" string into a hidden input so all existing
+           backend / read code keeps working unchanged.
+        ──────────────────────────────────────────────────────────────── */
+        class DateTimePicker {
+            constructor(rootId, opts = {}) {
+                this.root = document.getElementById(rootId);
+                if (!this.root) return;
+                this.trigger = this.root.querySelector('[data-dtp-trigger]');
+                this.text = this.root.querySelector('[data-dtp-text]');
+                this.chevron = this.root.querySelector('[data-dtp-chevron]');
+                this.input = this.root.querySelector('[data-dtp-input]');
+                this.panel = this.root.querySelector('[data-dtp-panel]');
+                this.daysEl = this.root.querySelector('[data-dtp-days]');
+                this.monthLabel = this.root.querySelector('[data-dtp-month-label]');
+                this.hourSel = this.root.querySelector('[data-dtp-hour]');
+                this.minSel = this.root.querySelector('[data-dtp-minute]');
+                this.ampmWrap = this.root.querySelector('[data-dtp-ampm]');
+                this.ampmBtns = this.root.querySelectorAll('[data-dtp-ampm] button');
+                this.prevBtn = this.root.querySelector('[data-dtp-prev]');
+                this.nextBtn = this.root.querySelector('[data-dtp-next]');
+                this.applyBtn = this.root.querySelector('[data-dtp-apply]');
+                this.clearBtn = this.root.querySelector('[data-dtp-clear]');
 
-        _bindEvents() {
-            this.trigger.addEventListener('click', (e) => { e.stopPropagation(); this.toggle(); });
-            this.prevBtn.addEventListener('click', () => { this.viewDate.setMonth(this.viewDate.getMonth() - 1); this._renderCalendar(); });
-            this.nextBtn.addEventListener('click', () => { this.viewDate.setMonth(this.viewDate.getMonth() + 1); this._renderCalendar(); });
-            this.applyBtn.addEventListener('click', () => this._apply());
-            this.clearBtn.addEventListener('click', () => this._clear());
-            this.ampmBtns.forEach(btn => btn.addEventListener('click', () => {
-                this.pendingAmpm = btn.dataset.val;
+                this.minDate = opts.minDate || new Date();
+                this.onChange = opts.onChange || (() => { });
+
+                const seed = new Date(this.minDate.getTime() + 30 * 60000);
+                this.viewDate = new Date(seed.getFullYear(), seed.getMonth(), 1);
+                this.selected = null;
+                this.pendingHour = seed.getHours() % 12 || 12;
+                this.pendingMinute = Math.round(seed.getMinutes() / 5) * 5 % 60;
+                this.pendingAmpm = seed.getHours() >= 12 ? 'PM' : 'AM';
+
+                this._buildTimeOptions();
+                this._bindEvents();
+                this._renderCalendar();
                 this._syncAmpmUI();
-            }));
-            this.panel.addEventListener('click', (e) => e.stopPropagation());
-            document.addEventListener('click', (e) => {
-                if (!this.root.contains(e.target)) this.close();
-            });
-        }
-
-        _syncAmpmUI() {
-            this.ampmBtns.forEach(b => b.classList.toggle('active', b.dataset.val === this.pendingAmpm));
-        }
-
-        toggle() { this.panel.classList.contains('open') ? this.close() : this.open(); }
-        open()  { this.panel.classList.add('open');  this.chevron.classList.add('rotate-180');  this.trigger.classList.add('dtp-active'); this._renderCalendar(); }
-        close() { this.panel.classList.remove('open'); this.chevron.classList.remove('rotate-180'); this.trigger.classList.remove('dtp-active'); }
-
-        _isSameDay(a, b) {
-            return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-        }
-
-        _renderCalendar() {
-            const y = this.viewDate.getFullYear(), m = this.viewDate.getMonth();
-            this.monthLabel.textContent = this.viewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-
-            const firstDay     = new Date(y, m, 1).getDay();
-            const daysInMonth  = new Date(y, m + 1, 0).getDate();
-            const today  = new Date(); today.setHours(0, 0, 0, 0);
-            const minDay = new Date(this.minDate); minDay.setHours(0, 0, 0, 0);
-
-            let html = '';
-            for (let i = 0; i < firstDay; i++) html += `<span class="dtp-day empty"></span>`;
-            for (let d = 1; d <= daysInMonth; d++) {
-                const date     = new Date(y, m, d);
-                const disabled = date < minDay;
-                const isToday    = this._isSameDay(date, today);
-                const isSelected = this.selected && this._isSameDay(date, this.selected);
-                html += `<button type="button" class="dtp-day ${disabled ? 'disabled' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" ${disabled ? 'disabled' : ''} data-date="${y}-${m}-${d}">${d}</button>`;
             }
-            this.daysEl.innerHTML = html;
-            this.daysEl.querySelectorAll('.dtp-day:not(.empty):not(.disabled)').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const [yy, mm, dd] = btn.dataset.date.split('-').map(Number);
-                    this.selected = new Date(yy, mm, dd);
-                    this._renderCalendar();
+
+            _buildTimeOptions() {
+                this.hourSel.innerHTML = Array.from({ length: 12 }, (_, i) => i + 1)
+                    .map(h => `<option value="${h}">${String(h).padStart(2, '0')}</option>`).join('');
+                this.minSel.innerHTML = Array.from({ length: 12 }, (_, i) => i * 5)
+                    .map(m => `<option value="${m}">${String(m).padStart(2, '0')}</option>`).join('');
+                this.hourSel.value = this.pendingHour;
+                this.minSel.value = this.pendingMinute;
+            }
+
+            _bindEvents() {
+                this.trigger.addEventListener('click', (e) => { e.stopPropagation(); this.toggle(); });
+                this.prevBtn.addEventListener('click', () => { this.viewDate.setMonth(this.viewDate.getMonth() - 1); this._renderCalendar(); });
+                this.nextBtn.addEventListener('click', () => { this.viewDate.setMonth(this.viewDate.getMonth() + 1); this._renderCalendar(); });
+                this.applyBtn.addEventListener('click', () => this._apply());
+                this.clearBtn.addEventListener('click', () => this._clear());
+                this.ampmBtns.forEach(btn => btn.addEventListener('click', () => {
+                    this.pendingAmpm = btn.dataset.val;
+                    this._syncAmpmUI();
+                }));
+                this.panel.addEventListener('click', (e) => e.stopPropagation());
+                document.addEventListener('click', (e) => {
+                    if (!this.root.contains(e.target)) this.close();
                 });
-            });
-        }
-
-        _apply() {
-            if (!this.selected) this.selected = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), Math.max(1, new Date().getDate()));
-            let h = parseInt(this.hourSel.value, 10);
-            const min = parseInt(this.minSel.value, 10);
-            if (this.pendingAmpm === 'PM' && h !== 12) h += 12;
-            if (this.pendingAmpm === 'AM' && h === 12) h = 0;
-            const dt = new Date(this.selected.getFullYear(), this.selected.getMonth(), this.selected.getDate(), h, min);
-            this._commit(dt);
-            this.close();
-        }
-
-        _clear() {
-            this.selected = null;
-            this.input.value = '';
-            this.text.textContent = 'Choose date & time';
-            this.text.classList.add('placeholder');
-            this.close();
-            this.onChange(null);
-        }
-
-        _commit(dt) {
-            const pad = v => String(v).padStart(2, '0');
-            this.input.value = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
-            const dateStr = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            let hr12 = dt.getHours() % 12; if (hr12 === 0) hr12 = 12;
-            const ampm = dt.getHours() >= 12 ? 'PM' : 'AM';
-            this.text.textContent = `${dateStr} · ${hr12}:${pad(dt.getMinutes())} ${ampm}`;
-            this.text.classList.remove('placeholder');
-            this.onChange(dt);
-        }
-
-        setValue(dt) {
-            if (!dt || isNaN(dt.getTime())) return this._clear();
-            this.selected  = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
-            this.viewDate  = new Date(dt.getFullYear(), dt.getMonth(), 1);
-            let h12 = dt.getHours() % 12; if (h12 === 0) h12 = 12;
-            this.pendingHour   = h12;
-            this.pendingMinute = Math.round(dt.getMinutes() / 5) * 5 % 60;
-            this.pendingAmpm   = dt.getHours() >= 12 ? 'PM' : 'AM';
-            this.hourSel.value = this.pendingHour;
-            this.minSel.value  = this.pendingMinute;
-            this._syncAmpmUI();
-            this._renderCalendar();
-            this._commit(dt);
-        }
-
-        getValue() { return this.input.value; }
-    }
-
-    let composeDtp, editDtp;
-    document.addEventListener('DOMContentLoaded', () => {
-        composeDtp = new DateTimePicker('composeDtp', { minDate: new Date() });
-        editDtp    = new DateTimePicker('editDtp',    { minDate: new Date() });
-    });
-
-    /* ── Modal helpers ──────────────────────────────────────────── */
-    function showModal(id) {
-        const m = document.getElementById(id);
-        m.classList.remove('hidden');
-        m.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
-    }
-    function hideModal(id) {
-        const m = document.getElementById(id);
-        m.classList.add('hidden');
-        m.classList.remove('flex');
-    }
-    function hideAllModals() {
-        ['historyModal','detailModal','editModal','deleteModal'].forEach(hideModal);
-        document.body.classList.remove('overflow-hidden');
-        if (editDtp) editDtp.close();
-    }
-
-    // Close on backdrop click
-    ['historyModal','detailModal','editModal','deleteModal'].forEach(id => {
-        document.getElementById(id).addEventListener('click', function(e) {
-            if (e.target === this) hideAllModals();
-        });
-    });
-
-    // ESC key
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') hideAllModals();
-    });
-
-    /* ── History modal ──────────────────────────────────────────── */
-    function openHistoryModal()  { showModal('historyModal'); }
-    function closeHistoryModal() { hideModal('historyModal'); document.body.classList.remove('overflow-hidden'); }
-
-    /* ── History search ─────────────────────────────────────────── */
-    document.getElementById('historySearch').addEventListener('input', function () {
-        const q = this.value.toLowerCase().trim();
-        document.querySelectorAll('#historyTableBody tr').forEach(row => {
-            const title   = row.dataset.title   || '';
-            const message = row.dataset.message || '';
-            row.style.display = (!q || title.includes(q) || message.includes(q)) ? '' : 'none';
-        });
-    });
-
-    /* ── Detail modal ───────────────────────────────────────────── */
-    function openDetailModal(n) {
-        document.getElementById('detailTarget').textContent    = ucfirst(n.target) + ' · Target';
-        document.getElementById('detailTitle').textContent     = n.title;
-        document.getElementById('detailMessage').textContent   = n.message;
-        document.getElementById('detailScheduled').textContent = n.scheduled_at
-            ? new Date(n.scheduled_at).toLocaleString('en-GB', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
-            : '—';
-        document.getElementById('detailCreated').textContent   = timeAgo(n.created_at);
-
-        const badge = document.getElementById('detailStatusBadge');
-        const statusStyles = {
-            sent:      'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
-            scheduled: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
-            failed:    'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
-        };
-        badge.className = 'px-4 py-1.5 rounded-full text-xs font-semibold shadow-md ' + (statusStyles[n.status] || 'bg-gray-100 text-gray-600');
-        badge.textContent = ucfirst(n.status);
-
-        const imgWrap = document.getElementById('detailImageWrap');
-        const imgEl   = document.getElementById('detailImage');
-        if (n.image_url) {
-            imgEl.src = n.image_url;
-            imgWrap.classList.remove('hidden');
-        } else {
-            imgWrap.classList.add('hidden');
-        }
-
-        showModal('detailModal');
-    }
-    function closeDetailModal() { hideModal('detailModal'); document.body.classList.remove('overflow-hidden'); }
-
-    /* ── Edit modal ─────────────────────────────────────────────── */
-    function openEditModal(n) {
-        document.getElementById('editId').value          = n.id;
-        document.getElementById('editTitle').value       = n.title;
-        document.getElementById('editMessage').value     = n.message;
-        document.getElementById('editTarget').value      = n.target;
-        document.getElementById('editImageUrl').value    = n.image_url || '';
-
-        if (n.scheduled_at && editDtp) {
-            editDtp.setValue(new Date(n.scheduled_at));
-        } else if (editDtp) {
-            editDtp._clear();
-        }
-
-        showModal('editModal');
-    }
-    function closeEditModal() { hideModal('editModal'); document.body.classList.remove('overflow-hidden'); if (editDtp) editDtp.close(); }
-
-    async function submitEdit() {
-        const id  = document.getElementById('editId').value;
-        const btn = document.querySelector('#editForm button[onclick="submitEdit()"]');
-        const originalBtnHtml = btn.innerHTML;
-
-        const payload = {
-            title:        document.getElementById('editTitle').value.trim(),
-            message:      document.getElementById('editMessage').value.trim(),
-            target:       document.getElementById('editTarget').value,
-            image_url:    document.getElementById('editImageUrl').value.trim() || null,
-            scheduled_at: document.getElementById('editScheduledAt').value,
-        };
-
-        if (!payload.title || !payload.message || !payload.scheduled_at) {
-            showToast('Please fill all required fields.', 'warning');
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerHTML = '<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span> Saving…';
-
-        try {
-            const res = await fetch(`/admin/notifications/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
-                body: JSON.stringify(payload),
-            });
-            const data = await res.json();
-
-        if (data.success) {
-
-            showToast(data.message || 'Notification sent successfully.', 'success');
-
-            // Clear all fields
-            document.getElementById('composeForm').reset();
-            if (composeDtp) composeDtp._clear();
-
-            // Reset preview
-            document.getElementById('previewTitle').textContent = 'Notification Title';
-            document.getElementById('previewMessage').textContent = 'Your message will appear here...';
-            document.getElementById('charCount').textContent = '0 / 200';
-
-            // Hide schedule box
-            document.getElementById('scheduleBox').classList.add('hidden');
-
-        }
-        else {
-                showToast(data.message || 'Update failed.', 'error');
             }
-        } catch {
-            showToast('Something went wrong.', 'error');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalBtnHtml;
+
+            _syncAmpmUI() {
+                this.ampmBtns.forEach(b => b.classList.toggle('active', b.dataset.val === this.pendingAmpm));
+            }
+
+            toggle() { this.panel.classList.contains('open') ? this.close() : this.open(); }
+            open() { this.panel.classList.add('open'); this.chevron.classList.add('rotate-180'); this.trigger.classList.add('dtp-active'); this._renderCalendar(); }
+            close() { this.panel.classList.remove('open'); this.chevron.classList.remove('rotate-180'); this.trigger.classList.remove('dtp-active'); }
+
+            _isSameDay(a, b) {
+                return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+            }
+
+            _renderCalendar() {
+                const y = this.viewDate.getFullYear(), m = this.viewDate.getMonth();
+                this.monthLabel.textContent = this.viewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+                const firstDay = new Date(y, m, 1).getDay();
+                const daysInMonth = new Date(y, m + 1, 0).getDate();
+                const today = new Date(); today.setHours(0, 0, 0, 0);
+                const minDay = new Date(this.minDate); minDay.setHours(0, 0, 0, 0);
+
+                let html = '';
+                for (let i = 0; i < firstDay; i++) html += `<span class="dtp-day empty"></span>`;
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const date = new Date(y, m, d);
+                    const disabled = date < minDay;
+                    const isToday = this._isSameDay(date, today);
+                    const isSelected = this.selected && this._isSameDay(date, this.selected);
+                    html += `<button type="button" class="dtp-day ${disabled ? 'disabled' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" ${disabled ? 'disabled' : ''} data-date="${y}-${m}-${d}">${d}</button>`;
+                }
+                this.daysEl.innerHTML = html;
+                this.daysEl.querySelectorAll('.dtp-day:not(.empty):not(.disabled)').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const [yy, mm, dd] = btn.dataset.date.split('-').map(Number);
+                        this.selected = new Date(yy, mm, dd);
+                        this._renderCalendar();
+                    });
+                });
+            }
+
+            _apply() {
+                if (!this.selected) this.selected = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), Math.max(1, new Date().getDate()));
+                let h = parseInt(this.hourSel.value, 10);
+                const min = parseInt(this.minSel.value, 10);
+                if (this.pendingAmpm === 'PM' && h !== 12) h += 12;
+                if (this.pendingAmpm === 'AM' && h === 12) h = 0;
+                const dt = new Date(this.selected.getFullYear(), this.selected.getMonth(), this.selected.getDate(), h, min);
+                this._commit(dt);
+                this.close();
+            }
+
+            _clear() {
+                this.selected = null;
+                this.input.value = '';
+                this.text.textContent = 'Choose date & time';
+                this.text.classList.add('placeholder');
+                this.close();
+                this.onChange(null);
+            }
+
+            _commit(dt) {
+                const pad = v => String(v).padStart(2, '0');
+                this.input.value = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+                const dateStr = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                let hr12 = dt.getHours() % 12; if (hr12 === 0) hr12 = 12;
+                const ampm = dt.getHours() >= 12 ? 'PM' : 'AM';
+                this.text.textContent = `${dateStr} · ${hr12}:${pad(dt.getMinutes())} ${ampm}`;
+                this.text.classList.remove('placeholder');
+                this.onChange(dt);
+            }
+
+            setValue(dt) {
+                if (!dt || isNaN(dt.getTime())) return this._clear();
+                this.selected = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+                this.viewDate = new Date(dt.getFullYear(), dt.getMonth(), 1);
+                let h12 = dt.getHours() % 12; if (h12 === 0) h12 = 12;
+                this.pendingHour = h12;
+                this.pendingMinute = Math.round(dt.getMinutes() / 5) * 5 % 60;
+                this.pendingAmpm = dt.getHours() >= 12 ? 'PM' : 'AM';
+                this.hourSel.value = this.pendingHour;
+                this.minSel.value = this.pendingMinute;
+                this._syncAmpmUI();
+                this._renderCalendar();
+                this._commit(dt);
+            }
+
+            getValue() { return this.input.value; }
         }
-    }
 
-    /* ── Delete modal ───────────────────────────────────────────── */
-    let _deleteId = null;
-    function openDeleteModal(id, title) {
-        _deleteId = id;
-        document.getElementById('deleteTitle').textContent = `"${title}"`;
-        showModal('deleteModal');
-    }
-    function closeDeleteModal() { hideModal('deleteModal'); document.body.classList.remove('overflow-hidden'); }
+        let composeDtp, editDtp;
+        document.addEventListener('DOMContentLoaded', () => {
+            composeDtp = new DateTimePicker('composeDtp', { minDate: new Date() });
+            editDtp = new DateTimePicker('editDtp', { minDate: new Date() });
+        });
 
-    async function submitDelete() {
-        if (!_deleteId) return;
-        const btn = document.querySelector('#deleteModal button[onclick="submitDelete()"]');
-        const originalBtnText = btn.textContent;
-        btn.disabled = true;
-        btn.textContent = 'Deleting…';
+        /* ── Modal helpers ──────────────────────────────────────────── */
+        function showModal(id) {
+            const m = document.getElementById(id);
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+        }
+        function hideModal(id) {
+            const m = document.getElementById(id);
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+        function hideAllModals() {
+            ['historyModal', 'detailModal', 'editModal', 'deleteModal'].forEach(hideModal);
+            document.body.classList.remove('overflow-hidden');
+            if (editDtp) editDtp.close();
+        }
 
-        try {
-            const res = await fetch(`/admin/notifications/${_deleteId}`, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': CSRF },
+        // Close on backdrop click
+        ['historyModal', 'detailModal', 'editModal', 'deleteModal'].forEach(id => {
+            document.getElementById(id).addEventListener('click', function (e) {
+                if (e.target === this) hideAllModals();
             });
-            const data = await res.json();
+        });
 
-            if (data.success) {
-                closeDeleteModal();
-                showToast(data.message || 'Notification deleted.', 'success');
-                setTimeout(() => location.reload(), 1200);
+        // ESC key
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') hideAllModals();
+        });
+
+        /* ── History modal ──────────────────────────────────────────── */
+        function openHistoryModal() { showModal('historyModal'); }
+        function closeHistoryModal() { hideModal('historyModal'); document.body.classList.remove('overflow-hidden'); }
+
+        /* ── History search ─────────────────────────────────────────── */
+        document.getElementById('historySearch').addEventListener('input', function () {
+            const q = this.value.toLowerCase().trim();
+            document.querySelectorAll('#historyTableBody tr').forEach(row => {
+                const title = row.dataset.title || '';
+                const message = row.dataset.message || '';
+                row.style.display = (!q || title.includes(q) || message.includes(q)) ? '' : 'none';
+            });
+        });
+
+        /* ── Detail modal ───────────────────────────────────────────── */
+        function openDetailModal(n) {
+            document.getElementById('detailTarget').textContent = ucfirst(n.target) + ' · Target';
+            document.getElementById('detailTitle').textContent = n.title;
+            document.getElementById('detailMessage').textContent = n.message;
+            document.getElementById('detailScheduled').textContent = n.scheduled_at
+                ? new Date(n.scheduled_at).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                : '—';
+            document.getElementById('detailCreated').textContent = timeAgo(n.created_at);
+
+            const badge = document.getElementById('detailStatusBadge');
+            const statusStyles = {
+                sent: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
+                scheduled: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
+                failed: 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
+            };
+            badge.className = 'px-4 py-1.5 rounded-full text-xs font-semibold shadow-md ' + (statusStyles[n.status] || 'bg-gray-100 text-gray-600');
+            badge.textContent = ucfirst(n.status);
+
+            const imgWrap = document.getElementById('detailImageWrap');
+            const imgEl = document.getElementById('detailImage');
+            if (n.image_url) {
+                imgEl.src = n.image_url;
+                imgWrap.classList.remove('hidden');
             } else {
-                showToast(data.message || 'Delete failed.', 'error');
-            }
-        } catch {
-            showToast('Something went wrong.', 'error');
-        } finally {
-            btn.disabled = false;
-            btn.textContent = originalBtnText;
-        }
-    }
-
-    /* ── Resend ─────────────────────────────────────────────────── */
-    async function resendNotification(id) {
-
-        const result = await Swal.fire({
-            title: 'Resend Notification?',
-            text: 'This notification will be sent again to the selected users.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, resend',
-            cancelButtonText: 'Cancel',
-            confirmButtonColor: '#8b5cf6',
-            cancelButtonColor: '#6b7280',
-            reverseButtons: true,
-        });
-
-        if (!result.isConfirmed) return;
-
-        try {
-            const res = await fetch(`/admin/notifications/${id}/resend`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': CSRF,
-                },
-            });
-
-            const data = await res.json();
-
-            showToast(
-                data.success
-                    ? (data.message || 'Notification resent successfully.')
-                    : (data.message || 'Failed to resend notification.'),
-                data.success ? 'success' : 'error'
-            );
-
-            if (data.success) {
-                setTimeout(() => location.reload(), 1200);
+                imgWrap.classList.add('hidden');
             }
 
-        } catch {
-            showToast('Something went wrong.', 'error');
+            showModal('detailModal');
         }
-    }
+        function closeDetailModal() { hideModal('detailModal'); document.body.classList.remove('overflow-hidden'); }
 
-    /* ── Compose: submit via fetch so we can show a toast on success ── */
-    document.getElementById('composeForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
+        /* ── Edit modal ─────────────────────────────────────────────── */
+        function openEditModal(n) {
+            document.getElementById('editId').value = n.id;
+            document.getElementById('editTitle').value = n.title;
+            document.getElementById('editMessage').value = n.message;
+            document.getElementById('editTarget').value = n.target;
+            document.getElementById('editImageUrl').value = n.image_url || '';
 
-        const form = this;
-        const btn  = document.getElementById('composeSubmitBtn');
-        const originalBtnHtml = btn.innerHTML;
+            if (n.scheduled_at && editDtp) {
+                editDtp.setValue(new Date(n.scheduled_at));
+            } else if (editDtp) {
+                editDtp._clear();
+            }
 
-        const scheduleType = form.querySelector('input[name="schedule"]:checked')?.value;
-        if (scheduleType === 'later' && composeDtp && !composeDtp.getValue()) {
-            showToast('Please choose a schedule date & time.', 'warning');
-            if (composeDtp) composeDtp.open();
-            return;
+            showModal('editModal');
         }
+        function closeEditModal() { hideModal('editModal'); document.body.classList.remove('overflow-hidden'); if (editDtp) editDtp.close(); }
 
-        btn.disabled = true;
-        btn.innerHTML = '<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span> Sending…';
+        async function submitEdit() {
+            const id = document.getElementById('editId').value;
+            const btn = document.querySelector('#editForm button[onclick="submitEdit()"]');
+            const originalBtnHtml = btn.innerHTML;
 
-        try {
-            const res = await fetch(form.action, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-                body: new FormData(form),
-            });
-            const data = await res.json();
+            const payload = {
+                title: document.getElementById('editTitle').value.trim(),
+                message: document.getElementById('editMessage').value.trim(),
+                target: document.getElementById('editTarget').value,
+                image_url: document.getElementById('editImageUrl').value.trim() || null,
+                scheduled_at: document.getElementById('editScheduledAt').value,
+            };
 
-        if (data.success) {
+            if (!payload.title || !payload.message || !payload.scheduled_at) {
+                showToast('Please fill all required fields.', 'warning');
+                return;
+            }
 
-            // Stop loading first
-            btn.disabled = false;
-            btn.innerHTML = originalBtnHtml;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span> Saving…';
 
-            // Close modal
-            closeEditModal();
+            try {
+                const res = await fetch(`/admin/notifications/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+                    body: JSON.stringify(payload),
+                });
+                const data = await res.json();
 
-            // Clear edit form
-            document.getElementById('editForm').reset();
+                if (data.success) {
 
-            // Show success
-            showToast(data.message || 'Notification updated successfully.', 'success');
+                    showToast(data.message || 'Notification sent successfully.', 'success');
 
-            return;
-        }else {
-                showToast(data.message || 'Failed to send notification.', 'error');
+                    // Clear all fields
+                    document.getElementById('composeForm').reset();
+                    if (composeDtp) composeDtp._clear();
+
+                    // Reset preview
+                    document.getElementById('previewTitle').textContent = 'Notification Title';
+                    document.getElementById('previewMessage').textContent = 'Your message will appear here...';
+                    document.getElementById('charCount').textContent = '0 / 200';
+
+                    // Hide schedule box
+                    document.getElementById('scheduleBox').classList.add('hidden');
+
+                }
+                else {
+                    showToast(data.message || 'Update failed.', 'error');
+                }
+            } catch {
+                showToast('Something went wrong.', 'error');
+            } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalBtnHtml;
             }
-        } catch {
-            showToast('Something went wrong.', 'error');
-            btn.disabled = false;
-            btn.innerHTML = originalBtnHtml;
         }
-    });
 
-    /* ── Compose: schedule toggle ───────────────────────────────── */
-    document.querySelectorAll('input[name="schedule"]').forEach(radio => {
-        radio.addEventListener('change', function () {
-            const box = document.getElementById('scheduleBox');
-            if (this.value === 'later') {
-                box.classList.remove('hidden');
-                box.style.animation = 'fadeSlideUp .25s ease both';
+        /* ── Delete modal ───────────────────────────────────────────── */
+        let _deleteId = null;
+        function openDeleteModal(id, title) {
+            _deleteId = id;
+            document.getElementById('deleteTitle').textContent = `"${title}"`;
+            showModal('deleteModal');
+        }
+        function closeDeleteModal() { hideModal('deleteModal'); document.body.classList.remove('overflow-hidden'); }
+
+        async function submitDelete() {
+            if (!_deleteId) return;
+            const btn = document.querySelector('#deleteModal button[onclick="submitDelete()"]');
+            const originalBtnText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Deleting…';
+
+            try {
+                const res = await fetch(`/admin/notifications/${_deleteId}`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': CSRF },
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    closeDeleteModal();
+                    showToast(data.message || 'Notification deleted.', 'success');
+                    setTimeout(() => location.reload(), 1200);
+                } else {
+                    showToast(data.message || 'Delete failed.', 'error');
+                }
+            } catch {
+                showToast('Something went wrong.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalBtnText;
+            }
+        }
+
+        /* ── Resend ─────────────────────────────────────────────────── */
+        async function resendNotification(id) {
+
+            const result = await Swal.fire({
+                title: 'Resend Notification?',
+                text: 'This notification will be sent again to the selected users.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, resend',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#4f46e5',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true,
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const res = await fetch(`/admin/notifications/${id}/resend`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': CSRF,
+                    },
+                });
+
+                const data = await res.json();
+
+                showToast(
+                    data.success
+                        ? (data.message || 'Notification resent successfully.')
+                        : (data.message || 'Failed to resend notification.'),
+                    data.success ? 'success' : 'error'
+                );
+
+                if (data.success) {
+                    setTimeout(() => location.reload(), 1200);
+                }
+
+            } catch {
+                showToast('Something went wrong.', 'error');
+            }
+        }
+
+        /* ── Compose: submit via fetch so we can show a toast on success ── */
+        document.getElementById('composeForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const form = this;
+            const btn = document.getElementById('composeSubmitBtn');
+            const originalBtnHtml = btn.innerHTML;
+
+            const scheduleType = form.querySelector('input[name="schedule"]:checked')?.value;
+            if (scheduleType === 'later' && composeDtp && !composeDtp.getValue()) {
+                showToast('Please choose a schedule date & time.', 'warning');
                 if (composeDtp) composeDtp.open();
-            } else {
-                box.classList.add('hidden');
-                if (composeDtp) composeDtp.close();
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span> Sending…';
+
+            try {
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+                    body: new FormData(form),
+                });
+                const data = await res.json();
+
+                if (data.success) {
+
+                    // Stop loading first
+                    btn.disabled = false;
+                    btn.innerHTML = originalBtnHtml;
+
+                    // Close modal
+                    closeEditModal();
+
+                    // Clear edit form
+                    document.getElementById('editForm').reset();
+
+                    // Show success
+                    showToast(data.message || 'Notification updated successfully.', 'success');
+
+                    return;
+                } else {
+                    showToast(data.message || 'Failed to send notification.', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = originalBtnHtml;
+                }
+            } catch {
+                showToast('Something went wrong.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalBtnHtml;
             }
         });
-    });
 
-    /* ── Live preview ────────────────────────────────────────────── */
-    const titleInput = document.getElementById('notifTitle');
-    const msgInput   = document.getElementById('notifMessage');
-    const charCount  = document.getElementById('charCount');
+        /* ── Compose: schedule toggle ───────────────────────────────── */
+        document.querySelectorAll('input[name="schedule"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                const box = document.getElementById('scheduleBox');
+                if (this.value === 'later') {
+                    box.classList.remove('hidden');
+                    box.style.animation = 'fadeSlideUp .25s ease both';
+                    if (composeDtp) composeDtp.open();
+                } else {
+                    box.classList.add('hidden');
+                    if (composeDtp) composeDtp.close();
+                }
+            });
+        });
 
-    titleInput?.addEventListener('input', function () {
-        const el = document.getElementById('previewTitle');
-        if (el) el.textContent = this.value || 'Notification Title';
-    });
+        /* ── Live preview ────────────────────────────────────────────── */
+        const titleInput = document.getElementById('notifTitle');
+        const msgInput = document.getElementById('notifMessage');
+        const charCount = document.getElementById('charCount');
 
-    msgInput?.addEventListener('input', function () {
-        const el = document.getElementById('previewMessage');
-        if (el) el.textContent = this.value || 'Your message will appear here...';
-        if (charCount) {
-            const len = this.value.length;
-            charCount.textContent = len + ' / 200';
-            charCount.style.color = len > 180 ? '#ef4444' : len > 150 ? '#f59e0b' : '';
+        titleInput?.addEventListener('input', function () {
+            const el = document.getElementById('previewTitle');
+            if (el) el.textContent = this.value || 'Notification Title';
+        });
+
+        msgInput?.addEventListener('input', function () {
+            const el = document.getElementById('previewMessage');
+            if (el) el.textContent = this.value || 'Your message will appear here...';
+            if (charCount) {
+                const len = this.value.length;
+                charCount.textContent = len + ' / 200';
+                charCount.style.color = len > 180 ? '#ef4444' : len > 150 ? '#f59e0b' : '';
+            }
+        });
+
+        document.getElementById('composeForm')?.addEventListener('reset', () => {
+            setTimeout(() => {
+                if (charCount) charCount.textContent = '0 / 200';
+                const pTitle = document.getElementById('previewTitle');
+                const pMsg = document.getElementById('previewMessage');
+                if (pTitle) pTitle.textContent = 'Notification Title';
+                if (pMsg) pMsg.textContent = 'Your message will appear here...';
+                if (composeDtp) composeDtp._clear();
+                document.getElementById('scheduleBox')?.classList.add('hidden');
+            }, 10);
+        });
+
+        /* ── Helpers ─────────────────────────────────────────────────── */
+        function ucfirst(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1);
         }
-    });
-
-    document.getElementById('composeForm')?.addEventListener('reset', () => {
-        setTimeout(() => {
-            if (charCount) charCount.textContent = '0 / 200';
-            const pTitle = document.getElementById('previewTitle');
-            const pMsg   = document.getElementById('previewMessage');
-            if (pTitle) pTitle.textContent = 'Notification Title';
-            if (pMsg)   pMsg.textContent   = 'Your message will appear here...';
-            if (composeDtp) composeDtp._clear();
-            document.getElementById('scheduleBox')?.classList.add('hidden');
-        }, 10);
-    });
-
-    /* ── Helpers ─────────────────────────────────────────────────── */
-    function ucfirst(str) {
-        if (!str) return '';
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-    function timeAgo(dateStr) {
-        if (!dateStr) return '—';
-        const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
-        const intervals = [[31536000,'year'],[2592000,'month'],[86400,'day'],[3600,'hour'],[60,'minute'],[1,'second']];
-        for (const [sec, label] of intervals) {
-            const count = Math.floor(seconds / sec);
-            if (count >= 1) return `${count} ${label}${count > 1 ? 's' : ''} ago`;
+        function timeAgo(dateStr) {
+            if (!dateStr) return '—';
+            const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
+            const intervals = [[31536000, 'year'], [2592000, 'month'], [86400, 'day'], [3600, 'hour'], [60, 'minute'], [1, 'second']];
+            for (const [sec, label] of intervals) {
+                const count = Math.floor(seconds / sec);
+                if (count >= 1) return `${count} ${label}${count > 1 ? 's' : ''} ago`;
+            }
+            return 'just now';
         }
-        return 'just now';
-    }
     </script>
 
 @endsection
