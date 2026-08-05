@@ -183,8 +183,7 @@ class RoleController extends Controller
             ->latest()
             ->paginate(10);
 
-        $roles = Role::orderBy('name')->get();
-   
+        $roles = Role::orderBy('name')->get();   
 
         return view('Admin.roles.assign-users', compact('users', 'roles'));
     }
