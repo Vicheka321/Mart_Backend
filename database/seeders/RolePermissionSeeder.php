@@ -238,18 +238,31 @@ class RolePermissionSeeder extends Seeder
             'view_notifications',
         ]);
 
-        // Staff => daily operation
+
+        // Staff => day-to-day operational access, no delete/settings/roles
         $staff->syncPermissions([
             'access_admin_panel',
             'view_dashboard',
+
             'view_products',
+            'edit_products',
+
+            'view_categories',
+            'view_brands',
+
             'view_orders',
             'update_orders',
+
             'view_customers',
+
+            'view_coupons',
+            'view_banners',
+            'view_promotions',
+
             'view_notifications',
         ]);
 
-        // Customer => app user, no admin panel
+
         $customer->syncPermissions([]);
     }
 }

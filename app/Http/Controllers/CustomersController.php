@@ -8,7 +8,7 @@ use App\Models\PaymentModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\DB;
 
 class CustomersController extends Controller
@@ -90,7 +90,7 @@ class CustomersController extends Controller
     //                 ->count(),
     //         ];
     //     });
-    //     return view('admin.customers', compact(
+    //     return view('Admin.customers', compact(
     //         'customers',
     //         'totalCustomers',
     //         'activeCustomers',
@@ -258,48 +258,66 @@ class CustomersController extends Controller
         ));
     }
 
+
+
     // public function store(Request $request)
     // {
-    //     $request->validate([
+    //     $validated = $request->validate([
     //         'full_name' => ['nullable', 'string', 'max:100'],
-    //         'email'     => ['required', 'email', 'unique:users,email'],
-    //         'phone'     => ['nullable', 'string', 'unique:users,phone'],
-    //         'password'  => ['required', 'string', 'min:8', 'confirmed'],
-    //         'role'      => ['required', 'string', 'exists:roles,name'],
+    //         'email'     => ['required', 'email', 'max:255', 'unique:users,email'],
+    //         'phone'     => ['nullable', 'string', 'max:30', 'unique:users,phone'],
+    //         'password' => [
+    //             'required',
+    //             'confirmed',
+    //             Password::min(8)
+    //                 ->mixedCase()
+    //                 ->letters()
+    //                 ->numbers()
+    //                 ->symbols()
+    //                 ->uncompromised(),
+    //         ],
+    //         'role'      => ['required', 'exists:roles,name'],
     //     ], [
-    //         'email.unique'    => 'This email address is already registered.',
-    //         'phone.unique'    => 'This phone number is already in use.',
-    //         'password.min'    => 'Password must be at least 8 characters.',
-    //         'password.confirmed' => 'Passwords do not match.',
-    //         'role.exists'     => 'The selected role is invalid.',
+    //         'email.unique'         => 'This email address is already registered.',
+    //         'phone.unique'         => 'This phone number is already in use.',
+    //         'password.min'         => 'Password must be at least 8 characters.',
+    //         'password.confirmed'   => 'Passwords do not match.',
+    //         'role.exists'          => 'The selected role is invalid.',
+    //         'password.required' => 'Password is required.',
+    //         'password.uncompromised' => 'This password has appeared in a data breach. Please choose another.',
     //     ]);
 
-    //     // Double-check email uniqueness explicitly (race-condition safety)
-    //     if (User::where('email', $request->email)->exists()) {
+    //     // Prevent creating Customer from Admin Panel
+    //     if ($validated['role'] === 'Customer') {
     //         return back()
     //             ->withInput()
-    //             ->withErrors(['email' => 'This email address is already registered.']);
+    //             ->withErrors([
+    //                 'role' => 'Customer accounts must register through the mobile application.'
+    //             ]);
     //     }
 
-    //     // Double-check phone uniqueness
-    //     if ($request->filled('phone') && User::where('phone', $request->phone)->exists()) {
-    //         return back()
-    //             ->withInput()
-    //             ->withErrors(['phone' => 'This phone number is already in use.']);
-    //     }
+    //     $user = DB::transaction(function () use ($validated) {
 
-    //     $user = User::create([
-    //         'full_name' => $request->full_name,
-    //         'email'     => $request->email,
-    //         'phone'     => $request->phone,
-    //         'password'  => Hash::make($request->password),
-    //     ]);
+    //         $user = User::create([
+    //             'full_name'    => $validated['full_name'] ?? null,
+    //             'email'        => $validated['email'],
+    //             'phone'        => $validated['phone'] ?? null,
+    //             'password'     => Hash::make($validated['password']),
+    //             'account_type' => 'employee',
+    //         ]);
 
-    //     // Role is managed by Spatie — NOT stored in users table
-    //     $user->assignRole($request->role);
+    //         // Assign Spatie Role
+    //         $user->assignRole($validated['role']);
 
-    //     return back()->with('success', 'User "' . ($user->full_name ?? $user->email) . '" created successfully.');
+    //         return $user;
+    //     });
+
+    //     return back()->with(
+    //         'success',
+    //         'User "' . ($user->full_name ?: $user->email) . '" created successfully.'
+    //     );
     // }
+
 
     public function store(Request $request)
     {
@@ -307,27 +325,32 @@ class CustomersController extends Controller
             'full_name' => ['nullable', 'string', 'max:100'],
             'email'     => ['required', 'email', 'max:255', 'unique:users,email'],
             'phone'     => ['nullable', 'string', 'max:30', 'unique:users,phone'],
-            'password'  => ['required', 'string', 'min:8', 'confirmed'],
+            'password'  => [
+                'required',
+                'confirmed',
+                Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised(),
+            ],
             'role'      => ['required', 'exists:roles,name'],
         ], [
-            'email.unique'         => 'This email address is already registered.',
-            'phone.unique'         => 'This phone number is already in use.',
-            'password.min'         => 'Password must be at least 8 characters.',
-            'password.confirmed'   => 'Passwords do not match.',
-            'role.exists'          => 'The selected role is invalid.',
+            'email.unique'            => 'This email address is already registered.',
+            'phone.unique'            => 'This phone number is already in use.',
+            'password.min'            => 'Password must be at least 8 characters.',
+            'password.confirmed'      => 'Passwords do not match.',
+            'role.exists'             => 'The selected role is invalid.',
+            'password.required'       => 'Password is required.',
+            'password.uncompromised'  => 'This password has appeared in a data breach. Please choose another.',
         ]);
 
-        // Prevent creating Customer from Admin Panel
+        // Customer accounts are mobile-app only — reject here as a normal validation error.
         if ($validated['role'] === 'Customer') {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'role' => 'Customer accounts must register through the mobile application.'
-                ]);
+            return response()->json([
+                'errors' => [
+                    'role' => ['Customer accounts must register through the mobile application.'],
+                ],
+            ], 422);
         }
 
         $user = DB::transaction(function () use ($validated) {
-
             $user = User::create([
                 'full_name'    => $validated['full_name'] ?? null,
                 'email'        => $validated['email'],
@@ -336,19 +359,59 @@ class CustomersController extends Controller
                 'account_type' => 'employee',
             ]);
 
-            // Assign Spatie Role
             $user->assignRole($validated['role']);
 
             return $user;
         });
 
-        return back()->with(
-            'success',
-            'User "' . ($user->full_name ?: $user->email) . '" created successfully.'
-        );
+        // Shape the payload the frontend needs to render a row without a reload.
+        return response()->json([
+            'success' => true,
+            'message' => 'User "' . ($user->full_name ?: $user->email) . '" created successfully.',
+            'user'    => [
+                'id'             => $user->id,
+                'full_name'      => $user->full_name,
+                'email'          => $user->email,
+                'phone'          => $user->phone,
+                'role'           => $validated['role'],
+                'avatar'         => $user->avatar,
+                'is_super_admin' => false,
+                'can_access'     => $user->hasRole($validated['role'])
+                    ? $user->can('access_admin_panel')
+                    : false,
+            ],
+        ], 201);
     }
 
+    /**
+     * Live-check whether an email is already taken.
+     */
+    public function checkEmail(Request $request)
+    {
+        $request->validate(['email' => ['required', 'email']]);
 
+        $exists = User::where('email', $request->email)->exists();
+
+        return response()->json([
+            'available' => ! $exists,
+            'message'   => $exists ? 'Email already exists.' : 'Email available.',
+        ]);
+    }
+
+    /**
+     * Live-check whether a phone number is already taken.
+     */
+    public function checkPhone(Request $request)
+    {
+        $request->validate(['phone' => ['required', 'string']]);
+
+        $exists = User::where('phone', $request->phone)->exists();
+
+        return response()->json([
+            'available' => ! $exists,
+            'message'   => $exists ? 'Phone already exists.' : 'Phone available.',
+        ]);
+    }
     public function updateCustomer(Request $request, User $user)
     {
         $passwordRules = ['nullable', 'string', 'min:8', 'confirmed'];

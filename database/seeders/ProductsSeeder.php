@@ -891,7 +891,9 @@ class ProductsSeeder extends Seeder
         foreach ($productData as $index => $item) {
 
             $createdAt = now()->subDays(rand(1, 730));
+            $costPrice = mt_rand(1, 5000) / 100;
 
+            $salePrice = $costPrice + (mt_rand(1, 3000) / 100);
             $product = ProductsModel::create([
                 'categories_id' => $item['category'],
                 'brand_id'      => $item['brand'],
@@ -902,8 +904,8 @@ class ProductsSeeder extends Seeder
                 // 'cost_price'    => rand(1, 100),
                 // 'sale_price'    => rand(1, 200),
                 // 'quantity'      => rand(10, 500),
-                'cost_price'    => 0.01,
-                'sale_price'    => 0.02,
+                'cost_price'    => $costPrice,
+                'sale_price'    => $salePrice,
                 'quantity'      => 100,
 
                 'status'        => true,

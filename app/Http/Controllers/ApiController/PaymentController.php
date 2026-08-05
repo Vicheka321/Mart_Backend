@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ApiController;
 
 use App\Events\NewOrderCreated;
 use App\Http\Controllers\Controller;
+use App\Jobs\CheckBakongPaymentJob;
 use App\Models\KhqrPayments;
 use App\Services\KHQRService;
 
@@ -132,6 +133,9 @@ class PaymentController extends Controller
                 'expires_at' => now()->addMinutes(50),
             ]);
 
+            // CheckBakongPaymentJob::dispatch(
+            //     $khqrPayment->id
+            // );
             /// ✅ UPDATE PAYMENT TABLE
             $payment->update([
                 'md5' => $result['data']['md5'],
@@ -271,13 +275,6 @@ class PaymentController extends Controller
                 /// ✅ UPDATE KHQR PAYMENT
                 $payment->markAsSuccess($result, $transactionId);
 
-                /// ✅ FIND ORDER
-                // $order = OrderModel::with([
-                //     'payment',
-                //     'user',
-                //     'orderItems.product.firstImage'
-                // ])->find($payment->order_id);
-
                 $order = OrderModel::with([
                     'payment',
                     'user',
@@ -307,16 +304,7 @@ class PaymentController extends Controller
                             $cart->id
                         )->delete();
                     }
-                    // foreach ($order->orderItems as $item) {
 
-                    //     ProductsModel::where(
-                    //         'id',
-                    //         $item->product_id
-                    //     )->decrement(
-                    //         'quantity',
-                    //         $item->qty
-                    //     );
-                    // }
 
                     foreach ($order->orderItems as $item) {
 

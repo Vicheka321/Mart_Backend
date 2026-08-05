@@ -20,11 +20,11 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        // Default filter = inactive
+
         $statusFilter = $request->input('status', 'all');
         $productKeywordSearch = trim($request->input('search'));
 
-        // Build optimized query
+
         $query = ProductsModel::query()
             ->with([
                 'category:id,name',
@@ -32,7 +32,7 @@ class ProductController extends Controller
                 'image:id,product_id,image_url',
             ]);
 
-        // Apply status filter
+
         switch ($statusFilter) {
             case 'active':
                 $query->where('status', 1);
@@ -46,7 +46,7 @@ class ProductController extends Controller
                 $query->where('quantity', '<=', 20);
                 break;
 
-                // case 'all' => no filter
+
         }
 
         if (!empty($productKeywordSearch)) {
@@ -80,13 +80,13 @@ class ProductController extends Controller
             });
         }
 
-        // Products list
+   
         $products = $query
             ->latest('id') 
             ->paginate(10)
             ->withQueryString();
 
-        // Required for Add/Edit Product modal
+  
         $categories = Category::select('id', 'name')
             ->orderBy('name')
             ->get();
@@ -95,7 +95,7 @@ class ProductController extends Controller
             ->orderBy('name')
             ->get();
 
-        // Summary cards
+  
         $totalProducts = ProductsModel::count();
         $totalActive   = ProductsModel::where('status', 1)->count();
         $totalInactive = ProductsModel::where('status', 0)->count();
@@ -165,7 +165,7 @@ class ProductController extends Controller
             'images.min'       => 'Please upload at least one product image.',
         ]);
 
-        // ✅ Create product
+     
         $product = ProductsModel::create([
             'categories_id' => $request->categories_id,
             'brand_id'      => $request->brand_id,
@@ -181,7 +181,7 @@ class ProductController extends Controller
 
 
 
-        // ✅ Upload each image to R2 and save to product_images
+      
         if ($request->file('images')) {
             foreach ($request->file('images') as $file) {
 
@@ -206,8 +206,7 @@ class ProductController extends Controller
         }
 
 
-        // return redirect()->route('products.index')
-        //     ->with('success', 'Product created successfully.');
+      
         if ($request->ajax()) {
 
             return response()->json([
@@ -287,10 +286,8 @@ class ProductController extends Controller
 
         DB::transaction(function () use ($request, $id) {
 
-            // Find product
             $product = ProductsModel::findOrFail($id);
 
-            // Update product information
             $product->update([
                 'categories_id' => $request->categories_id,
                 'brand_id'      => $request->brand_id,
@@ -304,52 +301,51 @@ class ProductController extends Controller
                 'status'        => $request->status ?? 1,
             ]);
 
-            // If new images are uploaded, replace all old images
+      
             if ($request->hasFile('images')) {
 
-                // Get old images
+            
                 $oldImages = ProductsImageModel::where('product_id', $product->id)->get();
 
-                // Delete old files from Cloudflare R2
+             
                 foreach ($oldImages as $oldImage) {
                     if ($oldImage->image_url) {
                         $baseUrl = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/';
 
-                        // Convert full URL to relative path
+                     
                         $path = str_replace($baseUrl, '', $oldImage->image_url);
 
-                        // Delete file if it exists
+                   
                         if (Storage::disk('r2')->exists($path)) {
                             Storage::disk('r2')->delete($path);
                         }
                     }
                 }
 
-                // Delete old image records from database
+             
                 ProductsImageModel::where('product_id', $product->id)->delete();
 
-                // Upload each new image
+         
                 foreach ($request->file('images') as $file) {
 
                     if (!$file->isValid()) {
                         continue;
                     }
 
-                    // Generate unique filename
                     $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
                     $path = 'products/' . $fileName;
 
-                    // Upload to Cloudflare R2
+               
                     Storage::disk('r2')->put(
                         $path,
                         file_get_contents($file),
                         'public'
                     );
 
-                    // Build public URL
+               
                     $imageUrl = rtrim(env('R2_PUBLIC_BASE_URL'), '/') . '/' . $path;
 
-                    // Save to database
+                 
                     ProductsImageModel::create([
                         'product_id' => $product->id,
                         'image_url'  => $imageUrl,
@@ -358,9 +354,7 @@ class ProductController extends Controller
             }
         });
 
-        // return redirect()
-        //     ->route('products.index', ['page' => request('page')])
-        //     ->with('success', 'Product updated successfully.');
+ 
         if ($request->ajax()) {
 
             return response()->json([
@@ -376,9 +370,7 @@ class ProductController extends Controller
     {
         $product = ProductsModel::findOrFail($id);
         $product->delete();
-        // return redirect()
-        //     ->route('products.index')
-        //     ->with('success', 'Product deleted successfully.');
+ 
         if (request()->ajax()) {
 
             return response()->json([
@@ -395,7 +387,6 @@ class ProductController extends Controller
     {
         $fileName = 'products_' . now()->format('Ymd_His') . '.csv';
 
-        // Load relationships to avoid N+1 queries
         $products = ProductsModel::with([
             'category:id,name',
             'brand:id,name'
@@ -414,18 +405,17 @@ class ProductController extends Controller
         $callback = function () use ($products) {
             $file = fopen('php://output', 'w');
 
-            // UTF-8 BOM for Excel support
+       
             fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
-            // CSV Header
             fputcsv($file, [
                 'ID',
-                // 'Product Code',
+             
                 'Name',
                 'Category',
                 'Brand',
                 'Description',
-                // 'Unit',
+             
                 'Cost Price',
                 'Sale Price',
                 'Quantity',
@@ -433,16 +423,16 @@ class ProductController extends Controller
                 'Created At',
             ]);
 
-            // CSV Data
+           
             foreach ($products as $product) {
                 fputcsv($file, [
                     $product->id,
-                    // $product->product_code,
+                  
                     $product->name,
                     $product->category->name ?? '',
                     $product->brand->name ?? '',
                     $product->description,
-                    // $product->unit,
+                
                     number_format($product->cost_price ?? 0, 2, '.', ''),
                     number_format($product->sale_price ?? 0, 2, '.', ''),
                     $product->quantity,
@@ -459,13 +449,7 @@ class ProductController extends Controller
 
     public function exportPDF()
     {
-        // Load relationships to avoid N+1 queries in the PDF view
-        // $products = ProductsModel::with([
-        //     'category:id,name',
-        //     'brand:id,name'
-        // ])
-        //     ->orderBy('id')
-        //     ->get();
+
 
         $products = ProductsModel::with([
             'category:id,name',
@@ -476,7 +460,7 @@ class ProductController extends Controller
             ->get();
 
         $pdf = Pdf::loadView(
-            'admin.PDF.products_pdf',
+            'Admin.PDF.products_pdf',
             compact('products')
         )
             ->setPaper('A4', 'portrait');

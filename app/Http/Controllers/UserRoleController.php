@@ -13,7 +13,7 @@ class UserRoleController extends Controller
         $users = User::with('roles')->orderBy('id', 'desc')->paginate(20);
         $roles = Role::orderBy('name')->get();
 
-        return view('admin.roles.user-roles', compact('users', 'roles'));
+        return view('Admin.roles.user-roles', compact('users', 'roles'));
     }
 
     public function update(Request $request, User $user)

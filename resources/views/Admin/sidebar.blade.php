@@ -765,7 +765,7 @@
                 </a>
             </div>
 
-            @can('view_audit_logs')
+            {{-- @can('view_audit_logs')
                     <div class="nav-item">
                         <a href="{{ route('audit-logs.index') }}"
                             class="nav-link group relative flex items-center gap-3 px-3 h-10 rounded-xl text-sm font-medium
@@ -801,7 +801,7 @@
 
                         </a>
                     </div>
-            @endcan
+            @endcan --}}
 
         </div>
     </nav>

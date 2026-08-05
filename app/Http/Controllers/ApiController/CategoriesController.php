@@ -13,15 +13,79 @@ use App\Models\PromotionModel;
 class CategoriesController extends Controller
 {
 
+
     // public function index()
     // {
     //     $categories = Category::with([
-    //         'products.firstImage'
-    //     ])
-    //         ->get();
+    //         'products.firstImage',
+    //         'products.promotions',
+    //     ])->get();
+
+    //     $categories->each(function ($category) {
+
+    //         $category->products->transform(function ($product) {
+
+    //             $promotion = $product->promotions()
+    //                 ->where('status', true)
+    //                 ->where(function ($q) {
+    //                     $q->whereNull('start_date')
+    //                         ->orWhere('start_date', '<=', now());
+    //                 })
+    //                 ->where(function ($q) {
+    //                     $q->whereNull('end_date')
+    //                         ->orWhere('end_date', '>=', now()->toDateString());
+    //                 })
+    //                 ->orderByDesc('discount_value')
+    //                 ->first();
+
+    //             $salePrice = (float) $product->sale_price;
+
+    //             $finalPrice = $salePrice;
+
+    //             $discount = null;
+
+    //             if ($promotion) {
+
+    //                 if ($promotion->discount_type === 'percent') {
+
+    //                     $finalPrice = $salePrice -
+    //                         ($salePrice * $promotion->discount_value / 100);
+
+    //                     if (!is_null($promotion->max_discount)) {
+    //                         $discountAmount = min(
+    //                             $salePrice - $finalPrice,
+    //                             $promotion->max_discount
+    //                         );
+
+    //                         $finalPrice = $salePrice - $discountAmount;
+    //                     }
+    //                 } else {
+
+    //                     $finalPrice = $salePrice - $promotion->discount_value;
+    //                 }
+
+    //                 $finalPrice = max(0, $finalPrice);
+
+    //                 $discount = [
+    //                     'discount_type'  => $promotion->discount_type,
+    //                     'discount_value' => $promotion->discount_value,
+    //                 ];
+    //             }
+
+    //             $product->sale_price = number_format($salePrice, 2, '.', '');
+    //             $product->final_price = number_format($finalPrice, 2, '.', '');
+    //             $product->discount = $discount;
+
+    //             unset($product->promotions);
+
+    //             return $product;
+    //         });
+    //     });
 
     //     return response()->json($categories);
     // }
+
+
 
     public function index()
     {
@@ -34,7 +98,7 @@ class CategoriesController extends Controller
 
             $category->products->transform(function ($product) {
 
-                $promotion = $product->promotions()
+                $promotions = $product->promotions()
                     ->where('status', true)
                     ->where(function ($q) {
                         $q->whereNull('start_date')
@@ -44,45 +108,82 @@ class CategoriesController extends Controller
                         $q->whereNull('end_date')
                             ->orWhere('end_date', '>=', now()->toDateString());
                     })
-                    ->orderByDesc('discount_value')
-                    ->first();
+                    ->get();
 
                 $salePrice = (float) $product->sale_price;
 
                 $finalPrice = $salePrice;
 
-                $discount = null;
+                $selectedPromotion = null;
 
-                if ($promotion) {
+                foreach ($promotions as $promotion) {
 
+                    // -----------------------------
+                    // Calculate Discount Amount
+                    // -----------------------------
                     if ($promotion->discount_type === 'percent') {
 
-                        $finalPrice = $salePrice -
-                            ($salePrice * $promotion->discount_value / 100);
+                        $discountAmount =
+                            $salePrice * $promotion->discount_value / 100;
 
                         if (!is_null($promotion->max_discount)) {
+
                             $discountAmount = min(
-                                $salePrice - $finalPrice,
+                                $discountAmount,
                                 $promotion->max_discount
                             );
-
-                            $finalPrice = $salePrice - $discountAmount;
                         }
                     } else {
 
-                        $finalPrice = $salePrice - $promotion->discount_value;
+                        $discountAmount = $promotion->discount_value;
                     }
 
-                    $finalPrice = max(0, $finalPrice);
+                    // -----------------------------
+                    // Calculate Final Price
+                    // -----------------------------
+                    $currentFinalPrice = $salePrice - $discountAmount;
+
+                    // Don't allow free products
+                    if ($currentFinalPrice <= 0) {
+                        continue;
+                    }
+
+                    // Keep lowest final price
+                    if ($currentFinalPrice < $finalPrice) {
+
+                        $finalPrice = $currentFinalPrice;
+
+                        $selectedPromotion = $promotion;
+                    }
+                }
+
+                // -----------------------------
+                // Discount Info
+                // -----------------------------
+                $discount = null;
+
+                if ($selectedPromotion) {
 
                     $discount = [
-                        'discount_type'  => $promotion->discount_type,
-                        'discount_value' => $promotion->discount_value,
+                        'discount_type'  => $selectedPromotion->discount_type,
+                        'discount_value' => $selectedPromotion->discount_value,
                     ];
                 }
 
-                $product->sale_price = number_format($salePrice, 2, '.', '');
-                $product->final_price = number_format($finalPrice, 2, '.', '');
+                $product->sale_price = number_format(
+                    $salePrice,
+                    2,
+                    '.',
+                    ''
+                );
+
+                $product->final_price = number_format(
+                    $finalPrice,
+                    2,
+                    '.',
+                    ''
+                );
+
                 $product->discount = $discount;
 
                 unset($product->promotions);
@@ -93,8 +194,6 @@ class CategoriesController extends Controller
 
         return response()->json($categories);
     }
-
-
     public function getProductsByCategory($id)
     {
         $today = Carbon::today();

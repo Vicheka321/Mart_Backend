@@ -2,35 +2,54 @@
 
 namespace Database\Seeders;
 
+use App\Models\ProductsModel;
+use App\Models\PromotionModel;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\PromotionModel;
 
 class Promotions extends Seeder
 {
     public function run(): void
     {
-        $promotion = PromotionModel::create([
-            'name' => 'Weekend Sale',
-            'discount_type' => 'percent',
-            'discount_value' => 20,
-            'start_date' => now(),
-            'end_date' => now()->addDays(3),
-            'status' => true,
-        ]);
+        $promotionNames = [
+            'Weekend Sale',
+            'Flash Sale',
+            'Mega Discount',
+            'Happy Hour',
+            'Special Offer',
+            'Super Deal',
+        ];
 
-        // Random 20 products from IDs 1-50
-        $productIds = collect(range(1, 50))
-            ->shuffle()
-            ->take(20);
+        foreach ($promotionNames as $name) {
 
-        foreach ($productIds as $productId) {
-            DB::table('promotion_products')->insert([
-                'promotion_id' => $promotion->id,
-                'product_id' => $productId,
-                'created_at' => now(),
-                'updated_at' => now(),
+            $promotion = PromotionModel::create([
+                'name' => $name,
+                'discount_type' => rand(0, 1)
+                    ? 'percent'
+                    : 'fixed',
+
+                'discount_value' => rand(5, 50),
+
+                'start_date' => now(),
+
+                'end_date' => now()->addDays(rand(3, 15)),
+
+                'status' => true,
             ]);
+
+            $productIds = ProductsModel::inRandomOrder()
+                ->limit(rand(10, 30))
+                ->pluck('id');
+
+            foreach ($productIds as $productId) {
+
+                DB::table('promotion_products')->insert([
+                    'promotion_id' => $promotion->id,
+                    'product_id' => $productId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
 }

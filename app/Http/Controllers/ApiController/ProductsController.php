@@ -128,124 +128,6 @@ class ProductsController extends Controller
         return response()->json($products);
     }
 
-    // public function getProductById($id)
-    // {
-    //     $today = Carbon::today();
-
-    //     $product = ProductsModel::with([
-    //         'category',
-    //         'brand',
-    //         'image'
-    //     ])->find($id);
-
-    //     if (!$product) {
-    //         return response()->json([
-    //             'message' => 'Product not found'
-    //         ], 404);
-    //     }
-
-    //     $final_price = $product->sale_price;
-    //     $discount = null;
-
-    //     $promotion =
-    //         PromotionModel::whereHas(
-    //             'products',
-    //             function ($q) use ($product) {
-    //                 $q->where(
-    //                     'product_id',
-    //                     $product->id
-    //                 );
-    //             }
-    //         )
-    //         ->where('status', true)
-    //         ->whereDate(
-    //             'start_date',
-    //             '<=',
-    //             $today
-    //         )
-    //         ->whereDate(
-    //             'end_date',
-    //             '>=',
-    //             $today
-    //         )
-    //         ->first();
-
-    //     if ($promotion) {
-
-    //         if (
-    //             $promotion->discount_type
-    //             === 'percent'
-    //         ) {
-
-    //             $final_price =
-    //                 $product->sale_price -
-    //                 (
-    //                     $product->sale_price *
-    //                     $promotion->discount_value
-    //                     / 100
-    //                 );
-
-    //             $discount =
-    //                 $promotion
-    //                 ->discount_value . '%';
-    //         } else {
-
-    //             $final_price =
-    //                 $product->sale_price -
-    //                 $promotion
-    //                 ->discount_value;
-
-    //             $discount =
-    //                 '$' .
-    //                 $promotion
-    //                 ->discount_value;
-    //         }
-    //     }
-
-    //     return response()->json([
-    //         'id' => $product->id,
-    //         'name' => $product->name,
-    //         'description' =>
-    //         $product->description,
-
-    //         'sale_price' =>
-    //         $product->sale_price,
-
-    //         'final_price' =>
-    //         round(
-    //             $final_price,
-    //             2
-    //         ),
-
-    //         'discount' =>
-    //         $discount,
-
-    //         'quantity' =>
-    //         $product->quantity,
-
-    //         'status' =>
-    //         $product->status,
-
-    //         'category_name' =>
-    //         optional(
-    //             $product->category
-    //         )->name,
-
-    //         'brand_name' =>
-    //         optional(
-    //             $product->brand
-    //         )->name,
-
-    //         'images' =>
-    //         $product->image
-    //             ->pluck(
-    //                 'image_url'
-    //             )
-    //             ->values(),
-    //     ]);
-    // }
-
-
     public function getProductById($id)
     {
         $today = Carbon::today();
@@ -308,71 +190,105 @@ class ProductsController extends Controller
                 ->values(),
         ]);
     }
-    // public function bestSellers()
+
+    // public function getProductById($id)
     // {
     //     $today = Carbon::today();
 
-    //     $products = ProductsModel::leftJoin(
-    //         'order_items',
-    //         'products.id',
-    //         '=',
-    //         'order_items.product_id'
-    //     )
-    //         ->select('products.*')
-    //         ->selectRaw('COALESCE(SUM(order_items.qty),0) as sold')
-    //         ->groupBy('products.id')
-    //         ->orderByDesc('sold')
-    //         ->take(20)
-    //         ->get();
+    //     $product = ProductsModel::with([
+    //         'category',
+    //         'brand',
+    //         'image',
+    //         'promotions' => function ($q) use ($today) {
+    //             $q->where('status', true)
+    //                 ->where(function ($q) use ($today) {
+    //                     $q->whereNull('start_date')
+    //                         ->orWhereDate('start_date', '<=', $today);
+    //                 })
+    //                 ->where(function ($q) use ($today) {
+    //                     $q->whereNull('end_date')
+    //                         ->orWhereDate('end_date', '>=', $today);
+    //                 });
+    //         }
+    //     ])->find($id);
 
-    //     $products->load('image');
+    //     if (!$product) {
+    //         return response()->json([
+    //             'message' => 'Product not found'
+    //         ], 404);
+    //     }
 
-    //     $products = $products->map(function ($product) use ($today) {
+    //     $salePrice = (float) $product->sale_price;
 
-    //         $final_price = $product->sale_price;
-    //         $discount = null;
+    //     $finalPrice = $salePrice;
 
-    //         $promotion = PromotionModel::whereHas('products', function ($q) use ($product) {
-    //             $q->where('product_id', $product->id);
-    //         })
-    //             ->where('status', true)
-    //             ->whereDate('start_date', '<=', $today)
-    //             ->whereDate('end_date', '>=', $today)
-    //             ->first();
+    //     $selectedPromotion = null;
 
-    //         if ($promotion) {
+    //     foreach ($product->promotions as $promotion) {
 
-    //             if ($promotion->discount_type === 'percent') {
-    //                 $final_price =
-    //                     $product->sale_price -
-    //                     ($product->sale_price * $promotion->discount_value / 100);
+    //         if ($promotion->discount_type === 'percent') {
 
-    //                 $discount = $promotion->discount_value . '%';
-    //             } else {
-    //                 $final_price =
-    //                     $product->sale_price - $promotion->discount_value;
+    //             $discountAmount =
+    //                 $salePrice * $promotion->discount_value / 100;
 
-    //                 $discount = '$' . $promotion->discount_value;
+    //             if (!is_null($promotion->max_discount)) {
+
+    //                 $discountAmount = min(
+    //                     $discountAmount,
+    //                     $promotion->max_discount
+    //                 );
     //             }
+    //         } else {
+
+    //             $discountAmount = $promotion->discount_value;
     //         }
 
-    //         return [
-    //             'id' => $product->id,
-    //             'name' => $product->name,
-    //             'sale_price' => $product->sale_price,
-    //             'final_price' => round($final_price, 2),
-    //             'discount' => $discount,
-    //             'sold' => (int)$product->sold,
-    //             'images' => $product->image
-    //                 ->pluck('image_url')
-    //                 ->values(),
+    //         $currentFinalPrice = $salePrice - $discountAmount;
+
+    //         // Skip promotion that makes product free
+    //         if ($currentFinalPrice <= 0) {
+    //             continue;
+    //         }
+
+    //         if ($currentFinalPrice < $finalPrice) {
+
+    //             $finalPrice = $currentFinalPrice;
+
+    //             $selectedPromotion = $promotion;
+    //         }
+    //     }
+
+    //     $discount = null;
+
+    //     if ($selectedPromotion) {
+
+    //         $discount = [
+    //             'discount_type'  => $selectedPromotion->discount_type,
+    //             'discount_value' => $selectedPromotion->discount_value,
     //         ];
-    //     });
+    //     }
 
-    //     return response()->json($products);
+    //     return response()->json([
+    //         'id' => $product->id,
+    //         'name' => $product->name,
+    //         'description' => $product->description,
+
+    //         'sale_price'  => number_format($salePrice, 2, '.', ''),
+    //         'final_price' => number_format($finalPrice, 2, '.', ''),
+
+    //         'discount' => $discount,
+
+    //         'quantity' => $product->quantity,
+    //         'status' => $product->status,
+
+    //         'category_name' => optional($product->category)->name,
+    //         'brand_name'    => optional($product->brand)->name,
+
+    //         'images' => $product->image
+    //             ->pluck('image_url')
+    //             ->values(),
+    //     ]);
     // }
-
-
 
     public function bestSellers()
     {
@@ -444,86 +360,105 @@ class ProductsController extends Controller
 
         return response()->json($products);
     }
-    // public function newArrivals()
+
+
+    // public function bestSellers()
     // {
     //     $today = Carbon::today();
 
-    //     $products = ProductsModel::with('image')
-    //         ->orderByDesc('created_at')
-    //         ->take(2)
+    //     $products = ProductsModel::leftJoin(
+    //         'order_items',
+    //         'products.id',
+    //         '=',
+    //         'order_items.product_id'
+    //     )
+    //         ->select('products.*')
+    //         ->selectRaw('COALESCE(SUM(order_items.qty),0) as sold')
+    //         ->groupBy('products.id')
+    //         ->orderByDesc('sold')
+    //         ->where('products.status', true)
+    //         ->where('products.quantity', '>', 0)
+    //         ->take(20)
     //         ->get();
 
-    //     $products = $products->map(function ($product) use ($today) {
+    //     $products->load([
+    //         'image',
+    //         'promotions' => function ($q) use ($today) {
+    //             $q->where('status', true)
+    //                 ->where(function ($q) use ($today) {
+    //                     $q->whereNull('start_date')
+    //                         ->orWhereDate('start_date', '<=', $today);
+    //                 })
+    //                 ->where(function ($q) use ($today) {
+    //                     $q->whereNull('end_date')
+    //                         ->orWhereDate('end_date', '>=', $today);
+    //                 });
+    //         }
+    //     ]);
 
-    //         $final_price = $product->sale_price;
-    //         $discount = null;
+    //     $products = $products->map(function ($product) {
 
-    //         $promotion = PromotionModel::whereHas(
-    //             'products',
-    //             function ($q) use ($product) {
-    //                 $q->where(
-    //                     'product_id',
-    //                     $product->id
-    //                 );
-    //             }
-    //         )
-    //             ->where('status', true)
-    //             ->whereDate(
-    //                 'start_date',
-    //                 '<=',
-    //                 $today
-    //             )
-    //             ->whereDate(
-    //                 'end_date',
-    //                 '>=',
-    //                 $today
-    //             )
-    //             ->first();
+    //         $salePrice = (float) $product->sale_price;
 
-    //         if ($promotion) {
+    //         $finalPrice = $salePrice;
 
-    //             if (
-    //                 $promotion->discount_type
-    //                 === 'percent'
-    //             ) {
+    //         $selectedPromotion = null;
 
-    //                 $final_price =
-    //                     $product->sale_price -
-    //                     (
-    //                         $product->sale_price *
-    //                         $promotion->discount_value
-    //                         / 100
+    //         foreach ($product->promotions as $promotion) {
+
+    //             if ($promotion->discount_type === 'percent') {
+
+    //                 $discountAmount =
+    //                     $salePrice * $promotion->discount_value / 100;
+
+    //                 if (!is_null($promotion->max_discount)) {
+
+    //                     $discountAmount = min(
+    //                         $discountAmount,
+    //                         $promotion->max_discount
     //                     );
-
-    //                 $discount =
-    //                     $promotion->discount_value . '%';
+    //                 }
     //             } else {
 
-    //                 $final_price =
-    //                     $product->sale_price -
-    //                     $promotion->discount_value;
-
-    //                 $discount =
-    //                     '$' .
-    //                     $promotion->discount_value;
+    //                 $discountAmount = $promotion->discount_value;
     //             }
+
+    //             $currentFinalPrice = $salePrice - $discountAmount;
+
+    //             // មិនអនុញ្ញាត Free
+    //             if ($currentFinalPrice <= 0) {
+    //                 continue;
+    //             }
+
+    //             if ($currentFinalPrice < $finalPrice) {
+
+    //                 $finalPrice = $currentFinalPrice;
+    //                 $selectedPromotion = $promotion;
+    //             }
+    //         }
+
+    //         $discount = null;
+
+    //         if ($selectedPromotion) {
+
+    //             $discount = [
+    //                 'discount_type' => $selectedPromotion->discount_type,
+    //                 'discount_value' => $selectedPromotion->discount_value,
+    //             ];
     //         }
 
     //         return [
     //             'id' => $product->id,
     //             'name' => $product->name,
 
-    //             'sale_price' =>
-    //             $product->sale_price,
+    //             'sale_price' => number_format($salePrice, 2, '.', ''),
+    //             'final_price' => number_format($finalPrice, 2, '.', ''),
 
-    //             'final_price' =>
-    //             round($final_price, 2),
+    //             'discount' => $discount,
 
-    //             'discount' =>
-    //             $discount,
+    //             'sold' => (int) $product->sold,
 
-    //             'images' =>
-    //             $product->image
+    //             'images' => $product->image
     //                 ->pluck('image_url')
     //                 ->values(),
     //         ];
@@ -531,7 +466,6 @@ class ProductsController extends Controller
 
     //     return response()->json($products);
     // }
-
 
 
     public function newArrivals()
@@ -592,206 +526,9 @@ class ProductsController extends Controller
 
         return response()->json($products);
     }
-    // public function recommended()
-    // {
-    //     $today = Carbon::today();
-
-    //     $products = ProductsModel::with('image')
-    //         ->withSum(
-    //             'orderItems as sold',
-    //             'qty'
-    //         )
-    //         ->where('status', 1)
-    //         ->orderBy(
-    //             'sale_price',
-    //             'asc'
-    //         )
-    //         ->take(10)
-    //         ->get();
-
-    //     $products = $products->map(
-    //         function ($product) use ($today) {
-
-    //             $final_price =
-    //                 $product->sale_price;
-
-    //             $discount = null;
-
-    //             $promotion =
-    //                 PromotionModel::whereHas(
-    //                     'products',
-    //                     function ($q)
-    //                     use ($product) {
-
-    //                         $q->where(
-    //                             'product_id',
-    //                             $product->id
-    //                         );
-    //                     }
-    //                 )
-    //                 ->where(
-    //                     'status',
-    //                     true
-    //                 )
-    //                 ->whereDate(
-    //                     'start_date',
-    //                     '<=',
-    //                     $today
-    //                 )
-    //                 ->whereDate(
-    //                     'end_date',
-    //                     '>=',
-    //                     $today
-    //                 )
-    //                 ->first();
-
-    //             if ($promotion) {
-
-    //                 if (
-    //                     $promotion->discount_type
-    //                     === 'percent'
-    //                 ) {
-
-    //                     $final_price =
-    //                         $product->sale_price -
-    //                         (
-    //                             $product->sale_price *
-    //                             $promotion->discount_value
-    //                             / 100
-    //                         );
-
-    //                     $discount =
-    //                         $promotion
-    //                         ->discount_value . '%';
-    //                 } else {
-
-    //                     $final_price =
-    //                         $product->sale_price -
-    //                         $promotion
-    //                         ->discount_value;
-
-    //                     $discount =
-    //                         '$' .
-    //                         $promotion
-    //                         ->discount_value;
-    //                 }
-    //             }
-
-    //             return [
-    //                 'id' => $product->id,
-
-    //                 'name' =>
-    //                 $product->name,
-
-    //                 'sale_price' =>
-    //                 $product->sale_price,
-
-    //                 'final_price' =>
-    //                 round(
-    //                     $final_price,
-    //                     2
-    //                 ),
-
-    //                 'discount' =>
-    //                 $discount,
-
-    //                 'sold' =>
-    //                 $product->sold ?? 0,
-
-    //                 'images' =>
-    //                 $product->image
-    //                     ->pluck(
-    //                         'image_url'
-    //                     )
-    //                     ->values(),
-    //             ];
-    //         }
-    //     );
-
-    //     return response()->json(
-    //         $products
-    //     );
-    // }
-
-    // public function allBestSellers()
-    // {
-    //     $today = Carbon::today();
-
-    //     $products = ProductsModel::leftJoin(
-    //         'order_items',
-    //         'products.id',
-    //         '=',
-    //         'order_items.product_id'
-    //     )
-    //         ->select('products.*')
-    //         ->selectRaw('COALESCE(SUM(order_items.qty),0) as sold')
-    //         ->groupBy('products.id')
-    //         ->orderByDesc('sold') // 🔥 BEST SELLER
-    //         ->get();
-
-    //     // load relationships
-    //     $products->load(['image', 'category', 'brand']);
-
-    //     $products = $products->map(function ($product) use ($today) {
-
-    //         $final_price = $product->sale_price;
-    //         $discount = null;
-
-    //         // promotion logic
-    //         $promotion = PromotionModel::whereHas('products', function ($q) use ($product) {
-    //             $q->where('product_id', $product->id);
-    //         })
-    //             ->where('status', true)
-    //             ->whereDate('start_date', '<=', $today)
-    //             ->whereDate('end_date', '>=', $today)
-    //             ->first();
-
-    //         if ($promotion) {
-    //             if ($promotion->discount_type === 'percent') {
-
-    //                 $final_price =
-    //                     $product->sale_price -
-    //                     ($product->sale_price * $promotion->discount_value / 100);
-
-    //                 $discount = number_format($promotion->discount_value, 2) . '%';
-    //             } else {
-
-    //                 $final_price =
-    //                     $product->sale_price - $promotion->discount_value;
-
-    //                 $discount = '$' . number_format($promotion->discount_value, 2);
-    //             }
-    //         }
-
-    //         return [
-    //             'id' => $product->id,
-    //             'name' => $product->name,
-    //             'description' => $product->description,
-    //             'unit' => $product->unit,
-    //             'quantity' => $product->quantity,
-
-    //             'sale_price' => $product->sale_price,
-    //             'final_price' => round($final_price, 2),
-    //             // 'final_price' => number_format($final_price, 2), // if want 2.80
-
-    //             'discount' => $discount,
-
-    //             'category_name' => optional($product->category)->name,
-    //             'brand_name' => optional($product->brand)->name,
-
-    //             'sold' => (int) $product->sold,
-
-    //             'images' => $product->image
-    //                 ->pluck('image_url')
-    //                 ->values(),
-    //         ];
-    //     });
-
-    //     return response()->json($products);
-    // }
 
 
-    // public function recommended()
+    // public function newArrivals()
     // {
     //     $today = Carbon::today();
 
@@ -799,50 +536,82 @@ class ProductsController extends Controller
     //         'image',
     //         'promotions' => function ($q) use ($today) {
     //             $q->where('status', true)
-    //                 ->whereDate('start_date', '<=', $today)
-    //                 ->whereDate('end_date', '>=', $today);
+    //                 ->where(function ($q) use ($today) {
+    //                     $q->whereNull('start_date')
+    //                         ->orWhereDate('start_date', '<=', $today);
+    //                 })
+    //                 ->where(function ($q) use ($today) {
+    //                     $q->whereNull('end_date')
+    //                         ->orWhereDate('end_date', '>=', $today);
+    //                 });
     //         }
     //     ])
-    //         ->withSum('orderItems as sold', 'qty')
-    //         ->where('status', 1)
-    //         ->orderBy('sale_price', 'asc')
-    //         ->take(10)
     //         ->where('status', true)
     //         ->where('quantity', '>', 0)
+    //         ->orderByDesc('created_at')
+    //         ->take(10)
     //         ->get();
 
     //     $products = $products->map(function ($product) {
 
-    //         $final_price = $product->sale_price;
-    //         $discount = null;
+    //         $salePrice = (float) $product->sale_price;
 
-    //         $promotion = $product->promotions->first();
+    //         $finalPrice = $salePrice;
 
-    //         if ($promotion) {
+    //         $selectedPromotion = null;
+
+    //         foreach ($product->promotions as $promotion) {
+
     //             if ($promotion->discount_type === 'percent') {
 
-    //                 $final_price = $product->sale_price -
-    //                     ($product->sale_price * $promotion->discount_value / 100);
+    //                 $discountAmount =
+    //                     $salePrice * $promotion->discount_value / 100;
 
-    //                 $discount = $promotion->discount_value . '%';
+    //                 if (!is_null($promotion->max_discount)) {
+
+    //                     $discountAmount = min(
+    //                         $discountAmount,
+    //                         $promotion->max_discount
+    //                     );
+    //                 }
     //             } else {
 
-    //                 $final_price = $product->sale_price - $promotion->discount_value;
-
-    //                 $discount = '$' . $promotion->discount_value;
+    //                 $discountAmount = $promotion->discount_value;
     //             }
+
+    //             $currentFinalPrice = $salePrice - $discountAmount;
+
+    //             // មិនអនុញ្ញាតឱ្យតម្លៃស្មើ 0 ឬអវិជ្ជមាន
+    //             if ($currentFinalPrice <= 0) {
+    //                 continue;
+    //             }
+
+    //             // ជ្រើស Promotion ដែលបានតម្លៃថោកជាងគេ
+    //             if ($currentFinalPrice < $finalPrice) {
+
+    //                 $finalPrice = $currentFinalPrice;
+    //                 $selectedPromotion = $promotion;
+    //             }
+    //         }
+
+    //         $discount = null;
+
+    //         if ($selectedPromotion) {
+
+    //             $discount = [
+    //                 'discount_type' => $selectedPromotion->discount_type,
+    //                 'discount_value' => $selectedPromotion->discount_value,
+    //             ];
     //         }
 
     //         return [
     //             'id' => $product->id,
     //             'name' => $product->name,
 
-    //             // ✅ formatted correctly
-    //             'sale_price' => number_format($product->sale_price, 2, '.', ''),
-    //             'final_price' => number_format($final_price, 2, '.', ''),
+    //             'sale_price' => number_format($salePrice, 2, '.', ''),
+    //             'final_price' => number_format($finalPrice, 2, '.', ''),
 
     //             'discount' => $discount,
-    //             'sold' => (int) ($product->sold ?? 0),
 
     //             'images' => $product->image
     //                 ->pluck('image_url')
@@ -923,6 +692,111 @@ class ProductsController extends Controller
 
         return response()->json($products);
     }
+
+    // public function recommended()
+    // {
+    //     $today = Carbon::today();
+
+    //     $products = ProductsModel::with([
+    //         'image',
+    //         'category',
+    //         'brand',
+    //         'promotions' => function ($q) use ($today) {
+    //             $q->where('status', true)
+    //                 ->where(function ($q) use ($today) {
+    //                     $q->whereNull('start_date')
+    //                         ->orWhereDate('start_date', '<=', $today);
+    //                 })
+    //                 ->where(function ($q) use ($today) {
+    //                     $q->whereNull('end_date')
+    //                         ->orWhereDate('end_date', '>=', $today);
+    //                 });
+    //         }
+    //     ])
+    //         ->withSum('orderItems as sold', 'qty')
+    //         ->where('status', true)
+    //         ->where('quantity', '>', 0)
+    //         ->orderBy('sale_price', 'asc')
+    //         ->take(10)
+    //         ->get();
+
+    //     $products = $products->map(function ($product) {
+
+    //         $salePrice = (float) $product->sale_price;
+
+    //         $finalPrice = $salePrice;
+
+    //         $selectedPromotion = null;
+
+    //         foreach ($product->promotions as $promotion) {
+
+    //             if ($promotion->discount_type === 'percent') {
+
+    //                 $discountAmount =
+    //                     $salePrice * $promotion->discount_value / 100;
+
+    //                 if (!is_null($promotion->max_discount)) {
+
+    //                     $discountAmount = min(
+    //                         $discountAmount,
+    //                         $promotion->max_discount
+    //                     );
+    //                 }
+    //             } else {
+
+    //                 $discountAmount = $promotion->discount_value;
+    //             }
+
+    //             $currentFinalPrice = $salePrice - $discountAmount;
+
+    //             // មិនអនុញ្ញាតឱ្យតម្លៃ <= 0
+    //             if ($currentFinalPrice <= 0) {
+    //                 continue;
+    //             }
+
+    //             // ជ្រើស Promotion ដែលធ្វើឱ្យតម្លៃថោកជាងគេ
+    //             if ($currentFinalPrice < $finalPrice) {
+
+    //                 $finalPrice = $currentFinalPrice;
+    //                 $selectedPromotion = $promotion;
+    //             }
+    //         }
+
+    //         $discount = null;
+
+    //         if ($selectedPromotion) {
+
+    //             $discount = [
+    //                 'discount_type' => $selectedPromotion->discount_type,
+    //                 'discount_value' => $selectedPromotion->discount_value,
+    //             ];
+    //         }
+
+    //         return [
+    //             'id' => $product->id,
+    //             'name' => $product->name,
+    //             'description' => $product->description,
+    //             'unit' => $product->unit,
+    //             'quantity' => $product->quantity,
+
+    //             'sale_price' => number_format($salePrice, 2, '.', ''),
+    //             'final_price' => number_format($finalPrice, 2, '.', ''),
+
+    //             'discount' => $discount,
+
+    //             'category_name' => optional($product->category)->name,
+    //             'brand_name' => optional($product->brand)->name,
+
+    //             'sold' => (int) ($product->sold ?? 0),
+
+    //             'images' => $product->image
+    //                 ->pluck('image_url')
+    //                 ->values(),
+    //         ];
+    //     });
+
+    //     return response()->json($products);
+    // }
     public function allBestSellers()
     {
         $today = Carbon::today();
@@ -1001,87 +875,6 @@ class ProductsController extends Controller
 
         return response()->json($products);
     }
-    // public function allNewArrivals()
-    // {
-    //     $today = Carbon::today();
-    //     $days = 30; // define "new"
-
-    //     $products = ProductsModel::leftJoin(
-    //         'order_items',
-    //         'products.id',
-    //         '=',
-    //         'order_items.product_id'
-    //     )
-    //         ->select('products.*')
-    //         ->selectRaw('COALESCE(SUM(order_items.qty),0) as sold')
-    //         ->where('products.created_at', '>=', Carbon::now()->subDays($days)) // NEW FILTER
-    //         ->groupBy('products.id')
-    //         ->orderByDesc('products.created_at') // newest first
-    //         ->get();
-
-    //     // load relationships
-    //     $products->load(['image', 'category', 'brand']);
-
-    //     $products = $products->map(function ($product) use ($today) {
-
-    //         $final_price = $product->sale_price;
-    //         $discount = null;
-
-    //         // promotion
-    //         $promotion = PromotionModel::whereHas('products', function ($q) use ($product) {
-    //             $q->where('product_id', $product->id);
-    //         })
-    //             ->where('status', true)
-    //             ->whereDate('start_date', '<=', $today)
-    //             ->whereDate('end_date', '>=', $today)
-    //             ->first();
-
-    //         if ($promotion) {
-    //             if ($promotion->discount_type === 'percent') {
-
-    //                 $final_price =
-    //                     $product->sale_price -
-    //                     ($product->sale_price * $promotion->discount_value / 100);
-
-    //                 $discount = number_format($promotion->discount_value, 2) . '%';
-    //             } else {
-
-    //                 $final_price =
-    //                     $product->sale_price - $promotion->discount_value;
-
-    //                 $discount = '$' . number_format($promotion->discount_value, 2);
-    //             }
-    //         }
-
-    //         return [
-    //             'id' => $product->id,
-    //             'name' => $product->name,
-    //             'description' => $product->description,
-    //             'unit' => $product->unit,
-    //             'quantity' => $product->quantity,
-
-    //             'sale_price' => $product->sale_price,
-
-    //             // 👉 choose one
-    //             'final_price' => round($final_price, 2),
-    //             // 'final_price' => number_format($final_price, 2), // if you want 2.80
-
-    //             'discount' => $discount,
-
-    //             'category_name' => optional($product->category)->name,
-    //             'brand_name' => optional($product->brand)->name,
-
-    //             'sold' => (int) $product->sold,
-
-    //             'images' => $product->image
-    //                 ->pluck('image_url')
-    //                 ->values(),
-    //         ];
-    //     });
-
-    //     return response()->json($products);
-    // }
-
 
     public function allNewArrivals()
     {

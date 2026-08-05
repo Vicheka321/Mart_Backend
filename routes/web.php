@@ -595,6 +595,9 @@ Route::prefix('admin')
             ->middleware('permission:view_customers')
             ->name('admin.customers.store');
 
+        Route::post('/admin/customers/check-email', [CustomersController::class, 'checkEmail'])->name('admin.customers.check-email');
+        Route::post('/admin/customers/check-phone', [CustomersController::class, 'checkPhone'])->name('admin.customers.check-phone');
+
         Route::patch('/customers/{user}', [CustomersController::class, 'updateCustomer'])
             ->middleware('permission:view_customers')
             ->name('admin.updateCustomer');
