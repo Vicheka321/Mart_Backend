@@ -103,15 +103,15 @@ class UserSeeder extends Seeder
         // ==========================
         // Demo Customer
         // ==========================
-        $customer = User::updateOrCreate(
-            ['email' => 'customer@gmail.com'],
-            [
-                'full_name' => 'Customer User',
-                'phone' => '012345682',
-                'password' => Hash::make('11112222'),
-            ]
-        );
-        $customer->syncRoles(['Customer']);
+        // $customer = User::updateOrCreate(
+        //     ['email' => 'customer@gmail.com'],
+        //     [
+        //         'full_name' => 'Customer User',
+        //         'phone' => '012345682',
+        //         'password' => Hash::make('11112222'),
+        //     ]
+        // );
+        // $customer->syncRoles(['Customer']);
 
         // ==========================
         // Generate 300 Cambodian Customers
@@ -205,7 +205,7 @@ class UserSeeder extends Seeder
 
             $user = User::create([
                 'full_name' => $fullName,
-                'email' => 'customer' . $i . '@gmail.com',
+                'email' => fake()->unique()->userName() . '@gmail.com',
                 'phone' => $phone,
                 'password' => Hash::make('11112222'),
                 'avatar' => 'https://i.pravatar.cc/300?img=' . rand(1, 70),
