@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             [
                 'full_name' => 'Super Admin',
                 'phone' => '012345678',
-                'password' => Hash::make('11112222'),
+                'password' => Hash::make('Vich@@2244'),
                 'account_type'  => 'employee',
             ]
         );
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
             [
                 'full_name' => 'Admin User',
                 'phone' => '012345679',
-                'password' => Hash::make('11112222'),
+                'password' => Hash::make('Vich@@2244'),
                 'account_type'  => 'employee',
             ]
         );

@@ -761,7 +761,7 @@
                         </svg>
                     </span>
 
-                    <span>My Account</span>
+                    <span>My Profile</span>
                 </a>
             </div>
 
