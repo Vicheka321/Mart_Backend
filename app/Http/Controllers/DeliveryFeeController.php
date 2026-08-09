@@ -56,7 +56,7 @@ class DeliveryFeeController extends Controller
             'min_km' => $validated['min_km'],
             'max_km' => $validated['max_km'],
             'fee'    => $validated['fee'],
-            'status' => $request->boolean('status'),
+            'status' => true,
         ]);
 
         return response()->json([
@@ -104,7 +104,7 @@ class DeliveryFeeController extends Controller
             'min_km' => $validated['min_km'],
             'max_km' => $validated['max_km'],
             'fee'    => $validated['fee'],
-            'status' => $request->boolean('status'),
+            'status' => true,
         ]);
 
         return response()->json([
