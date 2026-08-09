@@ -888,12 +888,48 @@ class ProductsSeeder extends Seeder
             // ],
         ];
 
+        // foreach ($productData as $index => $item) {
+
+        //     $createdAt = now()->subDays(rand(1, 730));
+        //     $costPrice = mt_rand(1, 5000) / 100;
+
+        //     $salePrice = $costPrice + (mt_rand(1, 3000) / 100);
+        //     $product = ProductsModel::create([
+        //         'categories_id' => $item['category'],
+        //         'brand_id'      => $item['brand'],
+        //         'product_code'  => 'PRD' . str_pad($index + 1, 5, '0', STR_PAD_LEFT),
+        //         'name'          => $item['name'],
+        //         'description'   => $item['name'],
+        //         'unit'          => 'piece',
+        //         'cost_price'    => $costPrice,
+        //         'sale_price'    => $salePrice,
+        //         'quantity'      => 100,
+
+        //         'status'        => true,
+        //         'created_at'    => $createdAt,
+        //         'updated_at'    => $createdAt,
+        //     ]);
+
+        //     ProductsImageModel::create([
+        //         'product_id' => $product->id,
+        //         'image_url'  => $item['image'],
+        //         'created_at' => $createdAt,
+        //         'updated_at' => $createdAt,
+        //     ]);
+        // }
         foreach ($productData as $index => $item) {
 
             $createdAt = now()->subDays(rand(1, 730));
-            $costPrice = mt_rand(1, 5000) / 100;
 
-            $salePrice = $costPrice + (mt_rand(1, 3000) / 100);
+            // Cost: $0.50 - $1.50
+            $costPrice = mt_rand(50, 150) / 100;
+
+            // Sale: $0.50 - $2.00, but higher than cost
+            $salePrice = mt_rand(
+                (int) ($costPrice * 100) + 1,
+                200
+            ) / 100;
+
             $product = ProductsModel::create([
                 'categories_id' => $item['category'],
                 'brand_id'      => $item['brand'],
@@ -901,11 +937,10 @@ class ProductsSeeder extends Seeder
                 'name'          => $item['name'],
                 'description'   => $item['name'],
                 'unit'          => 'piece',
-                // 'cost_price'    => rand(1, 100),
-                // 'sale_price'    => rand(1, 200),
-                // 'quantity'      => rand(10, 500),
+
                 'cost_price'    => $costPrice,
                 'sale_price'    => $salePrice,
+
                 'quantity'      => 100,
 
                 'status'        => true,
