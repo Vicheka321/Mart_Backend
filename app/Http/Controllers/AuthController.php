@@ -88,7 +88,7 @@ class AuthController extends Controller
                 [
                     'otp' => $otp,
                     'payload' => json_encode($payload),
-                    'expires_at' => now()->addMinutes(5),
+                    'expires_at' => now()->addMinutes(2),
                 ]
             );
 
@@ -106,7 +106,7 @@ class AuthController extends Controller
                 [
                     'otp' => $otp,
                     'payload' => json_encode($payload),
-                    'expires_at' => now()->addMinutes(5),
+                    'expires_at' => now()->addMinutes(2),
                 ]
             );
 
@@ -114,10 +114,10 @@ class AuthController extends Controller
 
                 $result = $this->sms->sendSms(
                     $login,
-                    "Your reset OTP is {$otp}"
+                    "Your verification OTP is {$otp}. It expires in 2 minutes."
                 );
 
-                dd($result);
+
 
                 return response()->json([
                     'success' => true,
@@ -223,7 +223,7 @@ class AuthController extends Controller
             [$field => $login],
             [
                 'otp' => $otp,
-                'expires_at' => now()->addMinutes(5),
+                'expires_at' => now()->addMinutes(2),
             ]
         );
 
@@ -235,7 +235,7 @@ class AuthController extends Controller
 
             $this->sms->sendSms(
                 $login,
-                "Your reset OTP is {$otp}"
+                "Your verification OTP is {$otp}. It expires in 2 minutes."
             );
         }
 
