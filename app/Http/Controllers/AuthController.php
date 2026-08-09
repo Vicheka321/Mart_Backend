@@ -395,10 +395,10 @@ class AuthController extends Controller
             Mail::to($request->login)
                 ->send(new SendOtpMail($otp));
         } else {
-            // $this->sms->sms(
-            //     $request->login,
-            //     "Your OTP is {$otp}"
-            // );
+            $this->sms->sendSms(
+                $request->login,
+                "Your verification OTP is {$otp}. It expires in 2 minutes."
+            );
         }
 
         return response()->json([
@@ -463,10 +463,10 @@ class AuthController extends Controller
 
 
         $otp = rand(100000, 999999);
-        // Otp::updateOrCreate(
-        //     ['email' => $request->email],
-        //     ['otp' => $otp, 'expires_at' => now()->addMinutes(5)]
-        // );
+        Otp::updateOrCreate(
+            ['email' => $request->email],
+            ['otp' => $otp, 'expires_at' => now()->addMinutes(5)]
+        );
 
         Mail::to($request->email)->send(new SendOtpMail($otp));
 

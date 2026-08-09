@@ -99,11 +99,14 @@ class OrdersController extends Controller
             ->orderBy('air_distance')
             ->first();
 
+
+
         if (!$branch) {
             return response()->json([
                 'success' => false,
-                'message' => 'No active branch.'
-            ], 404);
+                'code' => 'NO_BRANCH',
+                'message' => 'Order cannot be placed because no active branch is available.'
+            ], 422);
         }
 
         $distanceKm = $this->google->getDrivingDistance(
@@ -115,29 +118,23 @@ class OrdersController extends Controller
             $request->lng
 
         );
+
+
         $delivery = DeliveryFee::where('status', true)
-
             ->where('min_km', '<=', $distanceKm)
-
             ->where(function ($q) use ($distanceKm) {
-
                 $q->where('max_km', '>=', $distanceKm)
                     ->orWhereNull('max_km');
             })
-
             ->first();
 
         if (!$delivery) {
-
             return response()->json([
-
                 'success' => false,
-
-                'message' => 'Delivery area is not supported.'
-
+                'code' => 'DELIVERY_NOT_SUPPORTED',
+                'message' => 'Sorry, we currently do not deliver to this location.'
             ], 422);
         }
-
         $deliveryFee = $delivery->fee;
         $existingOrder = OrderModel::with('payment')
             ->where('user_id', $user_id)
@@ -194,7 +191,41 @@ class OrdersController extends Controller
                 $unitPrice = $item->price;
                 $lineTotal = $item->qty * $unitPrice;
 
-                $promotion = $product->promotions()
+                // $promotion = $product->promotions()
+                //     ->where('status', true)
+                //     ->where(function ($q) {
+                //         $q->whereNull('start_date')
+                //             ->orWhere('start_date', '<=', now());
+                //     })
+                //     ->where(function ($q) {
+                //         $q->whereNull('end_date')
+                //             ->orWhere('end_date', '>=', now()->toDateString());
+                //     })
+                //     ->orderByDesc('discount_value')
+                //     ->first();
+
+                // $promotionDiscount = 0;
+
+                // if ($promotion) {
+                //     if ($promotion->discount_type === 'percent') {
+                //         $promotionDiscount =
+                //             ($unitPrice * $promotion->discount_value / 100) * $item->qty;
+
+                //         if (!is_null($promotion->max_discount)) {
+                //             $promotionDiscount = min(
+                //                 $promotionDiscount,
+                //                 $promotion->max_discount
+                //             );
+                //         }
+                //     } else {
+                //         $promotionDiscount =
+                //             $promotion->discount_value * $item->qty;
+                //     }
+                //     $promotionDiscount = min($promotionDiscount, $lineTotal);
+                // }
+
+
+                $promotions = $product->promotions()
                     ->where('status', true)
                     ->where(function ($q) {
                         $q->whereNull('start_date')
@@ -204,29 +235,69 @@ class OrdersController extends Controller
                         $q->whereNull('end_date')
                             ->orWhere('end_date', '>=', now()->toDateString());
                     })
-                    ->orderByDesc('discount_value')
-                    ->first();
+                    ->get();
 
                 $promotionDiscount = 0;
+                $selectedPromotion = null;
 
-                if ($promotion) {
+                foreach ($promotions as $promotion) {
+
+                    // -----------------------------------
+                    // Calculate discount per UNIT
+                    // -----------------------------------
                     if ($promotion->discount_type === 'percent') {
-                        $promotionDiscount =
-                            ($unitPrice * $promotion->discount_value / 100) * $item->qty;
+
+                        $discountPerUnit =
+                            $unitPrice * $promotion->discount_value / 100;
 
                         if (!is_null($promotion->max_discount)) {
-                            $promotionDiscount = min(
-                                $promotionDiscount,
+                            $discountPerUnit = min(
+                                $discountPerUnit,
                                 $promotion->max_discount
                             );
                         }
                     } else {
-                        $promotionDiscount =
-                            $promotion->discount_value * $item->qty;
-                    }
-                    $promotionDiscount = min($promotionDiscount, $lineTotal);
-                }
 
+                        // Fixed discount
+                        $discountPerUnit =
+                            (float) $promotion->discount_value;
+                    }
+
+                    // -----------------------------------
+                    // Calculate final UNIT price
+                    // -----------------------------------
+                    $currentFinalPrice =
+                        $unitPrice - $discountPerUnit;
+
+                    // ❌ Never allow product price = $0
+                    if ($currentFinalPrice <= 0) {
+                        continue;
+                    }
+
+                    // -----------------------------------
+                    // Calculate total discount
+                    // -----------------------------------
+                    $currentDiscount =
+                        $discountPerUnit * $item->qty;
+
+                    // -----------------------------------
+                    // Keep the BEST promotion
+                    // Lowest final price
+                    // -----------------------------------
+                    if (
+                        $selectedPromotion === null ||
+                        $currentFinalPrice <
+                        ($unitPrice - ($promotionDiscount / $item->qty))
+                    ) {
+
+                        $promotionDiscount = min(
+                            $currentDiscount,
+                            $lineTotal
+                        );
+
+                        $selectedPromotion = $promotion;
+                    }
+                }
                 $finalLineTotal = $lineTotal - $promotionDiscount;
                 $total += $finalLineTotal;
                 $promotionDiscountTotal += $promotionDiscount;

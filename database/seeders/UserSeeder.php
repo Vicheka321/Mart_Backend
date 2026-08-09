@@ -44,7 +44,7 @@ class UserSeeder extends Seeder
             [
                 'full_name' => 'Theary',
                 'phone' => '012345670',
-                'password' => Hash::make('Pitipiwpiwwiwwiw168hengheng'),
+                'password' => Hash::make('Vich@@2244'),
                 'account_type'  => 'employee',
             ]
         );
@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
             [
                 'full_name' => 'Thyna',
                 'phone' => '012345673',
-                'password' => Hash::make('Pitipiwpiwwiwwiw169hengheng'),
+                'password' => Hash::make('Vich@@2244'),
                 'account_type'  => 'employee',
             ]
         );
@@ -67,7 +67,7 @@ class UserSeeder extends Seeder
             [
                 'full_name' => 'Sann',
                 'phone' => '0123456787',
-                'password' => Hash::make('Pitipiwpiwwiwwiw170hengheng'),
+                'password' => Hash::make('Vich@@2244'),
                 'account_type'  => 'employee',
             ]
         );

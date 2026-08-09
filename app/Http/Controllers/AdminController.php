@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AdminController extends Controller
 {
@@ -60,24 +61,72 @@ class AdminController extends Controller
         ]);
     }
 
+    // public function resetPassword(Request $request)
+    // {
+    //     $request->validate([
+    //         'token' => 'required',
+    //         'email' => 'required|email',
+    //         // 'password' => 'required|min:8|confirmed',
+    //         'password' => [
+    //             'required',
+    //             'confirmed',
+    //             Password::min(8)
+    //                 ->mixedCase()
+    //                 ->numbers()
+    //                 ->symbols(),
+    //         ],
+    //     ]);
+
+    //     $status = Password::reset(
+    //         $request->only(
+    //             'email',
+    //             'password',
+    //             'password_confirmation',
+    //             'token'
+    //         ),
+
+    //         function ($user, $password) {
+
+    //             $user->forceFill([
+    //                 'password' => Hash::make($password),
+    //             ])->save();
+
+    //             $user->setRememberToken(Str::random(60));
+
+    //             event(new PasswordReset($user));
+    //         }
+    //     );
+
+    //     if ($status == Password::PASSWORD_RESET) {
+
+    //         return redirect()
+    //             ->route('login')
+    //             ->with('success', 'Password reset successfully.');
+    //     }
+
+    //     return back()->withErrors([
+    //         'email' => __($status),
+    //     ]);
+    // }
+
     public function resetPassword(Request $request)
     {
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
+            'password' => [
+                'required',
+                'confirmed',
+                PasswordRule::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
+            ],
         ]);
 
         $status = Password::reset(
-            $request->only(
-                'email',
-                'password',
-                'password_confirmation',
-                'token'
-            ),
-
+            $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
-
                 $user->forceFill([
                     'password' => Hash::make($password),
                 ])->save();
@@ -89,7 +138,6 @@ class AdminController extends Controller
         );
 
         if ($status == Password::PASSWORD_RESET) {
-
             return redirect()
                 ->route('login')
                 ->with('success', 'Password reset successfully.');

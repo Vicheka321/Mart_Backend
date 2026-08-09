@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
 
 class AccountController extends Controller
 {
@@ -100,42 +101,73 @@ class AccountController extends Controller
     /**
      * Change password.
      */
+    // public function updatePassword(Request $request)
+    // {
+    //     /** @var User $user */
+    //     $user = Auth::user();
+
+    //     $validated = $request->validate([
+    //         'current_password' => [
+    //             'required',
+    //         ],
+    //         'password' => [
+    //             'required',
+    //             'string',
+    //             'min:8',
+    //             'confirmed',
+    //         ],
+    //     ]);
+
+    //     if (!Hash::check(
+    //         $validated['current_password'],
+    //         $user->password
+    //     )) {
+
+    //         return back()->withErrors([
+    //             'current_password' => 'Current password is incorrect.',
+    //         ]);
+    //     }
+
+    //     $user->update([
+    //         'password' => Hash::make(
+    //             $validated['password']
+    //         ),
+    //     ]);
+
+    //     return back()->with(
+    //         'success',
+    //         'Password updated successfully.'
+    //     );
+    // }
+
     public function updatePassword(Request $request)
     {
-        /** @var User $user */
-        $user = Auth::user();
-
         $validated = $request->validate([
             'current_password' => [
                 'required',
+                'current_password',
             ],
-            'password' => [
+
+            'new_password' => [
                 'required',
                 'string',
-                'min:8',
                 'confirmed',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
             ],
         ]);
 
-        if (!Hash::check(
-            $validated['current_password'],
-            $user->password
-        )) {
-
-            return back()->withErrors([
-                'current_password' => 'Current password is incorrect.',
-            ]);
-        }
+        $user = Auth::user();
 
         $user->update([
-            'password' => Hash::make(
-                $validated['password']
-            ),
+            'password' => Hash::make($validated['new_password']),
         ]);
 
-        return back()->with(
-            'success',
-            'Password updated successfully.'
-        );
+        return response()->json([
+            'success' => true,
+            'message' => 'Password updated successfully.',
+        ]);
     }
 }
