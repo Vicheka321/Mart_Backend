@@ -80,7 +80,7 @@ class UserSeeder extends Seeder
             [
                 'full_name' => 'Manager User',
                 'phone' => '012345680',
-                'password' => Hash::make('11112222'),
+                'password' => Hash::make('Vich@@2244'),
                 'account_type'  => 'employee',
             ]
         );
@@ -207,7 +207,7 @@ class UserSeeder extends Seeder
                 'full_name' => $fullName,
                 'email' => fake()->unique()->userName() . '@gmail.com',
                 'phone' => $phone,
-                'password' => Hash::make('11112222'),
+                'password' => Hash::make('Vich@@2244'),
                 'avatar' => 'https://i.pravatar.cc/300?img=' . rand(1, 70),
             ]);
 

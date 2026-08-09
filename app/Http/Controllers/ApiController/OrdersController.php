@@ -15,6 +15,7 @@ use App\Models\PaymentModel;
 use Illuminate\Support\Facades\Auth;
 use App\Services\TelegramService;
 use App\Events\NewOrderCreated;
+use App\Events\OrderStatusChanged;
 use App\Models\CouponModel;
 use App\Models\CouponUsageModel;
 use App\Models\PromotionUsagesModel;
@@ -719,49 +720,209 @@ class OrdersController extends Controller
 
 
 
+    // public function cancelOrder($id)
+    // {
+    //     DB::beginTransaction();
+
+    //     try {
+
+    //         $order = OrderModel::with('orderItems')->findOrFail($id);
+
+
+    //         foreach ($order->orderItems as $item) {
+    //             $product = ProductsModel::find($item->product_id);
+
+    //             if ($product) {
+    //                 $product->increment('quantity', $item->qty);
+    //             }
+    //         }
+
+    //         // Remove coupon usage
+    //         $couponUsage = CouponUsageModel::where('order_id', $order->id)->first();
+    //         if ($couponUsage) {
+    //             $coupon = CouponModel::find($couponUsage->coupon_id);
+
+    //             if ($coupon && $coupon->used_count > 0) {
+    //                 $coupon->decrement('used_count');
+    //             }
+
+    //             $couponUsage->delete();
+    //         }
+
+    //         // Delete payment
+    //         PaymentModel::where('order_id', $order->id)->delete();
+
+    //         // Delete order items
+    //         Order_itemModel::where('order_id', $order->id)->delete();
+
+    //         // Delete order
+    //         $order->delete();
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Order cancelled and deleted successfully'
+    //         ]);
+    //     } catch (\Exception $e) {
+
+    //         DB::rollBack();
+
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+
     public function cancelOrder($id)
     {
         DB::beginTransaction();
 
         try {
 
-            $order = OrderModel::with('orderItems')->findOrFail($id);
+            $order = OrderModel::with([
+                'orderItems.product',
+                'payment',
+                'user',
+            ])->findOrFail($id);
 
+            // =====================================
+            // ONLY PENDING / PROCESSING CAN CANCEL
+            // =====================================
+
+            if (!in_array($order->status, [
+                'pending',
+                'processing'
+            ])) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This order cannot be cancelled.'
+                ], 422);
+            }
+
+            // =====================================
+            // RESTORE STOCK
+            // =====================================
 
             foreach ($order->orderItems as $item) {
+
                 $product = ProductsModel::find($item->product_id);
 
                 if ($product) {
-                    $product->increment('quantity', $item->qty);
+                    $product->increment(
+                        'quantity',
+                        $item->qty
+                    );
                 }
             }
 
-            // Remove coupon usage
-            $couponUsage = CouponUsageModel::where('order_id', $order->id)->first();
-            if ($couponUsage) {
-                $coupon = CouponModel::find($couponUsage->coupon_id);
+            // =====================================
+            // RESTORE COUPON
+            // =====================================
 
-                if ($coupon && $coupon->used_count > 0) {
+            $couponUsage = CouponUsageModel::where(
+                'order_id',
+                $order->id
+            )->first();
+
+            if ($couponUsage) {
+
+                $coupon = CouponModel::find(
+                    $couponUsage->coupon_id
+                );
+
+                if (
+                    $coupon &&
+                    $coupon->used_count > 0
+                ) {
                     $coupon->decrement('used_count');
                 }
 
                 $couponUsage->delete();
             }
 
-            // Delete payment
-            PaymentModel::where('order_id', $order->id)->delete();
+            // =====================================
+            // PAYMENT
+            // =====================================
 
-            // Delete order items
-            Order_itemModel::where('order_id', $order->id)->delete();
+            if ($order->payment) {
 
-            // Delete order
-            $order->delete();
+                $order->payment->update([
+                    'payment_status' => 'cancelled',
+                ]);
+            }
+
+            // =====================================
+            // CANCEL ORDER
+            // =====================================
+
+            $order->update([
+                'status' => 'cancelled',
+
+                // Important:
+                // cancelled order must NOT be sent again
+                'is_sent' => true,
+            ]);
 
             DB::commit();
 
+            // =====================================
+            // REFRESH ORDER
+            // =====================================
+
+            $order->refresh();
+
+            // =====================================
+            // DASHBOARD REALTIME
+            // =====================================
+
+            broadcast(
+                new OrderStatusChanged(
+                    $order->id,
+                    $order->status
+                )
+            );
+
+            // =====================================
+            // TELEGRAM
+            // =====================================
+
+            $telegram = app(TelegramService::class);
+
+            /*
+        |--------------------------------------------------------------------------
+        | If this order already exists in Telegram
+        |--------------------------------------------------------------------------
+        */
+
+            if (
+                !empty($order->telegram_message_id) &&
+                !empty($order->telegram_chat_id)
+            ) {
+
+                $telegram->edit($order);
+            }
+
+            /*
+        |--------------------------------------------------------------------------
+        | FIFO
+        |--------------------------------------------------------------------------
+        |
+        | After cancelling this order,
+        | send the next pending order.
+        |
+        */
+
+            $telegram->sendNextPending();
+
             return response()->json([
                 'success' => true,
-                'message' => 'Order cancelled and deleted successfully'
+                'message' => 'Order cancelled successfully.',
+                'order_id' => $order->id,
+                'status' => $order->status,
             ]);
         } catch (\Exception $e) {
 
@@ -769,7 +930,7 @@ class OrdersController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }

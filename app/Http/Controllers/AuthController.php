@@ -106,7 +106,7 @@ class AuthController extends Controller
                 [
                     'otp' => $otp,
                     'payload' => json_encode($payload),
-                    'expires_at' => now()->addMinutes(2),
+                    'expires_at' => now()->addMinutes(1),
                 ]
             );
 
@@ -114,7 +114,7 @@ class AuthController extends Controller
 
                 $result = $this->sms->sendSms(
                     $login,
-                    "Your verification OTP is {$otp}. It expires in 2 minutes."
+                    "Your verification OTP is {$otp}. It expires in 1 minute."
                 );
 
 
@@ -223,7 +223,7 @@ class AuthController extends Controller
             [$field => $login],
             [
                 'otp' => $otp,
-                'expires_at' => now()->addMinutes(2),
+                'expires_at' => now()->addMinutes(1),
             ]
         );
 
@@ -235,7 +235,7 @@ class AuthController extends Controller
 
             $this->sms->sendSms(
                 $login,
-                "Your verification OTP is {$otp}. It expires in 2 minutes."
+                "Your verification OTP is {$otp}. It expires in 1 minute."
             );
         }
 
@@ -388,7 +388,7 @@ class AuthController extends Controller
 
         $otpRecord->update([
             'otp' => $otp,
-            'expires_at' => now()->addMinutes(5),
+            'expires_at' => now()->addMinutes(1),
         ]);
 
         if ($field === 'email') {
@@ -397,7 +397,7 @@ class AuthController extends Controller
         } else {
             $this->sms->sendSms(
                 $request->login,
-                "Your verification OTP is {$otp}. It expires in 2 minutes."
+                "Your verification OTP is {$otp}. It expires in 1 minute."
             );
         }
 
