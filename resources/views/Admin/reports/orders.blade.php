@@ -15,11 +15,6 @@
         @keyframes progressFill {
             from { width: 0 !important; }
         }
-        @keyframes numberPop {
-            0%   { transform: scale(0.85); opacity: 0; }
-            70%  { transform: scale(1.05); }
-            100% { transform: scale(1);    opacity: 1; }
-        }
         @keyframes modalIn {
             from { opacity: 0; transform: scale(0.92) translateY(20px); }
             to   { opacity: 1; transform: scale(1)    translateY(0); }
@@ -28,13 +23,10 @@
             from { opacity: 0; }
             to   { opacity: 1; }
         }
-
-        .kpi-card { animation: fadeSlideUp .5s ease both; }
-        .kpi-card:nth-child(1) { animation-delay: .05s; }
-        .kpi-card:nth-child(2) { animation-delay: .10s; }
-        .kpi-card:nth-child(3) { animation-delay: .15s; }
-        .kpi-card:nth-child(4) { animation-delay: .20s; }
-        .kpi-card:nth-child(5) { animation-delay: .25s; }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to   { transform: translateX(0); }
+        }
 
         .kpi-card-2 { animation: fadeSlideUp .5s ease both; }
         .kpi-card-2:nth-child(1) { animation-delay: .30s; }
@@ -43,7 +35,6 @@
         .kpi-card-2:nth-child(4) { animation-delay: .45s; }
         .kpi-card-2:nth-child(5) { animation-delay: .50s; }
 
-        .filter-card  { animation: fadeSlideUp .45s .05s ease both; }
         .table-card   { animation: fadeSlideUp .5s .28s ease both; }
         .analytic-card { animation: fadeSlideUp .5s ease both; }
         .analytic-card:nth-child(1) { animation-delay: .30s; }
@@ -54,10 +45,6 @@
         .analytic-card:nth-child(6) { animation-delay: .55s; }
         .analytic-card:nth-child(7) { animation-delay: .60s; }
         .analytic-card:nth-child(8) { animation-delay: .65s; }
-
-        .chart-card { animation: fadeSlideUp .5s ease both; }
-        .chart-card:nth-child(1) { animation-delay: .28s; }
-        .chart-card:nth-child(2) { animation-delay: .33s; }
 
         #ordersTableBody tr { animation: rowSlideIn .35s ease both; }
         #ordersTableBody tr:nth-child(1)  { animation-delay: .35s; }
@@ -73,152 +60,197 @@
 
         .progress-bar { animation: progressFill .9s .65s cubic-bezier(.4,0,.2,1) both; }
 
-        #orderModal.flex   { animation: overlayIn .2s ease; }
-        #exportModal.flex  { animation: overlayIn .2s ease; }
-        .modal-inner       { animation: modalIn .25s cubic-bezier(.34,1.56,.64,1) both; }
+        #orderModal.flex { animation: overlayIn .2s ease; }
+        .modal-inner     { animation: modalIn .25s cubic-bezier(.34,1.56,.64,1) both; }
 
         .action-btn { transition: transform .15s ease, box-shadow .15s ease; }
         .action-btn:hover  { transform: translateY(-1px); }
         .action-btn:active { transform: translateY(0); }
 
-        .filter-select {
-            width: 100%;
-            border-radius: .75rem;
-            border: 1px solid rgb(229 231 235);
-            background: white;
-            padding: .5rem .75rem;
-            font-size: .8125rem;
-            color: rgb(17 24 39);
-            outline: none;
-            transition: box-shadow .15s ease, border-color .15s ease;
+        /* ── toolbar / dropdown / drawer (Sales-report vibe) ───────────── */
+        .or-btn { transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease; }
+        .or-btn:active { transform: translateY(1px); }
+
+        .or-dropdown.open,
+        #filterOverlay.flex { animation: overlayIn .18s ease; }
+
+        .or-drawer { animation: slideInRight .28s cubic-bezier(.32,.72,0,1) both; }
+
+        .or-input {
+            width: 100%; border-radius: .75rem; border: 1px solid rgb(229 231 235);
+            background: #fff; padding: .55rem .75rem; font-size: .8125rem;
+            color: rgb(17 24 39); outline: none; transition: box-shadow .15s ease, border-color .15s ease;
         }
-        .dark .filter-select {
-            border-color: rgb(55 65 81);
-            background: rgb(31 41 55);
-            color: rgb(243 244 246);
-        }
-        .filter-select:focus {
-            box-shadow: 0 0 0 2px rgba(99,102,241,.35);
-            border-color: #6366f1;
-        }
+        .dark .or-input { border-color: rgb(55 65 81); background: rgb(31 41 55); color: rgb(243 244 246); }
+        .or-input:focus { box-shadow: 0 0 0 3px rgba(99,102,241,.25); border-color: #6366f1; }
+
+        .or-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .or-scrollbar::-webkit-scrollbar-thumb { background: rgba(120,120,140,.25); border-radius: 999px; }
+
+        /* mini calendar */
+        .cal-day { transition: background-color .12s ease, color .12s ease; }
+        .cal-day[data-state="in-range"] { background: rgba(99,102,241,.12); }
+        .dark .cal-day[data-state="in-range"] { background: rgba(129,140,248,.16); }
+        .cal-day[data-state="edge"] { background: #6366f1; color: #fff; font-weight: 600; }
+        .cal-day[data-state="edge"]:hover { background: #4f46e5; }
     </style>
 
-    <div class="space-y-4">
+    <div class="orders-report w-full min-w-0 max-w-full overflow-x-clip space-y-4">
 
-        {{-- ==================== HEADER ==================== --}}
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3"
-             style="animation: fadeSlideUp .4s ease both;">
+        {{-- ==================== HEADER / TOOLBAR ==================== --}}
+        <div class="relative z-[60] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3"
+            style="animation: fadeSlideUp .4s ease both;">
             <div>
-                <h1 class="text-lg font-bold text-gray-900 dark:text-white">Orders Report</h1>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Orders Report</h1>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                     Analyze orders, payments, customers and delivery performance.
                 </p>
             </div>
 
-            <button type="button" onclick="openExportModal()"
-                class="action-btn inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-xl
-                       border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700
-                       text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                    <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/>
-                </svg>
-                Export
-            </button>
-        </div>
+            <div class="flex items-center gap-2 relative">
 
-        {{-- ==================== KPI ROW 1 — ORDER STATUS ==================== --}}
-        {{-- @php
-            $statusKpis = [
-                [
-                    'label' => 'Total Orders',
-                    'value' => number_format($totalOrders),
-                    'sub'   => 'All statuses',
-                    'from'  => 'from-indigo-500', 'to' => 'to-violet-600',
-                    'bg'    => 'from-indigo-50 to-violet-100 dark:from-indigo-900/20 dark:to-violet-900/20',
-                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>',
-                    'pct'   => 100,
-                ],
-                [
-                    'label' => 'Pending',
-                    'value' => number_format($pendingOrders),
-                    'sub'   => 'Awaiting action',
-                    'from'  => 'from-amber-500', 'to' => 'to-yellow-600',
-                    'bg'    => 'from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-900/20',
-                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
-                    'pct'   => $totalOrders > 0 ? round(($pendingOrders / $totalOrders) * 100) : 0,
-                ],
-                [
-                    'label' => 'Processing',
-                    'value' => number_format($processingOrders),
-                    'sub'   => 'In progress',
-                    'from'  => 'from-blue-500', 'to' => 'to-indigo-600',
-                    'bg'    => 'from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20',
-                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>',
-                    'pct'   => $totalOrders > 0 ? round(($processingOrders / $totalOrders) * 100) : 0,
-                ],
-                [
-                    'label' => 'Completed',
-                    'value' => number_format($completedOrders),
-                    'sub'   => 'Successfully fulfilled',
-                    'from'  => 'from-emerald-500', 'to' => 'to-green-600',
-                    'bg'    => 'from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/20',
-                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>',
-                    'pct'   => $totalOrders > 0 ? round(($completedOrders / $totalOrders) * 100) : 0,
-                ],
-                [
-                    'label' => 'Cancelled',
-                    'value' => number_format($cancelledOrders),
-                    'sub'   => 'Not fulfilled',
-                    'from'  => 'from-rose-500', 'to' => 'to-red-600',
-                    'bg'    => 'from-rose-50 to-red-100 dark:from-rose-900/20 dark:to-red-900/20',
-                    'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>',
-                    'pct'   => $totalOrders > 0 ? round(($cancelledOrders / $totalOrders) * 100) : 0,
-                ],
-            ];
-        @endphp --}}
-
-        {{-- <div class="grid grid-cols-2 xl:grid-cols-5 gap-3">
-            @foreach($statusKpis as $kpi)
-                <div class="kpi-card relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
-                            border border-gray-100 dark:border-gray-700
-                            shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-3">
-                    <div class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br {{ $kpi['bg'] }}"></div>
-                    <div class="relative flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-xl bg-gradient-to-br {{ $kpi['from'] }} {{ $kpi['to'] }}
-                                        flex items-center justify-center shadow-md">
-                                <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    {!! $kpi['icon'] !!}
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-semibold text-gray-900 dark:text-white leading-tight">{{ $kpi['label'] }}</h4>
-                                <p class="text-[10px] text-gray-400 dark:text-gray-500 leading-tight">{{ $kpi['sub'] }}</p>
-                            </div>
-                        </div>
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full
-                                     bg-gradient-to-r {{ $kpi['from'] }} {{ $kpi['to'] }}
-                                     text-white text-[10px] font-semibold opacity-80">
-                            {{ $kpi['pct'] }}%
+                {{-- ---- Date range pill + calendar dropdown ---- --}}
+                <div class="relative">
+                    <button type="button" onclick="toggleDropdown('orDateDropdown')"
+                        class="or-btn inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700
+                               bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-xs font-medium text-gray-700 dark:text-gray-200">
+                        <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+                        </svg>
+                        <span id="orDateRangeLabel">
+                            @if(request('range', '30days') === 'custom' && request('date_range'))
+                                {{ str_replace(' to ', '  –  ', request('date_range')) }}
+                            @else
+                                @php
+                                    $rangeLabels = [
+                                        'today' => 'Today', '7days' => 'Last 7 days', '30days' => 'Last 30 days',
+                                        'this_month' => 'This month', 'last_month' => 'Last month', 'this_year' => 'This year',
+                                    ];
+                                @endphp
+                                {{ $rangeLabels[request('range', '30days')] ?? 'Last 30 days' }}
+                            @endif
                         </span>
-                    </div>
-                    <div class="relative mt-2 pl-2">
-                        <h2 class="text-2xl font-bold tracking-tight
-                                   bg-gradient-to-r {{ $kpi['from'] }} {{ $kpi['to'] }} bg-clip-text text-transparent leading-none">
-                            {{ $kpi['value'] }}
-                        </h2>
-                    </div>
-                    <div class="relative mt-2">
-                        <div class="h-1.5 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                            <div class="progress-bar h-full rounded-full bg-gradient-to-r {{ $kpi['from'] }} {{ $kpi['to'] }}"
-                                 style="width: {{ $kpi['pct'] }}%"></div>
-                        </div>
+                        <svg class="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+
+                    <div id="orDateDropdown" class="or-dropdown hidden absolute right-0 mt-2 w-[540px] max-w-[92vw] rounded-2xl border border-gray-200 dark:border-gray-700
+                                bg-white dark:bg-gray-800 shadow-2xl shadow-black/10 dark:shadow-black/40 z-40 overflow-hidden">
+                        <form method="GET" action="{{ route('reports.orders') }}" id="orDateRangeForm" class="flex flex-col sm:flex-row">
+                            {{-- carry over every other filter param except range/date_range/page --}}
+                            @foreach(request()->except(['range', 'date_range', 'page']) as $k => $v)
+                                @if(is_array($v))
+                                    @foreach($v as $vv)<input type="hidden" name="{{ $k }}[]" value="{{ $vv }}">@endforeach
+                                @else
+                                    <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+                                @endif
+                            @endforeach
+                            <input type="hidden" name="range" id="orRangeField" value="{{ request('range', '30days') }}">
+                            <input type="hidden" name="date_range" id="orDateRangeField" value="{{ request('date_range') }}">
+
+                            @php
+                                $orRanges = [
+                                    'today' => 'Today', '7days' => 'Last 7 days', '30days' => 'Last 30 days',
+                                    'this_month' => 'This month', 'last_month' => 'Last month', 'this_year' => 'This year',
+                                ];
+                            @endphp
+                            <div class="sm:w-36 flex-shrink-0 border-b sm:border-b-0 sm:border-r border-gray-100 dark:border-gray-700 p-2 space-y-0.5">
+                                @foreach($orRanges as $val => $label)
+                                    <button type="submit" name="range" value="{{ $val }}"
+                                        class="w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors
+                                               {{ request('range', '30days') == $val ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' }}">
+                                        {{ $label }}
+                                    </button>
+                                @endforeach
+                                <div class="pt-1 mt-1 border-t border-gray-100 dark:border-gray-700">
+                                    <span class="block px-3 py-2 rounded-xl text-xs font-medium {{ request('range') == 'custom' ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-300' : 'text-gray-400 dark:text-gray-500' }}">
+                                        Custom
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="p-3 flex-1">
+                                <div class="flex items-center justify-between mb-2 px-1">
+                                    <button type="button" id="orCalPrev" class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m15 19-7-7 7-7"/></svg>
+                                    </button>
+                                    <span id="orCalLabel" class="text-xs font-semibold text-gray-700 dark:text-gray-200"></span>
+                                    <button type="button" id="orCalNext" class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg>
+                                    </button>
+                                </div>
+                                <div class="grid grid-cols-7 gap-y-1 text-center text-[10px] font-semibold text-gray-400 dark:text-gray-500 mb-1">
+                                    <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                                </div>
+                                <div id="orCalGrid" class="grid grid-cols-7 gap-y-1 text-center text-xs"></div>
+
+                                <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                                    <span id="orCalSelectedLabel" class="text-[11px] text-gray-400 dark:text-gray-500">Pick a start and end date</span>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" onclick="toggleDropdown('orDateDropdown')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">Cancel</button>
+                                        <button type="button" id="orCalApply" class="or-btn px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold disabled:opacity-40 disabled:pointer-events-none" disabled>Apply</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            @endforeach
-        </div> --}}
 
-        {{-- ==================== KPI ROW 2 — REVENUE ==================== --}}
+                {{-- ---- Filter button (opens slide-over drawer) ---- --}}
+                <button type="button" onclick="openOrFilterDrawer()"
+                    class="or-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500
+                           text-white text-xs font-semibold shadow-lg shadow-indigo-500/20">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/>
+                    </svg>
+                    Filter
+                    @php $orActiveCount = count(array_filter(request()->only(['status', 'payment_method', 'payment_status', 'keyword']))); @endphp
+                    @if($orActiveCount)
+                        <span class="ml-0.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-white text-indigo-600 text-[10px] font-bold">{{ $orActiveCount }}</span>
+                    @endif
+                </button>
+
+                {{-- ---- Export dropdown ---- --}}
+                <div class="relative">
+                    <button type="button" onclick="toggleDropdown('orExportDropdown')"
+                        class="or-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700
+                               bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-semibold">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/>
+                        </svg>
+                        Export
+                    </button>
+                    <div id="orExportDropdown" class="or-dropdown hidden absolute right-0 mt-2 w-48 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-2xl shadow-black/10 dark:shadow-black/40 z-40 overflow-hidden p-1.5">
+                        <a href="{{ route('reports.orders.export.csv', request()->query()) }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                            Export as CSV
+                        </a>
+                        <a href="{{ route('reports.orders.export.pdf', request()->query()) }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <svg class="w-3.5 h-3.5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                            Export as PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ==================== ACTIVE FILTER CHIPS ==================== --}}
+        @if($orActiveCount)
+            <div class="flex flex-wrap items-center gap-2">
+                @foreach(request()->only(['status', 'payment_method', 'payment_status', 'keyword']) as $k => $v)
+                    @if($v)
+                        <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-[11px] text-gray-600 dark:text-gray-300">
+                            {{ ucfirst(str_replace('_', ' ', $k)) }}: <span class="font-semibold text-gray-900 dark:text-white">{{ $v }}</span>
+                            <a href="{{ route('reports.orders', request()->except($k, 'page')) }}" class="text-gray-400 hover:text-rose-500">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                            </a>
+                        </span>
+                    @endif
+                @endforeach
+                <a href="{{ route('reports.orders') }}" class="text-[11px] text-gray-400 hover:text-rose-500 font-medium">Clear all</a>
+            </div>
+        @endif
+
+        {{-- ==================== KPI ROW — REVENUE (UNCHANGED) ==================== --}}
         @php
             $revenueKpis = [
                 [
@@ -310,104 +342,7 @@
             @endforeach
         </div>
 
-        {{-- ==================== FILTERS ==================== --}}
-        <div class="filter-card bg-white dark:bg-gray-800
-                    border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
-
-            <div class="px-4 sm:px-5 py-3.5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-                        <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Filters</h2>
-                </div>
-                <a href="{{ route('reports.orders') }}"
-                   class="text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors font-medium">
-                    Reset all
-                </a>
-            </div>
-
-            <form method="GET" action="{{ route('reports.orders') }}" class="p-4 sm:p-5">
-                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-
-                    {{-- Date Range --}}
-                    <div>
-                        <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Date Range</label>
-                        <select name="range" class="filter-select">
-                            <option value="today"      {{ request('range') == 'today'      ? 'selected' : '' }}>Today</option>
-                            <option value="7days"      {{ request('range') == '7days'      ? 'selected' : '' }}>Last 7 days</option>
-                            <option value="30days"     {{ request('range', '30days') == '30days' ? 'selected' : '' }}>Last 30 days</option>
-                            <option value="this_month" {{ request('range') == 'this_month' ? 'selected' : '' }}>This month</option>
-                            <option value="last_month" {{ request('range') == 'last_month' ? 'selected' : '' }}>Last month</option>
-                            <option value="this_year"  {{ request('range') == 'this_year'  ? 'selected' : '' }}>This year</option>
-                        </select>
-                    </div>
-
-                    {{-- Order Status --}}
-                    <div>
-                        <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Order Status</label>
-                        <select name="status" class="filter-select">
-                            <option value="">All statuses</option>
-                            <option value="pending"    {{ request('status') == 'pending'    ? 'selected' : '' }}>Pending</option>
-                            <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
-                            <option value="completed"  {{ request('status') == 'completed'  ? 'selected' : '' }}>Completed</option>
-                            <option value="cancelled"  {{ request('status') == 'cancelled'  ? 'selected' : '' }}>Cancelled</option>
-                        </select>
-                    </div>
-
-                    {{-- Payment Method --}}
-                    <div>
-                        <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Payment Method</label>
-                        <select name="payment_method" class="filter-select">
-                            <option value="">All methods</option>
-                            <option value="cash"   {{ request('payment_method') == 'cash'   ? 'selected' : '' }}>Cash</option>
-                            {{-- <option value="aba"    {{ request('payment_method') == 'aba'    ? 'selected' : '' }}>ABA</option> --}}
-                            <option value="khqr"   {{ request('payment_method') == 'khqr'   ? 'selected' : '' }}>KHQR</option>
-                            {{-- <option value="wing"   {{ request('payment_method') == 'wing'   ? 'selected' : '' }}>Wing</option> --}}
-                            {{-- <option value="card"   {{ request('payment_method') == 'card'   ? 'selected' : '' }}>Card</option> --}}
-                        </select>
-                    </div>
-
-                    {{-- Payment Status --}}
-                    <div>
-                        <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Payment Status</label>
-                        <select name="payment_status" class="filter-select">
-                            <option value="">All payments</option>
-                            <option value="paid"    {{ request('payment_status') == 'paid'    ? 'selected' : '' }}>Paid</option>
-                            <option value="pending" {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="failed"  {{ request('payment_status') == 'failed'  ? 'selected' : '' }}>Failed</option>
-                        </select>
-                    </div>
-
-                    {{-- Keyword --}}
-                    <div class="sm:col-span-2 xl:col-span-4">
-                        <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Keyword</label>
-                        <div class="flex gap-2">
-                            <div class="relative flex-1">
-                                {{-- <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400"
-                                     fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
-                                </svg> --}}
-                                <input type="text" name="keyword" value="{{ request('keyword') }}"
-                                       placeholder="Order ID, customer name, phone, email, address…"
-                                       class="filter-select pl-8">
-                            </div>
-                            <button type="submit"
-                                class="action-btn px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700
-                                       text-white text-xs font-semibold shadow-sm shadow-indigo-500/20 transition-colors whitespace-nowrap">
-                                Apply
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-            </form>
-        </div>
-
-        {{-- ==================== ANALYTICS INSIGHTS ==================== --}}
+        {{-- ==================== ANALYTICS INSIGHTS (UNCHANGED) ==================== --}}
         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden"
              style="animation: fadeSlideUp .5s .28s ease both;">
             <div class="px-4 sm:px-5 py-3.5 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
@@ -452,20 +387,6 @@
                                 'from'  => 'from-blue-500', 'to' => 'to-indigo-600',
                                 'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>',
                             ],
-                            // [
-                            //     'label' => 'Peak Hour',
-                            //     'value' => $peakHour ? (($peakHour->hour % 12 ?: 12) . ($peakHour->hour >= 12 ? 'pm' : 'am')) : '—',
-                            //     'sub'   => $peakHour ? number_format($peakHour->total) . ' orders' : 'No data',
-                            //     'from'  => 'from-amber-500', 'to' => 'to-yellow-600',
-                            //     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
-                            // ],
-                            // [
-                            //     'label' => 'Peak Day',
-                            //     'value' => $peakDay ? \Carbon\Carbon::parse($peakDay->day)->format('d M') : '—',
-                            //     'sub'   => $peakDay ? number_format($peakDay->total) . ' orders' : 'No data',
-                            //     'from'  => 'from-orange-500', 'to' => 'to-amber-600',
-                            //     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>',
-                            // ],
                             [
                                 'label' => 'Top Payment',
                                 'value' => $topPayment ? strtoupper($topPayment->payment_method) : '—',
@@ -502,7 +423,7 @@
             </div>
         </div>
 
-        {{-- ==================== ORDERS TABLE ==================== --}}
+        {{-- ==================== ORDERS TABLE (UNCHANGED) ==================== --}}
         <div class="table-card bg-white dark:bg-gray-800
                     border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
 
@@ -546,12 +467,10 @@
                             @endphp
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors duration-150">
 
-                                {{-- ID --}}
                                 <td class="px-6 py-4">
                                     <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">#{{ $order->id }}</span>
                                 </td>
 
-                                {{-- Customer --}}
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2.5">
                                         <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600
@@ -569,14 +488,12 @@
                                     </div>
                                 </td>
 
-                                {{-- Address --}}
                                 <td class="px-6 py-4 max-w-[180px]">
                                     <p class="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
                                         {{ $order->delivery_address }}
                                     </p>
                                 </td>
 
-                                {{-- Items --}}
                                 <td class="px-6 py-4 text-center">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold
                                                  bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
@@ -584,14 +501,12 @@
                                     </span>
                                 </td>
 
-                                {{-- Amount --}}
                                 <td class="px-6 py-4 text-right">
                                     <span class="font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                                         ${{ number_format($order->total_amount, 2) }}
                                     </span>
                                 </td>
 
-                                {{-- Payment Method --}}
                                 <td class="px-6 py-4 text-center">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-semibold
                                                  bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
@@ -599,7 +514,6 @@
                                     </span>
                                 </td>
 
-                                {{-- Payment Status --}}
                                 <td class="px-6 py-4 text-center">
                                     @if($payment->payment_status === 'paid')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold
@@ -619,7 +533,6 @@
                                     @endif
                                 </td>
 
-                                {{-- Order Status --}}
                                 <td class="px-6 py-4 text-center">
                                     @switch($order->status)
                                         @case('completed')
@@ -648,7 +561,6 @@
                                     @endswitch
                                 </td>
 
-                                {{-- Date --}}
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex items-center justify-center gap-1.5">
                                         <div class="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-500/10
@@ -670,7 +582,6 @@
                                     </div>
                                 </td>
 
-                                {{-- Action --}}
                                 <td class="px-6 py-4 text-right">
                                     <button type="button" onclick="openOrderModal({{ $order->id }})"
                                         class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
@@ -778,8 +689,69 @@
 
     </div>{{-- /space-y-4 --}}
 
+    {{-- ==================== FILTER DRAWER ==================== --}}
+    <div id="orFilterOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50" onclick="closeOrFilterDrawer()"></div>
+    <div id="orFilterDrawer" class="or-drawer fixed top-0 right-0 h-full w-full sm:w-[420px] bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 z-50 hidden flex-col shadow-2xl">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg>
+                </div>
+                <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Filters</h2>
+            </div>
+            <button type="button" onclick="closeOrFilterDrawer()" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-300">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
 
-    {{-- ==================== ORDER DETAILS MODAL ==================== --}}
+        <form method="GET" action="{{ route('reports.orders') }}" class="flex-1 overflow-y-auto or-scrollbar p-5 space-y-4">
+            <input type="hidden" name="range" value="{{ request('range', '30days') }}">
+            <input type="hidden" name="date_range" value="{{ request('date_range') }}">
+
+            <div>
+                <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Order Status</label>
+                <select name="status" class="or-input">
+                    <option value="">All statuses</option>
+                    <option value="pending"    {{ request('status') == 'pending'    ? 'selected' : '' }}>Pending</option>
+                    <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
+                    <option value="completed"  {{ request('status') == 'completed'  ? 'selected' : '' }}>Completed</option>
+                    <option value="cancelled"  {{ request('status') == 'cancelled'  ? 'selected' : '' }}>Cancelled</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Payment Method</label>
+                <select name="payment_method" class="or-input">
+                    <option value="">All methods</option>
+                    <option value="cash" {{ request('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
+                    <option value="khqr" {{ request('payment_method') == 'khqr' ? 'selected' : '' }}>KHQR</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Payment Status</label>
+                <select name="payment_status" class="or-input">
+                    <option value="">All payments</option>
+                    <option value="paid"    {{ request('payment_status') == 'paid'    ? 'selected' : '' }}>Paid</option>
+                    <option value="pending" {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="failed"  {{ request('payment_status') == 'failed'  ? 'selected' : '' }}>Failed</option>
+                </select>
+            </div>
+
+            <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
+                <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Keyword</label>
+                <input type="text" name="keyword" value="{{ request('keyword') }}"
+                       placeholder="Order ID, customer name, phone, email, address…" class="or-input">
+            </div>
+
+            <div class="sticky bottom-0 pt-4 pb-1 bg-white dark:bg-gray-800 flex items-center gap-2">
+                <a href="{{ route('reports.orders') }}" class="flex-1 text-center py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-700">Reset all</a>
+                <button type="submit" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-500/20">Apply filters</button>
+            </div>
+        </form>
+    </div>
+
+    {{-- ==================== ORDER DETAILS MODAL (UNCHANGED) ==================== --}}
     <div id="orderModal"
          class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
@@ -820,86 +792,37 @@
         </div>
     </div>
 
-
-    {{-- ==================== EXPORT MODAL ==================== --}}
-    <div id="exportModal"
-         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-                    rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
-            <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24"
-                             stroke="currentColor" stroke-width="1.8">
-                            <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-base font-semibold text-gray-900 dark:text-white">Export Data</h3>
-                </div>
-                <button onclick="closeExportModal()"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path d="M18 6 6 18M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-6 space-y-3">
-                <p class="text-xs text-gray-400 dark:text-gray-500 mb-4">Choose your preferred export format:</p>
-
-                <a href="{{ route('reports.orders.export.csv', request()->query()) }}"
-                   class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
-                          bg-gray-50 dark:bg-gray-700/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/10
-                          hover:border-emerald-300 dark:hover:border-emerald-500/40 transition-all">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600
-                                    group-hover:border-emerald-300 flex items-center justify-center transition-all">
-                            <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">CSV File</p>
-                            <p class="text-[11px] text-gray-400">Spreadsheet compatible</p>
-                        </div>
-                    </div>
-                    <svg class="w-4 h-4 text-gray-300 group-hover:text-emerald-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path d="m9 18 6-6-6-6"/>
-                    </svg>
-                </a>
-
-                <a href="{{ route('reports.orders.export.pdf', request()->query()) }}"
-                   class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
-                          bg-gray-50 dark:bg-gray-700/50 hover:bg-red-50 dark:hover:bg-red-500/10
-                          hover:border-red-300 dark:hover:border-red-500/40 transition-all">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600
-                                    group-hover:border-red-300 flex items-center justify-center transition-all">
-                            <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors">PDF File</p>
-                            <p class="text-[11px] text-gray-400">Print-ready document</p>
-                        </div>
-                    </div>
-                    <svg class="w-4 h-4 text-gray-300 group-hover:text-red-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path d="m9 18 6-6-6-6"/>
-                    </svg>
-                </a>
-            </div>
-            <div class="px-6 pb-6">
-                <button onclick="closeExportModal()"
-                    class="w-full py-2 text-sm font-medium rounded-xl border border-gray-200 dark:border-gray-600
-                           text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                    Cancel
-                </button>
-            </div>
-        </div>
-    </div>
-
     @push('scripts')
     <script defer>
+        // ── Generic dropdown toggling (date range / export) ─────────────────
+        function toggleDropdown(id) {
+            document.querySelectorAll('.or-dropdown').forEach(el => { if (el.id !== id) el.classList.add('hidden'); });
+            document.getElementById(id).classList.toggle('hidden');
+        }
+        document.addEventListener('click', function (e) {
+            document.querySelectorAll('.or-dropdown').forEach(el => {
+                if (!el.contains(e.target) && !e.target.closest('button[onclick*="toggleDropdown"]')) {
+                    el.classList.add('hidden');
+                }
+            });
+        });
+
+        // ── Filter drawer ────────────────────────────────────────────────
+        const orFilterDrawer  = document.getElementById('orFilterDrawer');
+        const orFilterOverlay = document.getElementById('orFilterOverlay');
+        function openOrFilterDrawer() {
+            orFilterOverlay.classList.remove('hidden');
+            orFilterDrawer.classList.remove('hidden');
+            orFilterDrawer.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+        }
+        function closeOrFilterDrawer() {
+            orFilterOverlay.classList.add('hidden');
+            orFilterDrawer.classList.add('hidden');
+            orFilterDrawer.classList.remove('flex');
+            document.body.classList.remove('overflow-hidden');
+        }
+
         // ── Order Modal ────────────────────────────────────────────────
         const orderModal     = document.getElementById('orderModal');
         const orderModalBody = document.getElementById('orderModalBody');
@@ -946,27 +869,107 @@
 
         orderModal.addEventListener('click', e => { if (e.target === orderModal) closeOrderModal(); });
 
-        // ── Export Modal ───────────────────────────────────────────────
-        const exportModal = document.getElementById('exportModal');
-
-        function openExportModal() {
-            exportModal.classList.remove('hidden');
-            exportModal.classList.add('flex');
-            document.body.classList.add('overflow-hidden');
-        }
-
-        function closeExportModal() {
-            exportModal.classList.add('hidden');
-            exportModal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        exportModal.addEventListener('click', e => { if (e.target === exportModal) closeExportModal(); });
-
-        // ── ESC closes both ────────────────────────────────────────────
         document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') { closeOrderModal(); closeExportModal(); }
+            if (e.key === 'Escape') { closeOrderModal(); closeOrFilterDrawer(); }
         });
+
+        // ── Custom calendar (no external dependency) ─────────────────────
+        (function () {
+            const grid          = document.getElementById('orCalGrid');
+            const label         = document.getElementById('orCalLabel');
+            const selectedLabel = document.getElementById('orCalSelectedLabel');
+            const applyBtn      = document.getElementById('orCalApply');
+            const prevBtn       = document.getElementById('orCalPrev');
+            const nextBtn       = document.getElementById('orCalNext');
+            const rangeField     = document.getElementById('orRangeField');
+            const dateRangeField = document.getElementById('orDateRangeField');
+            const dateRangeForm  = document.getElementById('orDateRangeForm');
+
+            const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const pad = n => String(n).padStart(2, '0');
+            const fmt = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+            let seed = dateRangeField.value && dateRangeField.value.includes(' to ')
+                ? dateRangeField.value.split(' to ')
+                : (dateRangeField.value ? [dateRangeField.value, null] : [null, null]);
+
+            let selStart = seed[0] ? new Date(seed[0] + 'T00:00:00') : null;
+            let selEnd   = seed[1] ? new Date(seed[1] + 'T00:00:00') : null;
+            let viewDate = selStart ? new Date(selStart.getFullYear(), selStart.getMonth(), 1) : new Date();
+            viewDate.setDate(1);
+
+            function sameDay(a, b) { return a && b && a.toDateString() === b.toDateString(); }
+
+            function render() {
+                label.textContent = `${months[viewDate.getMonth()]} ${viewDate.getFullYear()}`;
+                grid.innerHTML = '';
+
+                const firstOfMonth = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
+                const startOffset  = firstOfMonth.getDay();
+                const daysInMonth  = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+                const today = new Date(); today.setHours(0,0,0,0);
+
+                for (let i = 0; i < startOffset; i++) {
+                    grid.appendChild(document.createElement('span'));
+                }
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const d = new Date(viewDate.getFullYear(), viewDate.getMonth(), day);
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = day;
+                    btn.className = 'cal-day w-8 h-8 mx-auto flex items-center justify-center rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700';
+
+                    if (sameDay(d, today)) btn.classList.add('ring-1', 'ring-indigo-400');
+
+                    const isEdge  = sameDay(d, selStart) || sameDay(d, selEnd);
+                    const inRange = selStart && selEnd && d > selStart && d < selEnd;
+
+                    if (isEdge) btn.setAttribute('data-state', 'edge');
+                    else if (inRange) btn.setAttribute('data-state', 'in-range');
+
+                    btn.addEventListener('click', () => {
+                        if (!selStart || (selStart && selEnd)) {
+                            selStart = d; selEnd = null;
+                        } else if (d < selStart) {
+                            selEnd = selStart; selStart = d;
+                        } else {
+                            selEnd = d;
+                        }
+                        updateSelectedLabel();
+                        render();
+                    });
+
+                    grid.appendChild(btn);
+                }
+            }
+
+            function updateSelectedLabel() {
+                if (selStart && selEnd) {
+                    selectedLabel.textContent = `${fmt(selStart)} → ${fmt(selEnd)}`;
+                    applyBtn.disabled = false;
+                } else if (selStart) {
+                    selectedLabel.textContent = `${fmt(selStart)} → pick an end date`;
+                    applyBtn.disabled = true;
+                } else {
+                    selectedLabel.textContent = 'Pick a start and end date';
+                    applyBtn.disabled = true;
+                }
+            }
+
+            prevBtn.addEventListener('click', () => { viewDate.setMonth(viewDate.getMonth() - 1); render(); });
+            nextBtn.addEventListener('click', () => { viewDate.setMonth(viewDate.getMonth() + 1); render(); });
+
+            applyBtn.addEventListener('click', () => {
+                if (!selStart || !selEnd) return;
+                dateRangeField.value = `${fmt(selStart)} to ${fmt(selEnd)}`;
+                rangeField.value = 'custom';
+                dateRangeForm.submit();
+            });
+
+            updateSelectedLabel();
+            render();
+        })();
     </script>
     @endpush
 

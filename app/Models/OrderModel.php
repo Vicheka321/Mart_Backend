@@ -16,15 +16,14 @@ class OrderModel extends Model
     protected $fillable = [
 
         'user_id',
-
+        'branch_id',
+        'distance_km',
+        'delivery_fee',
         'delivery_address',
         'lat',
         'lng',
-
-        'total_amount',
-
         'promotion_discount',
-
+        'total_amount',
         'coupon_code',
         'coupon_type',
         'coupon_value',
@@ -38,6 +37,7 @@ class OrderModel extends Model
 
         'is_sent',
         'note',
+        
     ];
 
     public function user()

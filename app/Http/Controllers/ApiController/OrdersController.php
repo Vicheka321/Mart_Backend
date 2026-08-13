@@ -179,7 +179,7 @@ class OrdersController extends Controller
             }
             $total = 0;
             $promotionDiscountTotal = 0;
-
+ 
             foreach ($items as $item) {
 
                 $product = ProductsModel::lockForUpdate()
@@ -413,13 +413,9 @@ class OrdersController extends Controller
                     $couponDiscount,
                     2
                 ),
-
                 'payment_method' => $request->payment_method,
-
                 'total_amount' => $total,
-
                 'status' => 'pending',
-
                 'note' => $request->note,
             ]);
 

@@ -26,35 +26,13 @@
             from { opacity: 0; transform: translateY(20px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: scale(0.92) translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
         @keyframes overlayIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to   { opacity: 1; }
         }
-
-        #exportModal.flex {
-            animation: overlayIn .2s ease;
-        }
-
-        .modal-inner {
-            animation: modalIn .25s cubic-bezier(.34,1.56,.64,1) both;
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to   { transform: translateX(0); }
         }
 
         /* ── KPI cards staggered ──────────────────────────────────── */
@@ -67,8 +45,6 @@
         .kpi-card:nth-child(6) { animation-delay: .29s; }
         .kpi-card:nth-child(7) { animation-delay: .34s; }
         .kpi-card:nth-child(8) { animation-delay: .39s; }
-
-        .filter-card  { animation: fadeSlideUp .45s .22s ease both; }
 
         /* ── Chart cards ──────────────────────────────────────────── */
         .chart-card { animation: chartReveal .6s cubic-bezier(.22,1,.36,1) both; }
@@ -111,82 +87,106 @@
         .action-btn:hover  { transform: translateY(-1px); }
         .action-btn:active { transform: translateY(0); }
 
-        /* ── Filter select ────────────────────────────────────────── */
-        .filter-select {
-            width: 100%;
-            border-radius: .75rem;
-            border: 1px solid rgb(229 231 235);
-            background: white;
-            padding: .5rem .75rem;
-            font-size: .8125rem;
-            color: rgb(17 24 39);
-            outline: none;
-            transition: box-shadow .15s ease, border-color .15s ease;
-        }
-        .dark .filter-select {
-            border-color: rgb(55 65 81);
-            background: rgb(31 41 55);
-            color: rgb(243 244 246);
-        }
-        .filter-select:focus {
-            box-shadow: 0 0 0 2px rgba(99,102,241,.35);
-            border-color: #6366f1;
-        }
+        /* ── toolbar / dropdown / drawer (shared report vibe) ──────────── */
+        .iv-btn { transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease; }
+        .iv-btn:active { transform: translateY(1px); }
 
-        
+        .iv-dropdown.open,
+        #ivFilterOverlay.flex { animation: overlayIn .18s ease; }
+
+        .iv-drawer { animation: slideInRight .28s cubic-bezier(.32,.72,0,1) both; }
+
+        .iv-input {
+            width: 100%; border-radius: .75rem; border: 1px solid rgb(229 231 235);
+            background: #fff; padding: .55rem .75rem; font-size: .8125rem;
+            color: rgb(17 24 39); outline: none; transition: box-shadow .15s ease, border-color .15s ease;
+        }
+        .dark .iv-input { border-color: rgb(55 65 81); background: rgb(31 41 55); color: rgb(243 244 246); }
+        .iv-input:focus { box-shadow: 0 0 0 3px rgba(99,102,241,.25); border-color: #6366f1; }
+
+        .iv-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .iv-scrollbar::-webkit-scrollbar-thumb { background: rgba(120,120,140,.25); border-radius: 999px; }
     </style>
 
     <div class="space-y-4">
 
-        {{-- ==================== HEADER ==================== --}}
+        {{-- ==================== HEADER / TOOLBAR ==================== --}}
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3"
              style="animation: fadeSlideUp .4s ease both;">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Inventory Report</h1>
+                <h1 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Inventory Report</h1>
                 <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                     Stock levels, inventory value, warehouse health and restock recommendations.
                 </p>
             </div>
 
-            <div class="flex gap-2">
-                {{-- <a href="#"
-                   class="action-btn inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl
-                          border border-emerald-200 dark:border-emerald-500/30
-                          bg-emerald-50 dark:bg-emerald-500/10
-                          text-emerald-600 dark:text-emerald-400
-                          hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <path d="M14 2v6h6"/>
-                    </svg>
-                    Export CSV
-                </a>
-                <a href="#"
-                   class="action-btn inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl
-                          border border-red-200 dark:border-red-500/30
-                          bg-red-50 dark:bg-red-500/10
-                          text-red-600 dark:text-red-400
-                          hover:bg-red-100 dark:hover:bg-red-500/20 transition-all">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <path d="M14 2v6h6"/>
-                    </svg>
-                    Export PDF
-                </a> --}}
+            <div class="flex items-center gap-2 relative">
 
-                    <button type="button" onclick="openExportModal()"
-                        class="action-btn inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium
-                               rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700
-                               text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200">
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                {{-- ---- Filter button (opens slide-over drawer) ---- --}}
+                <button type="button" onclick="openIvFilterDrawer()"
+                    class="iv-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500
+                           text-white text-xs font-semibold shadow-lg shadow-indigo-500/20">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/>
+                    </svg>
+                    Filter
+                    @php $ivActiveCount = count(array_filter(request()->only(['keyword', 'category', 'brand', 'stock_status', 'sort']))); @endphp
+                    @if($ivActiveCount)
+                        <span class="ml-0.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-white text-indigo-600 text-[10px] font-bold">{{ $ivActiveCount }}</span>
+                    @endif
+                </button>
+
+                {{-- ---- Export dropdown ---- --}}
+                <div class="relative">
+                    <button type="button" onclick="toggleDropdown('ivExportDropdown')"
+                        class="iv-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700
+                               bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-semibold">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                             <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/>
                         </svg>
                         <span class="hidden sm:inline">Export</span>
                     </button>
+                    <div id="ivExportDropdown" class="iv-dropdown hidden absolute right-0 mt-2 w-48 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-2xl shadow-black/10 dark:shadow-black/40 z-40 overflow-hidden p-1.5">
+                        <a href="{{ route('reports.products.export.csv', request()->query()) }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                            Export as CSV
+                        </a>
+                        <a href="{{ route('reports.products.export.pdf', request()->query()) }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <svg class="w-3.5 h-3.5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                            Export as PDF
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
-        {{-- ==================== KPI CARDS ==================== --}}
+        {{-- ==================== ACTIVE FILTER CHIPS ==================== --}}
+        @if($ivActiveCount)
+            @php
+                $ivFilterLabels = [
+                    'keyword'      => request('keyword'),
+                    'category'     => optional($categories->firstWhere('id', request('category')))->name,
+                    'brand'        => optional($brands->firstWhere('id', request('brand')))->name,
+                    'stock_status' => ['instock' => 'Healthy', 'lowstock' => 'Low Stock', 'outstock' => 'Out of Stock'][request('stock_status')] ?? request('stock_status'),
+                    'sort'         => ['stock_high' => 'Highest Stock', 'stock_low' => 'Lowest Stock', 'price_high' => 'Highest Price', 'price_low' => 'Lowest Price'][request('sort')] ?? request('sort'),
+                ];
+            @endphp
+            <div class="flex flex-wrap items-center gap-2">
+                @foreach($ivFilterLabels as $k => $label)
+                    @if(request($k) && $label)
+                        <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-[11px] text-gray-600 dark:text-gray-300">
+                            {{ ucfirst(str_replace('_', ' ', $k)) }}: <span class="font-semibold text-gray-900 dark:text-white">{{ $label }}</span>
+                            <a href="{{ route('reports.inventory', request()->except($k, 'page')) }}" class="text-gray-400 hover:text-rose-500">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                            </a>
+                        </span>
+                    @endif
+                @endforeach
+                <a href="{{ route('reports.inventory') }}" class="text-[11px] text-gray-400 hover:text-rose-500 font-medium">Clear all</a>
+            </div>
+        @endif
+
+        {{-- ==================== KPI CARDS (UNCHANGED) ==================== --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
             @php
                 $kpis = [
@@ -235,15 +235,6 @@
                         'pct'   => 100,
                         'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
                     ],
-                    // [
-                    //     'label' => 'Avg Stock',
-                    //     'value' => number_format($averageStock),
-                    //     'sub'   => 'Units per SKU',
-                    //     'from'  => 'from-cyan-500', 'to' => 'to-sky-600',
-                    //     'bg'    => 'from-cyan-50 to-sky-100 dark:from-cyan-900/20 dark:to-sky-900/20',
-                    //     'pct'   => 100,
-                    //     'icon'  => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>',
-                    // ],
                     [
                         'label' => 'Dead Stock',
                         'value' => number_format($deadStock),
@@ -310,119 +301,7 @@
             @endforeach
         </div>
 
-        {{-- ==================== FILTERS ==================== --}}
-        <div class="filter-card bg-white dark:bg-gray-800
-                    border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
-
-            <div class="px-4 sm:px-5 py-3.5 border-b border-gray-100 dark:border-gray-700
-                        flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600
-                                flex items-center justify-center">
-                        <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24"
-                             stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707
-                                     L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21
-                                     v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Filters</h2>
-                </div>
-                <a href="{{ route('reports.inventory') }}"
-                   class="text-xs text-gray-400 dark:text-gray-500
-                          hover:text-red-500 dark:hover:text-red-400 transition-colors font-medium">
-                    Reset all
-                </a>
-            </div>
-
-            <form action="{{ route('reports.inventory') }}" method="GET" class="p-4 sm:p-5">
-                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-3">
-
-                    {{-- Search --}}
-                    <div class="sm:col-span-2">
-                        <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500
-                                      uppercase tracking-wider mb-1.5">Search</label>
-                        <div class="relative">
-                            {{-- <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none"
-                                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
-                            </svg> --}}
-                            <input type="text" name="keyword" value="{{ request('keyword') }}"
-                                   placeholder="Product name ..."
-                                   class="filter-select pl-8">
-                        </div>
-                    </div>
-
-                    {{-- Category --}}
-                    <div>
-                        <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500
-                                      uppercase tracking-wider mb-1.5">Category</label>
-                        <select name="category" class="filter-select">
-                            <option value="">All categories</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}"
-                                        {{ request('category') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- Brand --}}
-                    <div>
-                        <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500
-                                      uppercase tracking-wider mb-1.5">Brand</label>
-                        <select name="brand" class="filter-select">
-                            <option value="">All brands</option>
-                            @foreach($brands as $brand)
-                                <option value="{{ $brand->id }}"
-                                        {{ request('brand') == $brand->id ? 'selected' : '' }}>
-                                    {{ $brand->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- Stock Status --}}
-                    <div>
-                        <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500
-                                      uppercase tracking-wider mb-1.5">Stock Status</label>
-                        <select name="stock_status" class="filter-select">
-                            <option value="">All statuses</option>
-                            <option value="instock"  {{ request('stock_status') == 'instock'  ? 'selected' : '' }}>Healthy</option>
-                            <option value="lowstock" {{ request('stock_status') == 'lowstock' ? 'selected' : '' }}>Low Stock</option>
-                            <option value="outstock" {{ request('stock_status') == 'outstock' ? 'selected' : '' }}>Out of Stock</option>
-                        </select>
-                    </div>
-
-                    {{-- Sort --}}
-                    <div>
-                        <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500
-                                      uppercase tracking-wider mb-1.5">Sort By</label>
-                        <select name="sort" class="filter-select">
-                            <option value="">Latest</option>
-                            <option value="stock_high" {{ request('sort') == 'stock_high' ? 'selected' : '' }}>Highest Stock</option>
-                            <option value="stock_low"  {{ request('sort') == 'stock_low'  ? 'selected' : '' }}>Lowest Stock</option>
-                            <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Highest Price</option>
-                            <option value="price_low"  {{ request('sort') == 'price_low'  ? 'selected' : '' }}>Lowest Price</option>
-                        </select>
-                    </div>
-
-                </div>
-
-                <div class="flex justify-end gap-2 mt-3">
-                    <button type="submit"
-                            class="action-btn px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700
-                                   text-white text-xs font-semibold shadow-sm shadow-indigo-500/20 transition-colors">
-                        Apply Filter
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        {{-- ==================== CHARTS ==================== --}}
+        {{-- ==================== CHARTS (UNCHANGED) ==================== --}}
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
 
             {{-- Stock Status Donut --}}
@@ -506,7 +385,7 @@
             </div>
         </div>
 
-        {{-- ==================== ANALYTICS SPOTLIGHT ==================== --}}
+        {{-- ==================== ANALYTICS SPOTLIGHT (UNCHANGED) ==================== --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-3">
             @php
                 $spots = [
@@ -526,14 +405,6 @@
                         'metaColor'=> 'text-red-600 dark:text-red-400',
                         'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>',
                     ],
-                        // [
-                        //     'label'    => 'Most Valuable',
-                        //     'name'     => $mostValuable->name ?? '—',
-                        //     'meta'     => '$' . number_format($mostValuable->inventory_value ?? 0, 2),
-                        //     'from'     => 'from-emerald-500', 'to' => 'to-green-600',
-                        //     'metaColor'=> 'text-emerald-600 dark:text-emerald-400',
-                        //     'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1"/>',
-                        // ],
                     [
                         'label'    => 'Need Restock',
                         'name'     => $needRestock->name ?? '—',
@@ -550,30 +421,6 @@
                         'metaColor'=> 'text-red-600 dark:text-red-400',
                         'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636"/>',
                     ],
-                        // [
-                        //     'label'    => 'Fast Moving',
-                        //     'name'     => $fastMoving->name ?? '—',
-                        //     'meta'     => number_format($fastMoving->sold_qty ?? 0) . ' sold',
-                        //     'from'     => 'from-blue-500', 'to' => 'to-cyan-600',
-                        //     'metaColor'=> 'text-blue-600 dark:text-blue-400',
-                        //     'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>',
-                        // ],
-                    // [
-                    //     'label'    => 'Slow Moving',
-                    //     'name'     => $slowMoving->name ?? '—',
-                    //     'meta'     => number_format($slowMoving->sold_qty ?? 0) . ' sold',
-                    //     'from'     => 'from-gray-400', 'to' => 'to-slate-500',
-                    //     'metaColor'=> 'text-gray-500 dark:text-gray-400',
-                    //     'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
-                    // ],
-                    // [
-                    //     'label'    => 'Highest Value',
-                    //     'name'     => $highestValue->name ?? '—',
-                    //     'meta'     => '$' . number_format($highestValue->stock_value ?? 0, 2),
-                    //     'from'     => 'from-violet-500', 'to' => 'to-purple-600',
-                    //     'metaColor'=> 'text-violet-600 dark:text-violet-400',
-                    //     'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>',
-                    // ],
                 ];
             @endphp
 
@@ -607,7 +454,7 @@
             @endforeach
         </div>
 
-        {{-- ==================== INVENTORY TABLE ==================== --}}
+        {{-- ==================== INVENTORY TABLE (UNCHANGED) ==================== --}}
         <div class="table-card bg-white dark:bg-gray-800
                     border border-gray-100 dark:border-gray-700
                     rounded-2xl overflow-hidden shadow-sm">
@@ -650,7 +497,6 @@
                                     default                     => ['bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400', 'Healthy'],
                                 };
 
-                                // Stock bar width (cap at 100)
                                 $barPct = min(100, max(0, $product->quantity / 2));
                                 $barColor = $product->quantity === 0
                                     ? 'bg-red-500'
@@ -659,41 +505,39 @@
 
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors duration-150">
 
-                                {{-- Product --}}
-                            <td class="px-5 py-3.5">
-                                <div class="flex items-center gap-3">
+                                <td class="px-5 py-3.5">
+                                    <div class="flex items-center gap-3">
 
-                                    @if($product->firstImage && $product->firstImage->image_url)
+                                        @if($product->firstImage && $product->firstImage->image_url)
 
-                                        <img
-                                            src="{{ asset($product->firstImage->image_url) }}"
-                                            alt="{{ $product->name }}"
-                                            class="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-gray-700 flex-shrink-0">
+                                            <img
+                                                src="{{ asset($product->firstImage->image_url) }}"
+                                                alt="{{ $product->name }}"
+                                                class="w-10 h-10 rounded-xl object-cover border border-gray-100 dark:border-gray-700 flex-shrink-0">
 
-                                    @else
+                                        @else
 
-                                        <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700
-                                                    flex items-center justify-center text-xs font-semibold
-                                                    text-gray-500 dark:text-gray-400 flex-shrink-0">
-                                            {{ strtoupper(substr($product->name, 0, 1)) }}
+                                            <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700
+                                                        flex items-center justify-center text-xs font-semibold
+                                                        text-gray-500 dark:text-gray-400 flex-shrink-0">
+                                                {{ strtoupper(substr($product->name, 0, 1)) }}
+                                            </div>
+
+                                        @endif
+
+                                        <div class="min-w-0">
+                                            <p class="text-xs font-semibold text-gray-900 dark:text-white truncate max-w-[160px]">
+                                                {{ $product->name }}
+                                            </p>
+
+                                            <p class="text-[10px] text-gray-400 dark:text-gray-500">
+                                                {{ $product->product_code ?? '—' }}
+                                            </p>
                                         </div>
 
-                                    @endif
-
-                                    <div class="min-w-0">
-                                        <p class="text-xs font-semibold text-gray-900 dark:text-white truncate max-w-[160px]">
-                                            {{ $product->name }}
-                                        </p>
-
-                                        <p class="text-[10px] text-gray-400 dark:text-gray-500">
-                                            {{ $product->product_code ?? '—' }}
-                                        </p>
                                     </div>
+                                </td>
 
-                                </div>
-                            </td>
-
-                                {{-- Category --}}
                                 <td class="px-5 py-3.5">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-semibold
                                                  bg-indigo-50 dark:bg-indigo-500/10
@@ -702,7 +546,6 @@
                                     </span>
                                 </td>
 
-                                {{-- Brand --}}
                                 <td class="px-5 py-3.5">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-semibold
                                                  bg-blue-50 dark:bg-blue-500/10
@@ -711,17 +554,14 @@
                                     </span>
                                 </td>
 
-                                {{-- Cost --}}
                                 <td class="px-5 py-3.5 text-right text-xs text-gray-600 dark:text-gray-400 whitespace-nowrap">
                                     ${{ number_format($product->cost_price ?? 0, 2) }}
                                 </td>
 
-                                {{-- Sale --}}
                                 <td class="px-5 py-3.5 text-right text-xs font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                                     ${{ number_format($product->sale_price ?? 0, 2) }}
                                 </td>
 
-                                {{-- Stock with mini bar --}}
                                 <td class="px-5 py-3.5 text-center">
                                     <div class="flex flex-col items-center gap-1">
                                         <span class="text-sm font-bold text-gray-900 dark:text-white">
@@ -734,13 +574,11 @@
                                     </div>
                                 </td>
 
-                                {{-- Value --}}
                                 <td class="px-5 py-3.5 text-right text-xs font-bold
                                            text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
                                     ${{ number_format($value, 2) }}
                                 </td>
 
-                                {{-- Status --}}
                                 <td class="px-5 py-3.5 text-center">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full
                                                  text-[10px] font-semibold {{ $statusClass }}">
@@ -748,7 +586,6 @@
                                     </span>
                                 </td>
 
-                                {{-- Updated --}}
                                 <td class="px-5 py-3.5 text-center text-[10px] text-gray-400 dark:text-gray-500 whitespace-nowrap">
                                     {{ $product->updated_at->format('d M Y') }}
                                 </td>
@@ -868,89 +705,81 @@
 
     </div>{{-- /space-y-4 --}}
 
-    {{-- ==================== EXPORT MODAL ==================== --}}
-    <div id="exportModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="modal-inner bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-                        rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
-            <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="1.8">
-                            <path d="M12 3v12" />
-                            <path d="m7 10 5 5 5-5" />
-                            <path d="M4 21h16" />
-                        </svg>
-                    </div>
-                    <h3 class="text-base font-semibold text-gray-900 dark:text-white">Export Data</h3>
+    {{-- ==================== FILTER DRAWER ==================== --}}
+    <div id="ivFilterOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50" onclick="closeIvFilterDrawer()"></div>
+    <div id="ivFilterDrawer" class="iv-drawer fixed top-0 right-0 h-full w-full sm:w-[420px] bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 z-50 hidden flex-col shadow-2xl">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg>
                 </div>
-                <button onclick="closeExportModal()"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path d="M18 6 6 18M6 6l12 12" />
-                    </svg>
-                </button>
+                <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Filters</h2>
             </div>
-            <div class="p-6 space-y-3">
-                <p class="text-xs text-gray-400 dark:text-gray-500 mb-4">Choose your preferred export format:</p>
-                <a href="{{ route('reports.products.export.csv') }}"
-                    class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
-                              bg-gray-50 dark:bg-gray-700/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/10
-                              hover:border-emerald-300 dark:hover:border-emerald-500/40 transition-all">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600
-                                        group-hover:border-emerald-300 flex items-center justify-center transition-all">
-                            <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                stroke-width="1.8">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <path d="M14 2v6h6" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p
-                                class="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                                CSV File</p>
-                            <p class="text-[11px] text-gray-400">Spreadsheet compatible</p>
-                        </div>
-                    </div>
-                    <svg class="w-4 h-4 text-gray-300 group-hover:text-emerald-500 transition-colors" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path d="m9 18 6-6-6-6" />
-                    </svg>
-                </a>
-                <a href="{{ route('reports.products.export.pdf') }}" 
-                    class="group flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600
-                              bg-gray-50 dark:bg-gray-700/50 hover:bg-red-50 dark:hover:bg-red-500/10
-                              hover:border-red-300 dark:hover:border-red-500/40 transition-all">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600
-                                        group-hover:border-red-300 flex items-center justify-center transition-all">
-                            <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                stroke-width="1.8">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <path d="M14 2v6h6" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p
-                                class="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors">
-                                PDF File</p>
-                            <p class="text-[11px] text-gray-400">Print-ready document</p>
-                        </div>
-                    </div>
-                    <svg class="w-4 h-4 text-gray-300 group-hover:text-red-500 transition-colors" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path d="m9 18 6-6-6-6" />
-                    </svg>
-                </a>
-            </div>
-            <div class="px-6 pb-6">
-                <button onclick="closeExportModal()" class="w-full py-2 text-sm font-medium rounded-xl border border-gray-200 dark:border-gray-600
-                               text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                    Cancel
-                </button>
-            </div>
+            <button type="button" onclick="closeIvFilterDrawer()" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-300">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
         </div>
+
+        <form action="{{ route('reports.inventory') }}" method="GET" class="flex-1 overflow-y-auto iv-scrollbar p-5 space-y-4">
+
+            <div>
+                <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Search</label>
+                <input type="text" name="keyword" value="{{ request('keyword') }}"
+                       placeholder="Product name ..." class="iv-input">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Category</label>
+                <select name="category" class="iv-input">
+                    <option value="">All categories</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}"
+                                {{ request('category') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Brand</label>
+                <select name="brand" class="iv-input">
+                    <option value="">All brands</option>
+                    @foreach($brands as $brand)
+                        <option value="{{ $brand->id }}"
+                                {{ request('brand') == $brand->id ? 'selected' : '' }}>
+                            {{ $brand->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Stock Status</label>
+                <select name="stock_status" class="iv-input">
+                    <option value="">All statuses</option>
+                    <option value="instock"  {{ request('stock_status') == 'instock'  ? 'selected' : '' }}>Healthy</option>
+                    <option value="lowstock" {{ request('stock_status') == 'lowstock' ? 'selected' : '' }}>Low Stock</option>
+                    <option value="outstock" {{ request('stock_status') == 'outstock' ? 'selected' : '' }}>Out of Stock</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Sort By</label>
+                <select name="sort" class="iv-input">
+                    <option value="">Latest</option>
+                    <option value="stock_high" {{ request('sort') == 'stock_high' ? 'selected' : '' }}>Highest Stock</option>
+                    <option value="stock_low"  {{ request('sort') == 'stock_low'  ? 'selected' : '' }}>Lowest Stock</option>
+                    <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Highest Price</option>
+                    <option value="price_low"  {{ request('sort') == 'price_low'  ? 'selected' : '' }}>Lowest Price</option>
+                </select>
+            </div>
+
+            <div class="sticky bottom-0 pt-4 pb-1 bg-white dark:bg-gray-800 flex items-center gap-2">
+                <a href="{{ route('reports.inventory') }}" class="flex-1 text-center py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-gray-700">Reset all</a>
+                <button type="submit" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-500/20">Apply filters</button>
+            </div>
+        </form>
     </div>
 
     @push('scripts')
@@ -1097,33 +926,38 @@
         });
     });
 
-    const exportModal = document.getElementById("exportModal");
-
-    function openExportModal() {
-            exportModal.classList.remove("hidden");
-            exportModal.classList.add("flex");
-
-            document.body.classList.add("overflow-hidden");
-        }
-
-        function closeExportModal() {
-            exportModal.classList.add("hidden");
-            exportModal.classList.remove("flex");
-
-            document.body.classList.remove("overflow-hidden");
-        }
-
-        exportModal.addEventListener("click", function (e) {
-            if (e.target === this) {
-                closeExportModal();
+    // ── Generic dropdown toggling (export) ───────────────────────────
+    function toggleDropdown(id) {
+        document.querySelectorAll('.iv-dropdown').forEach(el => { if (el.id !== id) el.classList.add('hidden'); });
+        document.getElementById(id).classList.toggle('hidden');
+    }
+    document.addEventListener('click', function (e) {
+        document.querySelectorAll('.iv-dropdown').forEach(el => {
+            if (!el.contains(e.target) && !e.target.closest('button[onclick*="toggleDropdown"]')) {
+                el.classList.add('hidden');
             }
         });
+    });
 
-        document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape") {
-                closeExportModal();
-            }
-        });
+    // ── Filter drawer ─────────────────────────────────────────────
+    const ivFilterDrawer  = document.getElementById('ivFilterDrawer');
+    const ivFilterOverlay = document.getElementById('ivFilterOverlay');
+    function openIvFilterDrawer() {
+        ivFilterOverlay.classList.remove('hidden');
+        ivFilterDrawer.classList.remove('hidden');
+        ivFilterDrawer.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+    }
+    function closeIvFilterDrawer() {
+        ivFilterOverlay.classList.add('hidden');
+        ivFilterDrawer.classList.add('hidden');
+        ivFilterDrawer.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { closeIvFilterDrawer(); }
+    });
     </script>
     @endpush
 
