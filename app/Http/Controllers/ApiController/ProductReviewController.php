@@ -55,4 +55,47 @@ class ProductReviewController extends Controller
             'review'  => $review,
         ], 201);
     }
+
+    public function update(Request $request, $productId, $reviewId)
+    {
+        $validated = $request->validate([
+            'rating' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:5',
+            ],
+
+            'review' => [
+                'nullable',
+                'string',
+                'max:2000',
+            ],
+        ]);
+
+        $user = $request->user();
+
+        $review = ProductReview::where('id', $reviewId)
+            ->where('product_id', $productId)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$review) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Review not found.',
+            ], 404);
+        }
+
+        $review->update([
+            'rating' => $validated['rating'],
+            'review' => $validated['review'] ?? null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Review updated successfully.',
+            'review' => $review,
+        ]);
+    }
 }

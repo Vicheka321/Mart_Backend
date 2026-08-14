@@ -57,6 +57,8 @@ class RolePermissionSeeder extends Seeder
             'edit_branches',
             'delete_branches',
 
+            'view_reviews',
+
             // coupons
             'view_coupons',
             'create_coupons',
@@ -175,6 +177,8 @@ class RolePermissionSeeder extends Seeder
             'create_branches',
             'edit_branches',
             'delete_branches',
+
+            'view_reviews',
 
             'view_customers',
             'create_customers',

@@ -1029,12 +1029,34 @@ class OrdersController extends Controller
     {
         $user_id = Auth::id();
 
+        // $orders = OrderModel::with([
+        //     'user:id,phone',
+        //     'payment:id,order_id,payment_method,payment_status',
+        //     'orderItems:id,order_id,product_id,qty,price',
+        //     'orderItems.product:id,name,sale_price',
+        //     'orderItems.product.firstImage:id,product_id,image_url',
+        // ])
+
         $orders = OrderModel::with([
             'user:id,phone',
             'payment:id,order_id,payment_method,payment_status',
             'orderItems:id,order_id,product_id,qty,price',
+
             'orderItems.product:id,name,sale_price',
+
             'orderItems.product.firstImage:id,product_id,image_url',
+
+            'orderItems.product.reviews' => function ($q) use ($user_id) {
+                $q->where('user_id', $user_id)
+                    ->select(
+                        'id',
+                        'user_id',
+                        'product_id',
+                        'order_id',
+                        'rating',
+                        'review'
+                    );
+            },
         ])
             ->where('user_id', $user_id)
             ->whereHas('payment', function ($q) {
@@ -1057,6 +1079,12 @@ class OrdersController extends Controller
 
                 'total' => number_format(
                     $order->total_amount,
+                    2,
+                    '.',
+                    ''
+                ),
+                'delivery_fee' => number_format(
+                    $order->delivery_fee ?? 0,
                     2,
                     '.',
                     ''
@@ -1103,8 +1131,13 @@ class OrdersController extends Controller
                     ->map(function ($item) {
 
                         $product = $item->product;
+                        $userReview = $product->reviews
+                            ->where('order_id', $item->order_id)
+                            ->first();
 
                         return [
+
+
 
                             'product_id' =>
                             $item->product_id,
@@ -1132,6 +1165,13 @@ class OrdersController extends Controller
                             'image' => optional(
                                 $product->firstImage
                             )->image_url,
+                            'review' => $userReview
+                                ? [
+                                    'id' => $userReview->id,
+                                    'rating' => $userReview->rating,
+                                    'review' => $userReview->review,
+                                ]
+                                : null,
                         ];
                     })
                     ->values()

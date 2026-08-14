@@ -18,6 +18,7 @@ use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DeliveryFeeController;
+use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\PushNotificationController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\RoleController;
@@ -601,4 +602,9 @@ Route::prefix('admin')
         Route::patch('/customers/{user}', [CustomersController::class, 'updateCustomer'])
             ->middleware('permission:view_customers')
             ->name('admin.updateCustomer');
+
+
+        Route::get('/reviews', [ProductReviewController::class, 'index'])
+            ->middleware('permission:view_reviews')
+            ->name('admin.reviews');
     });

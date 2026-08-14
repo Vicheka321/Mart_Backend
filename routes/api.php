@@ -93,7 +93,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'read']);
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);
 
-    Route::post('/products/{product}/reviews',[ProductReviewController::class, 'store']);
+    Route::post('/products/{product}/reviews', [ProductReviewController::class, 'store']);
+    Route::put('/products/{productId}/reviews/{reviewId}',[ProductReviewController::class, 'update']);
 
     Route::post('/delivery/quote', [DeliveryController::class, 'quote']);
 });
