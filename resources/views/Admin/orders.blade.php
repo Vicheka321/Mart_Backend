@@ -940,7 +940,7 @@
                                     <button type="button" onclick="confirmChange({{ $order['id'] }}, 'completed', this)" class="action-btn flex-1 inline-flex items-center justify-center h-9 rounded-lg text-xs font-medium
                                                            border border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10
                                                            text-emerald-600 dark:text-emerald-400">
-                                        Complete
+                                        Successful
                                     </button>
                                 @endif
 
@@ -1680,7 +1680,7 @@
                         <button type="button" onclick="confirmChange(${orderId}, 'completed', this)"
                             class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg
                                 border border-emerald-200 bg-emerald-50 text-emerald-600">
-                            Complete
+                            Successful
                         </button>
                         <button type="button" onclick="confirmChange(${orderId}, 'cancelled', this)"
                             class="action-btn inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg

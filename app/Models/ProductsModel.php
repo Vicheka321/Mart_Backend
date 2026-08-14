@@ -62,8 +62,23 @@ class ProductsModel extends Model
 
     public function firstImage()
     {
-        
-    return $this->hasOne(ProductsImageModel::class, 'product_id')->latest();
+
+        return $this->hasOne(ProductsImageModel::class, 'product_id')->latest();
     }
-    
+
+    public function reviews()
+    {
+        return $this->hasMany(
+            ProductReview::class,
+            'product_id'
+        );
+    }
+
+    public function approvedReviews()
+    {
+        return $this->hasMany(
+            ProductReview::class,
+            'product_id'
+        )->where('is_approved', true);
+    }
 }

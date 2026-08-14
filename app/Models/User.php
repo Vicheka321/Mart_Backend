@@ -87,4 +87,11 @@ class User extends Authenticatable
             new AdminResetPasswordNotification($token)
         );
     }
+
+    public function productReviews()
+    {
+        return $this->hasMany(
+            ProductReview::class
+        );
+    }
 }

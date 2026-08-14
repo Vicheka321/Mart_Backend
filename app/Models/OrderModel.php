@@ -7,7 +7,8 @@ use App\Models\User;
 use App\Models\AddressModel;
 use App\Models\Order_itemModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use App\Models\Branch;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class OrderModel extends Model
 {
     use HasFactory;
@@ -37,7 +38,7 @@ class OrderModel extends Model
 
         'is_sent',
         'note',
-        
+
     ];
 
     public function user()
@@ -74,5 +75,10 @@ class OrderModel extends Model
             CouponUsageModel::class,
             'order_id'
         );
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 }
