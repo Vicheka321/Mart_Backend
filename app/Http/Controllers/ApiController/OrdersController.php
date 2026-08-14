@@ -179,7 +179,7 @@ class OrdersController extends Controller
             }
             $total = 0;
             $promotionDiscountTotal = 0;
- 
+
             foreach ($items as $item) {
 
                 $product = ProductsModel::lockForUpdate()
@@ -1050,6 +1050,7 @@ class OrdersController extends Controller
 
             return [
 
+
                 'id' => $order->id,
 
                 'status' => $order->status,
@@ -1104,6 +1105,9 @@ class OrdersController extends Controller
                         $product = $item->product;
 
                         return [
+
+                            'product_id' =>
+                            $item->product_id,
 
                             'name' =>
                             $product->name,

@@ -21,7 +21,12 @@ class ProductsSeeder extends Seeder
                 'description' => 'Classic Coca Cola soft drink in a 330ml can, offering the same crisp, fizzy, refreshing cola taste found in shops and restaurants across Cambodia. Widely stocked in supermarkets, convenience stores, and street-side stalls, it is a popular grab-and-go choice for hot days.',
                 'cost_price' => 0.35,
                 'sale_price' => 0.50,
-                'image' => 'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p1b1c1.png'
+                'images' => [
+                    'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/b1.png',
+                    'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p2b1c1.png',
+                    'https://pub-42158637988f4d79ab3305553db0651f.r2.dev/products/p3b2c1.png',
+                ],
+                
             ],
             [
                 'name' => 'Coca Cola Zero',
@@ -488,13 +493,22 @@ class ProductsSeeder extends Seeder
                 'created_at'    => $createdAt,
                 'updated_at'    => $createdAt,
             ]);
+            $images = $item['images']
+                ?? [$item['image'] ?? null];
 
-            ProductsImageModel::create([
-                'product_id' => $product->id,
-                'image_url'  => $item['image'],
-                'created_at' => $createdAt,
-                'updated_at' => $createdAt,
-            ]);
+            foreach ($images as $image) {
+
+                if (empty($image)) {
+                    continue;
+                }
+
+                ProductsImageModel::create([
+                    'product_id' => $product->id,
+                    'image_url'  => $image,
+                    'created_at' => $createdAt,
+                    'updated_at' => $createdAt,
+                ]);
+            }
         }
     }
 }

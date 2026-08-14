@@ -18,7 +18,7 @@ class DeliveryFeeSeeder extends Seeder
 
             [
                 'min_km' => 0,
-                'max_km' => 25,
+                'max_km' => 10,
                 'fee' => 0,
                 'status' => true,
                 'created_at' => $now,
@@ -26,7 +26,7 @@ class DeliveryFeeSeeder extends Seeder
             ],
 
             [
-                'min_km' => 26,
+                'min_km' => 11,
                 'max_km' => 50,
                 'fee' => 1,
                 'status' => true,

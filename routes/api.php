@@ -20,7 +20,7 @@ use App\Http\Controllers\ApiController\PaymentController;
 use App\Http\Controllers\Api\DeviceTokenController;
 use App\Http\Controllers\ApiController\DeliveryController;
 use App\Http\Controllers\ApiController\NotificationController;
-
+use App\Http\Controllers\ApiController\ProductReviewController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'userLogin']);
@@ -93,6 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'read']);
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);
 
+    Route::post('/products/{product}/reviews',[ProductReviewController::class, 'store']);
 
     Route::post('/delivery/quote', [DeliveryController::class, 'quote']);
 });
