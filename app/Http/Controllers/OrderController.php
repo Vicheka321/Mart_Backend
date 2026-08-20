@@ -127,7 +127,7 @@ class OrderController extends Controller
             'user',
             'payment'
         ])
-            // Show only orders where payment status = paid
+         
             ->whereHas('payment', function ($q) {
                 $q->whereIn('payment_status', [
                     'paid',
@@ -135,12 +135,12 @@ class OrderController extends Controller
                 ]);
             })
 
-            // Optional order status filter
+            
             ->when($status && $status != 'all', function ($q) use ($status) {
                 $q->where('status', $status);
             })
 
-            // 1st sort key: status priority — Pending → Processing → Completed → Cancelled
+   
             ->orderByRaw("
             CASE 
                 WHEN status = 'pending' THEN 1
@@ -150,10 +150,7 @@ class OrderController extends Controller
             END ASC
         ")
 
-            // 2nd sort key: within Pending/Processing → oldest first (FIFO).
-            // Within Completed/Cancelled → newest first.
-            // A single ascending ORDER BY handles both directions by flipping
-            // the sign of the timestamp for the "newest first" groups.
+   
             ->orderByRaw("
             CASE 
                 WHEN status IN ('pending', 'processing') THEN EXTRACT(EPOCH FROM created_at)

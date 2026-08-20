@@ -66,7 +66,7 @@ class OrderSeeder extends Seeder
         }
 
 
-        for ($i = 1; $i <= 500; $i++) {
+        for ($i = 1; $i <= 50000; $i++) {
             $customer = $customers->random();
             $createdAt = Carbon::now()
                 ->subDays(rand(0, 365))

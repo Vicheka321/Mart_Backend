@@ -943,6 +943,7 @@ class ReportsController extends Controller
             'gross_sales',
             'total_discount',
             'paid_revenue',
+            'profit',
         ];
 
         $sort      = in_array($request->input('sort'), $allowedSorts)
@@ -993,6 +994,39 @@ class ReportsController extends Controller
         $totalDiscount     = (float) $summaryRows->sum(fn($r) =>
         (float)($r->coupon_discount    ?? 0)
             + (float)($r->promotion_discount ?? 0));
+        $totalCost = (float) $summaryRows->sum('total_cost');
+
+        $profit = round(
+            $grossSales - $totalDiscount - $totalCost,
+            2
+        );
+
+        $profit = Order_itemModel::query()
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('payments', 'orders.id', '=', 'payments.order_id')
+            ->where('payments.payment_status', 'paid')
+            ->whereBetween('orders.created_at', [$startDate, $endDate]);
+
+        if ($hasAddressFilter) {
+            empty($matchedOrderIds)
+                ? $profit->whereRaw('1 = 0')
+                : $profit->whereIn('orders.id', $matchedOrderIds);
+        }
+
+        $profit = (float) (
+            $profit->selectRaw('
+        SUM(
+            (order_items.price * order_items.qty)
+            -
+            (COALESCE(products.cost_price, 0) * order_items.qty)
+        ) as total_profit
+    ')->value('total_profit') ?? 0
+        );
+
+        $profitMargin = $grossSales > 0
+            ? round(($profit / $grossSales) * 100, 2)
+            : 0;
         $averageOrderValue = $totalOrders > 0 ? round($grossSales / $totalOrders, 2) : 0;
 
         /* ── 6. Grouped daily rows (paginated) ─────────────────────── */
@@ -1068,6 +1102,8 @@ class ReportsController extends Controller
             'grossSales',
             'paidRevenue',
             'totalDiscount',
+            'profit',
+            'profitMargin',
             'averageOrderValue',
             'provinceOptions',
             'districtOptions',

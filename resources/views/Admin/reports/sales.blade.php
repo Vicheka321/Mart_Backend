@@ -327,63 +327,101 @@
             @endif
 
             {{-- ==================== KPI CARDS ==================== --}}
-            <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
+            <div class="grid grid-cols-2 xl:grid-cols-5 gap-3">
                 @php
+                    $paidPct = $grossSales > 0 ? round(($paidRevenue / $grossSales) * 100) : 0;
                     $kpis = [
                         [
                             'label' => 'Total Orders',
                             'value' => number_format($totalOrders),
                             'sub' => 'All statuses',
-                            'accent' => '#6366f1',
                             'from' => 'from-indigo-500',
                             'to' => 'to-violet-600',
-                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>'
+                            'bg' => 'from-indigo-50 to-violet-100 dark:from-indigo-900/20 dark:to-violet-900/20',
+                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>',
+                            'pct' => 100,
                         ],
                         [
                             'label' => 'Gross Sales',
                             'value' => '$' . number_format($grossSales, 2),
                             'sub' => 'Before discount',
-                            'accent' => '#f59e0b',
                             'from' => 'from-amber-500',
                             'to' => 'to-yellow-600',
-                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+                            'bg' => 'from-amber-50 to-yellow-100 dark:from-amber-900/20 dark:to-yellow-900/20',
+                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+                            'pct' => 100,
                         ],
                         [
                             'label' => 'Paid Revenue',
                             'value' => '$' . number_format($paidRevenue, 2),
                             'sub' => 'Confirmed payments',
-                            'accent' => '#10b981',
                             'from' => 'from-emerald-500',
                             'to' => 'to-teal-600',
-                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>'
+                            'bg' => 'from-emerald-50 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/20',
+                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>',
+                            'pct' => $paidPct,
+                        ],
+                        [
+                            'label' => 'Profit',
+                            'value' => '$' . number_format($profit, 2),
+                            'sub' => 'Net profit',
+                            'from' => 'from-pink-500',
+                            'to' => 'to-red-600',
+                            'bg' => 'from-pink-50 to-red-100 dark:from-pink-900/20 dark:to-red-900/20',
+                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 1.12-3 2.5S10.343 13 12 13s3 1.12 3 2.5S13.657 18 12 18m0-10V6m0 12v-2m-6-6h12"/>',
+                            'pct' => $grossSales > 0
+                                ? min(round(($profit / $grossSales) * 100), 100)
+                                : 0,
                         ],
                         [
                             'label' => 'Avg Order Value',
                             'value' => '$' . number_format($averageOrderValue, 2),
                             'sub' => 'Discount: $' . number_format($totalDiscount, 2),
-                            'accent' => '#3b82f6',
                             'from' => 'from-blue-500',
                             'to' => 'to-indigo-600',
-                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>'
+                            'bg' => 'from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20',
+                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>',
+                            'pct' => 100,
                         ],
                     ];
                 @endphp
 
                 @foreach($kpis as $kpi)
-                    <div class="sr-kpi relative overflow-hidden rounded-2xl p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[11px] font-semibold text-gray-500 dark:text-gray-400">{{ $kpi['label'] }}</span>
-                            <div class="w-8 h-8 rounded-xl bg-gradient-to-br {{ $kpi['from'] }} {{ $kpi['to'] }} flex items-center justify-center shadow-md">
-                                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">{!! $kpi['icon'] !!}</svg>
+                    <div class="sr-kpi relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
+                                border border-gray-100 dark:border-gray-700
+                                shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-3">
+                        <div class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br {{ $kpi['bg'] }}"></div>
+                        <div class="relative flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-xl bg-gradient-to-br {{ $kpi['from'] }} {{ $kpi['to'] }}
+                                            flex items-center justify-center shadow-md">
+                                    <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        {!! $kpi['icon'] !!}
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-semibold text-gray-900 dark:text-white leading-tight">{{ $kpi['label'] }}</h4>
+                                    <p class="text-[10px] text-gray-400 dark:text-gray-500 leading-tight">{{ $kpi['sub'] }}</p>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full
+                                         bg-gradient-to-r {{ $kpi['from'] }} {{ $kpi['to'] }}
+                                         text-white text-[10px] font-semibold opacity-80">
+                                {{ $kpi['pct'] }}%
+                            </span>
+                        </div>
+                        <div class="relative mt-2 pl-2">
+                            <h2 class="text-2xl font-bold tracking-tight
+                                       bg-gradient-to-r {{ $kpi['from'] }} {{ $kpi['to'] }} bg-clip-text text-transparent leading-none">
+                                {{ $kpi['value'] }}
+                            </h2>
+                        </div>
+                        <div class="relative mt-2">
+                            <div class="h-1.5 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                                <div class="sr-bar h-full rounded-full bg-gradient-to-r {{ $kpi['from'] }} {{ $kpi['to'] }}"
+                                     style="width: {{ $kpi['pct'] }}%"></div>
                             </div>
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight leading-none">{{ $kpi['value'] }}</h2>
-                        <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-1.5">{{ $kpi['sub'] }}</p>
-
-                        <svg class="w-full h-8 mt-3 opacity-80" viewBox="0 0 100 24" preserveAspectRatio="none">
-                            <polyline points="0,18 12,14 24,16 36,10 48,12 60,6 72,9 84,4 100,7"
-                                fill="none" stroke="{{ $kpi['accent'] }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
                     </div>
                 @endforeach
             </div>
@@ -543,10 +581,18 @@
                 <div class="space-y-4">
 
                     @if($highestSellingDay)
-                        <div class="sr-side rounded-2xl p-4 bg-gradient-to-br from-indigo-600 to-violet-700 text-white shadow-lg shadow-indigo-900/20">
-                            <p class="text-[11px] font-semibold text-indigo-100 uppercase tracking-wider">Best day in range</p>
-                            <h3 class="text-lg font-bold mt-1">{{ \Carbon\Carbon::parse($highestSellingDay->sale_date)->format('d M Y') }}</h3>
-                            <div class="flex items-center gap-4 mt-2 text-xs text-indigo-100">
+                        <div class="sr-side relative overflow-hidden rounded-2xl p-4 bg-gradient-to-br from-indigo-600 to-violet-700 text-white shadow-lg shadow-indigo-900/20">
+                            <div class="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/10"></div>
+                            <div class="relative flex items-center gap-2 mb-1">
+                                <div class="w-6 h-6 rounded-lg bg-white/15 flex items-center justify-center">
+                                    <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                </div>
+                                <p class="text-[11px] font-semibold text-indigo-100 uppercase tracking-wider">Best day in range</p>
+                            </div>
+                            <h3 class="relative text-lg font-bold mt-1">{{ \Carbon\Carbon::parse($highestSellingDay->sale_date)->format('d M Y') }}</h3>
+                            <div class="relative flex items-center gap-4 mt-2 text-xs text-indigo-100">
                                 <span>{{ number_format($highestSellingDay->total_orders) }} orders</span>
                                 <span>${{ number_format($highestSellingDay->gross_sales, 2) }} gross</span>
                             </div>
