@@ -378,6 +378,28 @@ class DashboardController extends Controller
                 $q->whereIn('payment_status', ['paid', 'unpaid']);
             });
 
+        $applyDateFilter($recentOrdersQuery, 'orders.created_at');
+
+        $recentOrders = $recentOrdersQuery
+            ->orderBy('created_at', 'desc') // get newest 8
+            ->take(8)
+            ->get()
+            ->sortBy('created_at')          // display oldest → newest
+            ->values()
+            ->map(function ($order) {
+                return [
+                    'id'             => $order->id,
+                    'full_name'      => $order->user->full_name ?? 'Customer',
+                    'avatar'         => $order->user->avatar ?? null,
+                    'phone'          => $order->user->phone ?? '',
+                    'total'          => $order->total_amount,
+                    'payment_method' => $order->payment->payment_method ?? '',
+                    'payment_status' => $order->payment->payment_status ?? '',
+                    'status'         => $order->status,
+                    'created_at'     => $order->created_at->format('Y-m-d H:i'),
+                ];
+            });
+
         $applyDateFilter($recentOrdersQuery);
 
         $recentOrders = $recentOrdersQuery
