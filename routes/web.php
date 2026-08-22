@@ -25,7 +25,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
 use App\Services\InfobipService;
 use Illuminate\Support\Facades\Auth;
-
+use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -582,6 +582,30 @@ Route::prefix('admin')
         Route::delete('/roles/{role}', [RoleController::class, 'destroy'])
             ->middleware('permission:delete_roles')
             ->name('roles.destroy');
+
+        // permission
+
+        Route::get('/permissions', [PermissionController::class, 'index'])
+            ->middleware('permission:view_permissions')
+            ->name('permissions.index');
+
+        Route::post('/permissions', [PermissionController::class, 'store'])
+            ->middleware('permission:create_permissions')
+            ->name('permissions.store');
+
+
+        Route::put('/permissions/{permission}', [PermissionController::class, 'update'])
+            ->middleware('permission:edit_permissions')
+            ->name('permissions.update');
+
+        Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])
+            ->middleware('permission:delete_permissions')
+            ->name('permissions.destroy');
+
+
+        Route::delete('/permissions/resource/{resource}',[PermissionController::class, 'destroyResource'])
+            ->middleware('permission:delete_permissions')
+            ->name('permissions.destroyResource');
 
         // assign roles to users
         Route::get('/assign-roles', [RoleController::class, 'users'])

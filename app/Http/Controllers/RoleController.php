@@ -9,6 +9,114 @@ use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
+    // public function index()
+    // {
+    //     $roles = Role::with('permissions')
+    //         ->withCount('users')
+    //         ->orderBy('id', 'desc')
+    //         ->get();
+
+    //     $permissions = Permission::orderBy('name')->get();
+
+    //     $permissionGroups = [
+    //         'Admin Panel' => [
+    //             'access_admin_panel',
+    //         ],
+
+    //         'Dashboard' => [
+    //             'view_dashboard',
+    //         ],
+
+    //         'Banners' => [
+    //             'view_banners',
+    //             'create_banners',
+    //             'edit_banners',
+    //             'delete_banners',
+    //         ],
+
+    //         'Products' => [
+    //             'view_products',
+    //             'create_products',
+    //             'edit_products',
+    //             'delete_products',
+    //             'export_products',
+    //         ],
+
+    //         'Categories' => [
+    //             'view_categories',
+    //             'create_categories',
+    //             'edit_categories',
+    //             'delete_categories',
+    //         ],
+
+    //         'Brands' => [
+    //             'view_brands',
+    //             'create_brands',
+    //             'edit_brands',
+    //             'delete_brands',
+    //         ],
+
+    //         'Orders' => [
+    //             'view_orders',
+    //             'update_orders',
+    //             'cancel_orders',
+    //             'export_orders',
+    //         ],
+
+    //         'Customers' => [
+    //             'view_customers',
+    //             'delete_customers',
+    //         ],
+
+    //         'Promotions' => [
+    //             'view_promotions',
+    //             'create_promotions',
+    //             'edit_promotions',
+    //             'delete_promotions',
+    //         ],
+
+    //         'Coupons' => [
+    //             'view_coupons',
+    //             'create_coupons',
+    //             'edit_coupons',
+    //             'delete_coupons',
+    //         ],
+
+    //         'Reports' => [
+    //             'view_reports',
+    //             'view_sales_report',
+    //             'view_orders_report',
+    //             'view_customers_report',
+    //         ],
+
+    //         'Analysis' => [
+    //             'view_analysis',
+    //         ],
+
+    //         'Notifications' => [
+    //             'view_notifications',
+    //         ],
+
+    //         'Settings' => [
+    //             'view_settings',
+    //             'edit_settings',
+    //         ],
+
+    //         'Roles' => [
+    //             'view_roles',
+    //             'create_roles',
+    //             'edit_roles',
+    //             'delete_roles',
+    //             'assign_roles',
+    //         ],
+    //     ];
+
+    //     return view('Admin.roles.index', compact(
+    //         'roles',
+    //         'permissions',
+    //         'permissionGroups'
+    //     ));
+    // }
     public function index()
     {
         $roles = Role::with('permissions')
@@ -16,100 +124,12 @@ class RoleController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        $permissions = Permission::orderBy('name')->get();
+        $permissions = Permission::where('guard_name', 'web')
+            ->orderBy('resource')
+            ->orderBy('name')
+            ->get();
 
-        $permissionGroups = [
-            'Admin Panel' => [
-                'access_admin_panel',
-            ],
-
-            'Dashboard' => [
-                'view_dashboard',
-            ],
-
-            'Banners' => [
-                'view_banners',
-                'create_banners',
-                'edit_banners',
-                'delete_banners',
-            ],
-
-            'Products' => [
-                'view_products',
-                'create_products',
-                'edit_products',
-                'delete_products',
-                'export_products',
-            ],
-
-            'Categories' => [
-                'view_categories',
-                'create_categories',
-                'edit_categories',
-                'delete_categories',
-            ],
-
-            'Brands' => [
-                'view_brands',
-                'create_brands',
-                'edit_brands',
-                'delete_brands',
-            ],
-
-            'Orders' => [
-                'view_orders',
-                'update_orders',
-                'cancel_orders',
-                'export_orders',
-            ],
-
-            'Customers' => [
-                'view_customers',
-                'delete_customers',
-            ],
-
-            'Promotions' => [
-                'view_promotions',
-                'create_promotions',
-                'edit_promotions',
-                'delete_promotions',
-            ],
-
-            'Coupons' => [
-                'view_coupons',
-                'create_coupons',
-                'edit_coupons',
-                'delete_coupons',
-            ],
-
-            'Reports' => [
-                'view_reports',
-                'view_sales_report',
-                'view_orders_report',
-                'view_customers_report',
-            ],
-
-            'Analysis' => [
-                'view_analysis',
-            ],
-
-            'Notifications' => [
-                'view_notifications',
-            ],
-
-            'Settings' => [
-                'view_settings',
-                'edit_settings',
-            ],
-
-            'Roles' => [
-                'view_roles',
-                'create_roles',
-                'edit_roles',
-                'delete_roles',
-                'assign_roles',
-            ],
-        ];
+        $permissionGroups = $permissions->groupBy('resource');
 
         return view('Admin.roles.index', compact(
             'roles',
@@ -117,7 +137,6 @@ class RoleController extends Controller
             'permissionGroups'
         ));
     }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -160,12 +179,26 @@ class RoleController extends Controller
     {
         // 🔒 Protect Super Admin role
         if ($role->name === 'Super Admin') {
-            return back()->with('error', 'Super Admin role cannot be deleted.');
+            return back()->with(
+                'error',
+                'Super Admin role cannot be deleted.'
+            );
+        }
+
+        // 🔒 Cannot delete role if users are assigned
+        if ($role->users()->exists()) {
+            return back()->with(
+                'error',
+                'This role cannot be deleted because it is currently assigned to one or more users.'
+            );
         }
 
         $role->delete();
 
-        return back()->with('success', 'Role deleted successfully.');
+        return back()->with(
+            'success',
+            'Role deleted successfully.'
+        );
     }
 
     // public function users()
@@ -183,7 +216,7 @@ class RoleController extends Controller
             ->latest()
             ->paginate(10);
 
-        $roles = Role::orderBy('name')->get();   
+        $roles = Role::orderBy('name')->get();
 
         return view('Admin.roles.assign-users', compact('users', 'roles'));
     }

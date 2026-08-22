@@ -13,111 +13,154 @@ class RolePermissionSeeder extends Seeder
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Permissions grouped by resource
+        |--------------------------------------------------------------------------
+        | Each key is the "resource" column value, each item in the array is the
+        | permission "name". guard_name is always 'web'.
+        */
         $permissions = [
-            // admin panel
-            'access_admin_panel',
+            'Admin Panel' => [
+                'access_admin_panel',
+            ],
 
-            // dashboard
-            'view_dashboard',
+            'Dashboard' => [
+                'view_dashboard',
+            ],
 
-            // products
-            'view_products',
-            'create_products',
-            'edit_products',
-            'delete_products',
-            'export_products',
+            'Products' => [
+                'view_products',
+                'create_products',
+                'edit_products',
+                'delete_products',
+                'export_products',
+            ],
 
-            // categories
-            'view_categories',
-            'create_categories',
-            'edit_categories',
-            'delete_categories',
+            'Categories' => [
+                'view_categories',
+                'create_categories',
+                'edit_categories',
+                'delete_categories',
+            ],
 
-            // brands
-            'view_brands',
-            'create_brands',
-            'edit_brands',
-            'delete_brands',
+            'Brands' => [
+                'view_brands',
+                'create_brands',
+                'edit_brands',
+                'delete_brands',
+            ],
 
-            // orders
-            'view_orders',
-            'update_orders',
-            'cancel_orders',
-            'export_orders',
+            'Orders' => [
+                'view_orders',
+                'update_orders',
+                'cancel_orders',
+                'export_orders',
+            ],
 
-            // delivery fees
-            'view_delivery_fees',
-            'create_delivery_fees',
-            'edit_delivery_fees',
-            'delete_delivery_fees',
+            'Delivery Fees' => [
+                'view_delivery_fees',
+                'create_delivery_fees',
+                'edit_delivery_fees',
+                'delete_delivery_fees',
+            ],
 
-            // branches
-            'view_branches',
-            'create_branches',
-            'edit_branches',
-            'delete_branches',
+            'Branches' => [
+                'view_branches',
+                'create_branches',
+                'edit_branches',
+                'delete_branches',
+            ],
 
-            'view_reviews',
+            'Reviews' => [
+                'view_reviews',
+            ],
 
-            // coupons
-            'view_coupons',
-            'create_coupons',
-            'edit_coupons',
-            'delete_coupons',
+            'Coupons' => [
+                'view_coupons',
+                'create_coupons',
+                'edit_coupons',
+                'delete_coupons',
+            ],
 
-            // banners
-            'view_banners',
-            'create_banners',
-            'edit_banners',
-            'delete_banners',
+            'Banners' => [
+                'view_banners',
+                'create_banners',
+                'edit_banners',
+                'delete_banners',
+            ],
 
-            // promotions
-            'view_promotions',
-            'create_promotions',
-            'edit_promotions',
-            'delete_promotions',
+            'Promotions' => [
+                'view_promotions',
+                'create_promotions',
+                'edit_promotions',
+                'delete_promotions',
+            ],
 
-            // customers
-            'view_customers',
-            'create_customers',
-            'edit_customers',
-            'delete_customers',
+            'Customers' => [
+                'view_customers',
+                'create_customers',
+                'edit_customers',
+                'delete_customers',
+            ],
 
-            // notifications
-            'view_notifications',
+            'Notifications' => [
+                'view_notifications',
+            ],
 
-            // reports
-            'view_reports',
-            'view_sales_report',
-            'view_orders_report',
-            'view_customers_report',
+            'Reports' => [
+                'view_reports',
+                'view_sales_report',
+                'view_orders_report',
+                'view_customers_report',
+            ],
 
-            // analysis
-            'view_analysis',
+            'Analysis' => [
+                'view_analysis',
+            ],
 
-            // settings
-            'view_settings',
-            'edit_settings',
+            'Settings' => [
+                'view_settings',
+                'edit_settings',
+            ],
 
-            // audit logs
-            'view_audit_logs',
-            'delete_audit_logs',
+            'Roles' => [
+                'view_roles',
+                'create_roles',
+                'edit_roles',
+                'delete_roles',
+                'assign_roles',
+            ],
 
-            // roles / users
-            'view_roles',
-            'create_roles',
-            'edit_roles',
-            'delete_roles',
-            'assign_roles',
-            'view_users',
-            'edit_users',
+            'Users' => [
+                'view_users',
+            ],
+
+            'Permissions' => [
+                'view_permissions',
+                'create_permissions',
+                'edit_permissions',
+                'delete_permissions',
+            ],
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate([
-                'name' => $permission,
-                'guard_name' => 'web',
-            ]);
+        /*
+        |--------------------------------------------------------------------------
+        | Seed permissions (resource + name + guard_name explicit, no auto-generation)
+        |--------------------------------------------------------------------------
+        */
+        foreach ($permissions as $resource => $permissionNames) {
+            foreach ($permissionNames as $permissionName) {
+                Permission::firstOrCreate(
+                    [
+                        'name' => $permissionName,
+                        'guard_name' => 'web',
+                    ],
+                    [
+                        'resource' => $resource,
+                    ]
+                );
+            }
         }
 
         /*
@@ -140,7 +183,7 @@ class RolePermissionSeeder extends Seeder
         // Super Admin => everything
         $superAdmin->syncPermissions(Permission::pluck('name')->toArray());
 
-        // Admin => almost everything except super-sensitive things if you want
+        // Admin => almost everything, including Permission Management
         $admin->syncPermissions([
             'access_admin_panel',
 
@@ -161,7 +204,6 @@ class RolePermissionSeeder extends Seeder
             'create_brands',
             'edit_brands',
             'delete_brands',
-
 
             'view_orders',
             'update_orders',
@@ -209,41 +251,50 @@ class RolePermissionSeeder extends Seeder
 
             'view_analysis',
 
-            'view_roles',
-            'create_roles',
-            'edit_roles',
-            'assign_roles',
-            'view_users',
-            'edit_users',
-
             'view_settings',
             'edit_settings',
 
+            'view_roles',
+            'create_roles',
+            'edit_roles',
+            'delete_roles',
+            'assign_roles',
+            'view_users',
+
+            // Permission Management
+            'view_permissions',
+            'create_permissions',
+            'edit_permissions',
+            'delete_permissions',
         ]);
 
-
-        // Manager => operations + reports
+        // Manager => operations + reports (NO permission management)
         $manager->syncPermissions([
             'access_admin_panel',
             'view_dashboard',
 
-            'view_products', 'edit_products',
+            'view_products',
+            'edit_products',
             'view_categories',
             'view_brands',
 
-            'view_orders', 'update_orders', 'cancel_orders',
+            'view_orders',
+            'update_orders',
+            'cancel_orders',
             'view_customers',
 
             'view_promotions',
             'view_coupons',
 
-            'view_reports', 'view_sales_report', 'view_orders_report', 'view_customers_report',
+            'view_reports',
+            'view_sales_report',
+            'view_orders_report',
+            'view_customers_report',
             'view_analysis',
             'view_notifications',
         ]);
 
-
-        // Staff => day-to-day operational access, no delete/settings/roles
+        // Staff => day-to-day operational access, no delete/settings/roles/permissions
         $staff->syncPermissions([
             'access_admin_panel',
             'view_dashboard',
@@ -266,7 +317,7 @@ class RolePermissionSeeder extends Seeder
             'view_notifications',
         ]);
 
-
+        // Customer => no admin permissions
         $customer->syncPermissions([]);
     }
 }
